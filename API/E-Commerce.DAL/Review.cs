@@ -7,8 +7,8 @@ namespace E_Commerce.DAL
     {
         public int ID { get; set; }
 
-        [Required]
-        public int ProductID { get; set; }
+        [ForeignKey("Prodact"),Required]
+        public int ProdactID { get; set; }
 
         [Required , StringLength(255)]
         public string review { get; set; }
@@ -23,7 +23,7 @@ namespace E_Commerce.DAL
         [Required]
         public DateTime CrateDate { get; set; }
 
-        public virtual Prodact prodact { get; set; }
+        public virtual Prodact Prodact { get; set; }
         public virtual User User { get; set; }
     }
 

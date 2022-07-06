@@ -2,9 +2,9 @@
 
 namespace E_Commerce.DAL
 {
-    public class color
+    public class Color
     {
-        public color()
+        public Color()
         {
             prodacts = new HashSet<Prodact>();
         }

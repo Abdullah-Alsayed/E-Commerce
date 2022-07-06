@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace E_Commerce.DAL
@@ -31,7 +27,6 @@ namespace E_Commerce.DAL
         public string Description { get; set; }
         public double Discount { get; set; }
         public int BrandID { get; set; }
-        public int ReviewID { get; set; }
         public int UnitsID { get; set; }
         public int ColorID { get; set; }
 
@@ -50,8 +45,7 @@ namespace E_Commerce.DAL
         public virtual Category Category { get; set; }
         public virtual Brand brand { get; set; }
         public virtual Unit unit { get; set; }
-        public virtual color color { get; set; }
-        public virtual Review review { get; set; }
+        public virtual Color color { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<ProdactOrder> prodactOrders { get; set; }
         public virtual ICollection<ProdactImg> ProdactImgs { get; set; }

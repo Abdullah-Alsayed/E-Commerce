@@ -767,6 +767,39 @@
             "rid": "win"
           }
         }
+      },
+      "E-Commerce.BL/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/E-Commerce.BL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/E-Commerce.BL.dll": {}
+        }
+      },
+      "E-Commerce.DAL/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.6"
+        },
+        "compile": {
+          "bin/placeholder/E-Commerce.DAL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/E-Commerce.DAL.dll": {}
+        }
+      },
+      "E-Commerce.Services/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/E-Commerce.Services.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/E-Commerce.Services.dll": {}
+        }
       }
     }
   },
@@ -2203,10 +2236,28 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "E-Commerce.BL/1.0.0": {
+      "type": "project",
+      "path": "../E-Commerce.BL/E-Commerce.BL.csproj",
+      "msbuildProject": "../E-Commerce.BL/E-Commerce.BL.csproj"
+    },
+    "E-Commerce.DAL/1.0.0": {
+      "type": "project",
+      "path": "../E-Commerce.DAL/E-Commerce.DAL.csproj",
+      "msbuildProject": "../E-Commerce.DAL/E-Commerce.DAL.csproj"
+    },
+    "E-Commerce.Services/1.0.0": {
+      "type": "project",
+      "path": "../E-Commerce.Services/E-Commerce.Services.csproj",
+      "msbuildProject": "../E-Commerce.Services/E-Commerce.Services.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "E-Commerce.BL >= 1.0.0",
+      "E-Commerce.DAL >= 1.0.0",
+      "E-Commerce.Services >= 1.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.6",
       "Microsoft.EntityFrameworkCore >= 6.0.6",
       "Microsoft.EntityFrameworkCore.Design >= 6.0.6",
@@ -2245,7 +2296,17 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.BL\\E-Commerce.BL.csproj": {
+              "projectPath": "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.BL\\E-Commerce.BL.csproj"
+            },
+            "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.DAL\\E-Commerce.DAL.csproj": {
+              "projectPath": "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.DAL\\E-Commerce.DAL.csproj"
+            },
+            "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.Services\\E-Commerce.Services.csproj": {
+              "projectPath": "D:\\GitHub Projects\\E-Commerce\\API\\E-Commerce.Services\\E-Commerce.Services.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

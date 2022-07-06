@@ -8,6 +8,9 @@
     ".NETCoreApp,Version=v6.0": {
       "E-Commerce.API/1.0.0": {
         "dependencies": {
+          "E-Commerce.BL": "1.0.0",
+          "E-Commerce.DAL": "1.0.0",
+          "E-Commerce.Services": "1.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.6",
           "Microsoft.EntityFrameworkCore": "6.0.6",
           "Microsoft.EntityFrameworkCore.Design": "6.0.6",
@@ -539,6 +542,24 @@
             "fileVersion": "4.700.19.56404"
           }
         }
+      },
+      "E-Commerce.BL/1.0.0": {
+        "runtime": {
+          "E-Commerce.BL.dll": {}
+        }
+      },
+      "E-Commerce.DAL/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.6"
+        },
+        "runtime": {
+          "E-Commerce.DAL.dll": {}
+        }
+      },
+      "E-Commerce.Services/1.0.0": {
+        "runtime": {
+          "E-Commerce.Services.dll": {}
+        }
       }
     }
   },
@@ -925,6 +946,21 @@
       "sha512": "sha512-CeWTdRNfRaSh0pm2gDTJFwVaXfTq6Xwv/sA887iwPTneW7oMtMlpvDIO+U60+3GWTB7Aom6oQwv5VZVUhQRdPQ==",
       "path": "system.windows.extensions/4.7.0",
       "hashPath": "system.windows.extensions.4.7.0.nupkg.sha512"
+    },
+    "E-Commerce.BL/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "E-Commerce.DAL/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "E-Commerce.Services/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

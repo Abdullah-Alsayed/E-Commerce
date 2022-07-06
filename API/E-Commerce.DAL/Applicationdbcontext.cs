@@ -4,9 +4,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce.DAL
 {
-    public class Applicationdbcontext:IdentityDbContext<IdentityUser>
+    public class Applicationdbcontext : IdentityDbContext<User>
     {
         public Applicationdbcontext(DbContextOptions<Applicationdbcontext> options) : base(options) { }
+        
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Category> Categories { get; set; }             
+        public DbSet<Color> Colors { get; set; }
+        public DbSet<ContactUs> ContactUs { get; set; }
+        public DbSet<Errors> Errors { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Governorate> Governorates { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Prodact> Prodacts { get; set; }
+        public DbSet<ProdactImg> ProdactImgs { get; set; }
+        public DbSet<ProdactOrder> ProdactOrders { get; set; }
+        public DbSet<PromoCode> PromoCodes { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Slider> Sliders { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+        public DbSet<SubCategory> SubCategories { get; set; }
+        public DbSet<Unit> Units { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {
@@ -77,7 +98,7 @@ namespace E_Commerce.DAL
             Builder.Entity<User>()
            .Property(s => s.CreatDate)
            .HasDefaultValueSql("GETDATE()");
-
+            base.OnModelCreating(Builder);
 
         }
     }

@@ -42,7 +42,7 @@ namespace E_Commerce.DAL
         public int Count { get; set; }
         public bool IsConfirmed { get; set; }
 
-        [ForeignKey("User"),StringLength(450),Required]
+        [StringLength(450),Required]
         public string CreateBy { get; set; }
 
         [Required]

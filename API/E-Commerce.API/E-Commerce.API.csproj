@@ -22,4 +22,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\E-Commerce.BL\E-Commerce.BL.csproj" />
+    <ProjectReference Include="..\E-Commerce.DAL\E-Commerce.DAL.csproj" />
+    <ProjectReference Include="..\E-Commerce.Services\E-Commerce.Services.csproj" />
+  </ItemGroup>
+
 </Project>

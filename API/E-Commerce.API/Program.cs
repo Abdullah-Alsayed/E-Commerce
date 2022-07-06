@@ -1,7 +1,15 @@
+using E_Commerce.DAL;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddDbContext<Applicationdbcontext>(Option =>
+{
+    Option.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+});
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<Applicationdbcontext>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
