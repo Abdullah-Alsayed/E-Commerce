@@ -1,0 +1,28 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace E_Commerce.DAL
+{
+    public class Slider
+    {
+        public int ID { get; set; }
+
+        [Required , StringLength(100)]
+        public string Tital { get; set; }
+
+        [Required, StringLength(100)]
+        public string ImgID { get; set; }
+
+        [ForeignKey("User"),Required, StringLength(450)]
+        public string CreateBy { get; set; }
+
+        [Required]
+        public DateTime CreateDate { get; set; }
+
+        [StringLength(450)]
+        public string? ModifyBy { get; set; }
+        public DateTime? ModifyAt { get; set; }
+
+        public virtual User User { get; set; }
+    }
+}
