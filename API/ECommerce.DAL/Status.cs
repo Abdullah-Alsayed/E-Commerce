@@ -12,11 +12,11 @@ namespace ECommerce.DAL
             Orders = new HashSet<Order>();
         }
         public int ID { get; set; }
-        [Column(name: "Name-AR") , StringLength(100)]
-        public string? NameAR { get; set; }
+        [StringLength(100) , Required]
+        public string NameAR { get; set; }
 
-        [Column(name: "Name-EN"), StringLength(100)]
-        public string? NameEN { get; set; }
+        [StringLength(100) , Required]
+        public string NameEN { get; set; }
 
         [Required]
         public DateTime CreateDate { get; set; }

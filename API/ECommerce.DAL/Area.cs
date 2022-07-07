@@ -14,10 +14,10 @@ namespace ECommerce.DAL
 
         public int ID { get; set; }
 
-        [Column(name: "Name-AR"),StringLength(100), Required]
+        [StringLength(100), Required]
         public string NameAR { get; set; }
 
-        [StringLength(100),Column(name: "Name-EN"), Required]
+        [StringLength(100), Required]
         public string NameEN { get; set; }
 
         [Required]

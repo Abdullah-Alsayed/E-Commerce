@@ -9,11 +9,11 @@ namespace ECommerce.DAL
     {
         public int ID { get; set; }
 
-        [Column(name: "Name-AR"),StringLength(450)]
-        public string? NameAR { get; set; }
+        [StringLength(100) , Required]
+        public string NameAR { get; set; }
 
-        [Column(name: "Name-EN"), StringLength(450)]
-        public string? NameEN { get; set; }
+        [StringLength(100) , Required]
+        public string NameEN { get; set; }
 
         [Required]
         public DateTime CreateDate { get; set; }

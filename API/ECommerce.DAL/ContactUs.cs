@@ -15,7 +15,6 @@ namespace ECommerce.DAL
 
         [Required]
         [MaxLength(50)]
-        [RegularExpression(@"^[0-9]{1,11}$")]
         public string Phone { get; set; }
 
         [Required]
