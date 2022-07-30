@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DAL.Migrations
 {
     [DbContext(typeof(Applicationdbcontext))]
-    [Migration("20220707164327_BD")]
-    partial class BD
+    [Migration("20220716131311_UpdateProdactImg")]
+    partial class UpdateProdactImg
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -502,6 +502,11 @@ namespace ECommerce.DAL.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("float");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
@@ -512,15 +517,15 @@ namespace ECommerce.DAL.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("SubCategoryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("UnitsID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("unitID")
+                    b.Property<int>("UnitID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -533,7 +538,9 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.HasIndex("unitID");
+                    b.HasIndex("SubCategoryID");
+
+                    b.HasIndex("UnitID");
 
                     b.ToTable("Prodacts");
                 });
@@ -545,8 +552,8 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CrateDate")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CrateAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Img")
                         .IsRequired()
@@ -1282,7 +1289,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Prodact", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Brand", "brand")
+                    b.HasOne("ECommerce.DAL.Brand", "Brand")
                         .WithMany("Prodacts")
                         .HasForeignKey("BrandID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1294,7 +1301,7 @@ namespace ECommerce.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Color", "color")
+                    b.HasOne("ECommerce.DAL.Color", "Color")
                         .WithMany("prodacts")
                         .HasForeignKey("ColorID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1306,17 +1313,27 @@ namespace ECommerce.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Unit", "unit")
+                    b.HasOne("ECommerce.DAL.SubCategory", "SubCategory")
                         .WithMany("Prodacts")
-                        .HasForeignKey("unitID");
+                        .HasForeignKey("SubCategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("brand");
+                    b.HasOne("ECommerce.DAL.Unit", "Unit")
+                        .WithMany("Prodacts")
+                        .HasForeignKey("UnitID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
 
                     b.Navigation("Category");
 
-                    b.Navigation("color");
+                    b.Navigation("Color");
 
-                    b.Navigation("unit");
+                    b.Navigation("SubCategory");
+
+                    b.Navigation("Unit");
 
                     b.Navigation("User");
                 });
@@ -1341,7 +1358,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("ECommerce.DAL.Prodact", "Prodact")
-                        .WithMany("prodactOrders")
+                        .WithMany("ProdactOrders")
                         .HasForeignKey("ProdactID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1531,7 +1548,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("ProdactImgs");
 
-                    b.Navigation("prodactOrders");
+                    b.Navigation("ProdactOrders");
 
                     b.Navigation("Reviews");
                 });
@@ -1539,6 +1556,11 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("ECommerce.DAL.Status", b =>
                 {
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.SubCategory", b =>
+                {
+                    b.Navigation("Prodacts");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Unit", b =>

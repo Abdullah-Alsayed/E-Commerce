@@ -7,6 +7,11 @@ namespace ECommerce.DAL
 {
     public class SubCategory
     {
+        public SubCategory()
+        {
+            Prodacts = new HashSet<Prodact>();
+        }
+
         public int ID { get; set; }
 
         [StringLength(100) , Required]
@@ -33,5 +38,7 @@ namespace ECommerce.DAL
         public virtual Category Category { get; set; }
 
         public virtual User User { get; set; }
+        public virtual ICollection<Prodact> Prodacts { get; set; }
+
     }
 }

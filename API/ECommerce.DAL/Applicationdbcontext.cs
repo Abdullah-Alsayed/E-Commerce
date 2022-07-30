@@ -36,6 +36,10 @@ namespace ECommerce.DAL
             .Property(s => s.CreateDate)
             .HasDefaultValueSql("GETDATE()");
 
+            Builder.Entity<Area>()
+           .Property(s => s.IsActive)
+           .HasDefaultValue(true);
+
             Builder.Entity<Brand>()
             .Property(s => s.CreateDate)
             .HasDefaultValueSql("GETDATE()");
@@ -60,6 +64,10 @@ namespace ECommerce.DAL
             .Property(s => s.CreateDate)
             .HasDefaultValueSql("GETDATE()");
 
+            Builder.Entity<Governorate>()
+            .Property(s => s.IsActive)
+            .HasDefaultValue(true);
+
             Builder.Entity<Notification>()
             .Property(s => s.CreationDate)
             .HasDefaultValueSql("GETDATE()");
@@ -68,9 +76,17 @@ namespace ECommerce.DAL
             .Property(s => s.Createdate)
             .HasDefaultValueSql("GETDATE()");
 
+            Builder.Entity<Order>()
+            .Property(s => s.IsDeleted)
+            .HasDefaultValue(false);
+
             Builder.Entity<Prodact>()
             .Property(s => s.CreateDate)
             .HasDefaultValueSql("GETDATE()");
+
+            Builder.Entity<Prodact>()
+           .Property(s => s.IsDeleted)
+           .HasDefaultValue(false);
 
             Builder.Entity<PromoCode>()
             .Property(s => s.CreateDate)
@@ -87,6 +103,10 @@ namespace ECommerce.DAL
             Builder.Entity<Status>()
            .Property(s => s.CreateDate)
            .HasDefaultValueSql("GETDATE()");
+
+            Builder.Entity<Status>()
+            .Property(s => s.IsActive)
+            .HasDefaultValue(true);
 
             Builder.Entity<SubCategory>()
            .Property(s => s.CreateDate)

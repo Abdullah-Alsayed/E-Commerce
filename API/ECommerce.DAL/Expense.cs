@@ -23,6 +23,10 @@ namespace ECommerce.DAL
         [ForeignKey("User"), Required, StringLength(450)]
         public string CreateBy { get; set; }
 
+        [StringLength(450)]
+        public string? ModifyBy { get; set; }
+        public DateTime? ModifyAt { get; set; }
+
         public virtual User User { get; set; }
     }
 }

@@ -35,6 +35,8 @@ namespace ECommerce.DAL
         public string? ModifyBy { get; set; }
         public DateTime? ModifyAt { get; set; }
 
+        public bool IsActive { get; set; }
+
         public virtual User User { get; set; }
         public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

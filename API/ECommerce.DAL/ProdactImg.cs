@@ -12,7 +12,7 @@ namespace ECommerce.DAL
 
         [Required , StringLength(255)]
         public string Img { get; set; }
-        public int CrateDate { get; set; }
+        public DateTime CrateAt { get; set; }
 
         public virtual Prodact Prodact { get; set; }
     }
