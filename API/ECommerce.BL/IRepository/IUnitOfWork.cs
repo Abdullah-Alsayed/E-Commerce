@@ -7,7 +7,7 @@ namespace ECommerce.BLL.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBaseRepository<Prodact> Prodact { get; }
+        IProdactRepository Prodact { get; }
         IUserRepository User { get; }
         IProdactImgRepository ProdactImg { get; }
         IBaseRepository<Category> Category { get; }

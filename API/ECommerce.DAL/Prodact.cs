@@ -20,7 +20,9 @@ namespace ECommerce.DAL
         public string Title { get; set; }
 
         [Required]
-        public int Count { get; set; }
+        public int CountStock { get; set; }
+
+        public int Quantity { get; set; }
 
         [Required]
         public double Price { get; set; }

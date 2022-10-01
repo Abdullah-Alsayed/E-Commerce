@@ -25,7 +25,7 @@ namespace ECommerce.BL.Repository
             _roleManager = roleManager;
             _mailServices = mailServices;
             _hosting = hosting;
-            Prodact = new BaseRepository<Prodact>(_context, _hosting);
+            Prodact = new ProdactRepository(_context, _hosting);
             User = new UserRepository(_context, _userManager, _signInManager, _roleManager, _mailServices);
             ProdactImg = new ProdactImgRepository(_context, _hosting);
             Category = new BaseRepository<Category>(_context, _hosting);
@@ -46,7 +46,7 @@ namespace ECommerce.BL.Repository
             Notification = new NotificationRepository(_context, _hosting);    
         }
 
-        public IBaseRepository<Prodact> Prodact { get; private set; }
+        public IProdactRepository Prodact { get; private set; }
         public IBaseRepository<Category> Category { get; private set; }
         public IBaseRepository<Color> Color { get; private set; }
         public IUserRepository User { get; private set; }

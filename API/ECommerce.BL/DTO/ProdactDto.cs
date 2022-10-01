@@ -17,27 +17,20 @@ namespace ECommerce.BLL.DTO
         public string Title { get; set; }
 
         [Required]
-        public int Count { get; set; }
+        public int Quantity { get; set; }
+        public int Total { get; set; }
 
         [Required]
         public double Price { get; set; }
-        public string Description { get; set; }
         public double Discount { get; set; }
-        public int BrandID { get; set; }
-        public int UnitID { get; set; }
-        public int ColorID { get; set; }
-
-        [Required]
-        public int SubCategoryID { get; set; }
-
-        [Required]
-        public int CategoryID { get; set; }
-
-        [StringLength(450)]
-        public string? ModifyBy { get; set; }
-        public DateTime? ModifyAt { get; set; }
-        public bool IsDeleted { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
+        public IEnumerable<ProdactImg> Img { get; set; }
+       
+
+        public double TotalPrice()
+        {
+            return Total * Quantity;
+        }
 
         //public virtual User User { get; set; }
         //public virtual Category Category { get; set; }

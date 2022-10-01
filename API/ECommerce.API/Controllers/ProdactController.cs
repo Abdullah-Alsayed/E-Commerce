@@ -97,5 +97,12 @@ namespace ECommerce.API.Controllers
                 await _unitOfWork.SaveAsync();
             return Ok();
         }
+
+        public async Task<IActionResult> AddToChart(int ID)
+        {
+          var Prodact =  await _unitOfWork.Prodact.FindAsync(ID);
+          
+            return Ok();
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace ECommerce.DAL
         public DbSet<Status> Statuses { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Unit> Units { get; set; }
-
+        public DbSet<Feedback> Feedbacks { get; set; }
         protected override void OnModelCreating(ModelBuilder Builder)
         {
             Builder.Entity<Area>()
