@@ -13,7 +13,7 @@ namespace ECommerce.DAL
         public int Code { get; set; }
 
         [StringLength(150)]
-        public string Name { get; set; }
+        public string Source { get; set; }
 
         [StringLength(255)]
         public string Messege { get; set; }

@@ -10,6 +10,7 @@ namespace ECommerce.DAL
         public int ID { get; set; }
         public int OrderID { get; set; }
         public int ProdactID { get; set; }
+        public int Quantity { get; set; }
         public DateTime Date { get; set; }
         public virtual Order Order { get; set; }
         public virtual Prodact Prodact { get; set; }

@@ -51,6 +51,8 @@ namespace ECommerce.DAL
         [StringLength(450)]
         public string? ModifyBy { get; set; }
         public DateTime? ModifyAt { get; set; }
+        public bool IsDeleted { get; set; }
+
 
         public virtual User User { get; set; }
         public virtual Area Area { get; set; }

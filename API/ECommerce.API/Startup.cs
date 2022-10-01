@@ -1,19 +1,16 @@
+using ECommerce.BLL.DTO;
+using ECommerce.BLL.IRepository;
+using ECommerce.BL.Repository;
 using ECommerce.DAL;
+using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ECommerce.API
 {
@@ -29,8 +26,9 @@ namespace ECommerce.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.API", Version = "v1" });
@@ -39,7 +37,20 @@ namespace ECommerce.API
             {
                 Option.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<Applicationdbcontext>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddIdentity<User, IdentityRole>(Option =>
+            {
+                Option.Password.RequireNonAlphanumeric = false;
+                Option.Password.RequireDigit = false;
+                Option.Password.RequiredUniqueChars = 0;
+                Option.Password.RequireLowercase = false;
+                Option.Password.RequireUppercase = false;
+            }).AddEntityFrameworkStores<Applicationdbcontext>()
+                    .AddDefaultTokenProviders();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailServices, MailServicies>();
+            services.AddAuthentication();
+            services.AddAutoMapper(typeof(MappingProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +66,7 @@ namespace ECommerce.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

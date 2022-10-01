@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ECommerce.DAL.Migrations
 {
-    public partial class BD : Migration
+    public partial class CreateDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -536,14 +536,15 @@ namespace ECommerce.DAL.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Discount = table.Column<double>(type: "float", nullable: false),
                     BrandID = table.Column<int>(type: "int", nullable: false),
-                    UnitsID = table.Column<int>(type: "int", nullable: false),
+                    UnitID = table.Column<int>(type: "int", nullable: false),
                     ColorID = table.Column<int>(type: "int", nullable: false),
+                    SubCategoryID = table.Column<int>(type: "int", nullable: false),
                     CategoryID = table.Column<int>(type: "int", nullable: false),
                     CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    unitID = table.Column<int>(type: "int", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -573,8 +574,14 @@ namespace ECommerce.DAL.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Prodacts_Units_unitID",
-                        column: x => x.unitID,
+                        name: "FK_Prodacts_SubCategories_SubCategoryID",
+                        column: x => x.SubCategoryID,
+                        principalTable: "SubCategories",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Prodacts_Units_UnitID",
+                        column: x => x.UnitID,
                         principalTable: "Units",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -876,9 +883,14 @@ namespace ECommerce.DAL.Migrations
                 column: "CreateBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prodacts_unitID",
+                name: "IX_Prodacts_SubCategoryID",
                 table: "Prodacts",
-                column: "unitID");
+                column: "SubCategoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prodacts_UnitID",
+                table: "Prodacts",
+                column: "UnitID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PromoCodes_CreateBy",
@@ -977,9 +989,6 @@ namespace ECommerce.DAL.Migrations
                 name: "Sliders");
 
             migrationBuilder.DropTable(
-                name: "SubCategories");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -998,16 +1007,19 @@ namespace ECommerce.DAL.Migrations
                 name: "Brands");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Colors");
 
             migrationBuilder.DropTable(
-                name: "Colors");
+                name: "SubCategories");
 
             migrationBuilder.DropTable(
                 name: "Units");
 
             migrationBuilder.DropTable(
                 name: "Governorates");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
