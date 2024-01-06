@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL;
+using FluentValidation.AspNetCore;
+using System;
 
 namespace ECommerce.API
 {
@@ -22,9 +24,15 @@ namespace ECommerce.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFluentValidation(
+                fluent => fluent.RegisterValidatorsFromAssemblyContaining<Startup>()
+            );
+
             services.AddControllers();
+
             services
                 .AddControllers()
                 .AddNewtonsoftJson(
@@ -59,6 +67,7 @@ namespace ECommerce.API
             services.AddTransient<IMailServices, MailServicies>();
             services.AddAuthentication();
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -67,13 +76,14 @@ namespace ECommerce.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(
-                    c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Commerce.API v1")
-                );
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Commerce.API v1");
+                    c.DisplayRequestDuration();
+                });
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

@@ -48,7 +48,6 @@ namespace ECommerce.DAL.Entity
         [Required]
         public DateTime CreateAt { get; set; }
 
-        [Required]
         public string CreateBy { get; set; }
         public DateTime? LastLogin { get; set; }
 
