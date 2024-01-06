@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,6 +23,7 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindUnit))]
         public async Task<IActionResult> FindUnit(int ID)
@@ -33,23 +34,29 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(Unit);
         }
+
         [HttpGet]
         //[Route(nameof(FindAllUnit))]
         public async Task<IActionResult> FindAllUnit()
         {
-            var Units = await _unitOfWork.Unit.GetAllAsync(new[] { "User" }, o => o.NameAR, Constants.OrderBY.Descending);
+            var Units = await _unitOfWork.Unit.GetAllAsync(
+                new[] { "User" },
+                o => o.NameAR,
+                Constants.OrderBY.Descending
+            );
             if (Units == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(Units);
         }
+
         [HttpPost]
         //[Route(nameof(CreateUnit))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
         public async Task<IActionResult> CreateUnit(UnitDto dto)
         {
             Unit Entity = _mapper.Map<Unit>(dto);
-            Entity.CreateDate = DateTime.Now;
+            Entity.CreateAt = DateTime.Now;
             Entity.CreateBy = _unitOfWork.User.GetUserID(User);
 
             var Unit = await _unitOfWork.Unit.AddaAync(Entity);
@@ -70,7 +77,7 @@ namespace ECommerce.API.Controllers
                 return BadRequest(Constants.Errors.NotFound);
             else
             {
-                 _mapper.Map(dto,Unit);
+                _mapper.Map(dto, Unit);
                 Unit.ModifyBy = _unitOfWork.User.GetUserID(User);
                 Unit.ModifyAt = DateTime.Now;
                 await _unitOfWork.SaveAsync();

@@ -1,13 +1,11 @@
 ﻿using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
+using ECommerce.DAL.Entity;
 using ECommerce.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ECommerce.API.Controllers
 {
@@ -18,36 +16,38 @@ namespace ECommerce.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        public AccountController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var user = new User {
-                FitsrName = dto.FitsrName,          lastName    = dto.lastName,
-                Address   = dto.Address,             Age        = dto.Age,
-                CreatDate = DateTime.Now,           language    = Constants.languages.Arabic,
-                Email     = dto.Email.ToLower()   , UserName    = dto.UserName.ToLower(),
-                Gander    = Constants.Gender.Male , PhoneNumber = dto.PhoneNumber
+            var user = new User
+            {
+                FirstName = dto.FitsrName,
+                LastName = dto.lastName,
+                Address = dto.Address,
+                Age = dto.Age,
+                Language = Constants.Languages.Arabic,
+                Email = dto.Email.ToLower(),
+                UserName = dto.UserName.ToLower(),
+                Gander = DAL.Enums.UserGanderEnum.Male,
+                PhoneNumber = dto.PhoneNumber
             };
             if (await _unitOfWork.User.EmailExistesAsync(user.Email))
             {
-                if(await _unitOfWork.User.UserNameExistesAsync(user.UserName))
-                { 
-                    if(_unitOfWork.User.PhoneExistes(user.PhoneNumber))
-                    { 
+                if (await _unitOfWork.User.UserNameExistesAsync(user.UserName))
+                {
+                    if (_unitOfWork.User.PhoneExistes(user.PhoneNumber))
+                    {
                         var Result = await _unitOfWork.User.RegisterAsync(user, dto.Password);
                         if (Result.Succeeded)
                         {
-                            await _unitOfWork.User.LoginAsync(user,true);
+                            await _unitOfWork.User.LoginAsync(user, true);
                             return Ok(user);
                         }
                         else
@@ -70,7 +70,9 @@ namespace ECommerce.API.Controllers
                 }
             }
             else
+            {
                 return BadRequest(Constants.Errors.Emailexists);
+            }
         }
 
         [HttpPost]
@@ -78,23 +80,26 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> Login(LoginDto dto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
-            var Result = await _unitOfWork.User.LoginAsync(dto.UserName.ToLower(),dto.Password,dto.Rememberme);
-            if (Result.Succeeded)
-                return Ok(Result);
-            else
-                return BadRequest(Constants.Errors.LoginFiled);
+            }
+
+            Microsoft.AspNetCore.Identity.SignInResult Result = await _unitOfWork.User.LoginAsync(
+                dto.UserName.ToLower(),
+                dto.Password,
+                dto.Rememberme
+            );
+            return Result.Succeeded ? Ok(Result) : BadRequest(Constants.Errors.LoginFiled);
         }
 
         [HttpGet]
         [Route("Userinfo")]
-        public  IActionResult Userinfo()
+        public IActionResult Userinfo()
         {
-            var UserID = _unitOfWork.User.GetUserID(User);
-            var UserName = _unitOfWork.User.GetUserName(User);
-            var IsAuthenticated = _unitOfWork.User.IsAuthenticated(User);
-            var InfoList = new List<string>();
-            InfoList.Add(UserName); InfoList.Add(UserID);
+            string UserID = _unitOfWork.User.GetUserID(User);
+            string UserName = _unitOfWork.User.GetUserName(User);
+            _ = _unitOfWork.User.IsAuthenticated(User);
+            List<string> InfoList = new() { UserName, UserID };
             return Ok(InfoList);
         }
 

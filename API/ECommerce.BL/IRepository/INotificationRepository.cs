@@ -1,4 +1,4 @@
-﻿using ECommerce.DAL;
+﻿using ECommerce.DAL.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ECommerce.BLL.IRepository
 {
-    public interface INotificationRepository:IBaseRepository<Notification>
+    public interface INotificationRepository : IBaseRepository<Notification>
     {
-       Task<Notification> AddNotificationAsync(Notification notification);
+        Task<Notification> AddNotificationAsync(Notification notification);
     }
 }

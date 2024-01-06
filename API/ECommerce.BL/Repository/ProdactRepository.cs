@@ -1,5 +1,6 @@
 ﻿using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,17 +13,15 @@ using System.Threading.Tasks;
 
 namespace ECommerce.BLL.Repository
 {
-    public class ProdactRepository : BaseRepository<Prodact>, IProdactRepository
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
+        public ProductRepository(Applicationdbcontext context, IHostingEnvironment hosting)
+            : base(context, hosting) { }
 
-        public ProdactRepository(Applicationdbcontext context , IHostingEnvironment hosting) : base(context , hosting)
+        public async Task<Product> AddToChart(int ID)
         {
-        }
-
-        public async Task<Prodact> AddToChart(int ID)
-        {
-          var Prodact = await FindAsync(ID);
-            return Prodact;
+            var Product = await FindAsync(ID);
+            return Product;
         }
     }
 }

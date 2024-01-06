@@ -1,5 +1,4 @@
-﻿using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
+﻿using ECommerce.DAL.Entity;
 using System;
 using System.Threading.Tasks;
 
@@ -7,26 +6,25 @@ namespace ECommerce.BLL.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
-        IProdactRepository Prodact { get; }
-        IUserRepository User { get; }
-        IProdactImgRepository ProdactImg { get; }
-        IBaseRepository<Category> Category { get; }
         IBaseRepository<SubCategory> SubCategory { get; }
-        IBaseRepository<Color> Color { get; }
-        IBaseRepository<Unit> Unit { get; }
-        IBaseRepository<Brand> Brand { get; }
-        IBaseRepository<PromoCode> PromoCode { get; }
         IBaseRepository<Governorate> Governorate { get; }
-        IBaseRepository<Area> Area { get; }
-        IBaseRepository<Status> Status { get; }
+        IBaseRepository<SliderPhoto> SliderPhoto { get; }
+        IBaseRepository<PromoCode> PromoCode { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
-        IBaseRepository<Expense> Expense { get; }
-        IBaseRepository<Review> Review { get; }
-        IBaseRepository<Errors> Error { get; }
-        IBaseRepository<Setting> Setting { get; }
-        IBaseRepository<Slider> Slider { get; }
-
         INotificationRepository Notification { get; }
+        IProductPhotoRepository ProductPhoto { get; }
+        IBaseRepository<Category> Category { get; }
+        IBaseRepository<ErrorLog> ErrorLog { get; }
+        IBaseRepository<Setting> Setting { get; }
+        IBaseRepository<Expense> Expense { get; }
+        IBaseRepository<Status> Status { get; }
+        IBaseRepository<Review> Review { get; }
+        IBaseRepository<Color> Color { get; }
+        IBaseRepository<Brand> Brand { get; }
+        IProductRepository Product { get; }
+        IBaseRepository<Unit> Unit { get; }
+        IBaseRepository<Area> Area { get; }
+        IUserRepository User { get; }
 
         Task<int> SaveAsync();
     }
