@@ -34,7 +34,7 @@
     <Folder Include="Images\Brands\" />
     <Folder Include="Images\Categorys\" />
     <Folder Include="Images\NotificationsIcon\" />
-    <Folder Include="Images\ProdactImg\" />
+    <Folder Include="Images\ProductImg\" />
     <Folder Include="Images\SubCategorys\" />
   </ItemGroup>
 

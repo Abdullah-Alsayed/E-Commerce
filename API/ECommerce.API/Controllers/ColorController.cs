@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using ECommerce.DAL.Entity;
+using ECommerce.DAL.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,18 +26,20 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindColor))]
         public async Task<IActionResult> FindColor(int ID)
         {
             var Color = await _unitOfWork.Color.FindAsync(ID);
-            if(Color == null)
+            if (Color == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(Color);
         }
+
         [HttpGet]
-       // [Route(nameof(FindAllColor))]
+        // [Route(nameof(FindAllColor))]
         public async Task<IActionResult> FindAllColor()
         {
             var Colors = await _unitOfWork.Color.GetAllAsync();
@@ -44,27 +48,31 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(Colors);
         }
+
         [HttpPost]
         //[Route(nameof(CreateColor))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult>CreateColor(ColorDto dto)
+        public async Task<IActionResult> CreateColor(ColorDto dto)
         {
-                var Mapping = _mapper.Map<Color>(dto);
+            var Mapping = _mapper.Map<Color>(dto);
 
-                var color = await _unitOfWork.Color.AddaAync(Mapping);
-                if (color == null)
-                    return BadRequest(Constants.Errors.CreateFailed);
-                else
-                    await _unitOfWork.Notification.AddNotificationAsync(new Notification
+            var color = await _unitOfWork.Color.AddaAync(Mapping);
+            if (color == null)
+                return BadRequest(Constants.Errors.CreateFailed);
+            else
+                await _unitOfWork.Notification.AddNotificationAsync(
+                    new Notification
                     {
-                        UserID = _unitOfWork.User.GetUserID(User),
+                        CreateBy = _unitOfWork.User.GetUserID(User),
+                        operationTypeEnum = OperationTypeEnum.Create,
                         Icon = Constants.NotificationIcons.Add,
                         Title = "AddColor",
                         Subject = "AddColor",
-                        Messege = "Addcolor",
-                    });
-                await _unitOfWork.SaveAsync();
-                return Ok(color);
+                        Message = "AddColor",
+                    }
+                );
+            await _unitOfWork.SaveAsync();
+            return Ok(color);
         }
 
         // PUT api/<ColorController>/5
@@ -73,12 +81,12 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> UpdateColor(int ID, ColorDto dto)
         {
             var color = await _unitOfWork.Color.FindAsync(ID);
-            if (color ==null)
+            if (color == null)
                 return BadRequest(Constants.Errors.NotFound);
             else
             {
                 _mapper.Map(dto, color);
-               await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
                 return Ok(color);
             }
         }

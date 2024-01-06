@@ -1,52 +1,57 @@
 ﻿using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ECommerce.BLL.Repository
 {
-    public class ProdactImgRepository : BaseRepository<ProdactImg>, IProdactImgRepository
+    public class ProductPhotoRepository : BaseRepository<ProductPhoto>, IProductPhotoRepository
     {
         private readonly IHostingEnvironment hosting;
 
-        public ProdactImgRepository(Applicationdbcontext context , IHostingEnvironment hosting) : base(context , hosting)
+        public ProductPhotoRepository(Applicationdbcontext context, IHostingEnvironment hosting)
+            : base(context, hosting)
         {
             this.hosting = hosting;
         }
-        public async Task<int> AddImgs(int ID , IEnumerable<IFormFile> Files)
+
+        public async Task<int> AddPhotos(Guid ID, IEnumerable<IFormFile> Files)
         {
-            List<ProdactImg> Imgs = new List<ProdactImg>();
-            foreach (var file in Files)
+            List<ProductPhoto> Photos = new();
+            foreach (IFormFile file in Files)
             {
-                Imgs.Add(new ProdactImg
-                {
-                    CrateAt = DateTime.Now,
-                    ProdactID = ID,
-                    Img = await UplodImge(file, Constants.ImgFolder.ProdactImg, null)
-                });
+                Photos.Add(
+                    new ProductPhoto
+                    {
+                        ProductID = ID,
+                        PhotoPath = await UplodPhoto(file, Constants.PhotoFolder.ProductPhoto, null)
+                    }
+                );
             }
-            await AddaRangeAync(Imgs);
-            return Imgs.Count;
+            _ = await AddaRangeAync(Photos);
+            return Photos.Count;
         }
 
-        public async Task<bool> DeletImg(string Img)
+        public async Task<bool> DeletePhoto(string PhotoPath)
         {
-            var Result = await GetItemAsync(i => i.Img == Img);
+            var Result = await GetItemAsync(i => i.PhotoPath == PhotoPath);
             if (Result == null)
-            {
                 return false;
-            }
             else
             {
-                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", Constants.ImgFolder.ProdactImg, Img);
-                System.IO.File.Delete(Filepath);
+                string Filepath = Path.Combine(
+                    hosting.ContentRootPath,
+                    "Images",
+                    Constants.PhotoFolder.ProductPhoto,
+                    PhotoPath
+                );
+                File.Delete(Filepath);
                 Delete(Result);
                 return true;
             }

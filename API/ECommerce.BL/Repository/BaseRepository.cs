@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace ECommerce.BLL.Repository
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T>
+        where T : class
     {
         private readonly Applicationdbcontext _context;
         private readonly IHostingEnvironment hosting;
@@ -29,11 +30,13 @@ namespace ECommerce.BLL.Repository
             await _context.Set<T>().AddAsync(Entity);
             return Entity;
         }
+
         public async Task<IEnumerable<T>> AddaRangeAync(IEnumerable<T> Entitys)
         {
             await _context.Set<T>().AddRangeAsync(Entitys);
             return Entitys;
         }
+
         public bool Delete(T Entity)
         {
             if (Entity == null)
@@ -48,15 +51,18 @@ namespace ECommerce.BLL.Repository
             var Result = await _context.Set<T>().FindAsync(ID);
             return Result;
         }
+
         public T Update(T Entity)
         {
             _context.Set<T>().Update(Entity);
             return Entity;
         }
+
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }
+
         public async Task<IEnumerable<T>> GetAllAsync(string[] Includes = null)
         {
             IQueryable<T> Query = _context.Set<T>();
@@ -65,7 +71,11 @@ namespace ECommerce.BLL.Repository
 
             return await Query.ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null)
+
+        public async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>> Criteria,
+            string[] Includes = null
+        )
         {
             IQueryable<T> Query = _context.Set<T>();
             foreach (var incluse in Includes)
@@ -73,7 +83,13 @@ namespace ECommerce.BLL.Repository
 
             return await Query.Where(Criteria).ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null, Expression<Func<T, object>> orderBy = null, string orderByDirection = Constants.OrderBY.Ascending)
+
+        public async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>> Criteria,
+            string[] Includes = null,
+            Expression<Func<T, object>> orderBy = null,
+            string orderByDirection = Constants.OrderBY.Ascending
+        )
         {
             IQueryable<T> Query = _context.Set<T>();
             if (orderBy != null)
@@ -88,7 +104,12 @@ namespace ECommerce.BLL.Repository
 
             return await Query.Where(Criteria).ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsync(string[] Includes = null, Expression<Func<T, object>> orderBy = null, string orderByDirection = Constants.OrderBY.Ascending)
+
+        public async Task<IEnumerable<T>> GetAllAsync(
+            string[] Includes = null,
+            Expression<Func<T, object>> orderBy = null,
+            string orderByDirection = Constants.OrderBY.Ascending
+        )
         {
             IQueryable<T> Query = _context.Set<T>();
             if (orderBy != null)
@@ -102,42 +123,55 @@ namespace ECommerce.BLL.Repository
                 Query = Query.Include(incluse);
 
             return await Query.ToListAsync();
-
         }
-        public async Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null)
+
+        public async Task<T> GetItemAsync(
+            Expression<Func<T, bool>> Criteria,
+            string[] Includes = null
+        )
         {
             IQueryable<T> Query = _context.Set<T>();
-            if (Includes !=null)
+            if (Includes != null)
             {
                 foreach (var incluse in Includes)
                     Query = Query.Include(incluse);
             }
             return await Query.FirstOrDefaultAsync(Criteria);
         }
-        public async Task<string> UplodImge(IFormFile File, string FolderName, string ImgName = null)
+
+        public async Task<string> UplodPhoto(
+            IFormFile File,
+            string FolderName,
+            string PhotoName = null
+        )
         {
-            string Img = null;
+            string Photo = null;
             if (File != null)
             {
                 var Extansion = Path.GetExtension(File.FileName);
                 var GuId = Guid.NewGuid().ToString();
-                Img = GuId + Extansion;
-                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", FolderName, Img);
-                //  File.CopyTo(new FileStream(Filepath, FileMode.Create));
+                Photo = GuId + Extansion;
+                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", FolderName, Photo);
                 await File.CopyToAsync(new FileStream(Filepath, FileMode.Create));
             }
-            if (ImgName != null && File != null)
+            if (PhotoName != null && File != null)
             {
-                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", FolderName, ImgName);
+                var Filepath = Path.Combine(
+                    hosting.ContentRootPath,
+                    "Images",
+                    FolderName,
+                    PhotoName
+                );
                 System.IO.File.Delete(Filepath);
             }
-            if (ImgName != null && File == null)
+            if (PhotoName != null && File == null)
             {
-                return ImgName;
+                return PhotoName;
             }
 
-            return Img;
+            return Photo;
         }
+
         public bool SetAvtive(bool IsActive)
         {
             return !IsActive;

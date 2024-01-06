@@ -1,15 +1,11 @@
-﻿using ECommerce.DAL;
+﻿using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerce.BLL.DTO
 {
-    public class ProdactDto
+    public class ProductDto
     {
         public int ID { get; set; }
 
@@ -24,8 +20,7 @@ namespace ECommerce.BLL.DTO
         public double Price { get; set; }
         public double Discount { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }
-        public IEnumerable<ProdactImg> Img { get; set; }
-       
+        public IEnumerable<ProductPhoto> ProductPhotos { get; set; }
 
         public double TotalPrice()
         {
@@ -39,8 +34,8 @@ namespace ECommerce.BLL.DTO
         //public virtual Color color { get; set; }
         //public virtual SubCategory SubCategory { get; set; }
         //public virtual ICollection<Favorite> Favorites { get; set; }
-        //public virtual ICollection<ProdactOrder> prodactOrders { get; set; }
-        //public virtual ICollection<ProdactImg> ProdactImgs { get; set; }
+        //public virtual ICollection<ProductOrder> prodactOrders { get; set; }
+        //public virtual ICollection<ProductImg> ProductImgs { get; set; }
         //public virtual ICollection<Review> Reviews { get; set; }
     }
 }

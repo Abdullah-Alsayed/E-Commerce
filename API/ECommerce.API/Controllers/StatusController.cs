@@ -1,12 +1,12 @@
 ﻿using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using ECommerce.DAL.Entity;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,18 +24,20 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindStatus))]
         public async Task<IActionResult> FindStatus(int ID)
         {
             var Status = await _unitOfWork.Status.FindAsync(ID);
-            if(Status == null)
+            if (Status == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(Status);
         }
+
         [HttpGet]
-       // [Route(nameof(FindAllStatus))]
+        // [Route(nameof(FindAllStatus))]
         public async Task<IActionResult> FindAllStatus()
         {
             var Statuss = await _unitOfWork.Status.GetAllAsync();
@@ -44,13 +46,14 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(Statuss);
         }
+
         [HttpPost]
         //[Route(nameof(CreateStatus))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult>CreateStatus(StatusDto dto)
+        public async Task<IActionResult> CreateStatus(StatusDto dto)
         {
             var Mapping = _mapper.Map<Status>(dto);
-            Mapping.CreateDate = DateTime.Now;
+            Mapping.CreateAt = DateTime.Now;
             Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
 
             var Status = await _unitOfWork.Status.AddaAync(Mapping);
@@ -58,7 +61,7 @@ namespace ECommerce.API.Controllers
                 return BadRequest(Constants.Errors.CreateFailed);
             else
                 await _unitOfWork.SaveAsync();
-               return Ok(Status);
+            return Ok(Status);
         }
 
         // PUT api/<StatusController>/5
@@ -67,7 +70,7 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> UpdateStatus(int ID, StatusDto dto)
         {
             var Status = await _unitOfWork.Status.FindAsync(ID);
-            if (Status ==null)
+            if (Status == null)
                 return BadRequest(Constants.Errors.NotFound);
             else
             {
@@ -89,7 +92,7 @@ namespace ECommerce.API.Controllers
                 return NotFound(Constants.Errors.NotFound);
             else
                 Status.IsActive = _unitOfWork.Status.SetAvtive(Status.IsActive);
-                await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
             return Ok();
         }
     }

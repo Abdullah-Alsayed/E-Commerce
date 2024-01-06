@@ -1,5 +1,5 @@
 ﻿using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace ECommerce.BLL.IRepository
 {
-    public interface IProdactRepository:IBaseRepository<Prodact>
+    public interface IProductRepository : IBaseRepository<Product>
     {
-        Task<Prodact> AddToChart(int ID);
+        Task<Product> AddToChart(int ID);
     }
 }

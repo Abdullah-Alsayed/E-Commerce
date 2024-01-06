@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.DTO;
-using ECommerce.DAL;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using ECommerce.DAL.Entity;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,6 +23,7 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindPromoCode))]
         public async Task<IActionResult> FindPromoCode(int ID)
@@ -33,6 +34,7 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(PromoCode);
         }
+
         [HttpGet]
         // [Route(nameof(FindAllPromoCode))]
         public async Task<IActionResult> FindAllPromoCode()
@@ -43,13 +45,14 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(PromoCodes);
         }
+
         [HttpPost]
         //[Route(nameof(CreatePromoCode))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
         public async Task<IActionResult> CreatePromoCode(PromoCodeDto dto)
         {
             var Mapping = _mapper.Map<PromoCode>(dto);
-            Mapping.CreateDate = DateTime.Now;
+            Mapping.CreateAt = DateTime.Now;
             Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
 
             var PromoCode = await _unitOfWork.PromoCode.AddaAync(Mapping);

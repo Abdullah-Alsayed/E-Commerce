@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,35 +21,48 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         [Route(nameof(FindSubCategory))]
-        public async Task<IActionResult> FindSubCategory(int ID)
+        public async Task<IActionResult> FindSubCategory(Guid ID)
         {
-            var SubCategory = await _unitOfWork.SubCategory.GetItemAsync(x => x.ID == ID, new[] { "User" });
+            var SubCategory = await _unitOfWork.SubCategory.GetItemAsync(
+                x => x.ID == ID,
+                new[] { "User" }
+            );
             if (SubCategory == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(SubCategory);
         }
+
         [HttpGet]
         [Route(nameof(FindAllSubCategory))]
         public async Task<IActionResult> FindAllSubCategory()
         {
-            var SubCategorys = await _unitOfWork.SubCategory.GetAllAsync(new[] { "User" }, o => o.NameAR, Constants.OrderBY.Descending);
+            var SubCategorys = await _unitOfWork.SubCategory.GetAllAsync(
+                new[] { "User" },
+                o => o.NameAR,
+                Constants.OrderBY.Descending
+            );
             if (SubCategorys == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(SubCategorys);
         }
+
         [HttpPost]
         [Route(nameof(CreateSubCategory))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateSubCategory([FromForm]SubCategoryDto dto)
+        public async Task<IActionResult> CreateSubCategory([FromForm] SubCategoryDto dto)
         {
             SubCategory Entity = _mapper.Map<SubCategory>(dto);
-            Entity.CreateDate = DateTime.Now;
+            Entity.CreateAt = DateTime.Now;
             Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-            Entity.Img = await _unitOfWork.SubCategory.UplodImge(dto.File, Constants.ImgFolder.SubCategorys);
+            Entity.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
+                dto.File,
+                Constants.PhotoFolder.SubCategorys
+            );
 
             var SubCategory = await _unitOfWork.SubCategory.AddaAync(Entity);
             if (SubCategory == null)
@@ -72,7 +85,11 @@ namespace ECommerce.API.Controllers
                 _mapper.Map(dto, SubCategory);
                 SubCategory.ModifyAt = DateTime.Now;
                 SubCategory.ModifyBy = _unitOfWork.User.GetUserID(User);
-                SubCategory.Img = await _unitOfWork.SubCategory.UplodImge(dto.File, Constants.ImgFolder.SubCategorys, SubCategory.Img);
+                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
+                    dto.File,
+                    Constants.PhotoFolder.SubCategorys,
+                    SubCategory.PhotoPath
+                );
                 await _unitOfWork.SaveAsync();
                 return Ok(SubCategory);
             }

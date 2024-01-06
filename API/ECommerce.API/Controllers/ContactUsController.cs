@@ -1,12 +1,12 @@
 ﻿using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using ECommerce.DAL.Entity;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,18 +24,20 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindContactUs))]
         public async Task<IActionResult> FindContactUs(int ID)
         {
             var ContactUs = await _unitOfWork.ContactUs.FindAsync(ID);
-            if(ContactUs == null)
+            if (ContactUs == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(ContactUs);
         }
+
         [HttpGet]
-       // [Route(nameof(FindAllContactUs))]
+        // [Route(nameof(FindAllContactUs))]
         public async Task<IActionResult> FindAllContactUs()
         {
             var ContactUss = await _unitOfWork.ContactUs.GetAllAsync();
@@ -44,10 +46,11 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(ContactUss);
         }
+
         [HttpPost]
         //[Route(nameof(CreateContactUs))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult>CreateContactUs(ContactUsDto dto)
+        public async Task<IActionResult> CreateContactUs(ContactUsDto dto)
         {
             var Mapping = _mapper.Map<ContactUs>(dto);
 
@@ -56,7 +59,7 @@ namespace ECommerce.API.Controllers
                 return BadRequest(Constants.Errors.CreateFailed);
             else
                 await _unitOfWork.SaveAsync();
-               return Ok(ContactUs);
+            return Ok(ContactUs);
         }
 
         // PUT api/<ContactUsController>/5
@@ -65,7 +68,7 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> UpdateContactUs(int ID, ContactUsDto dto)
         {
             var ContactUs = await _unitOfWork.ContactUs.FindAsync(ID);
-            if (ContactUs ==null)
+            if (ContactUs == null)
                 return BadRequest(Constants.Errors.NotFound);
             else
             {
@@ -84,8 +87,8 @@ namespace ECommerce.API.Controllers
             if (ContactUs == null)
                 return NotFound(Constants.Errors.NotFound);
             else
-                 _unitOfWork.ContactUs.Delete(ContactUs);
-                await _unitOfWork.SaveAsync();
+                _unitOfWork.ContactUs.Delete(ContactUs);
+            await _unitOfWork.SaveAsync();
             return Ok();
         }
     }

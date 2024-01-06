@@ -1,7 +1,6 @@
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
 using ECommerce.BL.Repository;
-using ECommerce.DAL;
 using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ECommerce.DAL.Entity;
+using ECommerce.DAL;
 
 namespace ECommerce.API
 {
@@ -26,9 +27,20 @@ namespace ECommerce.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<Applicationdbcontext>(
+                options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            );
+
             services.AddControllers();
-            services.AddControllers().AddNewtonsoftJson(options =>
-            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(
+                    options =>
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                            .Json
+                            .ReferenceLoopHandling
+                            .Ignore
+                );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.API", Version = "v1" });
@@ -38,15 +50,17 @@ namespace ECommerce.API
                 Option.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddIdentity<User, IdentityRole>(Option =>
-            {
-                Option.Password.RequireNonAlphanumeric = false;
-                Option.Password.RequireDigit = false;
-                Option.Password.RequiredUniqueChars = 0;
-                Option.Password.RequireLowercase = false;
-                Option.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<Applicationdbcontext>()
-                    .AddDefaultTokenProviders();
+            services
+                .AddIdentity<User, IdentityRole>(Option =>
+                {
+                    Option.Password.RequireNonAlphanumeric = false;
+                    Option.Password.RequireDigit = false;
+                    Option.Password.RequiredUniqueChars = 0;
+                    Option.Password.RequireLowercase = false;
+                    Option.Password.RequireUppercase = false;
+                })
+                .AddEntityFrameworkStores<Applicationdbcontext>()
+                .AddDefaultTokenProviders();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailServices, MailServicies>();
             services.AddAuthentication();
@@ -60,7 +74,9 @@ namespace ECommerce.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECommerce.API v1"));
+                app.UseSwaggerUI(
+                    c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECommerce.API v1")
+                );
             }
 
             app.UseHttpsRedirection();
