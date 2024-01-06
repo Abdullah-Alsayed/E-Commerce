@@ -34,6 +34,6 @@ namespace ECommerce.BLL.IRepository
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
         Task<string> UplodPhoto(IFormFile File, string FolderName, string ImgName = null);
-        bool SetAvtive(bool IsActive);
+        bool ToggleAvtive(bool IsActive);
     }
 }

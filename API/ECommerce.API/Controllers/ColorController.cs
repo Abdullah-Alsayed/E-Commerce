@@ -10,8 +10,6 @@ using AutoMapper;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
@@ -54,25 +52,34 @@ namespace ECommerce.API.Controllers
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
         public async Task<IActionResult> CreateColor(ColorDto dto)
         {
-            var Mapping = _mapper.Map<Color>(dto);
-
-            var color = await _unitOfWork.Color.AddaAync(Mapping);
-            if (color == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.Notification.AddNotificationAsync(
-                    new Notification
-                    {
-                        CreateBy = _unitOfWork.User.GetUserID(User),
-                        operationTypeEnum = OperationTypeEnum.Create,
-                        Icon = Constants.NotificationIcons.Add,
-                        Title = "AddColor",
-                        Subject = "AddColor",
-                        Message = "AddColor",
-                    }
+            try
+            {
+                var Mapping = _mapper.Map<Color>(dto);
+                var color = await _unitOfWork.Color.AddaAync(Mapping);
+                if (color == null)
+                    return BadRequest(Constants.Errors.CreateFailed);
+                else
+                    await _unitOfWork.Notification.AddNotificationAsync(
+                        new Notification
+                        {
+                            CreateBy = _unitOfWork.User.GetUserID(User),
+                            operationTypeEnum = OperationTypeEnum.Create,
+                            Icon = Constants.NotificationIcons.Add,
+                            Title = "AddColor",
+                            Subject = "AddColor",
+                            Message = "AddColor",
+                        }
+                    );
+                await _unitOfWork.SaveAsync();
+                return Ok(color);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.AddaAync(
+                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
                 );
-            await _unitOfWork.SaveAsync();
-            return Ok(color);
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT api/<ColorController>/5
