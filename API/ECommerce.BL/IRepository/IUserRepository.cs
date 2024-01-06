@@ -1,4 +1,4 @@
-﻿using ECommerce.DAL;
+﻿using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ namespace ECommerce.BLL.IRepository
     public interface IUserRepository
     {
         Task<SignInResult> LoginAsync(string UserName, string Password, bool RememberMe);
-        Task<IdentityResult> RegisterAsync(User user , string Password);
+        Task<IdentityResult> RegisterAsync(User user, string Password);
         Task SendConfirmEmailAsync(User user);
         Task<IdentityResult> ConfirmEmailAsync(User User, string Toke);
         Task ForgotPasswordAsync(object Entity);

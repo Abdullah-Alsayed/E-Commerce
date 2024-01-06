@@ -2,34 +2,38 @@
 {
     public static class Constants
     {
-        public static class languages
+        public static class Languages
         {
             public const string Arabic = "Arabic";
             public const string English = "English";
         }
+
         public static class Gender
         {
             public const string Male = "Male";
             public const string Female = "Female";
         }
+
         public static class Roles
         {
             public const string Admin = "Admin";
             public const string User = "User";
         }
+
         public static class OrderBY
         {
-            public const string Ascending  = "Ascending";
+            public const string Ascending = "Ascending";
             public const string Descending = "Descending";
-
         }
-        public static class ImgFolder
+
+        public static class PhotoFolder
         {
             public const string Brands = "Brands";
             public const string Categorys = "Categorys";
             public const string SubCategorys = "SubCategorys";
-            public const string ProdactImg = "ProdactImg";
+            public const string ProductPhoto = "ProductPhoto";
         }
+
         public static class Errors
         {
             public const string Emailexists = "Email Already Exists";
@@ -40,6 +44,7 @@
             public const string CreateFailed = "Create Failed";
             public const string NotFound = "Not Found";
         }
+
         public static class NotificationIcons
         {
             public const string Add = "ADD.png";

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.DTO;
 using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 
 namespace ECommerce.BLL.DTO
 {
@@ -8,51 +9,35 @@ namespace ECommerce.BLL.DTO
     {
         public MappingProfile()
         {
-            CreateMap<Unit, UnitDto>()
-                .ReverseMap();
+            CreateMap<Unit, UnitDto>().ReverseMap();
 
-            CreateMap<Color, ColorDto>()
-                .ReverseMap();
+            CreateMap<Color, ColorDto>().ReverseMap();
 
-            CreateMap<Brand, BrandDto>()
-              .ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
 
-            CreateMap<Prodact, ProdactDto>()
-             .ReverseMap();
+            CreateMap<Product, ProductDto>().ReverseMap();
 
-            CreateMap<Category, CategoryDto>()
-              .ReverseMap();
+            CreateMap<Category, CategoryDto>().ReverseMap();
 
-            CreateMap<SubCategory, SubCategoryDto>()
-           .ReverseMap();
+            CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
 
-            CreateMap<PromoCode, PromoCodeDto>()
-            .ReverseMap();
+            CreateMap<PromoCode, PromoCodeDto>().ReverseMap();
 
-            CreateMap<Governorate, GovernorateDto>()
-            .ReverseMap();
+            CreateMap<Governorate, GovernorateDto>().ReverseMap();
 
-            CreateMap<Area, AreaDto>()
-            .ReverseMap();
+            CreateMap<Area, AreaDto>().ReverseMap();
 
-            CreateMap<Status, StatusDto>()
-            .ReverseMap();
+            CreateMap<Status, StatusDto>().ReverseMap();
 
-            CreateMap<ContactUs, ContactUsDto>()
-            .ReverseMap();
+            CreateMap<ContactUs, ContactUsDto>().ReverseMap();
 
-            CreateMap<Expense, ExpenseDto>()
-            .ReverseMap();
+            CreateMap<Expense, ExpenseDto>().ReverseMap();
 
-            CreateMap<Review, ReviewDto>()
-            .ReverseMap();
+            CreateMap<Review, ReviewDto>().ReverseMap();
 
-            CreateMap<Notification, NotificationDto>()
-            .ReverseMap();
+            CreateMap<Notification, NotificationDto>().ReverseMap();
 
-            CreateMap<Setting, SettingDto>()
-            .ReverseMap();
+            CreateMap<Setting, SettingDto>().ReverseMap();
         }
     }
 }
-

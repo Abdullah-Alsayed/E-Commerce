@@ -16,16 +16,16 @@ namespace ECommerce.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _Mapper;
 
-        public SettingController(IUnitOfWork UnitOfWork  , IMapper mapper)
+        public SettingController(IUnitOfWork UnitOfWork, IMapper mapper)
         {
             _unitOfWork = UnitOfWork;
-           _Mapper = mapper;
+            _Mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateSetting()
         {
-            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID > 0 , null);
+            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID != Guid.Empty, null);
             if (Setting == null)
                 return NotFound(Constants.Errors.NotFound);
             else
@@ -35,18 +35,17 @@ namespace ECommerce.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateSetting(SettingDto Dto)
         {
-            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID > 0);
-            if (Setting == null) 
+            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID != Guid.Empty);
+            if (Setting == null)
                 return NotFound(Constants.Errors.NotFound);
             else
             {
                 _Mapper.Map(Dto, Setting);
-                Setting.EditBy = _unitOfWork.User.GetUserID(User);
-                Setting.EditAt = DateTime.Now;
+                Setting.ModifyBy = _unitOfWork.User.GetUserID(User);
+                Setting.ModifyAt = DateTime.Now;
                 await _unitOfWork.SaveAsync();
                 return Ok(Setting);
             }
         }
-
     }
 }

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.DTO;
-using ECommerce.DAL;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using ECommerce.DAL.Entity;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,9 +23,10 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindBrand))]
-        public async Task<IActionResult> FindBrand(int ID)
+        public async Task<IActionResult> FindBrand(Guid ID)
         {
             var Brand = await _unitOfWork.Brand.GetItemAsync(x => x.ID == ID, new[] { "User" });
             if (Brand == null)
@@ -33,25 +34,34 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(Brand);
         }
+
         [HttpGet]
         //[Route(nameof(FindAllBrand))]
         public async Task<IActionResult> FindAllBrand()
         {
-            var Brands = await _unitOfWork.Brand.GetAllAsync(new[] { "User" }, o => o.NameAR, Constants.OrderBY.Descending);
+            var Brands = await _unitOfWork.Brand.GetAllAsync(
+                new[] { "User" },
+                o => o.NameAR,
+                Constants.OrderBY.Descending
+            );
             if (Brands == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(Brands);
         }
+
         [HttpPost]
         //[Route(nameof(CreateBrand))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
         public async Task<IActionResult> CreateBrand([FromQuery] BrandDto dto)
         {
             Brand Entity = _mapper.Map<Brand>(dto);
-            Entity.CreateDate = DateTime.Now;
+            Entity.CreateAt = DateTime.Now;
             Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-            Entity.ImgID = await _unitOfWork.Brand.UplodImge(dto.File, Constants.ImgFolder.Brands);
+            Entity.PhotoPath = await _unitOfWork.Brand.UplodPhoto(
+                dto.File,
+                Constants.PhotoFolder.Brands
+            );
 
             var Brand = await _unitOfWork.Brand.AddaAync(Entity);
             if (Brand == null)
@@ -74,7 +84,11 @@ namespace ECommerce.API.Controllers
                 _mapper.Map(dto, Brand);
                 Brand.ModifyAt = DateTime.Now;
                 Brand.ModifyBy = _unitOfWork.User.GetUserID(User);
-                Brand.ImgID = await _unitOfWork.Brand.UplodImge(dto.File, Constants.ImgFolder.Brands, Brand.ImgID);
+                Brand.PhotoPath = await _unitOfWork.Brand.UplodPhoto(
+                    dto.File,
+                    Constants.PhotoFolder.Brands,
+                    Brand.PhotoPath
+                );
                 await _unitOfWork.SaveAsync();
                 return Ok(Brand);
             }

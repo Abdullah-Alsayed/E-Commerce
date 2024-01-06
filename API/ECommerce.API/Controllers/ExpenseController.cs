@@ -1,12 +1,12 @@
 ﻿using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using ECommerce.DAL.Entity;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,18 +24,20 @@ namespace ECommerce.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         [HttpGet]
         //[Route(nameof(FindExpense))]
         public async Task<IActionResult> FindExpense(int ID)
         {
             var Expense = await _unitOfWork.Expense.FindAsync(ID);
-            if(Expense == null)
+            if (Expense == null)
                 return NotFound(Constants.Errors.NotFound);
             else
                 return Ok(Expense);
         }
+
         [HttpGet]
-       // [Route(nameof(FindAllExpense))]
+        // [Route(nameof(FindAllExpense))]
         public async Task<IActionResult> FindAllExpense()
         {
             var Expenses = await _unitOfWork.Expense.GetAllAsync();
@@ -44,13 +46,14 @@ namespace ECommerce.API.Controllers
             else
                 return Ok(Expenses);
         }
+
         [HttpPost]
         //[Route(nameof(CreateExpense))]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult>CreateExpense([FromForm]ExpenseDto dto)
+        public async Task<IActionResult> CreateExpense([FromForm] ExpenseDto dto)
         {
             var Mapping = _mapper.Map<Expense>(dto);
-            Mapping.CreateDate = DateTime.Now;
+            Mapping.CreateAt = DateTime.Now;
             Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
 
             var Expense = await _unitOfWork.Expense.AddaAync(Mapping);
@@ -58,7 +61,7 @@ namespace ECommerce.API.Controllers
                 return BadRequest(Constants.Errors.CreateFailed);
             else
                 await _unitOfWork.SaveAsync();
-               return Ok(Expense);
+            return Ok(Expense);
         }
 
         // PUT api/<ExpenseController>/5
@@ -67,7 +70,7 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> UpdateExpense(int ID, [FromForm] ExpenseDto dto)
         {
             var Expense = await _unitOfWork.Expense.FindAsync(ID);
-            if (Expense ==null)
+            if (Expense == null)
                 return BadRequest(Constants.Errors.NotFound);
             else
             {

@@ -1,17 +1,14 @@
-﻿using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
+﻿using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ECommerce.BLL.IRepository
 {
-    public interface IProdactImgRepository:IBaseRepository<ProdactImg>
+    public interface IProductPhotoRepository : IBaseRepository<ProductPhoto>
     {
-        Task<int> AddImgs(int ID, IEnumerable<IFormFile> Files);
-        Task<bool> DeletImg(string Img);
+        Task<int> AddPhotos(Guid ID, IEnumerable<IFormFile> Files);
+        Task<bool> DeletePhoto(string Photo);
     }
 }

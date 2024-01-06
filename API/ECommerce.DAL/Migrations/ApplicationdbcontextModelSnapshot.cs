@@ -3,8 +3,8 @@ using System;
 using ECommerce.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
@@ -15,51 +15,56 @@ namespace ECommerce.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.17")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("ECommerce.DAL.Area", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("GovernorateID")
-                        .HasColumnType("int");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("GovernorateID")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ID");
 
@@ -67,518 +72,528 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("GovernorateID");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Area");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Brand", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Brand", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("ImgID")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brand");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Category", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("ImgID")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Color", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Colors");
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Color");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.ContactUs", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Expense", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Messege")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
-
-                    b.Property<DateTime>("date")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("ContactUs");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Errors", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Code")
-                        .HasMaxLength(100)
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Messege")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Source")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Errors");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Expense", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<double>("Amount")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Reference")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expense");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Favorite", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Favorite", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("ProdactID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ProdactID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Favorites");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Feedback", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Feedbacks");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Governorate", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
+                        .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("Favorite");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Governorate", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Tax")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Governorates");
+                    b.ToTable("Governorate");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Notification", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CreationDate")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Messege")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Order", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("AreaID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("Createdate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DeliveryDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
 
-                    b.Property<int>("GovernorateID")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("ISoffline")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<int>("StatusID")
-                        .HasColumnType("int");
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<double>("SubTotal")
-                        .HasColumnType("float");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<int>("Tax")
-                        .HasColumnType("int");
+                    b.Property<int>("operationTypeEnum")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("UserID")
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Notification");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Order", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("AreaID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime>("DeliveryDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("GovernorateID")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsOffLine")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("PromoCodeID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StatusID")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("SubTotal")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Tax")
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
                     b.HasIndex("AreaID");
 
+                    b.HasIndex("CreateBy");
+
                     b.HasIndex("GovernorateID");
 
-                    b.HasIndex("StatusID");
+                    b.HasIndex("PromoCodeID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("StatusID");
 
                     b.ToTable("Order");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Prodact", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Product", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("BrandID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BrandID")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoryID")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ColorID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CountStock")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
+                    b.Property<double>("DiscountLabel")
+                        .HasColumnType("double precision");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubCategoryID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SubCategoryID")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
-                    b.Property<int>("UnitID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UnitID")
+                        .HasColumnType("uuid");
 
                     b.HasKey("ID");
 
@@ -586,353 +601,567 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CategoryID");
 
-                    b.HasIndex("ColorID");
-
                     b.HasIndex("CreateBy");
 
                     b.HasIndex("SubCategoryID");
 
                     b.HasIndex("UnitID");
 
-                    b.ToTable("Prodacts");
+                    b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.ProdactImg", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductColor", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CrateAt")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("ColorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("Img")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
-                    b.Property<int>("ProdactID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProdactID");
+                    b.HasIndex("ColorId");
 
-                    b.ToTable("ProdactImgs");
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductColor");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.ProdactOrder", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductOrder", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("OrderID")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProdactID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
                     b.HasIndex("OrderID");
 
-                    b.HasIndex("ProdactID");
+                    b.HasIndex("ProductID");
 
-                    b.ToTable("ProdactOrders");
+                    b.ToTable("ProductOrder");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.PromoCode", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductPhoto", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("PhotoPath")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("ProductPhoto");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("VendorID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("VendorID");
+
+                    b.ToTable("ProductStock");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Value")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("PromoCodes");
+                    b.ToTable("PromoCode");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Review", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CrateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("ProdactID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserID")
+                    b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<string>("review")
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rate")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reviews")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProdactID");
+                    b.HasIndex("CreateBy");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ProductID");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Review");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Setting", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PhotoPath")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("SettingID")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("SettingID");
+
+                    b.ToTable("Section");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address")
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
-                    b.Property<DateTime?>("EditAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("EditBy")
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FaceBook")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("Instagram")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Logo")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("MainColor")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Paner1")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Paner2")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Paner3")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Paner4")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Paner5")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Youtube")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("whatsapp")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("EditBy");
-
-                    b.ToTable("Settings");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Slider", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("ImgID")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifyBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Tital")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Sliders");
+                    b.ToTable("Setting");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Status", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.SliderPhoto", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
+                        .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<string>("NameAR")
+                    b.Property<string>("PhotoPath")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<string>("NameEN")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Statuses");
+                    b.ToTable("SliderPhoto");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.SubCategory", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Img")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Status");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.SubCategory", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryID")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("NameAR")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NameEN")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("ID");
 
@@ -940,142 +1169,159 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("SubCategories");
+                    b.ToTable("SubCategory");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Unit", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Unit", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Units");
+                    b.ToTable("Unit");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.User", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("Age")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<double?>("Discount")
-                        .HasColumnType("float");
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("FitsrName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Gander")
+                    b.Property<int>("Gander")
+                        .HasMaxLength(100)
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool?>("ISActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("MaxUseDiscount")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("language")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("lastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("lastlogin")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1084,35 +1330,88 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Vendor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -1121,18 +1420,18 @@ namespace ECommerce.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1145,18 +1444,18 @@ namespace ECommerce.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1168,17 +1467,17 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -1190,10 +1489,10 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1205,31 +1504,31 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Area", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Areas")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Governorate", "Governorate")
+                    b.HasOne("ECommerce.DAL.Entity.Governorate", "Governorate")
                         .WithMany("Areas")
                         .HasForeignKey("GovernorateID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1240,9 +1539,9 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Brand", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Brand", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Brands")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1251,9 +1550,9 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Category", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Categorys")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1262,9 +1561,20 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Expense", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Expense", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Expenses")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1273,79 +1583,76 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Favorite", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Favorite", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Prodact", "prodact")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Favorites")
-                        .HasForeignKey("ProdactID")
+                        .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
                         .WithMany("Favorites")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("prodact");
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Feedback", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Governorate", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Governorate", b =>
-                {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Governorates")
-                        .HasForeignKey("CreateBy");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Notification", b =>
-                {
-                    b.HasOne("ECommerce.DAL.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Order", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Area", "Area")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Order", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Area", "Area")
                         .WithMany("Orders")
                         .HasForeignKey("AreaID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Governorate", "Governorate")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Governorate", "Governorate")
                         .WithMany("Orders")
                         .HasForeignKey("GovernorateID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Status", "Status")
+                    b.HasOne("ECommerce.DAL.Entity.PromoCode", "PromoCode")
                         .WithMany("Orders")
-                        .HasForeignKey("StatusID")
+                        .HasForeignKey("PromoCodeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.Status", "Status")
                         .WithMany("Orders")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("StatusID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1353,45 +1660,41 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Governorate");
 
+                    b.Navigation("PromoCode");
+
                     b.Navigation("Status");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Prodact", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Product", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Brand", "Brand")
-                        .WithMany("Prodacts")
+                    b.HasOne("ECommerce.DAL.Entity.Brand", "Brand")
+                        .WithMany("Products")
                         .HasForeignKey("BrandID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Category", "Category")
-                        .WithMany("Prodacts")
+                    b.HasOne("ECommerce.DAL.Entity.Category", "Category")
+                        .WithMany("Products")
                         .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Color", "Color")
-                        .WithMany("prodacts")
-                        .HasForeignKey("ColorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerce.DAL.User", "User")
-                        .WithMany("Prodacts")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Products")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.SubCategory", "SubCategory")
-                        .WithMany("Prodacts")
+                    b.HasOne("ECommerce.DAL.Entity.SubCategory", "SubCategory")
+                        .WithMany("Products")
                         .HasForeignKey("SubCategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Unit", "Unit")
-                        .WithMany("Prodacts")
+                    b.HasOne("ECommerce.DAL.Entity.Unit", "Unit")
+                        .WithMany("Products")
                         .HasForeignKey("UnitID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1400,8 +1703,6 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("Color");
-
                     b.Navigation("SubCategory");
 
                     b.Navigation("Unit");
@@ -1409,39 +1710,93 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.ProdactImg", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductColor", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Prodact", "Prodact")
-                        .WithMany("ProdactImgs")
-                        .HasForeignKey("ProdactID")
+                    b.HasOne("ECommerce.DAL.Entity.Color", "Color")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ColorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Prodact");
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.ProdactOrder", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductOrder", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Order", "Order")
-                        .WithMany("ProdactOrders")
+                    b.HasOne("ECommerce.DAL.Entity.Order", "Order")
+                        .WithMany("ProductOrders")
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Prodact", "Prodact")
-                        .WithMany("ProdactOrders")
-                        .HasForeignKey("ProdactID")
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
 
-                    b.Navigation("Prodact");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.PromoCode", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductPhoto", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductPhotos")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductStocks")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("PromoCodes")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1450,38 +1805,44 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Review", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Prodact", "Prodact")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Reviews")
-                        .HasForeignKey("ProdactID")
+                        .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
                         .WithMany("Reviews")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Prodact");
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Setting", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Setting", null)
+                        .WithMany("Sections")
+                        .HasForeignKey("SettingID");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Settings")
-                        .HasForeignKey("EditBy");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Slider", b =>
-                {
-                    b.HasOne("ECommerce.DAL.User", "User")
-                        .WithMany("Sliders")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1489,24 +1850,37 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Status", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.SliderPhoto", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
-                        .WithMany("Statuses")
-                        .HasForeignKey("CreateBy");
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("SliderPhotos")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.SubCategory", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
                 {
-                    b.HasOne("ECommerce.DAL.Category", "Category")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Statuses")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.SubCategory", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Category", "Category")
                         .WithMany("SubCategories")
                         .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("SubCategorys")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1517,10 +1891,21 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Unit", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Unit", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", "User")
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Units")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1539,7 +1924,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", null)
+                    b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1548,7 +1933,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", null)
+                    b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1563,7 +1948,7 @@ namespace ECommerce.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.User", null)
+                    b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1572,74 +1957,88 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ECommerce.DAL.User", null)
+                    b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Area", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Brand", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Brand", b =>
                 {
-                    b.Navigation("Prodacts");
+                    b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Category", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
                 {
-                    b.Navigation("Prodacts");
+                    b.Navigation("Products");
 
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Color", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
-                    b.Navigation("prodacts");
+                    b.Navigation("ProductColors");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Governorate", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Governorate", b =>
                 {
                     b.Navigation("Areas");
 
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Order", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Order", b =>
                 {
-                    b.Navigation("ProdactOrders");
+                    b.Navigation("ProductOrders");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Prodact", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Product", b =>
                 {
                     b.Navigation("Favorites");
 
-                    b.Navigation("ProdactImgs");
+                    b.Navigation("ProductColors");
 
-                    b.Navigation("ProdactOrders");
+                    b.Navigation("ProductOrders");
+
+                    b.Navigation("ProductPhotos");
+
+                    b.Navigation("ProductStocks");
 
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Status", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.SubCategory", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
                 {
-                    b.Navigation("Prodacts");
+                    b.Navigation("Sections");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Unit", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
                 {
-                    b.Navigation("Prodacts");
+                    b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.User", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.SubCategory", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Unit", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
                 {
                     b.Navigation("Areas");
 
@@ -1657,7 +2056,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("Prodacts");
+                    b.Navigation("Products");
 
                     b.Navigation("PromoCodes");
 
@@ -1665,7 +2064,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Settings");
 
-                    b.Navigation("Sliders");
+                    b.Navigation("SliderPhotos");
 
                     b.Navigation("Statuses");
 
