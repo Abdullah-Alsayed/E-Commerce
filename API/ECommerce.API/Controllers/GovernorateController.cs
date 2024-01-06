@@ -91,7 +91,7 @@ namespace ECommerce.API.Controllers
             if (Governorate == null)
                 return NotFound(Constants.Errors.NotFound);
             else
-                Governorate.IsActive = _unitOfWork.Governorate.SetAvtive(Governorate.IsActive);
+                Governorate.IsActive = _unitOfWork.Governorate.ToggleAvtive(Governorate.IsActive);
             await _unitOfWork.SaveAsync();
             return Ok();
         }

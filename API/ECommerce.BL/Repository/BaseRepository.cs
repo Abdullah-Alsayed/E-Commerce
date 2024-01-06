@@ -172,7 +172,7 @@ namespace ECommerce.BLL.Repository
             return Photo;
         }
 
-        public bool SetAvtive(bool IsActive)
+        public bool ToggleAvtive(bool IsActive)
         {
             return !IsActive;
         }

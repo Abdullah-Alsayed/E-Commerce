@@ -90,7 +90,7 @@ namespace ECommerce.API.Controllers
             if (Area == null)
                 return NotFound(Constants.Errors.NotFound);
             else
-                Area.IsActive = _unitOfWork.Area.SetAvtive(Area.IsActive);
+                Area.IsActive = _unitOfWork.Area.ToggleAvtive(Area.IsActive);
             await _unitOfWork.SaveAsync();
             return Ok();
         }

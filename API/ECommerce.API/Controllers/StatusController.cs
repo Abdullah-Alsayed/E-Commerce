@@ -91,7 +91,7 @@ namespace ECommerce.API.Controllers
             if (Status == null)
                 return NotFound(Constants.Errors.NotFound);
             else
-                Status.IsActive = _unitOfWork.Status.SetAvtive(Status.IsActive);
+                Status.IsActive = _unitOfWork.Status.ToggleAvtive(Status.IsActive);
             await _unitOfWork.SaveAsync();
             return Ok();
         }

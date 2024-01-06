@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class HomeController : ControllerBase
     {
@@ -21,6 +21,7 @@ namespace ECommerce.API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
         public async Task<IActionResult> HomePage()
         {
             var Return = new HomeDto()

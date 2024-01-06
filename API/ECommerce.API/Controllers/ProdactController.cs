@@ -104,6 +104,7 @@ namespace ECommerce.API.Controllers
             return Ok();
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddToChart(int ID)
         {
             var Product = await _unitOfWork.Product.FindAsync(ID);
