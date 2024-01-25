@@ -22,7 +22,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using ECommerce.BLL.Futures.Governorate.Validators;
+using ECommerce.BLL.Validators;
+using Localization;
+using Microsoft.Extensions.Localization;
+using Sortech.CRM.Identity.Api.Localization;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 namespace ECommerce.API
 {
@@ -38,7 +43,7 @@ namespace ECommerce.API
         {
             services.Configure<JWTHelpers>(Configuration.GetSection("JWT"));
             services.AddFluentValidation(
-                fluent => fluent.RegisterValidatorsFromAssemblyContaining<Validator>()
+                fluent => fluent.RegisterValidatorsFromAssemblyContaining<BaseValidator>()
             );
 
             services.AddControllers();
@@ -130,6 +135,12 @@ namespace ECommerce.API
                 });
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddHttpContextAccessor();
+
+            // -- Localization
+            services.AddLocalization();
+            services.AddSingleton<LocalizerMiddleware>();
+            services.AddDistributedMemoryCache();
+            services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -156,7 +167,13 @@ namespace ECommerce.API
                 var context = scope.ServiceProvider.GetRequiredService<Applicationdbcontext>();
                 DataSeeder.SeedData(context);
             }
-
+            var options = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"))
+            };
+            app.UseRequestLocalization(options);
+            app.UseStaticFiles();
+            app.UseMiddleware<LocalizerMiddleware>();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();

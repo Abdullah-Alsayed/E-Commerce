@@ -21,10 +21,7 @@ public class FindGovernorateValidator : AbstractValidator<FindGovernorateRequest
         RuleFor(req => req)
             .Must(req =>
             {
-                var x = context.Governorates.FirstOrDefault(
-                    x => x.ID == req.ID && x.IsActive && !x.IsDeleted
-                );
-                return x != null;
+                return context.Governorates.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x => Constants.Errors.NotFound);
     }

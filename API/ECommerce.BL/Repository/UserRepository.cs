@@ -300,8 +300,12 @@ namespace ECommerce.BLL.Repository
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id),
-                new Claim("UserName", user.UserName)
+                new Claim("ID", user.Id),
+                new Claim("Language", user.Language),
+                new Claim("UserName", user.UserName),
+                new Claim("FirstName", user.FirstName),
+                new Claim("LastName", user.LastName),
+                new Claim("FullName", $"{user.FirstName} {user.LastName}")
             }
                 .Union(userClaims)
                 .Union(roleClaims);

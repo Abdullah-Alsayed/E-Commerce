@@ -15,5 +15,6 @@ namespace ECommerce.DAL.Entity
         public string Message { get; set; }
         public string Icon { get; set; }
         public OperationTypeEnum operationTypeEnum { get; set; }
+        public string CreateName { get; set; }
     }
 }

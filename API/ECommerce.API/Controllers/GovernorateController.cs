@@ -4,6 +4,7 @@ using ECommerce.BLL.Futures.Governorate.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
+using ECommerce.DAL.Enums;
 using ECommerce.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,21 +23,40 @@ namespace ECommerce.API.Controllers
     [Authorize]
     public class GovernorateController : ControllerBase
     {
-        private readonly string _userId;
+        private string _userId;
+        private string _userName;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+
+        // private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
+        IMapper _mapper;
 
         public GovernorateController(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
+            //  IMapper mapper,
             IHttpContextAccessor httpContextAccessor
         )
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            //   _mapper = mapper;
             _httpContext = httpContextAccessor;
-            _userId = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _userId = _httpContext.HttpContext.User.Claims
+                .FirstOrDefault(x => x.Type == "ID")
+                ?.Value;
+            ;
+            _userName = _httpContext.HttpContext.User.Claims
+                .FirstOrDefault(x => x.Type == "FullName")
+                ?.Value;
+
+            #region initilize mapper
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AllowNullCollections = true;
+                cfg.CreateMap<Governorate, GovernorateDto>().ReverseMap();
+                cfg.CreateMap<Governorate, CreateGovernorateRequest>().ReverseMap();
+            });
+            _mapper = new Mapper(config);
+            #endregion initilize mapper
         }
 
         [HttpGet]
@@ -120,35 +140,85 @@ namespace ECommerce.API.Controllers
 
         [HttpPost]
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest dto)
+        public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest request)
         {
             try
             {
-                Governorate Mapping = _mapper.Map<Governorate>(dto);
-                Mapping.CreateAt = DateTime.Now;
-                Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-                Governorate Governorate = await _unitOfWork.Governorate.AddaAync(Mapping);
-                if (Governorate == null)
+                var governorate = _mapper.Map<Governorate>(request);
+                governorate.CreateBy = _userId;
+                governorate = await _unitOfWork.Governorate.AddaAync(governorate);
+                var result = _mapper.Map<GovernorateDto>(governorate);
+                _ = await _unitOfWork.Notification.AddNotificationAsync(
+                    new Notification
+                    {
+                        CreateBy = _userId,
+                        CreateName = _userName,
+                        operationTypeEnum = OperationTypeEnum.Create,
+                        Icon = Constants.NotificationIcons.Add,
+                        Title = "Create Governorate",
+                        Subject = "Create Governorate",
+                        Message = "Create Governorate",
+                    }
+                );
+                return new BaseResponse<GovernorateDto>
                 {
-                    return BadRequest(Constants.Errors.CreateFailed);
-                }
-                else
-                {
-                    _ = await _unitOfWork.SaveAsync();
-                }
-
-                return Ok(Governorate);
+                    IsSuccess = true,
+                    Message = Constants.Messages.Success,
+                    Result = result
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _ = await _unitOfWork.ErrorLog.AddaAync(
+                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
+                );
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+            finally
+            {
+                _ = await _unitOfWork.SaveAsync();
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateGovernorate(int ID, GovernorateDto dto)
+        public async Task<BaseResponse> UpdateGovernorate(UpdateGovernorateRequst requst )
         {
+            {
+                var governorate = _mapper.Map<Governorate>(request);
+                governorate.CreateBy = _userId;
+                governorate = await _unitOfWork.Governorate.AddaAync(governorate);
+                var result = _mapper.Map<GovernorateDto>(governorate);
+                _ = await _unitOfWork.Notification.AddNotificationAsync(
+                    new Notification
+                    {
+                        CreateBy = _userId,
+                        CreateName = _userName,
+                        operationTypeEnum = OperationTypeEnum.Update,
+                        Icon = Constants.NotificationIcons.Edit,
+                        Title = "Update Governorate",
+                        Subject = "Update Governorate",
+                        Message = "Update Governorate",
+                    }
+                );
+                return new BaseResponse<GovernorateDto>
+                {
+                    IsSuccess = true,
+                    Message = Constants.Messages.Success,
+                    Result = result
+                };
+            
+            catch (Exception ex)
+            {
+                _ = await _unitOfWork.ErrorLog.AddaAync(
+                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
+                );
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+            finally
+            {
+                _ = await _unitOfWork.SaveAsync();
+            }
+
             Governorate Governorate = await _unitOfWork.Governorate.FindAsync(ID);
             if (Governorate == null)
             {

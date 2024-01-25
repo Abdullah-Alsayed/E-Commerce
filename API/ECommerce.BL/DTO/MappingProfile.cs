@@ -24,8 +24,6 @@ namespace ECommerce.BLL.DTO
 
             CreateMap<PromoCode, PromoCodeDto>().ReverseMap();
 
-            CreateMap<Governorate, GovernorateDto>().ReverseMap();
-
             CreateMap<Area, AreaDto>().ReverseMap();
 
             CreateMap<Status, StatusDto>().ReverseMap();
