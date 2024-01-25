@@ -1,7 +1,9 @@
-﻿namespace ECommerce.Services
+﻿namespace ECommerce.Helpers
 {
     public static class Constants
     {
+        public const string System = "System";
+
         public static class Languages
         {
             public const string Arabic = "Arabic";
@@ -43,8 +45,12 @@
             public const string LoginFiled = "The Useraame Or Password Incorrect";
             public const string CreateFailed = "Create Failed";
             public const string NotFound = "Not Found";
+            public const string Register = "Register Failed";
         }
-
+        public static class Messages
+        {
+            public const string Success = "Opration is Success";
+        }
         public static class NotificationIcons
         {
             public const string Add = "ADD.png";

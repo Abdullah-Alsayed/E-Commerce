@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
+#nullable disable
+
 namespace ECommerce.DAL.Migrations
 {
     [DbContext(typeof(Applicationdbcontext))]
@@ -15,9 +17,10 @@ namespace ECommerce.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.17")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>
                 {
@@ -26,7 +29,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -34,7 +37,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -50,7 +53,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -82,7 +85,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -90,7 +93,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -103,7 +106,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -137,7 +140,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -145,7 +148,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -158,7 +161,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -192,7 +195,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -200,7 +203,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -213,7 +216,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -243,7 +246,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -251,7 +254,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -269,7 +272,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -303,17 +306,15 @@ namespace ECommerce.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Code")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Message")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("Source")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
@@ -332,7 +333,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -340,7 +341,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -353,7 +354,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -382,7 +383,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -390,7 +391,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -403,7 +404,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -432,7 +433,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -440,7 +441,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -453,7 +454,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -476,7 +477,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -484,7 +485,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -497,7 +498,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -530,7 +531,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -538,7 +539,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -559,7 +560,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -603,7 +604,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -611,14 +612,14 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime>("DeliveryDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
@@ -636,7 +637,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -682,7 +683,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -690,7 +691,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -709,7 +710,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -799,7 +800,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -807,7 +808,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -820,7 +821,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -850,7 +851,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -858,7 +859,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -871,7 +872,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -904,7 +905,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -912,7 +913,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -925,7 +926,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -953,7 +954,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -961,7 +962,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -974,7 +975,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1007,7 +1008,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1015,7 +1016,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1031,7 +1032,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1069,7 +1070,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(150)");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1077,7 +1078,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1110,7 +1111,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1146,7 +1147,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1154,7 +1155,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1172,7 +1173,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1202,7 +1203,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1210,7 +1211,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1223,7 +1224,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1256,7 +1257,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1264,7 +1265,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1277,7 +1278,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1313,7 +1314,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1321,7 +1322,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1334,7 +1335,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1378,7 +1379,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .HasColumnType("text");
@@ -1413,7 +1414,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -1465,7 +1466,7 @@ namespace ECommerce.DAL.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
@@ -1479,7 +1480,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -1487,7 +1488,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeletedBy")
                         .HasMaxLength(450)
@@ -1500,7 +1501,7 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
@@ -1546,15 +1547,16 @@ namespace ECommerce.DAL.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -1570,15 +1572,16 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -1594,7 +1597,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -1616,7 +1619,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -1631,7 +1634,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1650,7 +1653,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>

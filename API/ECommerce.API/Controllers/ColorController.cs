@@ -3,7 +3,6 @@ using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using ECommerce.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Constants = ECommerce.Services.Constants;
+using Constants = ECommerce.Helpers.Constants;
 
 namespace ECommerce.API.Controllers
 {

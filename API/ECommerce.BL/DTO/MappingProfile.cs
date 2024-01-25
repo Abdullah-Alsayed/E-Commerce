@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using ECommerce.BLL.DTO;
+using ECommerce.BLL.Futures.Account.Requests;
+using ECommerce.BLL.Futures.Governorate.Dtos;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 
@@ -38,6 +39,11 @@ namespace ECommerce.BLL.DTO
             CreateMap<Notification, NotificationDto>().ReverseMap();
 
             CreateMap<Setting, SettingDto>().ReverseMap();
+
+            CreateMap<User, CreateUserRequest>()
+                //.ForMember(o => o.Email.ToLower(), b => b.MapFrom(z => z.Email))
+                //.ForMember(o => o.UserName.ToLower(), b => b.MapFrom(z => z.UserName))
+                .ReverseMap();
         }
     }
 }

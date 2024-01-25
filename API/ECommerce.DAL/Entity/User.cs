@@ -34,7 +34,7 @@ namespace ECommerce.DAL.Entity
         [Required, StringLength(100)]
         public string LastName { get; set; }
 
-        [Required, StringLength(100)]
+        [Required]
         public UserGanderEnum Gander { get; set; }
 
         [Required, StringLength(200)]
@@ -46,7 +46,7 @@ namespace ECommerce.DAL.Entity
         public double MaxUseDiscount { get; set; }
 
         [Required]
-        public DateTime CreateAt { get; set; }
+        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
         public string CreateBy { get; set; }
         public DateTime? LastLogin { get; set; }

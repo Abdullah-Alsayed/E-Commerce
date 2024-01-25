@@ -18,7 +18,7 @@ namespace ECommerce.DAL.Entity
         public string DeletedBy { get; set; }
 
         [Required]
-        public DateTime CreateAt { get; set; } = DateTime.Now;
+        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
         public DateTime? ModifyAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool IsActive { get; set; } = true;

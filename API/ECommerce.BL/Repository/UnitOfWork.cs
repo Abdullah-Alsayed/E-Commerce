@@ -4,9 +4,11 @@ using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Repository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace ECommerce.BL.Repository
@@ -19,6 +21,7 @@ namespace ECommerce.BL.Repository
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMailServices _mailServices;
         private readonly IHostingEnvironment _hosting;
+        private readonly JWTHelpers _jwt;
 
         public UnitOfWork(
             Applicationdbcontext context,
@@ -26,7 +29,8 @@ namespace ECommerce.BL.Repository
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             IMailServices mailServices,
-            IHostingEnvironment hosting
+            IHostingEnvironment hosting,
+            IOptions<JWTHelpers> jwt
         )
         {
             _context = context;
@@ -35,13 +39,16 @@ namespace ECommerce.BL.Repository
             _roleManager = roleManager;
             _mailServices = mailServices;
             _hosting = hosting;
+            _jwt = jwt.Value;
+
             Product = new ProductRepository(_context, _hosting);
             User = new UserRepository(
                 _context,
                 _userManager,
                 _signInManager,
                 _roleManager,
-                _mailServices
+                _mailServices,
+                _jwt
             );
             SubCategory = new BaseRepository<SubCategory>(_context, _hosting);
             Governorate = new BaseRepository<Governorate>(_context, _hosting);
