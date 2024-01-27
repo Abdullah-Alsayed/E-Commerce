@@ -30,6 +30,7 @@
             public const string NameAR= "nameAr";
             public const string NameEn= "nameEN";
             public const string Governorates = "governorates";
+            public const string Areas = "areas";
         }
 
         public static class Gender

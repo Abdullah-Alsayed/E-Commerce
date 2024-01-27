@@ -29,6 +29,7 @@ using Sortech.CRM.Identity.Api.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using ECommerce.BLL.Futures.Governorates.Services;
+using ECommerce.BLL.Futures.Areas.Services;
 
 namespace ECommerce.API
 {
@@ -144,6 +145,7 @@ namespace ECommerce.API
 
             #region Services
             services.AddScoped<IGovernorateServices, GovernorateServices>();
+            services.AddScoped<IAreaServices, AreaServices>();
             #endregion
         }
 
