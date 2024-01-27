@@ -1,95 +1,102 @@
-﻿using ECommerce.BLL.DTO;
+﻿using AutoMapper;
+using ECommerce.BLL.Futures.Account.Dtos;
+using ECommerce.BLL.Futures.Account.Requests;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class AccountController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IMapper _mapper;
 
-        public AccountController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        private string _userId = string.Empty;
+
+        public AccountController(
+            IUnitOfWork unitOfWork,
+            IHttpContextAccessor httpContext,
+            IMapper mapper
+        )
+        {
+            _unitOfWork = unitOfWork;
+            _httpContext = httpContext;
+            _userId = _httpContext.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            _mapper = mapper;
+        }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("Register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
+        public async Task<BaseResponse<CreateUserDto>> RegisterAsync(CreateUserRequest request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-            var user = new User
-            {
-                FirstName = dto.FitsrName,
-                LastName = dto.lastName,
-                Address = dto.Address,
-                Age = dto.Age,
-                Language = Constants.Languages.Arabic,
-                Email = dto.Email.ToLower(),
-                UserName = dto.UserName.ToLower(),
-                Gander = DAL.Enums.UserGanderEnum.Male,
-                PhoneNumber = dto.PhoneNumber
-            };
-            if (await _unitOfWork.User.EmailExistesAsync(user.Email))
-            {
-                if (await _unitOfWork.User.UserNameExistesAsync(user.UserName))
-                {
-                    if (_unitOfWork.User.PhoneExistes(user.PhoneNumber))
+                if (!ModelState.IsValid)
+                    return new BaseResponse<CreateUserDto>
                     {
-                        var Result = await _unitOfWork.User.RegisterAsync(user, dto.Password);
-                        if (Result.Succeeded)
-                        {
-                            await _unitOfWork.User.LoginAsync(user, true);
-                            return Ok(user);
-                        }
-                        else
-                        {
-                            foreach (var item in Result.Errors)
-                            {
-                                ModelState.AddModelError("", item.Description);
-                            }
-                            return BadRequest(ModelState);
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest(Constants.Errors.PhoneNumbeExists);
-                    }
-                }
-                else
+                        IsSuccess = false,
+                        Message = Constants.Errors.Register
+                    };
+
+                var user = _mapper.Map<User>(request);
+                user.Language = Constants.Languages.Arabic;
+                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
+
+                var result = await _unitOfWork.User.CreateUserAsync(
+                    user,
+                    request.Password,
+                    _userId
+                );
+                return new BaseResponse<CreateUserDto>
                 {
-                    return BadRequest(Constants.Errors.UserNameExists);
-                }
+                    IsSuccess = result.IsSuccess,
+                    Message = result.Message,
+                    Result = result.Result
+                };
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(Constants.Errors.Emailexists);
+                await ErrorLog(ex);
+                return new BaseResponse<CreateUserDto> { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginDto dto)
+        [AllowAnonymous]
+        public async Task<BaseResponse> Login(LoginRequest request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = Constants.Errors.LoginFiled
+                    };
 
-            Microsoft.AspNetCore.Identity.SignInResult Result = await _unitOfWork.User.LoginAsync(
-                dto.UserName.ToLower(),
-                dto.Password,
-                dto.Rememberme
-            );
-            return Result.Succeeded ? Ok(Result) : BadRequest(Constants.Errors.LoginFiled);
+                var result = await _unitOfWork.User.LoginAsync(request);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await ErrorLog(ex);
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
@@ -110,5 +117,15 @@ namespace ECommerce.API.Controllers
             await _unitOfWork.User.LogOffAsync();
             return Ok();
         }
+
+        #region helpers
+        private async Task ErrorLog(Exception ex)
+        {
+            await _unitOfWork.ErrorLog.AddaAync(
+                new ErrorLog { Message = ex.Message, Source = ex.Source, }
+            );
+            await _unitOfWork.SaveAsync();
+        }
+        #endregion
     }
 }

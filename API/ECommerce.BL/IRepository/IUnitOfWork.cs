@@ -1,4 +1,5 @@
-﻿using ECommerce.DAL.Entity;
+﻿using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 using System;
 using System.Threading.Tasks;
 
@@ -6,6 +7,7 @@ namespace ECommerce.BLL.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
+        Applicationdbcontext Context { get; }
         IBaseRepository<SubCategory> SubCategory { get; }
         IBaseRepository<Governorate> Governorate { get; }
         IBaseRepository<SliderPhoto> SliderPhoto { get; }

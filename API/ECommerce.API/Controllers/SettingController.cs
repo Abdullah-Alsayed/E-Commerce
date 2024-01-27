@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
+using ECommerce.Helpers;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

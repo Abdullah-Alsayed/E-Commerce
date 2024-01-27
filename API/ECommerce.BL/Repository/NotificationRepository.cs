@@ -15,7 +15,10 @@ namespace ECommerce.BLL.Repository
 
         public async Task<Notification> AddNotificationAsync(Notification notification)
         {
-            _ = await _Context.Set<Notification>().AddAsync(notification);
+            notification.Title = "";
+            notification.Subject = "";
+            notification.Message = "";
+            _ = await _Context.Notifications.AddAsync(notification);
             return notification;
         }
     }

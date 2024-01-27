@@ -2,6 +2,7 @@
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;

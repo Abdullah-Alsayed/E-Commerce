@@ -1,50 +1,57 @@
-﻿using ECommerce.BLL.DTO;
+﻿using AutoMapper;
+using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Constants = ECommerce.Helpers.Constants;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class ColorController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public ColorController(IUnitOfWork unitOfWork, IMapper mapper)
+        private string _userId = string.Empty;
+
+        public ColorController(
+            IUnitOfWork unitOfWork,
+            IHttpContextAccessor httpContext,
+            IMapper mapper
+        )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContext = httpContext;
+            _userId = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
         [HttpGet]
         //[Route(nameof(FindColor))]
         public async Task<IActionResult> FindColor(int ID)
         {
-            var Color = await _unitOfWork.Color.FindAsync(ID);
-            if (Color == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Color);
+            Color Color = await _unitOfWork.Color.FindAsync(ID);
+            return Color == null ? NotFound(Constants.Errors.NotFound) : Ok(Color);
         }
 
         [HttpGet]
         // [Route(nameof(FindAllColor))]
         public async Task<IActionResult> FindAllColor()
         {
-            var Colors = await _unitOfWork.Color.GetAllAsync();
-            if (Colors == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Colors);
+            System.Collections.Generic.IEnumerable<Color> Colors =
+                await _unitOfWork.Color.GetAllAsync();
+            return Colors == null ? NotFound(Constants.Errors.NotFound) : Ok(Colors);
         }
 
         [HttpPost]
@@ -54,15 +61,19 @@ namespace ECommerce.API.Controllers
         {
             try
             {
-                var Mapping = _mapper.Map<Color>(dto);
-                var color = await _unitOfWork.Color.AddaAync(Mapping);
+                Color mapping = _mapper.Map<Color>(dto);
+                mapping.CreateBy = _userId;
+                Color color = await _unitOfWork.Color.AddaAync(mapping);
                 if (color == null)
+                {
                     return BadRequest(Constants.Errors.CreateFailed);
+                }
                 else
-                    await _unitOfWork.Notification.AddNotificationAsync(
+                {
+                    _ = await _unitOfWork.Notification.AddNotificationAsync(
                         new Notification
                         {
-                            CreateBy = _unitOfWork.User.GetUserID(User),
+                            CreateBy = _userId,
                             operationTypeEnum = OperationTypeEnum.Create,
                             Icon = Constants.NotificationIcons.Add,
                             Title = "AddColor",
@@ -70,15 +81,20 @@ namespace ECommerce.API.Controllers
                             Message = "AddColor",
                         }
                     );
-                await _unitOfWork.SaveAsync();
+                }
+
                 return Ok(color);
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.AddaAync(
+                _ = await _unitOfWork.ErrorLog.AddaAync(
                     new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
                 );
                 return BadRequest(ex.Message);
+            }
+            finally
+            {
+                _ = await _unitOfWork.SaveAsync();
             }
         }
 
@@ -87,13 +103,15 @@ namespace ECommerce.API.Controllers
         //[Route(nameof(UpdateColor))]
         public async Task<IActionResult> UpdateColor(int ID, ColorDto dto)
         {
-            var color = await _unitOfWork.Color.FindAsync(ID);
+            Color color = await _unitOfWork.Color.FindAsync(ID);
             if (color == null)
+            {
                 return BadRequest(Constants.Errors.NotFound);
+            }
             else
             {
-                _mapper.Map(dto, color);
-                await _unitOfWork.SaveAsync();
+                _ = _mapper.Map(dto, color);
+                _ = await _unitOfWork.SaveAsync();
                 return Ok(color);
             }
         }

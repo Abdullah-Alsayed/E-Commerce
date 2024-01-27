@@ -1,12 +1,11 @@
-﻿using ECommerce.BLL.DTO;
+﻿using AutoMapper;
+using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,22 +28,17 @@ namespace ECommerce.API.Controllers
         //[Route(nameof(FindArea))]
         public async Task<IActionResult> FindArea(int ID)
         {
-            var Area = await _unitOfWork.Area.FindAsync(ID);
-            if (Area == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Area);
+            Area Area = await _unitOfWork.Area.FindAsync(ID);
+            return Area == null ? NotFound(Constants.Errors.NotFound) : Ok(Area);
         }
 
         [HttpGet]
         // [Route(nameof(FindAllArea))]
         public async Task<IActionResult> FindAllArea()
         {
-            var Areas = await _unitOfWork.Area.GetAllAsync();
-            if (Areas == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Areas);
+            System.Collections.Generic.IEnumerable<Area> Areas =
+                await _unitOfWork.Area.GetAllAsync();
+            return Areas == null ? NotFound(Constants.Errors.NotFound) : Ok(Areas);
         }
 
         [HttpPost]
@@ -52,14 +46,19 @@ namespace ECommerce.API.Controllers
         //[Authorize(Roles = nameof(Constants.Roles.Admin))]
         public async Task<IActionResult> CreateArea(AreaDto dto)
         {
-            var Mapping = _mapper.Map<Area>(dto);
+            Area Mapping = _mapper.Map<Area>(dto);
             Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
 
-            var Area = await _unitOfWork.Area.AddaAync(Mapping);
+            Area Area = await _unitOfWork.Area.AddaAync(Mapping);
             if (Area == null)
+            {
                 return BadRequest(Constants.Errors.CreateFailed);
+            }
             else
-                await _unitOfWork.SaveAsync();
+            {
+                _ = await _unitOfWork.SaveAsync();
+            }
+
             return Ok(Area);
         }
 
@@ -68,15 +67,17 @@ namespace ECommerce.API.Controllers
         //[Route(nameof(UpdateArea))]
         public async Task<IActionResult> UpdateArea(int ID, AreaDto dto)
         {
-            var Area = await _unitOfWork.Area.FindAsync(ID);
+            Area Area = await _unitOfWork.Area.FindAsync(ID);
             if (Area == null)
+            {
                 return BadRequest(Constants.Errors.NotFound);
+            }
             else
             {
-                _mapper.Map(dto, Area);
+                _ = _mapper.Map(dto, Area);
                 Area.ModifyAt = DateTime.Now;
                 Area.ModifyBy = _unitOfWork.User.GetUserID(User);
-                await _unitOfWork.SaveAsync();
+                _ = await _unitOfWork.SaveAsync();
                 return Ok(Area);
             }
         }
@@ -86,12 +87,17 @@ namespace ECommerce.API.Controllers
         //[Route(nameof(DeleteArea))]
         public async Task<IActionResult> SetAvtiveArea(int ID)
         {
-            var Area = await _unitOfWork.Area.FindAsync(ID);
+            Area Area = await _unitOfWork.Area.FindAsync(ID);
             if (Area == null)
+            {
                 return NotFound(Constants.Errors.NotFound);
+            }
             else
+            {
                 Area.IsActive = _unitOfWork.Area.ToggleAvtive(Area.IsActive);
-            await _unitOfWork.SaveAsync();
+            }
+
+            _ = await _unitOfWork.SaveAsync();
             return Ok();
         }
     }
