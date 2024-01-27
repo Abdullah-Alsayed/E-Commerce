@@ -1,4 +1,5 @@
-﻿using ECommerce.Services;
+﻿using ECommerce.BLL.Request;
+using ECommerce.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,10 @@ namespace ECommerce.BLL.IRepository
         T Update(T Entity);
         bool Delete(T Entity);
         Task<T> FindAsync(int ID);
+        Task<T> FindAsync(Guid ID);
         Task<IEnumerable<T>> GetAllAsync();
+        Task<List<T>> GetAllAsync(BaseGridRequest request);
+
         Task<IEnumerable<T>> GetAllAsync(string[] Includes = null);
         Task<IEnumerable<T>> GetAllAsync(
             Expression<Func<T, bool>> Criteria,
@@ -35,5 +39,6 @@ namespace ECommerce.BLL.IRepository
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
         Task<string> UplodPhoto(IFormFile File, string FolderName, string ImgName = null);
         bool ToggleAvtive(bool IsActive);
+        List<string> SearchEntity();
     }
 }

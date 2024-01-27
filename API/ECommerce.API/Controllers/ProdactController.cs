@@ -7,6 +7,7 @@ using System;
 using AutoMapper;
 using System.Collections.Generic;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 
 namespace ECommerce.API.Controllers
 {

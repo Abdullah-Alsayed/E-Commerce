@@ -7,6 +7,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

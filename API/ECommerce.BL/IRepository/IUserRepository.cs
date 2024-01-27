@@ -1,4 +1,7 @@
-﻿using ECommerce.DAL.Entity;
+﻿using ECommerce.BLL.Futures.Account.Dtos;
+using ECommerce.BLL.Futures.Account.Requests;
+using ECommerce.BLL.Response;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -7,8 +10,12 @@ namespace ECommerce.BLL.IRepository
 {
     public interface IUserRepository
     {
-        Task<SignInResult> LoginAsync(string UserName, string Password, bool RememberMe);
-        Task<IdentityResult> RegisterAsync(User user, string Password);
+        Task<BaseResponse> LoginAsync(LoginRequest request);
+        Task<BaseResponse<CreateUserDto>> CreateUserAsync(
+            User user,
+            string password,
+            string userId
+        );
         Task SendConfirmEmailAsync(User user);
         Task<IdentityResult> ConfirmEmailAsync(User User, string Toke);
         Task ForgotPasswordAsync(object Entity);
@@ -17,7 +24,7 @@ namespace ECommerce.BLL.IRepository
         Task<User> FindUserByIDAsync(string UserID);
         Task<User> FindUserByNameAsync(string Name);
         Task<User> FindUserByEmailAsync(string Email);
-        Task<bool> EmailExistesAsync(string email);
+        Task<bool> EmailExisteAsync(string email);
         bool PhoneExistes(string PhoneNumber);
         Task<bool> UserNameExistesAsync(string userName);
         Task<bool> IsConfirmedAsync(User user);

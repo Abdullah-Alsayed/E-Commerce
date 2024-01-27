@@ -1,7 +1,7 @@
 ﻿using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
-using ECommerce.Services;
+using ECommerce.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;

@@ -1,99 +1,147 @@
-﻿using ECommerce.BLL.DTO;
+﻿using AutoMapper;
+using ECommerce.BLL.Futures.Governorates.Dtos;
+using ECommerce.BLL.Futures.Governorates.Requests;
+using ECommerce.BLL.Futures.Governorates.Services;
+using ECommerce.BLL.Futures.Governorates.Validators;
 using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
+using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
+using ECommerce.DAL.Enums;
+using ECommerce.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using static ECommerce.Helpers.Constants;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace ECommerce.API.Controllers;
 
-namespace ECommerce.API.Controllers
+[Route("api/[controller]/[Action]")]
+[ApiController]
+[Authorize]
+public class GovernorateController : ControllerBase
 {
-    [Route("api/[controller]/[Action]")]
-    [ApiController]
-    public class GovernorateController : ControllerBase
+    private string _userId;
+    private string _userName;
+    private string _lang;
+    private readonly IHttpContextAccessor _httpContext;
+    private readonly IGovernorateServices _services;
+
+    public GovernorateController(
+        IHttpContextAccessor httpContextAccessor,
+        IGovernorateServices services
+    )
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        _httpContext = httpContextAccessor;
+        _services = services;
+        #region Get User Data From Token
+        _userId = _httpContext.HttpContext.User.Claims
+            .FirstOrDefault(x => x.Type == Constants.EntitsKeys.ID)
+            ?.Value;
 
-        public GovernorateController(IUnitOfWork unitOfWork, IMapper mapper)
+        _userName = _httpContext.HttpContext.User.Claims
+            .FirstOrDefault(x => x.Type == Constants.EntitsKeys.FullName)
+            ?.Value;
+
+        _lang =
+            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
+            ?? Constants.Languages.Ar;
+        #endregion
+    }
+
+    [HttpGet]
+    public async Task<BaseResponse> FindGovernorate([FromQuery] FindGovernorateRequest request)
+    {
+        try
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            return await _services.FindAsync(request);
         }
-
-        [HttpGet]
-        //[Route(nameof(FindGovernorate))]
-        public async Task<IActionResult> FindGovernorate(int ID)
+        catch (Exception ex)
         {
-            var Governorate = await _unitOfWork.Governorate.FindAsync(ID);
-            if (Governorate == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Governorate);
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
+    }
 
-        [HttpGet]
-        // [Route(nameof(FindAllGovernorate))]
-        public async Task<IActionResult> FindAllGovernorate()
+    [HttpGet]
+    public async Task<BaseResponse> GetAllGovernorate([FromQuery] GetAllGovernorateRequest request)
+    {
+        try
         {
-            var Governorates = await _unitOfWork.Governorate.GetAllAsync();
-            if (Governorates == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Governorates);
+            return await _services.GetAllAsync(request, _lang);
         }
-
-        [HttpPost]
-        //[Route(nameof(CreateGovernorate))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateGovernorate(GovernorateDto dto)
+        catch (Exception ex)
         {
-            var Mapping = _mapper.Map<Governorate>(dto);
-            Mapping.CreateAt = DateTime.Now;
-            Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Governorate = await _unitOfWork.Governorate.AddaAync(Mapping);
-            if (Governorate == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Governorate);
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
+    }
 
-        // PUT api/<GovernorateController>/5
-        [HttpPut]
-        //[Route(nameof(UpdateGovernorate))]
-        public async Task<IActionResult> UpdateGovernorate(int ID, GovernorateDto dto)
+    [HttpGet]
+    public async Task<BaseResponse> GetSearchEntity()
+    {
+        try
         {
-            var Governorate = await _unitOfWork.Governorate.FindAsync(ID);
-            if (Governorate == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
-            {
-                _mapper.Map(dto, Governorate);
-                Governorate.ModifyAt = DateTime.Now;
-                Governorate.ModifyBy = _unitOfWork.User.GetUserID(User);
-                await _unitOfWork.SaveAsync();
-                return Ok(Governorate);
-            }
+            return await _services.GetSearchEntityAsync();
         }
-
-        [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteGovernorate))]
-        public async Task<IActionResult> SetAvtiveGovernorate(int ID)
+        catch (Exception ex)
         {
-            var Governorate = await _unitOfWork.Governorate.FindAsync(ID);
-            if (Governorate == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                Governorate.IsActive = _unitOfWork.Governorate.ToggleAvtive(Governorate.IsActive);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpPost]
+    public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.CreateAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpPut]
+    public async Task<BaseResponse> UpdateGovernorate(UpdateGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.UpdateAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpPut]
+    public async Task<BaseResponse> ToggleAvtiveGovernorate(ToggleAvtiveGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.ToggleAvtiveAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpDelete]
+    public async Task<BaseResponse> DeleteGovernorate(DeleteGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.DeleteAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
     }
 }

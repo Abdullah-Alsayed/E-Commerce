@@ -4,21 +4,24 @@ using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Repository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using ECommerce.Helpers;
 using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace ECommerce.BL.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly Applicationdbcontext _context;
+        public readonly Applicationdbcontext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMailServices _mailServices;
         private readonly IHostingEnvironment _hosting;
+        private readonly JWTHelpers _jwt;
 
         public UnitOfWork(
             Applicationdbcontext context,
@@ -26,7 +29,8 @@ namespace ECommerce.BL.Repository
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             IMailServices mailServices,
-            IHostingEnvironment hosting
+            IHostingEnvironment hosting,
+            IOptions<JWTHelpers> jwt
         )
         {
             _context = context;
@@ -35,13 +39,16 @@ namespace ECommerce.BL.Repository
             _roleManager = roleManager;
             _mailServices = mailServices;
             _hosting = hosting;
+            _jwt = jwt.Value;
+
             Product = new ProductRepository(_context, _hosting);
             User = new UserRepository(
                 _context,
                 _userManager,
                 _signInManager,
                 _roleManager,
-                _mailServices
+                _mailServices,
+                _jwt
             );
             SubCategory = new BaseRepository<SubCategory>(_context, _hosting);
             Governorate = new BaseRepository<Governorate>(_context, _hosting);
@@ -60,6 +67,7 @@ namespace ECommerce.BL.Repository
             Brand = new BaseRepository<Brand>(_context, _hosting);
             Unit = new BaseRepository<Unit>(_context, _hosting);
             Area = new BaseRepository<Area>(_context, _hosting);
+            Context = _context;
         }
 
         public IBaseRepository<SubCategory> SubCategory { get; private set; }
@@ -81,6 +89,8 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Unit> Unit { get; private set; }
         public IBaseRepository<Area> Area { get; private set; }
         public IUserRepository User { get; private set; }
+
+        public Applicationdbcontext Context { get; set; }
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
@@ -10,6 +11,8 @@ namespace ECommerce.DAL.Entity
             Areas = new HashSet<Area>();
             Orders = new HashSet<Order>();
         }
+
+        public Guid ID { get; set; }
 
         [StringLength(100), Required]
         public string NameAR { get; set; }
