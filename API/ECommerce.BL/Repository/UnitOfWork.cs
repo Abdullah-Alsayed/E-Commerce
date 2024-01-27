@@ -15,7 +15,7 @@ namespace ECommerce.BL.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly Applicationdbcontext _context;
+        public readonly Applicationdbcontext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -67,6 +67,7 @@ namespace ECommerce.BL.Repository
             Brand = new BaseRepository<Brand>(_context, _hosting);
             Unit = new BaseRepository<Unit>(_context, _hosting);
             Area = new BaseRepository<Area>(_context, _hosting);
+            Context = _context;
         }
 
         public IBaseRepository<SubCategory> SubCategory { get; private set; }
@@ -88,6 +89,8 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Unit> Unit { get; private set; }
         public IBaseRepository<Area> Area { get; private set; }
         public IUserRepository User { get; private set; }
+
+        public Applicationdbcontext Context { get; set; }
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 

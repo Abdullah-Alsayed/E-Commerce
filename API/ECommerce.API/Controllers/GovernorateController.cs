@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using ECommerce.BLL.Futures.Governorate.Dtos;
-using ECommerce.BLL.Futures.Governorate.Requests;
+using ECommerce.BLL.Futures.Governorates.Dtos;
+using ECommerce.BLL.Futures.Governorates.Requests;
+using ECommerce.BLL.Futures.Governorates.Services;
+using ECommerce.BLL.Futures.Governorates.Validators;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
@@ -9,247 +11,137 @@ using ECommerce.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using static ECommerce.Helpers.Constants;
 
-namespace ECommerce.API.Controllers
+namespace ECommerce.API.Controllers;
+
+[Route("api/[controller]/[Action]")]
+[ApiController]
+[Authorize]
+public class GovernorateController : ControllerBase
 {
-    [Route("api/[controller]/[Action]")]
-    [ApiController]
-    [Authorize]
-    public class GovernorateController : ControllerBase
+    private string _userId;
+    private string _userName;
+    private string _lang;
+    private readonly IHttpContextAccessor _httpContext;
+    private readonly IGovernorateServices _services;
+
+    public GovernorateController(
+        IHttpContextAccessor httpContextAccessor,
+        IGovernorateServices services
+    )
     {
-        private string _userId;
-        private string _userName;
-        private readonly IUnitOfWork _unitOfWork;
+        _httpContext = httpContextAccessor;
+        _services = services;
+        #region Get User Data From Token
+        _userId = _httpContext.HttpContext.User.Claims
+            .FirstOrDefault(x => x.Type == Constants.EntitsKeys.ID)
+            ?.Value;
 
-        // private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
-        IMapper _mapper;
+        _userName = _httpContext.HttpContext.User.Claims
+            .FirstOrDefault(x => x.Type == Constants.EntitsKeys.FullName)
+            ?.Value;
 
-        public GovernorateController(
-            IUnitOfWork unitOfWork,
-            //  IMapper mapper,
-            IHttpContextAccessor httpContextAccessor
-        )
+        _lang =
+            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
+            ?? Constants.Languages.Ar;
+        #endregion
+    }
+
+    [HttpGet]
+    public async Task<BaseResponse> FindGovernorate([FromQuery] FindGovernorateRequest request)
+    {
+        try
         {
-            _unitOfWork = unitOfWork;
-            //   _mapper = mapper;
-            _httpContext = httpContextAccessor;
-            _userId = _httpContext.HttpContext.User.Claims
-                .FirstOrDefault(x => x.Type == "ID")
-                ?.Value;
-            ;
-            _userName = _httpContext.HttpContext.User.Claims
-                .FirstOrDefault(x => x.Type == "FullName")
-                ?.Value;
-
-            #region initilize mapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AllowNullCollections = true;
-                cfg.CreateMap<Governorate, GovernorateDto>().ReverseMap();
-                cfg.CreateMap<Governorate, CreateGovernorateRequest>().ReverseMap();
-            });
-            _mapper = new Mapper(config);
-            #endregion initilize mapper
+            return await _services.FindAsync(request);
         }
-
-        [HttpGet]
-        public async Task<BaseResponse> FindGovernorate([FromQuery] FindGovernorateRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
-                var result = _mapper.Map<GovernorateDto>(governorate);
-                return new BaseResponse<GovernorateDto>
-                {
-                    IsSuccess = true,
-                    Message = Constants.Messages.Success,
-                    Result = result
-                };
-            }
-            catch (Exception ex)
-            {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
+    }
 
-        [HttpGet]
-        public async Task<BaseResponse> GetAllGovernorate(
-            [FromQuery] GetAllGovernorateRequest request
-        )
+    [HttpGet]
+    public async Task<BaseResponse> GetAllGovernorate([FromQuery] GetAllGovernorateRequest request)
+    {
+        try
         {
-            try
-            {
-                var governorates = await _unitOfWork.Governorate.GetAllAsync(request);
-                var response = _mapper.Map<List<GovernorateDto>>(governorates);
-                return new BaseResponse<BaseGridResponse<List<GovernorateDto>>>
-                {
-                    IsSuccess = true,
-                    Message = Constants.Messages.Success,
-                    Result = new BaseGridResponse<List<GovernorateDto>>
-                    {
-                        Items = response,
-                        Total = response != null ? response.Count : 0
-                    }
-                };
-            }
-            catch (Exception ex)
-            {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                _ = await _unitOfWork.SaveAsync();
-
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+            return await _services.GetAllAsync(request, _lang);
         }
-
-        [HttpGet]
-        public async Task<BaseResponse> GetSearchEntity()
+        catch (Exception ex)
         {
-            try
-            {
-                var result = _unitOfWork.Governorate.SearchEntity();
-                return new BaseResponse<List<string>>
-                {
-                    IsSuccess = true,
-                    Message = Constants.Messages.Success,
-                    Result = result
-                };
-            }
-            catch (Exception ex)
-            {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                _ = await _unitOfWork.SaveAsync();
-
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
+    }
 
-        [HttpPost]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest request)
+    [HttpGet]
+    public async Task<BaseResponse> GetSearchEntity()
+    {
+        try
         {
-            try
-            {
-                var governorate = _mapper.Map<Governorate>(request);
-                governorate.CreateBy = _userId;
-                governorate = await _unitOfWork.Governorate.AddaAync(governorate);
-                var result = _mapper.Map<GovernorateDto>(governorate);
-                _ = await _unitOfWork.Notification.AddNotificationAsync(
-                    new Notification
-                    {
-                        CreateBy = _userId,
-                        CreateName = _userName,
-                        operationTypeEnum = OperationTypeEnum.Create,
-                        Icon = Constants.NotificationIcons.Add,
-                        Title = "Create Governorate",
-                        Subject = "Create Governorate",
-                        Message = "Create Governorate",
-                    }
-                );
-                return new BaseResponse<GovernorateDto>
-                {
-                    IsSuccess = true,
-                    Message = Constants.Messages.Success,
-                    Result = result
-                };
-            }
-            catch (Exception ex)
-            {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-            finally
-            {
-                _ = await _unitOfWork.SaveAsync();
-            }
+            return await _services.GetSearchEntityAsync();
         }
-
-        [HttpPut]
-        public async Task<BaseResponse> UpdateGovernorate(UpdateGovernorateRequst requst )
+        catch (Exception ex)
         {
-            {
-                var governorate = _mapper.Map<Governorate>(request);
-                governorate.CreateBy = _userId;
-                governorate = await _unitOfWork.Governorate.AddaAync(governorate);
-                var result = _mapper.Map<GovernorateDto>(governorate);
-                _ = await _unitOfWork.Notification.AddNotificationAsync(
-                    new Notification
-                    {
-                        CreateBy = _userId,
-                        CreateName = _userName,
-                        operationTypeEnum = OperationTypeEnum.Update,
-                        Icon = Constants.NotificationIcons.Edit,
-                        Title = "Update Governorate",
-                        Subject = "Update Governorate",
-                        Message = "Update Governorate",
-                    }
-                );
-                return new BaseResponse<GovernorateDto>
-                {
-                    IsSuccess = true,
-                    Message = Constants.Messages.Success,
-                    Result = result
-                };
-            
-            catch (Exception ex)
-            {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-            finally
-            {
-                _ = await _unitOfWork.SaveAsync();
-            }
-
-            Governorate Governorate = await _unitOfWork.Governorate.FindAsync(ID);
-            if (Governorate == null)
-            {
-                return BadRequest(Constants.Errors.NotFound);
-            }
-            else
-            {
-                _ = _mapper.Map(dto, Governorate);
-                Governorate.ModifyAt = DateTime.Now;
-                Governorate.ModifyBy = _unitOfWork.User.GetUserID(User);
-                _ = await _unitOfWork.SaveAsync();
-                return Ok(Governorate);
-            }
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
+    }
 
-        [HttpPut]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> SetAvtiveGovernorate(int ID)
+    [HttpPost]
+    public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest request)
+    {
+        try
         {
-            Governorate Governorate = await _unitOfWork.Governorate.FindAsync(ID);
-            if (Governorate == null)
-            {
-                return NotFound(Constants.Errors.NotFound);
-            }
-            else
-            {
-                Governorate.IsActive = _unitOfWork.Governorate.ToggleAvtive(Governorate.IsActive);
-            }
+            return await _services.CreateAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
 
-            _ = await _unitOfWork.SaveAsync();
-            return Ok();
+    [HttpPut]
+    public async Task<BaseResponse> UpdateGovernorate(UpdateGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.UpdateAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpPut]
+    public async Task<BaseResponse> ToggleAvtiveGovernorate(ToggleAvtiveGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.ToggleAvtiveAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpDelete]
+    public async Task<BaseResponse> DeleteGovernorate(DeleteGovernorateRequest request)
+    {
+        try
+        {
+            return await _services.DeleteAsync(request, _userId, _userName);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
     }
 }

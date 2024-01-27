@@ -1,15 +1,19 @@
 {
   //---------------------------- LOCALIZAER EN ---------------------------//
-
-
-  // ---------------------------User Actitvities---------------------------
-  "invalidTime": "from date can not be bigger than or equal to date",
-
-  // --------------------------- Message  ---------------------------
-
   "fail": "Operation Error",
-  "isRequired": "IsRequired",
   "success": "Operation done successfully",
+  "isRequired": "Is Required",
+  "maxNumber": "Max Number is {0}",
+  "minNumber": "Min Number is {0}",
+  "notFound": "This is not Found",
+  "exist": "Alredy exist",
+
+  //-------------------------------Entitys------------------------------
+  "tax": "Tax",
+  "nameAr": "The Arabic Name",
+  "nameEn": "The English Name",
+  "governorates": "The Governorate",
+
   "MessageChangePassword": "Operation done successfully, please login with your new password.",
   "UserNameRequired": "Username is required.",
   "PasswordRequired": "Password is required",

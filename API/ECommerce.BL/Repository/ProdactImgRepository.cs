@@ -2,7 +2,6 @@
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using ECommerce.Helpers;
-using ECommerce.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;

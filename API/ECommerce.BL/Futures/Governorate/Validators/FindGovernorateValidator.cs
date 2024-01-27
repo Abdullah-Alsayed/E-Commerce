@@ -1,17 +1,25 @@
-﻿using ECommerce.BLL.Futures.Governorate.Requests;
+﻿using ECommerce.BLL.Futures.Governorates.Requests;
 using ECommerce.DAL;
 using ECommerce.Helpers;
 using FluentValidation;
+using Microsoft.Extensions.Localization;
 using System.Linq;
 
-namespace ECommerce.BLL.Futures.Governorate.Validators;
+namespace ECommerce.BLL.Futures.Governorates.Validators;
 
 public class FindGovernorateValidator : AbstractValidator<FindGovernorateRequest>
 {
-    public FindGovernorateValidator(Applicationdbcontext context)
+    private readonly IStringLocalizer<FindGovernorateValidator> _localizer;
+
+    public FindGovernorateValidator(
+        Applicationdbcontext context,
+        IStringLocalizer<FindGovernorateValidator> localizer
+    )
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
+        _localizer = localizer;
+
         RuleFor(req => req.ID)
             .NotEmpty()
             .WithMessage(x => Constants.Errors.Register)
@@ -23,6 +31,9 @@ public class FindGovernorateValidator : AbstractValidator<FindGovernorateRequest
             {
                 return context.Governorates.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
-            .WithMessage(x => Constants.Errors.NotFound);
+            .WithMessage(
+                x =>
+                    $" {_localizer[Constants.EntitsKeys.Governorates]} {_localizer[Constants.MessageKeys.NotFound]}"
+            );
     }
 }

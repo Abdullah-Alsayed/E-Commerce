@@ -1,6 +1,6 @@
 ﻿using ECommerce.BLL.DTO;
 
-namespace ECommerce.BLL.Futures.Governorate.Dtos
+namespace ECommerce.BLL.Futures.Governorates.Dtos
 {
     public class GovernorateDto : BaseEntityDto
     {

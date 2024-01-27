@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.Futures.Account.Requests;
-using ECommerce.BLL.Futures.Governorate.Dtos;
+using ECommerce.BLL.Futures.Governorates.Dtos;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 

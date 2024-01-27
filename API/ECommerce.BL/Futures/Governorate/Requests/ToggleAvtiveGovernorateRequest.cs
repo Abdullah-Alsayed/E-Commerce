@@ -2,7 +2,7 @@
 
 namespace ECommerce.BLL.Futures.Governorates.Requests
 {
-    public class FindGovernorateRequest
+    public class ToggleAvtiveGovernorateRequest
     {
         public Guid ID { get; set; }
     }

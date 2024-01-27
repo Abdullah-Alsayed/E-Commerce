@@ -8,9 +8,7 @@ using ECommerce.Helpers;
 using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -122,7 +120,7 @@ namespace ECommerce.BLL.Repository
                     return new BaseResponse<LoginDto>
                     {
                         IsSuccess = result.Succeeded,
-                        Message = Constants.Messages.Success,
+                        Message = Constants.MessageKeys.Success,
                         Result = new LoginDto
                         {
                             Email = user.Email,
@@ -194,7 +192,7 @@ namespace ECommerce.BLL.Repository
                 {
                     IsSuccess = Identityresult.Succeeded,
                     Message = Identityresult.Succeeded
-                        ? Constants.Messages.Success
+                        ? Constants.MessageKeys.Success
                         : string.Join(",", Identityresult.Errors.Select(x => x.Description)),
                     Result =
                         (Identityresult.Succeeded && string.IsNullOrEmpty(userId))

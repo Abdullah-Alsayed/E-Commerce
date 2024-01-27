@@ -1,27 +1,30 @@
-﻿using ECommerce.BLL.Futures.Governorate.Requests;
+﻿using ECommerce.BLL.Futures.Governorates.Requests;
 using ECommerce.Helpers;
 using FluentValidation;
+using Microsoft.Extensions.Localization;
 
-namespace ECommerce.BLL.Futures.Governorate.Validators;
+namespace ECommerce.BLL.Futures.Governorates.Validators;
 
 public class GetAllGovernorateValidator : AbstractValidator<GetAllGovernorateRequest>
 {
-    public GetAllGovernorateValidator()
+    private readonly IStringLocalizer<GetAllGovernorateValidator> _localizer;
+
+    public GetAllGovernorateValidator(IStringLocalizer<GetAllGovernorateValidator> localizer)
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
+        _localizer = localizer;
 
         RuleFor(req => req.SearchFor)
-            .MaximumLength(100)
-            .WithMessage(x => Constants.Errors.Register);
+            .MaximumLength(250)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 250].ToString());
 
         RuleFor(req => req.SearchBy)
-            .MaximumLength(100)
-            .WithMessage(x => Constants.Errors.Register)
-            .NotEmpty()
-            .WithMessage("reqierd")
-            .When(x => !string.IsNullOrEmpty(x.SearchFor));
+            .MaximumLength(250)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 250].ToString());
 
-        RuleFor(req => req.SortBy).MaximumLength(100).WithMessage(x => Constants.Errors.Register);
+        RuleFor(req => req.SortBy)
+            .MaximumLength(250)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 250].ToString());
     }
 }

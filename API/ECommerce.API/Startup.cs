@@ -28,6 +28,7 @@ using Microsoft.Extensions.Localization;
 using Sortech.CRM.Identity.Api.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using ECommerce.BLL.Futures.Governorates.Services;
 
 namespace ECommerce.API
 {
@@ -37,8 +38,7 @@ namespace ECommerce.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-
+        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JWTHelpers>(Configuration.GetSection("JWT"));
@@ -141,6 +141,10 @@ namespace ECommerce.API
             services.AddSingleton<LocalizerMiddleware>();
             services.AddDistributedMemoryCache();
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+
+            #region Services
+            services.AddScoped<IGovernorateServices, GovernorateServices>();
+            #endregion
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -169,7 +173,7 @@ namespace ECommerce.API
             }
             var options = new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"))
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
             };
             app.UseRequestLocalization(options);
             app.UseStaticFiles();

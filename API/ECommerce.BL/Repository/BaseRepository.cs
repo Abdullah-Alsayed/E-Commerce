@@ -1,5 +1,5 @@
 ﻿using Azure;
-using ECommerce.BLL.Futures.Governorate.Requests;
+using ECommerce.BLL.Futures.Governorates.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
@@ -87,6 +87,9 @@ namespace ECommerce.BLL.Repository
             {
                 var result = new List<T>();
                 IQueryable<T> query = _context.Set<T>();
+
+                query = IsDeletedDynamic(query, request.IsDeleted);
+
                 if (!string.IsNullOrEmpty(request.SortBy))
                     query = OrderByDynamic(query, request.SortBy, request.IsDescending);
                 if (
@@ -212,9 +215,7 @@ namespace ECommerce.BLL.Repository
                 System.IO.File.Delete(Filepath);
             }
             if (PhotoName != null && File == null)
-            {
                 return PhotoName;
-            }
 
             return Photo;
         }
@@ -253,7 +254,7 @@ namespace ECommerce.BLL.Repository
             return query.Provider.CreateQuery<Q>(resultExpression);
         }
 
-        public static IQueryable<T> SearchDynamic<T>(
+        public IQueryable<T> SearchDynamic(
             IQueryable<T> query,
             string propertyName,
             string searchTerm
@@ -261,26 +262,54 @@ namespace ECommerce.BLL.Repository
         {
             if (string.IsNullOrEmpty(propertyName) || string.IsNullOrEmpty(searchTerm))
                 return query;
-
             ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
+
             MemberExpression property = Expression.PropertyOrField(parameter, propertyName);
-            ConstantExpression searchValue = Expression.Constant(searchTerm);
+
+            MethodInfo toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
+            Expression toLowerExpression = Expression.Call(property, toLowerMethod);
+
+            ConstantExpression constantTerm = Expression.Constant(searchTerm.ToLower());
+
             MethodInfo containsMethod = typeof(string).GetMethod(
                 "Contains",
                 new[] { typeof(string) }
             );
-
-            MethodCallExpression containsCall = Expression.Call(
-                property,
+            Expression containsExpression = Expression.Call(
+                toLowerExpression,
                 containsMethod,
-                searchValue
+                constantTerm
             );
+
             Expression<Func<T, bool>> predicate = Expression.Lambda<Func<T, bool>>(
-                containsCall,
+                containsExpression,
                 parameter
             );
 
             return query.Where(predicate);
+        }
+
+        public IQueryable<T> IsDeletedDynamic(IQueryable<T> query, bool propertyValue)
+        {
+            // Create a parameter expression
+            ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
+
+            // Create property access expression
+            MemberExpression property = Expression.PropertyOrField(parameter, "IsDeleted");
+
+            // Create constant expression for dynamic value
+            ConstantExpression value = Expression.Constant(propertyValue);
+
+            // Create equality expression: x.Property == propertyValue
+            BinaryExpression equality = Expression.Equal(property, value);
+
+            // Create lambda expression
+            Expression<Func<T, bool>> lambda = Expression.Lambda<Func<T, bool>>(
+                equality,
+                parameter
+            );
+            // Now, use the filter function to filter entities
+            return query.Where(lambda);
         }
 
         public List<string> SearchEntity()

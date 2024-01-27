@@ -4,6 +4,7 @@
     {
         Create = 1,
         Update,
-        Delete
+        Delete,
+        Toggle
     }
 }

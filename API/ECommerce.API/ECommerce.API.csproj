@@ -44,4 +44,6 @@
     <Folder Include="Images\SubCategorys\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>
