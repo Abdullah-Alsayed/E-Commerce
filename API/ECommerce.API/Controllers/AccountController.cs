@@ -5,7 +5,6 @@ using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using ECommerce.Helpers;
-using ECommerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,6 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         [Route("Register")]
         public async Task<BaseResponse<CreateUserDto>> RegisterAsync(CreateUserRequest request)
         {
@@ -53,7 +51,7 @@ namespace ECommerce.API.Controllers
                     };
 
                 var user = _mapper.Map<User>(request);
-                user.Language = Constants.Languages.Arabic;
+                user.Language = Constants.Languages.Ar;
                 user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
 
                 var result = await _unitOfWork.User.CreateUserAsync(
