@@ -24,9 +24,6 @@ namespace ECommerce.BLL.Futures.Account.Requests
         [Required, Range(1, 90)]
         public int Age { get; set; }
 
-        [StringLength(50)]
-        public string? Language { get; set; }
-
         [Required, EmailAddress]
         public string Email { get; set; }
 
