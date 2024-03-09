@@ -22,7 +22,7 @@ namespace ECommerce.DAL
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPhoto> productPhotos { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
-        public DbSet<PromoCode> PromoCodes { get; set; }
+        public DbSet<Voucher> Voucher { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<SliderPhoto> SliderPhotos { get; set; }
@@ -30,6 +30,7 @@ namespace ECommerce.DAL
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<History> Histories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {

@@ -4,4 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Enums\LanguageEnum.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Enums\LanguageEnum.cs" />
+  </ItemGroup>
+
 </Project>

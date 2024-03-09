@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using ECommerce.DAL.Enums;
 
 namespace ECommerce.DAL.Entity
 {
@@ -14,6 +15,8 @@ namespace ECommerce.DAL.Entity
         [StringLength(255)]
         public string Message { get; set; }
 
+        public EntitiesEnum Entity { get; set; }
+        public OperationTypeEnum Operation { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }

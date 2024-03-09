@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.Features.Area.Requests;
-using ECommerce.BLL.Features.Area.Services;
+using ECommerce.BLL.Features.Areas.Requests;
+using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +13,9 @@ namespace ECommerce.API.Controllers
     [Authorize]
     public class AreaController : ControllerBase
     {
-        private readonly IAreaServices _service;
+        private readonly IAreaService _service;
 
-        public AreaController(IAreaServices service) => _service = service;
+        public AreaController(IAreaService service) => _service = service;
 
         [HttpGet]
         public async Task<BaseResponse> FindArea([FromQuery] FindAreaRequest request)

@@ -20,7 +20,6 @@ namespace ECommerce.BL.Repository
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMailServicies _mailServices;
-        private readonly IHostingEnvironment _hosting;
         private readonly JWTHelpers _jwt;
 
         public UnitOfWork(
@@ -29,7 +28,6 @@ namespace ECommerce.BL.Repository
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             IMailServicies mailServices,
-            IHostingEnvironment hosting,
             IOptions<JWTHelpers> jwt
         )
         {
@@ -38,10 +36,9 @@ namespace ECommerce.BL.Repository
             _userManager = userManager;
             _roleManager = roleManager;
             _mailServices = mailServices;
-            _hosting = hosting;
             _jwt = jwt.Value;
 
-            Product = new ProductRepository(_context, _hosting);
+            Product = new ProductRepository(_context);
             User = new UserRepository(
                 _context,
                 _userManager,
@@ -50,34 +47,36 @@ namespace ECommerce.BL.Repository
                 _mailServices,
                 _jwt
             );
-            SubCategory = new BaseRepository<SubCategory>(_context, _hosting);
-            Governorate = new BaseRepository<Governorate>(_context, _hosting);
-            SliderPhoto = new BaseRepository<SliderPhoto>(_context, _hosting);
-            Notification = new NotificationRepository(_context, _hosting);
-            PromoCode = new BaseRepository<PromoCode>(_context, _hosting);
-            ProductPhoto = new ProductPhotoRepository(_context, _hosting);
-            ContactUs = new BaseRepository<ContactUs>(_context, _hosting);
-            Category = new BaseRepository<Category>(_context, _hosting);
-            ErrorLog = new BaseRepository<ErrorLog>(_context, _hosting);
-            Expense = new BaseRepository<Expense>(_context, _hosting);
-            Setting = new BaseRepository<Setting>(_context, _hosting);
-            Status = new BaseRepository<Status>(_context, _hosting);
-            Review = new BaseRepository<Review>(_context, _hosting);
-            Color = new BaseRepository<Color>(_context, _hosting);
-            Brand = new BaseRepository<Brand>(_context, _hosting);
-            Unit = new BaseRepository<Unit>(_context, _hosting);
-            Area = new BaseRepository<Area>(_context, _hosting);
+            SubCategory = new BaseRepository<SubCategory>(_context);
+            Governorate = new BaseRepository<Governorate>(_context);
+            SliderPhoto = new BaseRepository<SliderPhoto>(_context);
+            Notification = new NotificationRepository(_context);
+            Voucher = new BaseRepository<Voucher>(_context);
+            //ProductPhoto = new ProductPhotoRepository(_context);
+            History = new BaseRepository<History>(_context);
+            ContactUs = new BaseRepository<ContactUs>(_context);
+            Category = new BaseRepository<Category>(_context);
+            ErrorLog = new BaseRepository<ErrorLog>(_context);
+            Expense = new BaseRepository<Expense>(_context);
+            Setting = new BaseRepository<Setting>(_context);
+            Status = new BaseRepository<Status>(_context);
+            Review = new BaseRepository<Review>(_context);
+            Color = new BaseRepository<Color>(_context);
+            Brand = new BaseRepository<Brand>(_context);
+            Unit = new BaseRepository<Unit>(_context);
+            Area = new BaseRepository<Area>(_context);
             Context = _context;
         }
 
         public IBaseRepository<SubCategory> SubCategory { get; private set; }
         public IBaseRepository<Governorate> Governorate { get; private set; }
         public IBaseRepository<SliderPhoto> SliderPhoto { get; private set; }
-        public IBaseRepository<PromoCode> PromoCode { get; private set; }
+        public IBaseRepository<Voucher> Voucher { get; private set; }
         public IBaseRepository<ContactUs> ContactUs { get; private set; }
         public IProductPhotoRepository ProductPhoto { get; private set; }
         public INotificationRepository Notification { get; private set; }
         public IBaseRepository<ErrorLog> ErrorLog { get; private set; }
+        public IBaseRepository<History> History { get; private set; }
         public IBaseRepository<Category> Category { get; private set; }
         public IBaseRepository<Expense> Expense { get; private set; }
         public IBaseRepository<Setting> Setting { get; private set; }
@@ -93,6 +92,8 @@ namespace ECommerce.BL.Repository
         public Applicationdbcontext Context { get; set; }
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
+
+        public async Task<bool> IsDone(int modifyRows) => await SaveAsync() == modifyRows;
 
         public void Dispose() => _context.Dispose();
     }

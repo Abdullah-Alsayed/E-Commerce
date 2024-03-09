@@ -1,7 +1,7 @@
-﻿using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
 
 namespace ECommerce.BLL.IRepository
 {
@@ -11,10 +11,11 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<SubCategory> SubCategory { get; }
         IBaseRepository<Governorate> Governorate { get; }
         IBaseRepository<SliderPhoto> SliderPhoto { get; }
-        IBaseRepository<PromoCode> PromoCode { get; }
+        IBaseRepository<Voucher> Voucher { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
         INotificationRepository Notification { get; }
         IProductPhotoRepository ProductPhoto { get; }
+        IBaseRepository<History> History { get; }
         IBaseRepository<Category> Category { get; }
         IBaseRepository<ErrorLog> ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }
@@ -29,5 +30,6 @@ namespace ECommerce.BLL.IRepository
         IUserRepository User { get; }
 
         Task<int> SaveAsync();
+        Task<bool> IsDone(int modifyRows);
     }
 }

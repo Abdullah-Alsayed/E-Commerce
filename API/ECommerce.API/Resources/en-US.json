@@ -13,8 +13,12 @@
   "tax": "Tax",
   "nameAr": "The Arabic Name",
   "nameEn": "The English Name",
-  "governorates": "The Governorate",
+  "governorate": "The Governorate",
   "area": "The Area",
+  "color": "The Color",
+  "voucher": "The voucher",
+  "value": "The value",
+  "name": "The Name",
 
   "MessageChangePassword": "Operation done successfully, please login with your new password.",
   "UserNameRequired": "Username is required.",

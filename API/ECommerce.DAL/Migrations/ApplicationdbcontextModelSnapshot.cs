@@ -218,10 +218,13 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("character varying(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameAR")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NameEN")
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -305,9 +308,15 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Entity")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Message")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Operation")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Source")
                         .IsRequired()
@@ -520,6 +529,31 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Governorates");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.History", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Entity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserID")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Histories");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
                     b.Property<Guid>("ID")
@@ -544,8 +578,8 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("character varying(450)");
 
-                    b.Property<string>("EntityName")
-                        .HasColumnType("text");
+                    b.Property<int>("Entity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Icon")
                         .HasColumnType("text");
@@ -562,7 +596,9 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("MessageEN")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("timestamp with time zone");
@@ -570,6 +606,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(450)
                         .HasColumnType("character varying(450)");
+
+                    b.Property<int>("OperationType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -580,9 +619,6 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<int>("operationTypeEnum")
-                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
@@ -901,55 +937,6 @@ namespace ECommerce.DAL.Migrations
                     b.HasIndex("VendorID");
 
                     b.ToTable("ProductStock");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifyBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CreateBy");
-
-                    b.ToTable("PromoCodes");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
@@ -1528,6 +1515,55 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Vendor");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Voucher");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1775,6 +1811,15 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.History", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Histories")
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -1806,7 +1851,7 @@ namespace ECommerce.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.DAL.Entity.PromoCode", "PromoCode")
+                    b.HasOne("ECommerce.DAL.Entity.Voucher", "PromoCode")
                         .WithMany("Orders")
                         .HasForeignKey("PromoCodeID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1956,17 +2001,6 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
-                {
-                    b.HasOne("ECommerce.DAL.Entity.User", "User")
-                        .WithMany("PromoCodes")
-                        .HasForeignKey("CreateBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -2075,6 +2109,17 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("PromoCodes")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -2175,11 +2220,6 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Entity.PromoCode", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
                 {
                     b.Navigation("Sections");
@@ -2214,6 +2254,8 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Governorates");
 
+                    b.Navigation("Histories");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");
@@ -2233,6 +2275,11 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("SubCategorys");
 
                     b.Navigation("Units");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

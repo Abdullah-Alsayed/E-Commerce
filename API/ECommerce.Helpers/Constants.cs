@@ -21,8 +21,8 @@
             public const string Success = "success";
             public const string Fail = "fail";
             public const string NotExist = "notExist";
-
-
+            public const string InvalidExtension= "invalidExtension";
+            public const string InvalidSize= "invalidSize";
         }
         public static class EntitsKeys
         {
@@ -31,8 +31,14 @@
             public const string Tax= "tax";
             public const string NameAR= "nameAr";
             public const string NameEn= "nameEN";
-            public const string Governorates = "governorates";
+            public const string Governorate = "governorate";
             public const string Area = "area";
+            public const string Color="color";
+            public const string Voucher= "voucher";
+            public const string Value = "value";
+            public const string Name="name";
+            public static string Photo="photo";
+            public static string Brand = "barnd";
         }
 
         public static class Gender
@@ -59,6 +65,7 @@
             public const string Categorys = "Categorys";
             public const string SubCategorys = "SubCategorys";
             public const string ProductPhoto = "ProductPhoto";
+            public const string Images= "Images";
         }
 
         public static class Errors

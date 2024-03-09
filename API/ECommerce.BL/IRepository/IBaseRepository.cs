@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace ECommerce.BLL.IRepository
 {
@@ -37,7 +38,12 @@ namespace ECommerce.BLL.IRepository
             string orderByDirection = Constants.OrderBY.Ascending
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
-        Task<string> UplodPhoto(IFormFile File, string FolderName, string ImgName = null);
+        Task<string> UplodPhoto(
+            IFormFile File,
+            IHostEnvironment environment,
+            string FolderName,
+            string ImgName = null
+        );
         bool ToggleAvtive(bool IsActive);
         List<string> SearchEntity();
     }

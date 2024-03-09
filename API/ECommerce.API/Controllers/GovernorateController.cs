@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.Features.Governorate.Requests;
-using ECommerce.BLL.Features.Governorate.Services;
+using ECommerce.BLL.Features.Governorates.Requests;
+using ECommerce.BLL.Features.Governorates.Services;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +13,9 @@ namespace ECommerce.API.Controllers;
 [Authorize]
 public class GovernorateController : ControllerBase
 {
-    private readonly IGovernorateServices _service;
+    private readonly IGovernorateService _service;
 
-    public GovernorateController(IGovernorateServices service) => _service = service;
+    public GovernorateController(IGovernorateService service) => _service = service;
 
     [HttpGet]
     public async Task<BaseResponse> FindGovernorate([FromQuery] FindGovernorateRequest request)

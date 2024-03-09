@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
@@ -39,7 +39,7 @@ namespace ECommerce.DAL.Entity
         public virtual Area Area { get; set; } = new Area();
         public virtual Status Status { get; set; } = new Status();
         public virtual Governorate Governorate { get; set; } = new Governorate();
-        public virtual PromoCode PromoCode { get; set; } = new PromoCode();
+        public virtual Voucher PromoCode { get; set; } = new Voucher();
         public virtual ICollection<ProductOrder> ProductOrders { get; set; }
     }
 }

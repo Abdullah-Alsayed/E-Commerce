@@ -2,7 +2,7 @@
 
 namespace ECommerce.BLL.DTO
 {
-    public class BaseEntityDto
+    public record BaseEntityDto
     {
         public Guid ID { get; set; } = Guid.NewGuid();
         public string CreateBy { get; set; }

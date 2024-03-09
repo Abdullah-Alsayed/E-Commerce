@@ -7,8 +7,11 @@ using System.Reflection;
 using System.Text;
 using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
-using ECommerce.BLL.Features.Area.Services;
-using ECommerce.BLL.Features.Governorate.Services;
+using ECommerce.BLL.Features.Areas.Services;
+using ECommerce.BLL.Features.Brands.Services;
+using ECommerce.BLL.Features.Colors.Services;
+using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core;
@@ -142,9 +145,12 @@ namespace ECommerce.API
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
             #region Services
-            services.AddScoped<IGovernorateServices, GovernorateServices>();
-            services.AddScoped<IAreaServices, AreaServices>();
+            services.AddScoped<IGovernorateService, GovernorateService>();
+            services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IMailServicies, MailServicies>();
+            services.AddScoped<IColorService, ColorService>();
+            services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IBrandService, BrandService>();
             #endregion
         }
 

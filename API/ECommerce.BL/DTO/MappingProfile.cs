@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.BLL.Features.Account.Requests;
+using ECommerce.BLL.Features.Colors.Dtos;
+using ECommerce.BLL.Features.Vouchers.Dtos;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 
@@ -11,17 +13,13 @@ namespace ECommerce.BLL.DTO
         {
             CreateMap<Unit, UnitDto>().ReverseMap();
 
-            CreateMap<Color, ColorDto>().ReverseMap();
-
-            CreateMap<Brand, BrandDto>().ReverseMap();
-
             CreateMap<Product, ProductDto>().ReverseMap();
 
             CreateMap<Category, CategoryDto>().ReverseMap();
 
             CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
 
-            CreateMap<PromoCode, PromoCodeDto>().ReverseMap();
+            CreateMap<Voucher, VoucherDto>().ReverseMap();
 
             CreateMap<Status, StatusDto>().ReverseMap();
 

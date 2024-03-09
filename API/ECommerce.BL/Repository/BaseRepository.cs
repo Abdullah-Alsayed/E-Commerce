@@ -12,6 +12,7 @@ using ECommerce.DAL;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace ECommerce.BLL.Repository
 {
@@ -19,12 +20,10 @@ namespace ECommerce.BLL.Repository
         where T : class
     {
         private readonly Applicationdbcontext _context;
-        private readonly IHostingEnvironment hosting;
 
-        public BaseRepository(Applicationdbcontext context, IHostingEnvironment hosting)
+        public BaseRepository(Applicationdbcontext context)
         {
             _context = context;
-            this.hosting = hosting;
         }
 
         public async Task<T> AddaAync(T Entity)
@@ -180,34 +179,41 @@ namespace ECommerce.BLL.Repository
         }
 
         public async Task<string> UplodPhoto(
-            IFormFile File,
+            IFormFile file,
+            IHostEnvironment environment,
             string FolderName,
             string PhotoName = null
         )
         {
-            string Photo = null;
-            if (File != null)
+            string Photo = string.Empty;
+            string filepath = string.Empty;
+            if (file != null)
             {
-                var Extansion = Path.GetExtension(File.FileName);
+                var Extansion = Path.GetExtension(file.FileName);
                 var GuId = Guid.NewGuid().ToString();
                 Photo = GuId + Extansion;
-                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", FolderName, Photo);
-                await File.CopyToAsync(new FileStream(Filepath, FileMode.Create));
+                filepath = Path.Combine(
+                    environment.ContentRootPath,
+                    Constants.PhotoFolder.Images,
+                    FolderName,
+                    Photo
+                );
+                await file.CopyToAsync(new FileStream(filepath, FileMode.Create));
             }
-            if (PhotoName != null && File != null)
+            if (PhotoName != null && file != null)
             {
                 var Filepath = Path.Combine(
-                    hosting.ContentRootPath,
-                    "Images",
+                    environment.ContentRootPath,
+                    Constants.PhotoFolder.Images,
                     FolderName,
                     PhotoName
                 );
                 System.IO.File.Delete(Filepath);
             }
-            if (PhotoName != null && File == null)
+            if (PhotoName != null && file == null)
                 return PhotoName;
 
-            return Photo;
+            return filepath;
         }
 
         public bool ToggleAvtive(bool IsActive)
