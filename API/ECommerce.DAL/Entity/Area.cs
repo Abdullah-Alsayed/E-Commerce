@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
@@ -8,16 +8,13 @@ namespace ECommerce.DAL.Entity
     {
         public Area() => Orders = new HashSet<Order>();
 
-        [Required]
         public Guid GovernorateID { get; set; }
 
-        [StringLength(100), Required]
         public string NameAR { get; set; }
 
-        [StringLength(100), Required]
         public string NameEN { get; set; }
 
-        public virtual Governorate Governorate { get; set; } = new Governorate();
+        public virtual Governorate Governorate { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }
 }

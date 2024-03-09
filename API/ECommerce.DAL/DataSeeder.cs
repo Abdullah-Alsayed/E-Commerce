@@ -1,13 +1,13 @@
-﻿using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Helpers
+namespace ECommerce.Core
 {
     public static class DataSeeder
     {
@@ -40,28 +40,22 @@ namespace ECommerce.Helpers
                 );
                 var Areas = JsonSerializer.Deserialize<List<AreaJson>>(AreasJson);
 
-                var governoratesList = governorates.Select(
-                    governorate =>
-                        new Governorate
+                var governoratesList = governorates.Select(governorate => new Governorate
+                {
+                    ID = Guid.NewGuid(),
+                    NameAR = governorate.NameAR,
+                    NameEN = governorate.NameEN,
+                    Areas = Areas
+                        .Where(x => x.GovernorateID == governorate.id)
+                        .Select(area => new Area
                         {
-                            ID = Guid.NewGuid(),
-                            NameAR = governorate.NameAR,
-                            NameEN = governorate.NameEN,
-                            Areas = Areas
-                                .Where(x => x.GovernorateID == governorate.id)
-                                .Select(
-                                    area =>
-                                        new Area
-                                        {
-                                            NameAR = area.NameAR,
-                                            NameEN = area.NameEN,
-                                            CreateBy = systemUser
-                                        }
-                                )
-                                .ToList(),
-                            CreateBy = systemUser,
-                        }
-                );
+                            NameAR = area.NameAR,
+                            NameEN = area.NameEN,
+                            CreateBy = systemUser
+                        })
+                        .ToList(),
+                    CreateBy = systemUser,
+                });
                 context.Governorates.AddRange(governoratesList);
             }
             if (!context.Roles.Any())

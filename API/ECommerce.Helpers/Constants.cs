@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Helpers
+﻿namespace ECommerce.Core
 {
     public static class Constants
     {
@@ -20,16 +20,19 @@
             public const string IsRequired= "isRequired";
             public const string Success = "success";
             public const string Fail = "fail";
+            public const string NotExist = "notExist";
+
+
         }
         public static class EntitsKeys
         {
             public const string ID = "ID"; // From Token
             public const string FullName = "FullName"; //From Token
-
             public const string Tax= "tax";
             public const string NameAR= "nameAr";
             public const string NameEn= "nameEN";
             public const string Governorates = "governorates";
+            public const string Area = "area";
         }
 
         public static class Gender

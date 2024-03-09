@@ -1,12 +1,11 @@
-﻿using AutoMapper;
-using ECommerce.BLL.IRepository;
-using ECommerce.BLL.DTO;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
+using ECommerce.BLL.DTO;
+using ECommerce.BLL.IRepository;
+using ECommerce.Core;
 using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

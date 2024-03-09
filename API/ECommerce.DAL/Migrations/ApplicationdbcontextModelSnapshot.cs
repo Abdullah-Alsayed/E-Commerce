@@ -60,14 +60,10 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<string>("NameAR")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("NameEN")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
@@ -560,10 +556,13 @@ namespace ECommerce.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Message")
+                    b.Property<string>("MessageAR")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<string>("MessageEN")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("timestamp with time zone");

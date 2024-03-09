@@ -1,10 +1,10 @@
-﻿using ECommerce.BLL.Futures.Account.Dtos;
-using ECommerce.BLL.Futures.Account.Requests;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Account.Dtos;
+using ECommerce.BLL.Features.Account.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace ECommerce.BLL.IRepository
 {

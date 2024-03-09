@@ -1,34 +1,35 @@
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using ECommerce.BL.Repository;
-using ECommerce.Services.MailServices;
+using ECommerce.BLL.DTO;
+using ECommerce.BLL.Features.Area.Services;
+using ECommerce.BLL.Features.Governorate.Services;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Validators;
+using ECommerce.Core;
+using ECommerce.Core.Services.MailServices;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using FluentValidation.AspNetCore;
+using Localization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using ECommerce.DAL.Entity;
-using ECommerce.DAL;
-using FluentValidation.AspNetCore;
-using System;
-using ECommerce.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using ECommerce.BLL.Validators;
-using Localization;
 using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Sortech.CRM.Identity.Api.Localization;
-using Microsoft.AspNetCore.Localization;
-using System.Globalization;
-using ECommerce.BLL.Futures.Governorates.Services;
 
 namespace ECommerce.API
 {
@@ -42,24 +43,23 @@ namespace ECommerce.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JWTHelpers>(Configuration.GetSection("JWT"));
-            services.AddFluentValidation(
-                fluent => fluent.RegisterValidatorsFromAssemblyContaining<BaseValidator>()
+            services.AddFluentValidation(fluent =>
+                fluent.RegisterValidatorsFromAssemblyContaining<BaseValidator>()
             );
 
             services.AddControllers();
 
             services
                 .AddControllers()
-                .AddNewtonsoftJson(
-                    options =>
-                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
-                            .Json
-                            .ReferenceLoopHandling
-                            .Ignore
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                        .Json
+                        .ReferenceLoopHandling
+                        .Ignore
                 );
 
-            services.AddDbContext<Applicationdbcontext>(
-                options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            services.AddDbContext<Applicationdbcontext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
             );
             services.AddSwaggerGen(c =>
             {
@@ -108,8 +108,7 @@ namespace ECommerce.API
                 })
                 .AddEntityFrameworkStores<Applicationdbcontext>()
                 .AddDefaultTokenProviders();
-            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
-            services.AddTransient<IMailServices, MailServicies>();
+            services.AddTransient<IMailServicies, MailServicies>();
             services
                 .AddAuthentication(options =>
                 {
@@ -144,6 +143,8 @@ namespace ECommerce.API
 
             #region Services
             services.AddScoped<IGovernorateServices, GovernorateServices>();
+            services.AddScoped<IAreaServices, AreaServices>();
+            services.AddScoped<IMailServicies, MailServicies>();
             #endregion
         }
 
@@ -163,8 +164,8 @@ namespace ECommerce.API
             }
 
             using (
-                var scope = app.ApplicationServices
-                    .GetRequiredService<IServiceScopeFactory>()
+                var scope = app
+                    .ApplicationServices.GetRequiredService<IServiceScopeFactory>()
                     .CreateScope()
             )
             {

@@ -12,7 +12,8 @@ namespace ECommerce.DAL.Entity
         public string Subject { get; set; }
 
         [StringLength(255), Required]
-        public string Message { get; set; }
+        public string MessageAR { get; set; }
+        public string MessageEN { get; set; }
         public string Icon { get; set; }
         public OperationTypeEnum operationTypeEnum { get; set; }
         public string EntityName { get; set; }

@@ -1,8 +1,8 @@
-﻿using ECommerce.BLL.IRepository;
+﻿using System.Threading.Tasks;
+using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Hosting;
-using System.Threading.Tasks;
 
 namespace ECommerce.BLL.Repository
 {
@@ -17,9 +17,18 @@ namespace ECommerce.BLL.Repository
         {
             notification.Title = "";
             notification.Subject = "";
-            notification.Message = "";
+            notification.MessageAR = "";
+            notification.MessageEN = "";
+
             _ = await _Context.Notifications.AddAsync(notification);
+
+            // Call Signal R
             return notification;
+        }
+
+        private string GenrateMessage()
+        {
+            return string.Empty;
         }
     }
 }

@@ -1,104 +1,111 @@
-﻿using AutoMapper;
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using ECommerce.BLL.Features.Area.Requests;
+using ECommerce.BLL.Features.Area.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class AreaController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IAreaServices _service;
 
-        public AreaController(IUnitOfWork unitOfWork, IMapper mapper)
+        public AreaController(IAreaServices service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindArea([FromQuery] FindAreaRequest request)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        //[Route(nameof(FindArea))]
-        public async Task<IActionResult> FindArea(int ID)
+        public async Task<BaseResponse> GetAllArea([FromQuery] GetAllAreaRequest request)
         {
-            Area Area = await _unitOfWork.Area.FindAsync(ID);
-            return Area == null ? NotFound(Constants.Errors.NotFound) : Ok(Area);
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        // [Route(nameof(FindAllArea))]
-        public async Task<IActionResult> FindAllArea()
+        public async Task<BaseResponse> GetSearchEntity()
         {
-            System.Collections.Generic.IEnumerable<Area> Areas =
-                await _unitOfWork.Area.GetAllAsync();
-            return Areas == null ? NotFound(Constants.Errors.NotFound) : Ok(Areas);
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpPost]
-        //[Route(nameof(CreateArea))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateArea(AreaDto dto)
+        public async Task<BaseResponse> CreateArea(CreateAreaRequest request)
         {
-            Area Mapping = _mapper.Map<Area>(dto);
-            Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            Area Area = await _unitOfWork.Area.AddaAync(Mapping);
-            if (Area == null)
+            try
             {
-                return BadRequest(Constants.Errors.CreateFailed);
+                return await _service.CreateAsync(request);
             }
-            else
+            catch (Exception ex)
             {
-                _ = await _unitOfWork.SaveAsync();
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
-
-            return Ok(Area);
         }
 
-        // PUT api/<AreaController>/5
         [HttpPut]
-        //[Route(nameof(UpdateArea))]
-        public async Task<IActionResult> UpdateArea(int ID, AreaDto dto)
+        public async Task<BaseResponse> UpdateArea(UpdateAreaRequest request)
         {
-            Area Area = await _unitOfWork.Area.FindAsync(ID);
-            if (Area == null)
+            try
             {
-                return BadRequest(Constants.Errors.NotFound);
+                return await _service.UpdateAsync(request);
             }
-            else
+            catch (Exception ex)
             {
-                _ = _mapper.Map(dto, Area);
-                Area.ModifyAt = DateTime.Now;
-                Area.ModifyBy = _unitOfWork.User.GetUserID(User);
-                _ = await _unitOfWork.SaveAsync();
-                return Ok(Area);
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ToggleAvtiveArea(ToggleAvtiveAreaRequest request)
+        {
+            try
+            {
+                return await _service.ToggleAvtiveAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteArea))]
-        public async Task<IActionResult> SetAvtiveArea(int ID)
+        public async Task<BaseResponse> DeleteArea(DeleteAreaRequest request)
         {
-            Area Area = await _unitOfWork.Area.FindAsync(ID);
-            if (Area == null)
+            try
             {
-                return NotFound(Constants.Errors.NotFound);
+                return await _service.DeleteAsync(request);
             }
-            else
+            catch (Exception ex)
             {
-                Area.IsActive = _unitOfWork.Area.ToggleAvtive(Area.IsActive);
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
-
-            _ = await _unitOfWork.SaveAsync();
-            return Ok();
         }
     }
 }

@@ -1,27 +1,17 @@
-﻿using Azure;
-using ECommerce.BLL.Futures.Governorates.Requests;
-using ECommerce.BLL.IRepository;
-using ECommerce.BLL.Request;
-using ECommerce.BLL.Response;
-using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using ECommerce.Services;
-using MailKit.Search;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
+using ECommerce.Core;
+using ECommerce.DAL;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.BLL.Repository
 {

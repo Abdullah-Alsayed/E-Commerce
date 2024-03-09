@@ -1,17 +1,17 @@
-﻿using AutoMapper;
-using ECommerce.BLL.Futures.Account.Dtos;
-using ECommerce.BLL.Futures.Account.Requests;
-using ECommerce.BLL.IRepository;
-using ECommerce.BLL.Response;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
+using ECommerce.BLL.Features.Account.Dtos;
+using ECommerce.BLL.Features.Account.Requests;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {

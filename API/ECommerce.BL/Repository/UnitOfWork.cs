@@ -1,15 +1,15 @@
 ﻿// Ignore Spelling: Governorate
 
+using System.Threading.Tasks;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Repository;
+using ECommerce.Core;
+using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using ECommerce.Services.MailServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace ECommerce.BL.Repository
 {
@@ -19,7 +19,7 @@ namespace ECommerce.BL.Repository
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IMailServices _mailServices;
+        private readonly IMailServicies _mailServices;
         private readonly IHostingEnvironment _hosting;
         private readonly JWTHelpers _jwt;
 
@@ -28,7 +28,7 @@ namespace ECommerce.BL.Repository
             SignInManager<User> signInManager,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
-            IMailServices mailServices,
+            IMailServicies mailServices,
             IHostingEnvironment hosting,
             IOptions<JWTHelpers> jwt
         )

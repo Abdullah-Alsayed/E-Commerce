@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using ECommerce.BLL.Futures.Account.Requests;
-using ECommerce.BLL.Futures.Governorates.Dtos;
+using ECommerce.BLL.Features.Account.Requests;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 
@@ -23,8 +22,6 @@ namespace ECommerce.BLL.DTO
             CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
 
             CreateMap<PromoCode, PromoCodeDto>().ReverseMap();
-
-            CreateMap<Area, AreaDto>().ReverseMap();
 
             CreateMap<Status, StatusDto>().ReverseMap();
 

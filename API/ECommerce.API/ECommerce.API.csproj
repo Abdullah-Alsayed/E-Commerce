@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+	  <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,8 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.BL\ECommerce.BLL.csproj" />
     <ProjectReference Include="..\ECommerce.DAL\ECommerce.DAL.csproj" />
-    <ProjectReference Include="..\ECommerce.Helpers\ECommerce.Helpers.csproj" />
-    <ProjectReference Include="..\ECommerce.Services\ECommerce.Services.csproj" />
+    <ProjectReference Include="..\ECommerce.Helpers\ECommerce.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

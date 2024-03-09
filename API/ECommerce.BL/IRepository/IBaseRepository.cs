@@ -1,10 +1,10 @@
-﻿using ECommerce.BLL.Request;
-using ECommerce.Helpers;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using ECommerce.BLL.Request;
+using ECommerce.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.BLL.IRepository
 {

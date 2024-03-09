@@ -1,21 +1,21 @@
-﻿using ECommerce.BLL.Futures.Account.Dtos;
-using ECommerce.BLL.Futures.Account.Requests;
-using ECommerce.BLL.IRepository;
-using ECommerce.BLL.Response;
-using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using ECommerce.Services.MailServices;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ECommerce.BLL.Features.Account.Dtos;
+using ECommerce.BLL.Features.Account.Requests;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.Core.Services.MailServices;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerce.BLL.Repository
 {
@@ -25,7 +25,7 @@ namespace ECommerce.BLL.Repository
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IMailServices _mailServices;
+        private readonly IMailServicies _mailServices;
         private readonly JWTHelpers _jwt;
 
         public UserRepository(
@@ -33,7 +33,7 @@ namespace ECommerce.BLL.Repository
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IMailServices mailServices,
+            IMailServicies mailServices,
             JWTHelpers jwt
         )
         {
@@ -98,11 +98,10 @@ namespace ECommerce.BLL.Repository
 
         public async Task<BaseResponse> LoginAsync(LoginRequest request)
         {
-            var user = _userManager.Users.FirstOrDefault(
-                x =>
-                    x.UserName == request.UserName.ToLower()
-                    || x.Email == request.UserName.ToLower()
-                    || x.PhoneNumber == request.UserName
+            var user = _userManager.Users.FirstOrDefault(x =>
+                x.UserName == request.UserName.ToLower()
+                || x.Email == request.UserName.ToLower()
+                || x.PhoneNumber == request.UserName
             );
             if (user != null)
             {

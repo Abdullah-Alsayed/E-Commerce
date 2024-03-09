@@ -7,12 +7,14 @@
   "minNumber": "Min Number is {0}",
   "notFound": "This is not Found",
   "exist": "Alredy exist",
+  "notExist": "Not exist",
 
   //-------------------------------Entitys------------------------------
   "tax": "Tax",
   "nameAr": "The Arabic Name",
   "nameEn": "The English Name",
   "governorates": "The Governorate",
+  "area": "The Area",
 
   "MessageChangePassword": "Operation done successfully, please login with your new password.",
   "UserNameRequired": "Username is required.",

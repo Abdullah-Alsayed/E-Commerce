@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL.Entity;
@@ -7,10 +10,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Constants = ECommerce.Helpers.Constants;
+using Constants = ECommerce.Core.Constants;
 
 namespace ECommerce.API.Controllers
 {
@@ -76,9 +76,6 @@ namespace ECommerce.API.Controllers
                             CreateBy = _userId,
                             operationTypeEnum = OperationTypeEnum.Create,
                             Icon = Constants.NotificationIcons.Add,
-                            Title = "AddColor",
-                            Subject = "AddColor",
-                            Message = "AddColor",
                         }
                     );
                 }

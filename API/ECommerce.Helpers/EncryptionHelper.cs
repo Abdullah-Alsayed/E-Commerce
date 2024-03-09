@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
-namespace ECommerce.Helpers
+namespace ECommerce.Core
 {
     public class EncryptionHelper
     {

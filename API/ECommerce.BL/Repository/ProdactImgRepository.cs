@@ -1,13 +1,13 @@
-﻿using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using ECommerce.BLL.IRepository;
+using ECommerce.Core;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.BLL.Repository
 {
@@ -16,10 +16,7 @@ namespace ECommerce.BLL.Repository
         private readonly IHostingEnvironment hosting;
 
         public ProductPhotoRepository(Applicationdbcontext context, IHostingEnvironment hosting)
-            : base(context, hosting)
-        {
-            this.hosting = hosting;
-        }
+            : base(context, hosting) => this.hosting = hosting;
 
         public async Task<int> AddPhotos(Guid ID, IEnumerable<IFormFile> Files)
         {

@@ -1,13 +1,11 @@
-﻿using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
 using AutoMapper;
-using System.Collections.Generic;
+using ECommerce.BLL.DTO;
+using ECommerce.BLL.IRepository;
+using ECommerce.Core;
 using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
