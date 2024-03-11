@@ -1,111 +1,115 @@
-﻿//using System;
-//using System.Threading.Tasks;
-//using AutoMapper;
-//using ECommerce.BLL.DTO;
-//using ECommerce.BLL.IRepository;
-//using ECommerce.Core;
-//using ECommerce.DAL.Entity;
-//using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.SubCategories.Requests;
+using ECommerce.BLL.Features.SubCategories.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace ECommerce.API.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class SubCategoryController : ControllerBase
-//    {
-//        private readonly IUnitOfWork _unitOfWork;
-//        private readonly IMapper _mapper;
+namespace ECommerce.API.Controllers
+{
+    [Route("api/[controller]/[Action]")]
+    [ApiController]
+    [Authorize]
+    public class SubCategoryController : ControllerBase
+    {
+        private readonly ISubCategoryService _service;
 
-//        public SubCategoryController(IUnitOfWork unitOfWork, IMapper mapper)
-//        {
-//            _unitOfWork = unitOfWork;
-//            _mapper = mapper;
-//        }
+        public SubCategoryController(ISubCategoryService service) => _service = service;
 
-//        [HttpGet]
-//        [Route(nameof(FindSubCategory))]
-//        public async Task<IActionResult> FindSubCategory(Guid ID)
-//        {
-//            var SubCategory = await _unitOfWork.SubCategory.GetItemAsync(
-//                x => x.ID == ID,
-//                new[] { "User" }
-//            );
-//            if (SubCategory == null)
-//                return NotFound(Constants.Errors.NotFound);
-//            else
-//                return Ok(SubCategory);
-//        }
+        [HttpGet]
+        public async Task<BaseResponse> FindSubCategory([FromQuery] FindSubCategoryRequest request)
+        {
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-//        [HttpGet]
-//        [Route(nameof(FindAllSubCategory))]
-//        public async Task<IActionResult> FindAllSubCategory()
-//        {
-//            var SubCategorys = await _unitOfWork.SubCategory.GetAllAsync(
-//                new[] { "User" },
-//                o => o.NameAR,
-//                Constants.OrderBY.Descending
-//            );
-//            if (SubCategorys == null)
-//                return NotFound(Constants.Errors.NotFound);
-//            else
-//                return Ok(SubCategorys);
-//        }
+        [HttpGet]
+        public async Task<BaseResponse> GetAllSubCategory(
+            [FromQuery] GetAllSubCategoryRequest request
+        )
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-//        [HttpPost]
-//        [Route(nameof(CreateSubCategory))]
-//        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-//        public async Task<IActionResult> CreateSubCategory([FromForm] SubCategoryDto dto)
-//        {
-//            SubCategory Entity = _mapper.Map<SubCategory>(dto);
-//            Entity.CreateAt = DateTime.Now;
-//            Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-//            Entity.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
-//                dto.File,
-//                Constants.PhotoFolder.SubCategorys
-//            );
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-//            var SubCategory = await _unitOfWork.SubCategory.AddaAync(Entity);
-//            if (SubCategory == null)
-//                return BadRequest(Constants.Errors.CreateFailed);
-//            else
-//                await _unitOfWork.SaveAsync();
-//            return Ok(SubCategory);
-//        }
+        [HttpPost]
+        public async Task<BaseResponse> CreateSubCategory(CreateSubCategoryRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-//        // PUT api/<SubCategoryController>/5
-//        [HttpPut]
-//        [Route(nameof(UpdateSubCategory))]
-//        public async Task<IActionResult> UpdateSubCategory(int ID, [FromForm] SubCategoryDto dto)
-//        {
-//            var SubCategory = await _unitOfWork.SubCategory.FindAsync(ID);
-//            if (SubCategory == null)
-//                return BadRequest(Constants.Errors.NotFound);
-//            else
-//            {
-//                _mapper.Map(dto, SubCategory);
-//                SubCategory.ModifyAt = DateTime.Now;
-//                SubCategory.ModifyBy = _unitOfWork.User.GetUserID(User);
-//                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
-//                    dto.File,
-//                    Constants.PhotoFolder.SubCategorys,
-//                    SubCategory.PhotoPath
-//                );
-//                await _unitOfWork.SaveAsync();
-//                return Ok(SubCategory);
-//            }
-//        }
+        [HttpPut]
+        public async Task<BaseResponse> UpdateSubCategory(UpdateSubCategoryRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-//        //[HttpDelete]
-//        ////[Authorize(Roles = nameof(Constants.Roles.Admin))]
-//        //[Route(nameof(DeleteSubCategory))]
-//        //public async Task<IActionResult> DeleteSubCategory(int ID)
-//        //{
-//        //    var SubCategory = await _unitOfWork.SubCategory.FindAsync(ID);
-//        //    if (!_unitOfWork.SubCategory.Delete(SubCategory))
-//        //        return NotFound(Constants.Errors.NotFound);
-//        //    else
-//        //      await _unitOfWork.SaveAsync();
-//        //    return Ok();
-//        //}
-//    }
-//}
+        [HttpPut]
+        public async Task<BaseResponse> ToggleAvtiveSubCategory(
+            ToggleAvtiveSubCategoryRequest request
+        )
+        {
+            try
+            {
+                return await _service.ToggleAvtiveAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteSubCategory(DeleteSubCategoryRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+    }
+}

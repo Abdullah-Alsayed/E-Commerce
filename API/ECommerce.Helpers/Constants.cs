@@ -23,6 +23,7 @@
             public const string NotExist = "notExist";
             public const string InvalidExtension= "invalidExtension";
             public const string InvalidSize= "invalidSize";
+            public const string HasReview= "hasReview";
         }
         public static class EntitsKeys
         {
@@ -37,8 +38,14 @@
             public const string Voucher= "voucher";
             public const string Value = "value";
             public const string Name="name";
-            public static string Photo="photo";
-            public static string Brand = "barnd";
+            public const string Photo="photo";
+            public const string Brand = "barnd";
+            public const string Category= "category";
+            public const string SubCategory= "subCategory";
+            public const string Unit= "unit";
+            public const string Status= "status";
+            public const string Product = "Product";
+            public const string Review= "review";
         }
 
         public static class Gender

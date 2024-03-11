@@ -5,6 +5,9 @@
         Create = 1,
         Update,
         Delete,
-        Toggle
+        Toggle,
+        GetAll,
+        Find,
+        Search
     }
 }

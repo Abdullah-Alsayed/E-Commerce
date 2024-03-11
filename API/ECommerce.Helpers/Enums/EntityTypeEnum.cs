@@ -6,6 +6,11 @@
         Area,
         Color,
         Voucher,
-        Brand
+        Brand,
+        Category,
+        SubCategory,
+        Unit,
+        Status,
+        Review
     }
 }

@@ -52,15 +52,15 @@ namespace ECommerce.BL.Repository
             SliderPhoto = new BaseRepository<SliderPhoto>(_context);
             Notification = new NotificationRepository(_context);
             Voucher = new BaseRepository<Voucher>(_context);
+            ErrorLog = new ErrorRepository(_context);
             //ProductPhoto = new ProductPhotoRepository(_context);
             History = new BaseRepository<History>(_context);
             ContactUs = new BaseRepository<ContactUs>(_context);
             Category = new BaseRepository<Category>(_context);
-            ErrorLog = new BaseRepository<ErrorLog>(_context);
             Expense = new BaseRepository<Expense>(_context);
             Setting = new BaseRepository<Setting>(_context);
             Status = new BaseRepository<Status>(_context);
-            Review = new BaseRepository<Review>(_context);
+            Review = new BaseRepository<ProductReview>(_context);
             Color = new BaseRepository<Color>(_context);
             Brand = new BaseRepository<Brand>(_context);
             Unit = new BaseRepository<Unit>(_context);
@@ -75,12 +75,12 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<ContactUs> ContactUs { get; private set; }
         public IProductPhotoRepository ProductPhoto { get; private set; }
         public INotificationRepository Notification { get; private set; }
-        public IBaseRepository<ErrorLog> ErrorLog { get; private set; }
+        public IErrorRepository ErrorLog { get; private set; }
         public IBaseRepository<History> History { get; private set; }
         public IBaseRepository<Category> Category { get; private set; }
         public IBaseRepository<Expense> Expense { get; private set; }
         public IBaseRepository<Setting> Setting { get; private set; }
-        public IBaseRepository<Review> Review { get; private set; }
+        public IBaseRepository<ProductReview> Review { get; private set; }
         public IBaseRepository<Status> Status { get; private set; }
         public IBaseRepository<Color> Color { get; private set; }
         public IBaseRepository<Brand> Brand { get; private set; }

@@ -77,11 +77,12 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.StackTrace }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.Find);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -110,11 +111,12 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -163,8 +165,11 @@ public class GovernorateService : IGovernorateService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Create);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -214,8 +219,11 @@ public class GovernorateService : IGovernorateService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Update);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -265,8 +273,11 @@ public class GovernorateService : IGovernorateService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Toggle);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -316,8 +327,11 @@ public class GovernorateService : IGovernorateService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Delete);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -335,31 +349,28 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.Message, }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.Search);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
     #region helpers
-    private async Task SendNotification(OperationTypeEnum action)
-    {
+    private async Task SendNotification(OperationTypeEnum action) =>
         _ = await _unitOfWork.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
                 CreateName = _userName,
                 OperationType = action,
-                Icon = action.ToString(),
                 Entity = EntitiesEnum.Governorate
             }
         );
-    }
 
-    private async Task LogHistory(OperationTypeEnum action)
-    {
+    private async Task LogHistory(OperationTypeEnum action) =>
         await _unitOfWork.History.AddaAync(
             new History
             {
@@ -368,20 +379,11 @@ public class GovernorateService : IGovernorateService
                 Entity = EntitiesEnum.Governorate
             }
         );
-    }
 
     private async Task ErrorLog(Exception ex, OperationTypeEnum action)
     {
-        _unitOfWork.Context.ChangeTracker.Clear();
-        _ = await _unitOfWork.ErrorLog.AddaAync(
-            new ErrorLog
-            {
-                Source = ex.Source,
-                Message = ex.Message,
-                Operation = action,
-                Entity = EntitiesEnum.Brand
-            }
-        );
+        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Governorate);
+        _ = await _unitOfWork.SaveAsync();
     }
 
     #endregion

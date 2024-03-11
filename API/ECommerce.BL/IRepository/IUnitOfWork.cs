@@ -17,11 +17,11 @@ namespace ECommerce.BLL.IRepository
         IProductPhotoRepository ProductPhoto { get; }
         IBaseRepository<History> History { get; }
         IBaseRepository<Category> Category { get; }
-        IBaseRepository<ErrorLog> ErrorLog { get; }
+        IErrorRepository ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }
         IBaseRepository<Expense> Expense { get; }
         IBaseRepository<Status> Status { get; }
-        IBaseRepository<Review> Review { get; }
+        IBaseRepository<ProductReview> Review { get; }
         IBaseRepository<Color> Color { get; }
         IBaseRepository<Brand> Brand { get; }
         IProductRepository Product { get; }

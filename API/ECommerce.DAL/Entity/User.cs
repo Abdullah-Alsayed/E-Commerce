@@ -21,7 +21,7 @@ namespace ECommerce.DAL.Entity
             Expenses = new HashSet<Expense>();
             Settings = new HashSet<Setting>();
             Statuses = new HashSet<Status>();
-            Reviews = new HashSet<Review>();
+            Reviews = new HashSet<ProductReview>();
             Brands = new HashSet<Brand>();
             Orders = new HashSet<Order>();
             Areas = new HashSet<Area>();
@@ -67,7 +67,7 @@ namespace ECommerce.DAL.Entity
         public virtual ICollection<Expense> Expenses { get; set; }
         public virtual ICollection<Setting> Settings { get; set; }
         public virtual ICollection<Status> Statuses { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<ProductReview> Reviews { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Brand> Brands { get; set; }
         public virtual ICollection<Area> Areas { get; set; }

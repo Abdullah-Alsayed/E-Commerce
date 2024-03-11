@@ -20,37 +20,11 @@
   "value": "The value",
   "name": "The Name",
 
-  "MessageChangePassword": "Operation done successfully, please login with your new password.",
-  "UserNameRequired": "Username is required.",
-  "PasswordRequired": "Password is required",
-  "tokenRequired": "token Required",
-  "LanguageRequired": "please Enter Language",
-  "InvalidLanguage": "Please Enter Valid Language",
-  "invalidLogin": "The data entered is incorrect",
-  "islocked": "account is Locked please try again later after 1 hours",
-  "invalidCurrency": "Invalid Currency Id",
-  "uniqDay": "Can not duplicate days of work",
-  "finishingHours": "Must startingHours less than finishingHours",
-  "invalidEnum": "invalid Enum",
-  "invalidTimeZone": "Invalid Timezone",
 
 
-  "Saturday": "Saturday",
-  "Sunday": "Sunday",
-  "Monday": "Monday",
-  "Tuesday": "Tuesday",
-  "Wednesday": "Wednesday",
-  "Thursday": "Thursday",
-  "Friday": "Friday",
-  "invalidCurrencies": "Invalid Currencies Id",
+  // --------------------------- Product ---------------------------
 
-  "invalidPhoneNumber": "invalid Phone Number",
-  "canUpdateBusinessTypeIdFirstUpdate": "can Update Business Type Id First Update only",
-  // --------------------------- Secuiry System  ---------------------------
-
-  "AuthorizedDomains": "Invalid Domain",
-  "InvalidIp": "Invalid IP Must Be IPv4 or IPv6  ",
-  "InvalidIpLogin": "Invalid Ip Address",
+  "HasReview": "You have already rated this product",
 
   // --------------------------- Department  ---------------------------
   "departmentname": "Please Enter Department Name",

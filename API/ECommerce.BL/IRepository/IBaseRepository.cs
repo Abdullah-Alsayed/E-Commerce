@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
+using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 

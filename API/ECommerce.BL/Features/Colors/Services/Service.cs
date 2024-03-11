@@ -69,8 +69,8 @@ namespace ECommerce.BLL.Features.Colors.Services
             try
             {
                 var color = await _unitOfWork.Color.FindAsync(request.ID);
-                var result = _mapper.Map<BrandDto>(color);
-                return new BaseResponse<BrandDto>
+                var result = _mapper.Map<ColorDto>(color);
+                return new BaseResponse<ColorDto>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
@@ -79,11 +79,12 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace }
-                );
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                await ErrorLog(ex, OperationTypeEnum.Find);
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
@@ -93,17 +94,17 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
                     ? _lang == Languages.Ar
-                        ? nameof(Governorate.NameAR)
-                        : nameof(Governorate.NameEN)
+                        ? nameof(Color.NameAR)
+                        : nameof(Color.NameEN)
                     : request.SearchBy;
 
                 var colors = await _unitOfWork.Color.GetAllAsync(request);
-                var response = _mapper.Map<List<BrandDto>>(colors);
-                return new BaseResponse<BaseGridResponse<List<BrandDto>>>
+                var response = _mapper.Map<List<ColorDto>>(colors);
+                return new BaseResponse<BaseGridResponse<List<ColorDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
-                    Result = new BaseGridResponse<List<BrandDto>>
+                    Result = new BaseGridResponse<List<ColorDto>>
                     {
                         Items = response,
                         Total = response != null ? response.Count : 0
@@ -112,11 +113,12 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
@@ -129,7 +131,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 var color = _mapper.Map<Color>(request);
                 color.CreateBy = _userId;
                 color = await _unitOfWork.Color.AddaAync(color);
-                var result = _mapper.Map<BrandDto>(color);
+                var result = _mapper.Map<ColorDto>(color);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
                 modifyRows++;
@@ -144,7 +146,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<BrandDto>
+                    return new BaseResponse<ColorDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -165,8 +167,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 await transaction.RollbackAsync();
                 await ErrorLog(ex, OperationTypeEnum.Create);
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
@@ -180,7 +185,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 _mapper.Map(request, color);
                 color.ModifyBy = _userId;
                 color.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<BrandDto>(color);
+                var result = _mapper.Map<ColorDto>(color);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -195,7 +200,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<BrandDto>
+                    return new BaseResponse<ColorDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -216,8 +221,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 await transaction.RollbackAsync();
                 await ErrorLog(ex, OperationTypeEnum.Update);
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
@@ -231,7 +239,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 color.DeletedBy = _userId;
                 color.DeletedAt = DateTime.UtcNow;
                 color.IsDeleted = true;
-                var result = _mapper.Map<BrandDto>(color);
+                var result = _mapper.Map<ColorDto>(color);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Delete);
                 modifyRows++;
@@ -246,7 +254,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<BrandDto>
+                    return new BaseResponse<ColorDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -267,8 +275,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 await transaction.RollbackAsync();
                 await ErrorLog(ex, OperationTypeEnum.Delete);
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
@@ -286,31 +297,28 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.Message, }
-                );
-                _ = await _unitOfWork.SaveAsync();
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                await ErrorLog(ex, OperationTypeEnum.Search);
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
             }
         }
 
         #region helpers
-        private async Task SendNotification(OperationTypeEnum action)
-        {
+        private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
                     CreateName = _userName,
                     OperationType = action,
-                    Icon = action.ToString(),
                     Entity = EntitiesEnum.Color
                 }
             );
-        }
 
-        private async Task LogHistory(OperationTypeEnum action)
-        {
+        private async Task LogHistory(OperationTypeEnum action) =>
             await _unitOfWork.History.AddaAync(
                 new History
                 {
@@ -319,20 +327,11 @@ namespace ECommerce.BLL.Features.Colors.Services
                     Entity = EntitiesEnum.Color
                 }
             );
-        }
 
         private async Task ErrorLog(Exception ex, OperationTypeEnum action)
         {
-            _unitOfWork.Context.ChangeTracker.Clear();
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog
-                {
-                    Source = ex.Source,
-                    Message = ex.Message,
-                    Operation = action,
-                    Entity = EntitiesEnum.Color
-                }
-            );
+            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Color);
+            _ = await _unitOfWork.SaveAsync();
         }
 
         #endregion

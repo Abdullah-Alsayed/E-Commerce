@@ -1,0 +1,38 @@
+﻿using System.Linq;
+using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.Core;
+using ECommerce.DAL;
+using FluentValidation;
+using Microsoft.Extensions.Localization;
+
+namespace ECommerce.BLL.Features.Units.Validators;
+
+public class FindUnitValidator : AbstractValidator<FindUnitRequest>
+{
+    private readonly IStringLocalizer<FindUnitValidator> _localizer;
+
+    public FindUnitValidator(
+        Applicationdbcontext context,
+        IStringLocalizer<FindUnitValidator> localizer
+    )
+    {
+        ClassLevelCascadeMode = CascadeMode.Stop;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        _localizer = localizer;
+
+        RuleFor(req => req.ID)
+            .NotEmpty()
+            .WithMessage(x => Constants.Errors.Register)
+            .NotNull()
+            .WithMessage(x => Constants.Errors.Register);
+
+        RuleFor(req => req)
+            .Must(req =>
+            {
+                return context.Units.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+            })
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntitsKeys.Unit]} {_localizer[Constants.MessageKeys.NotFound]}"
+            );
+    }
+}

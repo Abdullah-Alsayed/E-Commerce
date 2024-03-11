@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
@@ -20,7 +20,7 @@ namespace ECommerce.DAL.Entity
         [StringLength(255)]
         public string PhotoPath { get; set; }
 
-        public virtual Category Category { get; set; } = new Category();
+        public virtual Category Category { get; set; }
         public virtual ICollection<Product> Products { get; set; }
     }
 }

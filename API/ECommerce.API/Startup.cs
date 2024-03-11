@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Features.Brands.Services;
+using ECommerce.BLL.Features.Categories.Services;
 using ECommerce.BLL.Features.Colors.Services;
 using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Reviews.Services;
+using ECommerce.BLL.Features.Statuses.Services;
+using ECommerce.BLL.Features.SubCategories.Services;
+using ECommerce.BLL.Features.Units.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Validators;
@@ -146,11 +148,16 @@ namespace ECommerce.API
 
             #region Services
             services.AddScoped<IGovernorateService, GovernorateService>();
-            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<ISubCategoryService, SubCategoryService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IStatusService, StatusService>();
+            services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IMailServicies, MailServicies>();
             services.AddScoped<IColorService, ColorService>();
-            services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IUnitService, UnitService>();
             #endregion
         }
 

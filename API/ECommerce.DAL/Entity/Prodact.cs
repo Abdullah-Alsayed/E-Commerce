@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
@@ -11,7 +11,7 @@ namespace ECommerce.DAL.Entity
             ProductOrders = new HashSet<ProductOrder>();
             ProductPhotos = new HashSet<ProductPhoto>();
             Favorites = new HashSet<Favorite>();
-            Reviews = new HashSet<Review>();
+            Reviews = new HashSet<ProductReview>();
         }
 
         public Guid BrandID { get; set; }
@@ -43,6 +43,6 @@ namespace ECommerce.DAL.Entity
         public virtual ICollection<ProductPhoto> ProductPhotos { get; set; }
         public virtual ICollection<ProductStock> ProductStocks { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<ProductReview> Reviews { get; set; }
     }
 }

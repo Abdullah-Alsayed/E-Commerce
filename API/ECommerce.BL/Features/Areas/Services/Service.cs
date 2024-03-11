@@ -77,11 +77,12 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.StackTrace }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.Find);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -100,7 +101,7 @@ public class AreaService : IAreaService
             return new BaseResponse<BaseGridResponse<List<AreaDto>>>
             {
                 IsSuccess = true,
-                Message = _localizer[MessageKeys.Success].ToString(),
+                Message = _localizer[MessageKeys.Fail].ToString(),
                 Result = new BaseGridResponse<List<AreaDto>>
                 {
                     Items = response,
@@ -110,11 +111,12 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -163,8 +165,11 @@ public class AreaService : IAreaService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Create);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -214,8 +219,11 @@ public class AreaService : IAreaService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Update);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -265,8 +273,11 @@ public class AreaService : IAreaService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Toggle);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -317,8 +328,11 @@ public class AreaService : IAreaService
         {
             await transaction.RollbackAsync();
             await ErrorLog(ex, OperationTypeEnum.Delete);
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -336,11 +350,12 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            _ = await _unitOfWork.ErrorLog.AddaAync(
-                new ErrorLog { Source = ex.Source, Message = ex.Message, }
-            );
-            _ = await _unitOfWork.SaveAsync();
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            await ErrorLog(ex, OperationTypeEnum.Search);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
         }
     }
 
@@ -353,7 +368,6 @@ public class AreaService : IAreaService
                 CreateBy = _userId,
                 CreateName = _userName,
                 OperationType = action,
-                Icon = action.ToString(),
                 Entity = EntitiesEnum.Area,
             }
         );
@@ -373,17 +387,8 @@ public class AreaService : IAreaService
 
     private async Task ErrorLog(Exception ex, OperationTypeEnum action)
     {
-        _unitOfWork.Context.ChangeTracker.Clear();
-        _ = await _unitOfWork.ErrorLog.AddaAync(
-            new ErrorLog
-            {
-                Source = ex.Source,
-                Message = ex.Message,
-                Operation = action,
-                Entity = EntitiesEnum.Area
-            }
-        );
+        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Area);
+        _ = await _unitOfWork.SaveAsync();
     }
-
     #endregion
 }

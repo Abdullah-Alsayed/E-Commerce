@@ -23,7 +23,7 @@ namespace ECommerce.DAL
         public DbSet<ProductPhoto> productPhotos { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<Voucher> Voucher { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        public DbSet<ProductReview> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<SliderPhoto> SliderPhotos { get; set; }
         public DbSet<Status> Statuses { get; set; }
