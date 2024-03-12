@@ -47,5 +47,6 @@ namespace ECommerce.BLL.IRepository
         );
         bool ToggleAvtive(bool IsActive);
         List<string> SearchEntity();
+        Task<T> FirstAsync();
     }
 }

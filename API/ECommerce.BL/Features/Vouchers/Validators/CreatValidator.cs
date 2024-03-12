@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Azure;
+using ECommerce.BLL.Features.Expenses.Requests;
 using ECommerce.BLL.Features.Vouchers.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;

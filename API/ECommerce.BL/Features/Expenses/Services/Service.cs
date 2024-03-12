@@ -1,0 +1,352 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using ECommerce.BLL.Features.Expenses.Dtos;
+using ECommerce.BLL.Features.Expenses.Requests;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.DAL.Entity;
+using ECommerce.DAL.Enums;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
+using static ECommerce.Core.Constants;
+
+namespace ECommerce.BLL.Features.Expenses.Services;
+
+public class ExpenseService : IExpenseService
+{
+    IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHttpContextAccessor _httpContext;
+    private readonly IHostEnvironment _environment;
+    private readonly IStringLocalizer<ExpenseService> _localizer;
+
+    private string _userId = Constants.System;
+    private string _userName = Constants.System;
+    private string _lang = Languages.Ar;
+
+    public ExpenseService(
+        IUnitOfWork unitOfWork,
+        IStringLocalizer<ExpenseService> localizer,
+        IHttpContextAccessor httpContextAccessor,
+        IHostEnvironment environment
+    )
+    {
+        _unitOfWork = unitOfWork;
+        _localizer = localizer;
+        _httpContext = httpContextAccessor;
+        _environment = environment;
+
+        #region initilize mapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.CreateMap<Expense, ExpenseDto>().ReverseMap();
+            cfg.CreateMap<Expense, CreateExpenseRequest>().ReverseMap();
+            cfg.CreateMap<Expense, UpdateExpenseRequest>().ReverseMap();
+        });
+        _mapper = new Mapper(config);
+        #endregion initilize mapper
+
+        #region Get User Data From Token
+        _userId = _httpContext
+            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntitsKeys.ID)
+            ?.Value;
+
+        _userName = _httpContext
+            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntitsKeys.FullName)
+            ?.Value;
+
+        _lang =
+            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        #endregion
+    }
+
+    public async Task<BaseResponse> FindAsync(FindExpenseRequest request)
+    {
+        try
+        {
+            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            var result = _mapper.Map<ExpenseDto>(Expense);
+            return new BaseResponse<ExpenseDto>
+            {
+                IsSuccess = true,
+                Message = _localizer[MessageKeys.Success].ToString(),
+                Result = result
+            };
+        }
+        catch (Exception ex)
+        {
+            await ErrorLog(ex, OperationTypeEnum.Find);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    public async Task<BaseResponse> GetAllAsync(GetAllExpenseRequest request)
+    {
+        try
+        {
+            request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
+                ? nameof(Expense.Reference)
+                : request.SearchBy;
+
+            var Expenses = await _unitOfWork.Expense.GetAllAsync(request);
+            var response = _mapper.Map<List<ExpenseDto>>(Expenses);
+            return new BaseResponse<BaseGridResponse<List<ExpenseDto>>>
+            {
+                IsSuccess = true,
+                Message = _localizer[MessageKeys.Success].ToString(),
+                Result = new BaseGridResponse<List<ExpenseDto>>
+                {
+                    Items = response,
+                    Total = response != null ? response.Count : 0
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    public async Task<BaseResponse> CreateAsync(CreateExpenseRequest request)
+    {
+        using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+        var modifyRows = 0;
+        try
+        {
+            var Expense = _mapper.Map<Expense>(request);
+            Expense.CreateBy = _userId;
+            Expense.PhotoPath = await _unitOfWork.Expense.UplodPhoto(
+                request.FormFile,
+                _environment,
+                Constants.PhotoFolder.Expense
+            );
+            Expense = await _unitOfWork.Expense.AddaAync(Expense);
+            var result = _mapper.Map<ExpenseDto>(Expense);
+            #region Send Notification
+            await SendNotification(OperationTypeEnum.Create);
+            modifyRows++;
+            #endregion
+
+            #region Log
+            await LogHistory(OperationTypeEnum.Create);
+            modifyRows++;
+            #endregion
+
+            modifyRows++;
+            if (await _unitOfWork.IsDone(modifyRows))
+            {
+                await transaction.CommitAsync();
+                return new BaseResponse<ExpenseDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            else
+            {
+                await transaction.RollbackAsync();
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString(),
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            await ErrorLog(ex, OperationTypeEnum.Create);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    public async Task<BaseResponse> UpdateAsync(UpdateExpenseRequest request)
+    {
+        using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+        var modifyRows = 0;
+        try
+        {
+            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            _mapper.Map(request, Expense);
+            Expense.ModifyBy = _userId;
+            Expense.ModifyAt = DateTime.UtcNow;
+            Expense.PhotoPath = await _unitOfWork.Expense.UplodPhoto(
+                request.FormFile,
+                _environment,
+                Constants.PhotoFolder.Expense,
+                Expense.PhotoPath
+            );
+            var result = _mapper.Map<ExpenseDto>(Expense);
+            #region Send Notification
+            await SendNotification(OperationTypeEnum.Update);
+            modifyRows++;
+            #endregion
+
+            #region Log
+            await LogHistory(OperationTypeEnum.Update);
+            modifyRows++;
+            #endregion
+
+            modifyRows++;
+            if (await _unitOfWork.IsDone(modifyRows))
+            {
+                await transaction.CommitAsync();
+                return new BaseResponse<ExpenseDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            else
+            {
+                await transaction.RollbackAsync();
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString(),
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            await ErrorLog(ex, OperationTypeEnum.Update);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    public async Task<BaseResponse> DeleteAsync(DeleteExpenseRequest request)
+    {
+        using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+        var modifyRows = 0;
+        try
+        {
+            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            Expense.DeletedBy = _userId;
+            Expense.DeletedAt = DateTime.UtcNow;
+            Expense.IsDeleted = true;
+            var result = _mapper.Map<ExpenseDto>(Expense);
+            #region Send Notification
+            await SendNotification(OperationTypeEnum.Delete);
+            modifyRows++;
+            #endregion
+
+            #region Log
+            await LogHistory(OperationTypeEnum.Delete);
+            modifyRows++;
+            #endregion
+
+            modifyRows++;
+            if (await _unitOfWork.IsDone(modifyRows))
+            {
+                await transaction.CommitAsync();
+                return new BaseResponse<ExpenseDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            else
+            {
+                await transaction.RollbackAsync();
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString(),
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            await ErrorLog(ex, OperationTypeEnum.Delete);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    public async Task<BaseResponse> GetSearchEntityAsync()
+    {
+        try
+        {
+            var result = _unitOfWork.Expense.SearchEntity();
+            return new BaseResponse<List<string>>
+            {
+                IsSuccess = true,
+                Message = _localizer[MessageKeys.Success].ToString(),
+                Result = result
+            };
+        }
+        catch (Exception ex)
+        {
+            await ErrorLog(ex, OperationTypeEnum.Search);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
+    #region helpers
+    private async Task SendNotification(OperationTypeEnum action)
+    {
+        _ = await _unitOfWork.Notification.AddNotificationAsync(
+            new Notification
+            {
+                CreateBy = _userId,
+                CreateName = _userName,
+                OperationType = action,
+                Entity = EntitiesEnum.Expense
+            }
+        );
+    }
+
+    private async Task LogHistory(OperationTypeEnum action)
+    {
+        await _unitOfWork.History.AddaAync(
+            new History
+            {
+                UserID = _userId,
+                Action = action,
+                Entity = EntitiesEnum.Expense
+            }
+        );
+    }
+
+    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
+    {
+        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Expense);
+        _ = await _unitOfWork.SaveAsync();
+    }
+    #endregion
+}

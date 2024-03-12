@@ -11,6 +11,9 @@
         SubCategory,
         Unit,
         Status,
-        Review
+        Review,
+        Setting,
+        ContactUs,
+        Expense
     }
 }

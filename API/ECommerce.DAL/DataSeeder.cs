@@ -80,6 +80,25 @@ namespace ECommerce.Core
                     }
                 );
             }
+            if (!context.Settings.Any())
+            {
+                context.Settings.Add(
+                    new Setting
+                    {
+                        Address = "Dummy Data",
+                        Email = "test@test.com",
+                        FaceBook = "FaceBook.com",
+                        Instagram = "Instagram.com",
+                        MainColor = "#4990e2",
+                        Logo = "Logo.png",
+                        Phone = "011111111111",
+                        Whatsapp = "whatsapp.com",
+                        Youtube = "Youtube.com",
+                        Title = "Dummy Data",
+                        CreateBy = systemUser,
+                    }
+                );
+            }
             context.SaveChanges();
         }
     }

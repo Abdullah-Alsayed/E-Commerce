@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Categories.Requests;
 using ECommerce.BLL.Features.Categories.Services;
 using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;

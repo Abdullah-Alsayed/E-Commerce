@@ -11,13 +11,9 @@ namespace ECommerce.BLL.DTO
         {
             CreateMap<Product, ProductDto>().ReverseMap();
 
-            CreateMap<ContactUs, ContactUsDto>().ReverseMap();
-
             CreateMap<Expense, ExpenseDto>().ReverseMap();
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
-
-            CreateMap<Setting, SettingDto>().ReverseMap();
 
             CreateMap<User, CreateUserRequest>()
                 //.ForMember(o => o.Email.ToLower(), b => b.MapFrom(z => z.Email))

@@ -1,4 +1,5 @@
-﻿using ECommerce.BLL.Features.Reviews.Requests;
+﻿using System.Linq;
+using ECommerce.BLL.Features.Reviews.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;
@@ -46,6 +47,23 @@ public class UpdateReviewValidator : AbstractValidator<UpdateReviewRequest>
             .NotNull()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
+
+        RuleFor(req => req.ID)
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .Must(ID =>
+            {
+                return context.Reviews.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+            })
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
     }
 }

@@ -8,8 +8,11 @@ using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Features.Categories.Services;
 using ECommerce.BLL.Features.Colors.Services;
+using ECommerce.BLL.Features.ContactUses.Services;
+using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Governorates.Services;
 using ECommerce.BLL.Features.Reviews.Services;
+using ECommerce.BLL.Features.Settings.Services;
 using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
 using ECommerce.BLL.Features.Units.Services;
@@ -47,13 +50,15 @@ namespace ECommerce.API
         [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JWTHelpers>(Configuration.GetSection("JWT"));
+            //****************** Fluent Validation ******************************
             services.AddFluentValidation(fluent =>
                 fluent.RegisterValidatorsFromAssemblyContaining<BaseValidator>()
             );
 
+            //****************** Controllers ******************************
             services.AddControllers();
 
+            //****************** Newtonsoft Json ******************************
             services
                 .AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -63,9 +68,7 @@ namespace ECommerce.API
                         .Ignore
                 );
 
-            services.AddDbContext<Applicationdbcontext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            //****************** Swagger ******************************
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "E-Commerce.API", Version = "v1" });
@@ -101,7 +104,12 @@ namespace ECommerce.API
                 );
             });
 
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            //****************** Application DB context ******************************
+            services.AddDbContext<Applicationdbcontext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            );
+
+            //****************** Identity Setting ******************************
             services
                 .AddIdentity<User, IdentityRole>(Option =>
                 {
@@ -113,7 +121,9 @@ namespace ECommerce.API
                 })
                 .AddEntityFrameworkStores<Applicationdbcontext>()
                 .AddDefaultTokenProviders();
-            services.AddTransient<IMailServicies, MailServicies>();
+
+            //****************** JWT ******************************
+            services.Configure<JWTHelpers>(Configuration.GetSection("JWT"));
             services
                 .AddAuthentication(options =>
                 {
@@ -137,20 +147,29 @@ namespace ECommerce.API
                         )
                     };
                 });
+
+            //****************** Auto Mapper ******************************
             services.AddAutoMapper(typeof(MappingProfile));
+
+            //****************** Http Context Accessor ******************************
             services.AddHttpContextAccessor();
 
-            // -- Localization
+            //****************** Localization ******************************
             services.AddLocalization();
             services.AddSingleton<LocalizerMiddleware>();
             services.AddDistributedMemoryCache();
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
             #region Services
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IMailServicies, MailServicies>();
             services.AddScoped<IGovernorateService, GovernorateService>();
             services.AddScoped<ISubCategoryService, SubCategoryService>();
+            services.AddScoped<IContactUsService, ContactUsService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IMailServicies, MailServicies>();
@@ -176,15 +195,16 @@ namespace ECommerce.API
                 });
             }
 
-            using (
-                var scope = app
-                    .ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                    .CreateScope()
-            )
+            //****************** Data Seeder ******************************
+            using var scope = app
+                .ApplicationServices.GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
             {
                 var context = scope.ServiceProvider.GetRequiredService<Applicationdbcontext>();
                 DataSeeder.SeedData(context);
             }
+
+            //****************** Localization ******************************
             var options = new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
@@ -192,6 +212,7 @@ namespace ECommerce.API
             app.UseRequestLocalization(options);
             app.UseStaticFiles();
             app.UseMiddleware<LocalizerMiddleware>();
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();

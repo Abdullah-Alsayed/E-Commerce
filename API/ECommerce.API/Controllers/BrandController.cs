@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Brands.Requests;
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class BrandController : ControllerBase
     {
         private readonly IBrandService _service;

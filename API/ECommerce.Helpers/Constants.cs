@@ -24,6 +24,11 @@
             public const string InvalidExtension= "invalidExtension";
             public const string InvalidSize= "invalidSize";
             public const string HasReview= "hasReview";
+            public const string EmailNotValid= "emailNotValid";
+            public const string LinkNotValid= "linkNotValid";
+            public const string ColorNotValid = "colorNotValid";
+            public const string PhoneNotValid= "phoneNotValid";
+            public static int SubjectNotValid;
         }
         public static class EntitsKeys
         {
@@ -46,6 +51,15 @@
             public const string Status= "status";
             public const string Product = "Product";
             public const string Review= "review";
+            public const string Email="";
+            public const string Whatsapp="";
+            public const string MainColor="";
+            public const string Phone="";
+            public const string Subject="";
+            public const string Message="";
+            public const string Expense="";
+            public const string Amount="";
+            public const string Reference="";
         }
 
         public static class Gender
@@ -73,6 +87,8 @@
             public const string SubCategorys = "SubCategorys";
             public const string ProductPhoto = "ProductPhoto";
             public const string Images= "Images";
+            public const string Main= "Main";
+            public const string Expense= "Expense";
         }
 
         public static class Errors

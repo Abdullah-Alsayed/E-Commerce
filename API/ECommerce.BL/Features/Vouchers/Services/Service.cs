@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Expenses.Dtos;
+using ECommerce.BLL.Features.Expenses.Requests;
 using ECommerce.BLL.Features.Vouchers.Dtos;
 using ECommerce.BLL.Features.Vouchers.Requests;
 using ECommerce.BLL.IRepository;

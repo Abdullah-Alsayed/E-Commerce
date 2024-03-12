@@ -581,9 +581,6 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Entity")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Icon")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -885,6 +882,60 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("productPhotos");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductReview", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rate")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Review")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
                 {
                     b.Property<Guid>("ID")
@@ -937,60 +988,6 @@ namespace ECommerce.DAL.Migrations
                     b.HasIndex("VendorID");
 
                     b.ToTable("ProductStock");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifyBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
-
-                    b.Property<Guid>("ProductID")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Reviews")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CreateBy");
-
-                    b.HasIndex("ProductID");
-
-                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
@@ -1117,11 +1114,11 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Youtube")
+                    b.Property<string>("Whatsapp")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("whatsapp")
+                    b.Property<string>("Youtube")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
@@ -1974,6 +1971,25 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductReview", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -1999,25 +2015,6 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Vendor");
-                });
-
-            modelBuilder.Entity("ECommerce.DAL.Entity.Review", b =>
-                {
-                    b.HasOne("ECommerce.DAL.Entity.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("CreateBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>

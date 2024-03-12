@@ -203,6 +203,7 @@ namespace ECommerce.BLL.Repository
                 );
                 await file.CopyToAsync(new FileStream(filepath, FileMode.Create));
             }
+            //Update Photo
             if (PhotoName != null && file != null)
             {
                 var Filepath = Path.Combine(
@@ -321,6 +322,11 @@ namespace ECommerce.BLL.Repository
                 .ToList();
 
             return stringProperties;
+        }
+
+        public async Task<T> FirstAsync()
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync();
         }
     }
 }

@@ -39,6 +39,7 @@
   <ItemGroup>
     <Folder Include="Images\Brands\" />
     <Folder Include="Images\Categorys\" />
+    <Folder Include="Images\Expense\" />
     <Folder Include="Images\NotificationsIcon\" />
     <Folder Include="Images\ProductImg\" />
     <Folder Include="Images\SubCategorys\" />

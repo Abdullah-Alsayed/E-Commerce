@@ -27,7 +27,7 @@ namespace ECommerce.DAL.Entity
         public string Youtube { get; set; }
 
         [StringLength(200)]
-        public string whatsapp { get; set; }
+        public string Whatsapp { get; set; }
 
         [EmailAddress, StringLength(100)]
         public string Email { get; set; }
