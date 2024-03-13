@@ -6,16 +6,20 @@ using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Features.Brands.Services;
+using ECommerce.BLL.Features.Carts.Services;
 using ECommerce.BLL.Features.Categories.Services;
 using ECommerce.BLL.Features.Colors.Services;
 using ECommerce.BLL.Features.ContactUses.Services;
 using ECommerce.BLL.Features.Expenses.Services;
+using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
 using ECommerce.BLL.Features.Reviews.Services;
 using ECommerce.BLL.Features.Settings.Services;
+using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
 using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Validators;
@@ -167,16 +171,20 @@ namespace ECommerce.API
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IContactUsService, ContactUsService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IMailServicies, MailServicies>();
+            services.AddScoped<IVendorService, VendorService>();
+            services.AddScoped<ISliderService, SliderService>();
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<ICartService, CartService>();
             #endregion
         }
 

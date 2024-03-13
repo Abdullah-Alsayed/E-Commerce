@@ -25,12 +25,14 @@ namespace ECommerce.DAL
         public DbSet<Voucher> Voucher { get; set; }
         public DbSet<ProductReview> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
-        public DbSet<SliderPhoto> SliderPhotos { get; set; }
+        public DbSet<Slider> Sliders { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<History> Histories { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {

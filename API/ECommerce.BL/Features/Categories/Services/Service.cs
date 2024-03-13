@@ -82,7 +82,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Find);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Find,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -116,7 +120,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.GetAll,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -174,7 +182,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Create);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Create,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -234,7 +246,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Update);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -288,7 +304,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Delete);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -342,7 +362,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Toggle);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -365,7 +389,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Search);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Search,
+                    EntitiesEnum.Category
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -395,12 +423,6 @@ namespace ECommerce.BLL.Features.Categories.Services
                     Entity = EntitiesEnum.Category
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Category);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

@@ -5,8 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Brands.Dtos;
-using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Dtos;
+using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -84,7 +85,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Find);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Brand);
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -118,7 +119,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.GetAll,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -176,7 +181,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Create);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Create,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -236,7 +245,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Update);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -290,7 +303,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Delete);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -344,7 +361,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Toggle);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -367,7 +388,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Search);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Search,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -397,12 +422,6 @@ namespace ECommerce.BLL.Features.Brands.Services
                     Entity = EntitiesEnum.Brand
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Brand);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

@@ -11,9 +11,9 @@ namespace ECommerce.DAL.Entity
         public User()
         {
             Notifications = new HashSet<Notification>();
-            SliderPhotos = new HashSet<SliderPhoto>();
             Governorates = new HashSet<Governorate>();
             SubCategorys = new HashSet<SubCategory>();
+            Reviews = new HashSet<ProductReview>();
             PromoCodes = new HashSet<Voucher>();
             Categorys = new HashSet<Category>();
             Favorites = new HashSet<Favorite>();
@@ -21,9 +21,9 @@ namespace ECommerce.DAL.Entity
             Expenses = new HashSet<Expense>();
             Settings = new HashSet<Setting>();
             Statuses = new HashSet<Status>();
-            Reviews = new HashSet<ProductReview>();
-            Brands = new HashSet<Brand>();
+            Sliders = new HashSet<Slider>();
             Orders = new HashSet<Order>();
+            Brands = new HashSet<Brand>();
             Areas = new HashSet<Area>();
             Units = new HashSet<Unit>();
         }
@@ -56,7 +56,7 @@ namespace ECommerce.DAL.Entity
 
         [StringLength(50)]
         public string Language { get; set; } = "ar-EG";
-        public virtual ICollection<SliderPhoto> SliderPhotos { get; set; }
+        public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<SubCategory> SubCategorys { get; set; }

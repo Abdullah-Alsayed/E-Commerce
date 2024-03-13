@@ -14,6 +14,10 @@
         Review,
         Setting,
         ContactUs,
-        Expense
+        Expense,
+        Slider,
+        Vendor,
+        Feedback,
+        Cart
     }
 }

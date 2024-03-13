@@ -77,7 +77,7 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Find);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -99,7 +99,7 @@ public class ReviewService : IReviewService
             return new BaseResponse<BaseGridResponse<List<ReviewDto>>>
             {
                 IsSuccess = true,
-                Message = _localizer[MessageKeys.Fail].ToString(),
+                Message = _localizer[MessageKeys.Success].ToString(),
                 Result = new BaseGridResponse<List<ReviewDto>>
                 {
                     Items = response,
@@ -109,7 +109,7 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -162,7 +162,7 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Create);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -216,7 +216,7 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Update);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -271,7 +271,7 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Delete);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -294,7 +294,7 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Search);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -329,10 +329,5 @@ public class ReviewService : IReviewService
         );
     }
 
-    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-    {
-        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Review);
-        _ = await _unitOfWork.SaveAsync();
-    }
     #endregion
 }

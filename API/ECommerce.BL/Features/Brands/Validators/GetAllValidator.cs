@@ -1,4 +1,5 @@
 ﻿using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Localization;

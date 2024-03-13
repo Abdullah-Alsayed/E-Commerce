@@ -4,8 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.DTO;
+using ECommerce.BLL.Features.Carts.Dtos;
+using ECommerce.BLL.Features.Carts.Requests;
 using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Colors.Requests;
+using ECommerce.BLL.Features.Feedbacks.Dtos;
+using ECommerce.BLL.Features.Feedbacks.Requests;
+using ECommerce.BLL.Features.Vendors.Dtos;
+using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -79,7 +85,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Find);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Color);
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -113,7 +119,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.GetAll,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -166,7 +176,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Create);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Create,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -220,7 +234,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Update);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -274,7 +292,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Delete);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -297,7 +319,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Search);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Search,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -327,12 +353,6 @@ namespace ECommerce.BLL.Features.Colors.Services
                     Entity = EntitiesEnum.Color
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Color);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

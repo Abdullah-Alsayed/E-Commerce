@@ -112,7 +112,11 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Create);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Create,
+                    EntitiesEnum.ContactUs
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -144,7 +148,11 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.GetAll,
+                    EntitiesEnum.ContactUs
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -174,12 +182,6 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                     Entity = EntitiesEnum.ContactUs
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.ContactUs);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

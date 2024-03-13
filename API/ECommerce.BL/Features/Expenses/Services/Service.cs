@@ -81,7 +81,7 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Find);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -113,7 +113,7 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -171,7 +171,7 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Create);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -231,7 +231,7 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Update);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -285,7 +285,7 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Delete);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -308,7 +308,7 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Search);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -343,10 +343,5 @@ public class ExpenseService : IExpenseService
         );
     }
 
-    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-    {
-        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Expense);
-        _ = await _unitOfWork.SaveAsync();
-    }
     #endregion
 }

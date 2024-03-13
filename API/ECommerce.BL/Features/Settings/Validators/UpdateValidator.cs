@@ -72,7 +72,7 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
             )
             .MaximumLength(10)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 10].ToString())
-            .Matches("^#?([a-f0-9]{6}|[a-f0-9]{3})$")
+            .Matches(Constants.Regex.Color)
             .WithMessage(x => $"{_localizer[Constants.MessageKeys.ColorNotValid]}");
 
         RuleFor(req => req.Phone)
@@ -86,9 +86,7 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
             )
             .MaximumLength(20)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
-            .Matches(
-                "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$"
-            )
+            .Matches(Constants.Regex.PhoneNumber)
             .WithMessage(x => $"{_localizer[Constants.MessageKeys.PhoneNotValid]}");
 
         RuleFor(req => req.FormFile)

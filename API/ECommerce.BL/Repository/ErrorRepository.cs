@@ -29,6 +29,7 @@ namespace ECommerce.BLL.Repository
                     Entity = entity
                 }
             );
+            await _context.SaveChangesAsync();
         }
     }
 }

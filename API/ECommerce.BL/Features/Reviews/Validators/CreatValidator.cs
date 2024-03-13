@@ -48,11 +48,11 @@ namespace ECommerce.BLL.Features.Reviews.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntitsKeys.Rate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntitsKeys.Rate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.ProductID)

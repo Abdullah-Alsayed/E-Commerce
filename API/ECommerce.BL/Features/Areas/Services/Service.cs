@@ -77,7 +77,7 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Find);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -101,7 +101,7 @@ public class AreaService : IAreaService
             return new BaseResponse<BaseGridResponse<List<AreaDto>>>
             {
                 IsSuccess = true,
-                Message = _localizer[MessageKeys.Fail].ToString(),
+                Message = _localizer[MessageKeys.Success].ToString(),
                 Result = new BaseGridResponse<List<AreaDto>>
                 {
                     Items = response,
@@ -111,7 +111,7 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -164,7 +164,7 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Create);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -218,7 +218,7 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Update);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -272,7 +272,7 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Toggle);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Toggle, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -327,7 +327,7 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Delete);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -350,7 +350,7 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Search);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -385,10 +385,5 @@ public class AreaService : IAreaService
         );
     }
 
-    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-    {
-        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Area);
-        _ = await _unitOfWork.SaveAsync();
-    }
     #endregion
 }

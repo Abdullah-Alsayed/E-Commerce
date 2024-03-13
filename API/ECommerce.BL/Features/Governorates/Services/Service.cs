@@ -77,7 +77,11 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Find);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Find,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -111,7 +115,11 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -164,7 +172,11 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Create);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -218,7 +230,11 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Update);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -272,7 +288,11 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Toggle);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Toggle,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -326,7 +346,11 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Delete);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -349,7 +373,11 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Search);
+            await _unitOfWork.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Governorate
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -379,12 +407,6 @@ public class GovernorateService : IGovernorateService
                 Entity = EntitiesEnum.Governorate
             }
         );
-
-    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-    {
-        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Governorate);
-        _ = await _unitOfWork.SaveAsync();
-    }
 
     #endregion
 }

@@ -6,7 +6,7 @@ namespace ECommerce.BLL.DTO
     public class HomeDto
     {
         public Setting Setting { get; set; }
-        public IEnumerable<SliderPhoto> SliderPhotos { get; set; }
+        public IEnumerable<Slider> Sliders { get; set; }
         public IEnumerable<Category> categories { get; set; }
         public IEnumerable<SubCategory> SubCategories { get; set; }
         public IEnumerable<Product> Products { get; set; }

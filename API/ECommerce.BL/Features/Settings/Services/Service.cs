@@ -82,7 +82,11 @@ namespace ECommerce.BLL.Features.Settings.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Find);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Find,
+                    EntitiesEnum.Setting
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -141,7 +145,11 @@ namespace ECommerce.BLL.Features.Settings.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Update);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.Setting
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -171,12 +179,6 @@ namespace ECommerce.BLL.Features.Settings.Services
                     Entity = EntitiesEnum.Setting
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Setting);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

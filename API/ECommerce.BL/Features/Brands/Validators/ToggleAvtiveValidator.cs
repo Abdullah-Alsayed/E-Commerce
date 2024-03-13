@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;

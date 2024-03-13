@@ -66,9 +66,7 @@ public class CreateContactUsValidator : AbstractValidator<CreateContactUsRequest
             )
             .MaximumLength(20)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
-            .Matches(
-                "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$"
-            )
+            .Matches(Constants.Regex.PhoneNumber)
             .WithMessage(x => $"{_localizer[Constants.MessageKeys.PhoneNotValid]}");
     }
 }

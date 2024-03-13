@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
 using ECommerce.DAL;

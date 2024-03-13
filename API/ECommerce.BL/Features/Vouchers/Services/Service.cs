@@ -80,7 +80,7 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Find);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -112,7 +112,7 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.GetAll);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -165,7 +165,7 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Create);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -219,7 +219,7 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Update);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -273,7 +273,7 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Toggle);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Toggle, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -327,7 +327,7 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await ErrorLog(ex, OperationTypeEnum.Delete);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -350,7 +350,7 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await ErrorLog(ex, OperationTypeEnum.Search);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -385,10 +385,5 @@ public class VoucherService : IVoucherService
         );
     }
 
-    private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-    {
-        await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Voucher);
-        _ = await _unitOfWork.SaveAsync();
-    }
     #endregion
 }

@@ -60,6 +60,18 @@
             public const string Expense="";
             public const string Amount="";
             public const string Reference="";
+            public const string Slider= "";
+            public const string TitleAR= "";
+            public const string TitleEN= "";
+            public const string Description= "";
+            public const string Vendor="";
+            public static string Address = "";
+            public static string Feedback;
+            public static string Comment;
+            public static string Rate="";
+            public static string Rating="";
+            public static string Quantity="";
+            public static string Cart="";
         }
 
         public static class Gender
@@ -89,6 +101,7 @@
             public const string Images= "Images";
             public const string Main= "Main";
             public const string Expense= "Expense";
+            public const string Slider= "Slider";
         }
 
         public static class Errors
@@ -109,6 +122,11 @@
             public const string Add = "ADD.png";
             public const string Edit = "Edit.png";
             public const string Delete = "Delete.png";
+        }
+        public static class Regex
+        {
+            public const string Color = "^#?([a-f0-9]{6}|[a-f0-9]{3})$";
+            public const string PhoneNumber = "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
         }
     }
 }

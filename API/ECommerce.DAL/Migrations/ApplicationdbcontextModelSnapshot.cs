@@ -1129,7 +1129,56 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Settings");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Entity.SliderPhoto", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ShoppingCart", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("ShoppingCarts");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Slider", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -1169,11 +1218,14 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<string>("PhotoPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleAR")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("TitleEN")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -1182,7 +1234,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("SliderPhotos");
+                    b.ToTable("Sliders");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
@@ -1509,7 +1561,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Vendor");
+                    b.ToTable("Vendors");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
@@ -2043,10 +2095,29 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Entity.SliderPhoto", b =>
+            modelBuilder.Entity("ECommerce.DAL.Entity.ShoppingCart", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
-                        .WithMany("SliderPhotos")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Slider", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany("Sliders")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2265,7 +2336,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Settings");
 
-                    b.Navigation("SliderPhotos");
+                    b.Navigation("Sliders");
 
                     b.Navigation("Statuses");
 

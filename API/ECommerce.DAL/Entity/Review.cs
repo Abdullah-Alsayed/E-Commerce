@@ -14,6 +14,6 @@ namespace ECommerce.DAL.Entity
         [Required, Range(1, 5)]
         public int Rate { get; set; }
 
-        public virtual Product Product { get; set; } = new Product();
+        public virtual Product Product { get; set; }
     }
 }

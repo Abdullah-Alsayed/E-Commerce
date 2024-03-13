@@ -10,12 +10,14 @@ namespace ECommerce.BLL.IRepository
         Applicationdbcontext Context { get; }
         IBaseRepository<SubCategory> SubCategory { get; }
         IBaseRepository<Governorate> Governorate { get; }
-        IBaseRepository<SliderPhoto> SliderPhoto { get; }
+        IBaseRepository<Slider> Slider { get; }
         IBaseRepository<Voucher> Voucher { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
         INotificationRepository Notification { get; }
         IProductPhotoRepository ProductPhoto { get; }
         IBaseRepository<History> History { get; }
+        IBaseRepository<Feedback> Feedback { get; }
+        IBaseRepository<ShoppingCart> Cart { get; }
         IBaseRepository<Category> Category { get; }
         IErrorRepository ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }
@@ -27,6 +29,7 @@ namespace ECommerce.BLL.IRepository
         IProductRepository Product { get; }
         IBaseRepository<Unit> Unit { get; }
         IBaseRepository<Area> Area { get; }
+        IBaseRepository<Vendor> Vendor { get; }
         IUserRepository User { get; }
 
         Task<int> SaveAsync();

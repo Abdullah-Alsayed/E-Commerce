@@ -1,5 +1,8 @@
 ﻿using System.Linq;
+using ECommerce.BLL.Features.Carts.Requests;
 using ECommerce.BLL.Features.Colors.Requests;
+using ECommerce.BLL.Features.Feedbacks.Requests;
+using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;

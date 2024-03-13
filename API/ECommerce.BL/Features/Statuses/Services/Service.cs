@@ -79,7 +79,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Find);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Find,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -113,7 +117,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.GetAll);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.GetAll,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -166,7 +174,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Create);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Create,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -220,7 +232,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Update);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -274,7 +290,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await ErrorLog(ex, OperationTypeEnum.Delete);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -297,7 +317,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex, OperationTypeEnum.Search);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Search,
+                    EntitiesEnum.Status
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -327,12 +351,6 @@ namespace ECommerce.BLL.Features.Statuses.Services
                     Entity = EntitiesEnum.Status
                 }
             );
-
-        private async Task ErrorLog(Exception ex, OperationTypeEnum action)
-        {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, action, EntitiesEnum.Status);
-            _ = await _unitOfWork.SaveAsync();
-        }
 
         #endregion
     }

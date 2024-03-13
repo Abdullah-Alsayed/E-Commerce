@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Response;
 
 namespace ECommerce.BLL.Features.Brands.Services
