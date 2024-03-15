@@ -11,6 +11,7 @@ public class GetAllSubCategoryValidator : AbstractValidator<GetAllSubCategoryReq
 
     public GetAllSubCategoryValidator(IStringLocalizer<GetAllSubCategoryValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req)
             .SetValidator(new GetAllValidator<GetAllSubCategoryValidator>(_localizer));
     }

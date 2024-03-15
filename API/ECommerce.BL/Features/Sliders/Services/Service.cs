@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Sliders.Dtos;
-using ECommerce.BLL.Features.Sliders.Dtos;
-using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;

@@ -10,6 +10,8 @@ using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Colors.Requests;
 using ECommerce.BLL.Features.Feedbacks.Dtos;
 using ECommerce.BLL.Features.Feedbacks.Requests;
+using ECommerce.BLL.Features.Orders.Dtos;
+using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.Features.Vendors.Dtos;
 using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.BLL.IRepository;

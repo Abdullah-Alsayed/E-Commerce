@@ -17,7 +17,7 @@ namespace ECommerce.DAL.Entity
         [Required]
         public Guid GovernorateID { get; set; }
 
-        public Guid PromoCodeID { get; set; }
+        public Guid? VoucherID { get; set; }
 
         [Required, StringLength(255)]
         public string Address { get; set; }
@@ -36,10 +36,10 @@ namespace ECommerce.DAL.Entity
         [Required, Range(1, double.MaxValue)]
         public double SubTotal { get; set; }
 
-        public virtual Area Area { get; set; } = new Area();
-        public virtual Status Status { get; set; } = new Status();
-        public virtual Governorate Governorate { get; set; } = new Governorate();
-        public virtual Voucher PromoCode { get; set; } = new Voucher();
+        public virtual Area Area { get; set; }
+        public virtual Status Status { get; set; }
+        public virtual Governorate Governorate { get; set; }
+        public virtual Voucher Voucher { get; set; }
         public virtual ICollection<ProductOrder> ProductOrders { get; set; }
     }
 }

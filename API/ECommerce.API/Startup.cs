@@ -13,6 +13,8 @@ using ECommerce.BLL.Features.ContactUses.Services;
 using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Orders.Services;
+using ECommerce.BLL.Features.Products.Services;
 using ECommerce.BLL.Features.Reviews.Services;
 using ECommerce.BLL.Features.Settings.Services;
 using ECommerce.BLL.Features.Sliders.Services;
@@ -164,27 +166,31 @@ namespace ECommerce.API
             services.AddDistributedMemoryCache();
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
-            #region Services
+            //****************** Services ******************************
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            #region Feature Services
+            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<IColorService, ColorService>();
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ISliderService, SliderService>();
             services.AddScoped<IMailServicies, MailServicies>();
-            services.AddScoped<IGovernorateService, GovernorateService>();
-            services.AddScoped<ISubCategoryService, SubCategoryService>();
-            services.AddScoped<IContactUsService, ContactUsService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IFeedbackService, FeedbackService>();
-            services.AddScoped<IVoucherService, VoucherService>();
-            services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IMailServicies, MailServicies>();
             services.AddScoped<IVendorService, VendorService>();
-            services.AddScoped<ISliderService, SliderService>();
-            services.AddScoped<IColorService, ColorService>();
-            services.AddScoped<IBrandService, BrandService>();
-            services.AddScoped<IAreaService, AreaService>();
-            services.AddScoped<IUnitService, UnitService>();
-            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IContactUsService, ContactUsService>();
+            services.AddScoped<ISubCategoryService, SubCategoryService>();
+            services.AddScoped<IGovernorateService, GovernorateService>();
             #endregion
         }
 

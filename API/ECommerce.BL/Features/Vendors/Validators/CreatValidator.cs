@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using ECommerce.BLL.Features.Vendors.Requests;
-using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;

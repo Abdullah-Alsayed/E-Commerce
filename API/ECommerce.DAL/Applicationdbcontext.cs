@@ -20,9 +20,8 @@ namespace ECommerce.DAL
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductPhoto> productPhotos { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
-        public DbSet<Voucher> Voucher { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<ProductReview> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Slider> Sliders { get; set; }
@@ -32,6 +31,7 @@ namespace ECommerce.DAL
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<History> Histories { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)

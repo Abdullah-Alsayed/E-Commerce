@@ -7,10 +7,11 @@ namespace ECommerce.BLL.Features.Carts.Validators;
 
 public class GetUserValidator : AbstractValidator<GetUserCartRequest>
 {
-    private readonly IStringLocalizer<GetUserValidator> _localizer;
+    //private readonly IStringLocalizer<GetUserValidator> _localizer;
 
-    public GetUserValidator(IStringLocalizer<GetUserValidator> localizer)
-    {
-        RuleFor(req => req).SetValidator(new GetAllValidator<GetUserValidator>(_localizer));
-    }
+    //public GetUserValidator(IStringLocalizer<GetUserValidator> localizer)
+    //{
+    //    _localizer = localizer;
+    //    RuleFor(req => req).SetValidator(new GetAllValidator<GetUserValidator>(_localizer));
+    //}
 }

@@ -11,6 +11,7 @@ public class GetAllReviewValidator : AbstractValidator<GetAllReviewRequest>
 
     public GetAllReviewValidator(IStringLocalizer<GetAllReviewValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllReviewValidator>(_localizer));
     }
 }

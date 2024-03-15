@@ -45,8 +45,16 @@ namespace ECommerce.BLL.IRepository
             string FolderName,
             string ImgName = null
         );
+        Task<List<string>> UplodPhotos(
+            List<IFormFile> Files,
+            IHostEnvironment environment,
+            string FolderName,
+            List<string> ImgNames = null
+        );
+
         bool ToggleAvtive(bool IsActive);
         List<string> SearchEntity();
         Task<T> FirstAsync();
+        Task<T> FirstAsync(Expression<Func<T, bool>> Criteria);
     }
 }

@@ -1,114 +1,98 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoMapper;
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Core;
-using ECommerce.DAL.Entity;
+using ECommerce.BLL.Features.Products.Requests;
+using ECommerce.BLL.Features.Products.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IProductService _service;
 
-        public ProductController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public ProductController(IProductService service) => _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> FindProduct(Guid ID)
+        public async Task<BaseResponse> FindProduct([FromQuery] FindProductRequest request)
         {
-            var Product = await _unitOfWork.Product.GetItemAsync(x => x.ID == ID, new[] { "User" });
-            if (Product == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Product);
-        }
-
-        [HttpGet]
-        //[Route(nameof(FindAllProduct))]
-        public async Task<IActionResult> FindAllProduct()
-        {
-            var Products = await _unitOfWork.Product.GetAllAsync(
-                new[] { "User", "ProductImgs" },
-                o => o.Title,
-                Constants.OrderBY.Ascending
-            );
-            if (Products == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Products);
-        }
-
-        [HttpPost]
-        //[Route(nameof(CreateProduct))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateProduct([FromQuery] ProductDto dto)
-        {
-            var Entity = _mapper.Map<Product>(dto);
-            Entity.CreateAt = DateTime.Now;
-            Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Product = await _unitOfWork.Product.AddaAync(Entity);
-            if (Product == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
+            try
             {
-                await _unitOfWork.SaveAsync();
-                await _unitOfWork.ProductPhoto.AddPhotos(Product.ID, dto.Files);
-                await _unitOfWork.SaveAsync();
-                return Ok(Product);
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
-        // PUT api/<ProductController>/5
-        [HttpPut]
-        //[Route(nameof(UpdateProduct))]
-        public async Task<IActionResult> UpdateProduct(int ID, [FromQuery] ProductDto dto)
+        [HttpGet]
+        public async Task<BaseResponse> GetAllProduct([FromQuery] GetAllProductRequest request)
         {
-            var Product = await _unitOfWork.Product.FindAsync(ID);
-
-            if (Product == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Product);
-                Product.ModifyAt = DateTime.Now;
-                Product.ModifyBy = _unitOfWork.User.GetUserID(User);
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
-                await _unitOfWork.ProductPhoto.AddPhotos(Product.ID, dto.Files);
-                await _unitOfWork.SaveAsync();
-                return Ok(Product);
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse> CreateProduct(CreateProductRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> UpdateProduct(UpdateProductRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteProduct))]
-        public async Task<IActionResult> DeleteProduct(int ID)
+        public async Task<BaseResponse> DeleteProduct(DeleteProductRequest request)
         {
-            var Product = await _unitOfWork.Product.FindAsync(ID);
-            if (Product == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                Product.IsDeleted = true;
-            await _unitOfWork.SaveAsync();
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddToChart(int ID)
-        {
-            var Product = await _unitOfWork.Product.FindAsync(ID);
-
-            return Ok();
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
     }
 }

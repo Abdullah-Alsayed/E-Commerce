@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Carts.Dtos;
 using ECommerce.BLL.Features.Carts.Requests;
+using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -41,7 +42,9 @@ namespace ECommerce.BLL.Features.Carts.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
+                cfg.CreateMap<Product, ProductDto>().ReverseMap();
                 cfg.CreateMap<ShoppingCart, CartDto>().ReverseMap();
+                cfg.CreateMap<ShoppingCart, UserCartDto>().ReverseMap();
                 cfg.CreateMap<ShoppingCart, CreateCartRequest>().ReverseMap();
                 cfg.CreateMap<ShoppingCart, UpdateCartRequest>().ReverseMap();
             });
@@ -103,17 +106,13 @@ namespace ECommerce.BLL.Features.Carts.Services
         {
             try
             {
-                request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
-                    ? nameof(ShoppingCart.ProductID)
-                    : request.SearchBy;
-
-                var Carts = await _unitOfWork.Cart.GetAllAsync(request);
-                var response = _mapper.Map<List<CartDto>>(Carts);
-                return new BaseResponse<BaseGridResponse<List<CartDto>>>
+                var carts = await GetChart();
+                var response = _mapper.Map<List<UserCartDto>>(carts);
+                return new BaseResponse<BaseGridResponse<List<UserCartDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
-                    Result = new BaseGridResponse<List<CartDto>>
+                    Result = new BaseGridResponse<List<UserCartDto>>
                     {
                         Items = response,
                         Total = response != null ? response.Count : 0
@@ -336,6 +335,27 @@ namespace ECommerce.BLL.Features.Carts.Services
         }
 
         #region helpers
+        private async Task<IEnumerable<ShoppingCart>> GetChart()
+        {
+            var carts = await _unitOfWork.Cart.GetAllAsync(
+                cart => cart.CreateBy == _userId,
+                [nameof(Product)],
+                chat => chat.CreateAt
+            );
+            carts = carts
+                .GroupBy(cart => cart.ProductID)
+                .Select(cart => new ShoppingCart
+                {
+                    ProductID = cart.Key,
+                    Quantity = cart.ToList().Sum(x => x.Quantity),
+                    Product = cart.LastOrDefault().Product,
+                    CreateAt = cart.LastOrDefault().CreateAt,
+                    CreateBy = cart.LastOrDefault().CreateBy,
+                })
+                .ToList();
+            return carts;
+        }
+
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification

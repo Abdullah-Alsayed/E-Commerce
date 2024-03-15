@@ -18,6 +18,8 @@
         Slider,
         Vendor,
         Feedback,
-        Cart
+        Cart,
+        Product,
+        Order
     }
 }

@@ -2,5 +2,5 @@
 
 namespace ECommerce.BLL.Features.Carts.Requests
 {
-    public record GetUserCartRequest : BaseGridRequest { }
+    public record GetUserCartRequest { }
 }

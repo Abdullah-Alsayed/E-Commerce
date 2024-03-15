@@ -120,8 +120,9 @@ namespace ECommerce.BLL.Repository
         )
         {
             IQueryable<T> Query = _context.Set<T>();
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
 
             return await Query.Where(Criteria).ToListAsync();
         }
@@ -218,6 +219,31 @@ namespace ECommerce.BLL.Repository
                 return PhotoName;
 
             return filepath;
+        }
+
+        public async Task<List<string>> UplodPhotos(
+            List<IFormFile> files,
+            IHostEnvironment environment,
+            string FolderName,
+            List<string> ImgNames = null
+        )
+        {
+            var photos = new List<string>();
+            var curentPhoto = string.Empty;
+            var index = 0;
+            foreach (var file in files)
+            {
+                curentPhoto = await UplodPhoto(
+                    file,
+                    environment,
+                    FolderName,
+                    ImgNames != null ? ImgNames[index] : null
+                );
+                photos.Add(curentPhoto);
+                index++;
+            }
+
+            return photos;
         }
 
         public bool ToggleAvtive(bool IsActive)
@@ -327,6 +353,11 @@ namespace ECommerce.BLL.Repository
         public async Task<T> FirstAsync()
         {
             return await _context.Set<T>().FirstOrDefaultAsync();
+        }
+
+        public async Task<T> FirstAsync(Expression<Func<T, bool>> Criteria)
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync(Criteria);
         }
     }
 }

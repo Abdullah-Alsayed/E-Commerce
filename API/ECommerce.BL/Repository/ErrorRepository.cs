@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
@@ -19,17 +22,25 @@ namespace ECommerce.BLL.Repository
 
         public async Task ErrorLog(Exception ex, OperationTypeEnum action, EntitiesEnum entity)
         {
-            _context.ChangeTracker.Clear();
-            await AddaAync(
-                new ErrorLog
-                {
-                    Source = ex.Source,
-                    Message = ex.Message,
-                    Operation = action,
-                    Entity = entity
-                }
-            );
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ChangeTracker.Clear();
+                await AddaAync(
+                    new ErrorLog
+                    {
+                        Source = ex.InnerException.Source,
+                        Message = ex.InnerException.Message,
+                        StackTrace = ex.InnerException.StackTrace,
+                        Operation = action,
+                        Entity = entity
+                    }
+                );
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.InnerException.Message);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ public class GetAllContactUsValidator : AbstractValidator<GetAllContactUsRequest
 
     public GetAllContactUsValidator(IStringLocalizer<GetAllContactUsValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllContactUsValidator>(_localizer));
     }
 }

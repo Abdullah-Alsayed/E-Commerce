@@ -11,6 +11,7 @@ public class GetAllFeedbackValidator : AbstractValidator<GetAllFeedbackRequest>
 
     public GetAllFeedbackValidator(IStringLocalizer<GetAllFeedbackValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllFeedbackValidator>(_localizer));
     }
 }

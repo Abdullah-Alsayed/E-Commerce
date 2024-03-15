@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.BLL.Features.Vendors.Requests;
-using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.BLL.Response;
 
 namespace ECommerce.BLL.Features.Vendors.Services

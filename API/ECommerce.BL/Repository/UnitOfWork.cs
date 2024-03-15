@@ -55,6 +55,7 @@ namespace ECommerce.BL.Repository
             ErrorLog = new ErrorRepository(_context);
             //ProductPhoto = new ProductPhotoRepository(_context);
             Feedback = new BaseRepository<Feedback>(_context);
+            Order = new BaseRepository<Order>(_context);
             History = new BaseRepository<History>(_context);
             Vendor = new BaseRepository<Vendor>(_context);
             ContactUs = new BaseRepository<ContactUs>(_context);
@@ -74,9 +75,9 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<SubCategory> SubCategory { get; private set; }
         public IBaseRepository<Governorate> Governorate { get; private set; }
         public IBaseRepository<Slider> Slider { get; private set; }
+        public IBaseRepository<Order> Order { get; private set; }
         public IBaseRepository<Voucher> Voucher { get; private set; }
         public IBaseRepository<ContactUs> ContactUs { get; private set; }
-        public IProductPhotoRepository ProductPhoto { get; private set; }
         public INotificationRepository Notification { get; private set; }
         public IErrorRepository ErrorLog { get; private set; }
         public IBaseRepository<History> History { get; private set; }
@@ -100,7 +101,11 @@ namespace ECommerce.BL.Repository
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 
-        public async Task<bool> IsDone(int modifyRows) => await SaveAsync() == modifyRows;
+        public async Task<bool> IsDone(int modifyRows)
+        {
+            var count = await SaveAsync();
+            return count == modifyRows;
+        }
 
         public void Dispose() => _context.Dispose();
     }

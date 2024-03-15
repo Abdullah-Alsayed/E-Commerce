@@ -11,6 +11,7 @@ public class GetAllGovernorateValidator : AbstractValidator<GetAllGovernorateReq
 
     public GetAllGovernorateValidator(IStringLocalizer<GetAllGovernorateValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req)
             .SetValidator(new GetAllValidator<GetAllGovernorateValidator>(_localizer));
     }

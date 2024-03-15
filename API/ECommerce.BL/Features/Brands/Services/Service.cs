@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Products.Dtos;
+using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Sliders.Dtos;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.IRepository;

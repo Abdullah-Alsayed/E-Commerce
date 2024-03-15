@@ -1,5 +1,4 @@
 ﻿using ECommerce.BLL.Features.Sliders.Requests;
-using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -12,6 +11,7 @@ public class GetAllSliderValidator : AbstractValidator<GetAllSliderRequest>
 
     public GetAllSliderValidator(IStringLocalizer<GetAllSliderValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllSliderValidator>(_localizer));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Response;
 

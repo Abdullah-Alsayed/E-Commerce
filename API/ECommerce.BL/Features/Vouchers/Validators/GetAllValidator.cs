@@ -12,6 +12,7 @@ public class GetAllVoucherValidator : AbstractValidator<GetAllVoucherRequest>
 
     public GetAllVoucherValidator(IStringLocalizer<GetAllVoucherValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllVoucherValidator>(_localizer));
     }
 }

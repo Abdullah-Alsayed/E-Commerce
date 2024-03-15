@@ -11,6 +11,7 @@ public class GetAllStatusValidator : AbstractValidator<GetAllStatusRequest>
 
     public GetAllStatusValidator(IStringLocalizer<GetAllStatusValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllStatusValidator>(_localizer));
     }
 }

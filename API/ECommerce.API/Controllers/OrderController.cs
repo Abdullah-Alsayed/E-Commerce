@@ -1,24 +1,85 @@
-﻿
-using AutoMapper;
-using ECommerce.BLL.IRepository;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Orders.Requests;
+using ECommerce.BLL.Features.Orders.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IOrderService _service;
 
-        public OrderController(IUnitOfWork unitOfWork, IMapper mapper)
+        public OrderController(IOrderService service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindOrder([FromQuery] FindOrderRequest request)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
+        [HttpGet]
+        public async Task<BaseResponse> GetAllOrder([FromQuery] GetAllOrderRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
 
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse> CreateOrder(CreateOrderRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteOrder(DeleteOrderRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
     }
 }

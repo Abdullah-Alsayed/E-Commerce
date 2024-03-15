@@ -55,7 +55,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return !context.Voucher.Any(x =>
+                    return !context.Vouchers.Any(x =>
                         x.Name.ToLower() == req.Name.ToLower() && x.IsActive && !x.IsDeleted
                     );
                 })

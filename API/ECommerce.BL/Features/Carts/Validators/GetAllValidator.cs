@@ -11,6 +11,7 @@ public class GetAllCartValidator : AbstractValidator<GetAllCartRequest>
 
     public GetAllCartValidator(IStringLocalizer<GetAllCartValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllCartValidator>(_localizer));
     }
 }

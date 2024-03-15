@@ -14,10 +14,10 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Voucher> Voucher { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
         INotificationRepository Notification { get; }
-        IProductPhotoRepository ProductPhoto { get; }
         IBaseRepository<History> History { get; }
         IBaseRepository<Feedback> Feedback { get; }
         IBaseRepository<ShoppingCart> Cart { get; }
+        IBaseRepository<Order> Order { get; }
         IBaseRepository<Category> Category { get; }
         IErrorRepository ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }

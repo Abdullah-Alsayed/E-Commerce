@@ -99,6 +99,19 @@ namespace ECommerce.Core
                     }
                 );
             }
+            if (!context.Statuses.Any())
+            {
+                context.Statuses.Add(
+                    new Status
+                    {
+                        NameAR = "مكتمل",
+                        NameEN = "Complete",
+                        IsCompleted = true,
+                        Order = 5,
+                        CreateBy = systemUser,
+                    }
+                );
+            }
             context.SaveChanges();
         }
     }

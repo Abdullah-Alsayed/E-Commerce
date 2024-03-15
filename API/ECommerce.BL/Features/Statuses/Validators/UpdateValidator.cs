@@ -28,6 +28,31 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
             .WithMessage(x =>
                 $" {_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
+        RuleFor(req => req.Order)
+            .GreaterThanOrEqualTo(1)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 1].ToString())
+            .LessThanOrEqualTo(5)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 5].ToString())
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Rate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Rate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .Must(
+                (req, name) =>
+                {
+                    return context.Statuses.Any(x =>
+                        x.Order == req.Order && x.IsActive && !x.IsDeleted
+                    );
+                }
+            )
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Order]} {_localizer[Constants.MessageKeys.NotExist]}"
+            );
+
         RuleFor(req => req.NameAR)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
@@ -45,7 +70,10 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
                 (req, name) =>
                 {
                     return !context.Statuses.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower()
+                        && x.ID != req.ID
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 }
             )

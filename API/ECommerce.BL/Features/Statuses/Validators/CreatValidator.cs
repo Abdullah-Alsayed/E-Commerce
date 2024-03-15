@@ -51,6 +51,13 @@ namespace ECommerce.BLL.Features.Statuses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
+                    return context.Statuses.Where(x => x.IsActive && !x.IsDeleted).Count() < 5;
+                })
+                .WithMessage(x => $" {_localizer[Constants.MessageKeys.MaxLimete]}");
+
+            RuleFor(req => req)
+                .Must(req =>
+                {
                     return !context.Statuses.Any(x =>
                         x.NameEN == req.NameEN
                         || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted

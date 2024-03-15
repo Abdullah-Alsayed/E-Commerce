@@ -11,6 +11,5 @@ namespace ECommerce.BLL.DTO
         public IEnumerable<SubCategory> SubCategories { get; set; }
         public IEnumerable<Product> Products { get; set; }
         public IEnumerable<ProductReview> Reviews { get; set; }
-        public IEnumerable<ProductPhoto> ProductPhotos { get; set; }
     }
 }

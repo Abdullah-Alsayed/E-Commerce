@@ -1,5 +1,4 @@
 ﻿using ECommerce.BLL.Features.Vendors.Requests;
-using ECommerce.BLL.Features.Vendors.Requests;
 using ECommerce.BLL.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -12,6 +11,7 @@ public class GetAllVendorValidator : AbstractValidator<GetAllVendorRequest>
 
     public GetAllVendorValidator(IStringLocalizer<GetAllVendorValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllVendorValidator>(_localizer));
     }
 }

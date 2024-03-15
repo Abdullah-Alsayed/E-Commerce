@@ -136,10 +136,16 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var Status = _mapper.Map<Status>(request);
-                Status.CreateBy = _userId;
-                Status = await _unitOfWork.Status.AddaAync(Status);
-                var result = _mapper.Map<StatusDto>(Status);
+                var allStatus = await _unitOfWork.Status.GetAllAsync(
+                    stat => stat.IsActive && !stat.IsDeleted,
+                    null
+                );
+                modifyRows = SetCompleteStatus(request.IsCompleted, modifyRows, allStatus);
+                var status = _mapper.Map<Status>(request);
+                status.CreateBy = _userId;
+                status.Order = allStatus.Count();
+                await _unitOfWork.Status.AddaAync(status);
+                var result = _mapper.Map<StatusDto>(status);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
                 modifyRows++;
@@ -193,11 +199,22 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var Status = await _unitOfWork.Status.FindAsync(request.ID);
-                _mapper.Map(request, Status);
-                Status.ModifyBy = _userId;
-                Status.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<StatusDto>(Status);
+                var allStatus = await _unitOfWork.Status.GetAllAsync(
+                    stat => stat.IsActive && !stat.IsDeleted,
+                    null
+                );
+                var status = await _unitOfWork.Status.FindAsync(request.ID);
+                modifyRows = allStatus.Any(x =>
+                    x.Order == request.Order && x.IsCompleted && x.IsActive && !x.IsDeleted
+                )
+                    ? 1
+                    : 2;
+                _ = SetCompleteStatus(request.IsCompleted, modifyRows, allStatus);
+                _ = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
+                _mapper.Map(request, status);
+                status.ModifyBy = _userId;
+                status.ModifyAt = DateTime.UtcNow;
+                var result = _mapper.Map<StatusDto>(status);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -331,6 +348,42 @@ namespace ECommerce.BLL.Features.Statuses.Services
         }
 
         #region helpers
+        private static int SetCompleteStatus(
+            bool IsCompleted,
+            int modifyRows,
+            IEnumerable<Status> allStatus
+        )
+        {
+            if (IsCompleted)
+            {
+                var completeStatus = allStatus.FirstOrDefault(stat => stat.IsCompleted);
+                if (completeStatus != null)
+                {
+                    completeStatus.IsCompleted = false;
+                    modifyRows++;
+                }
+            }
+
+            return modifyRows;
+        }
+
+        private int SwapOrder(
+            int neworder,
+            int oldOrder,
+            int modifyRows,
+            IEnumerable<Status> allStatus
+        )
+        {
+            if (oldOrder != neworder)
+            {
+                var oldStatus = allStatus.FirstOrDefault(stat => stat.Order == neworder);
+                if (oldStatus != null)
+                    oldStatus.Order = oldOrder;
+            }
+
+            return modifyRows;
+        }
+
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification

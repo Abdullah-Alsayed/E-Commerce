@@ -11,6 +11,7 @@ public class GetAllUnitValidator : AbstractValidator<GetAllUnitRequest>
 
     public GetAllUnitValidator(IStringLocalizer<GetAllUnitValidator> localizer)
     {
+        _localizer = localizer;
         RuleFor(req => req).SetValidator(new GetAllValidator<GetAllUnitValidator>(_localizer));
     }
 }

@@ -28,7 +28,8 @@
             public const string LinkNotValid= "linkNotValid";
             public const string ColorNotValid = "colorNotValid";
             public const string PhoneNotValid= "phoneNotValid";
-            public static int SubjectNotValid;
+            public static string SubjectNotValid="";
+            public static string MaxLimete="";
         }
         public static class EntitsKeys
         {
@@ -65,13 +66,17 @@
             public const string TitleEN= "";
             public const string Description= "";
             public const string Vendor="";
-            public static string Address = "";
-            public static string Feedback;
-            public static string Comment;
-            public static string Rate="";
-            public static string Rating="";
-            public static string Quantity="";
-            public static string Cart="";
+            public const string Address = "";
+            public const string Feedback="";
+            public const string Comment="";
+            public const string Rate="";
+            public const string Rating="";
+            public const string Quantity="";
+            public const string Cart="";
+            public const string Title="";
+            public const string Price="";
+            public static string Order="";
+            public static string DeliveryDate="";
         }
 
         public static class Gender
@@ -102,6 +107,7 @@
             public const string Main= "Main";
             public const string Expense= "Expense";
             public const string Slider= "Slider";
+            public const string Products= "Products";
         }
 
         public static class Errors

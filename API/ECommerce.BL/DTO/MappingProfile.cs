@@ -9,8 +9,6 @@ namespace ECommerce.BLL.DTO
     {
         public MappingProfile()
         {
-            CreateMap<Product, ProductDto>().ReverseMap();
-
             CreateMap<Expense, ExpenseDto>().ReverseMap();
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
