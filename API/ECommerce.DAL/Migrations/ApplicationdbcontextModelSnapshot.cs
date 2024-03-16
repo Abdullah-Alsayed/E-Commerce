@@ -555,6 +555,52 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Histories");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Invoice", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Invoices");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
                     b.Property<Guid>("ID")
@@ -889,6 +935,30 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductSize", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SizeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("ProductSize");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
                 {
                     b.Property<Guid>("ID")
@@ -1131,6 +1201,55 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("ShoppingCarts");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Size", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("NameAR")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NameEN")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Sizes");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Slider", b =>
                 {
                     b.Property<Guid>("ID")
@@ -1212,9 +1331,6 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsCompleted")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
@@ -1828,6 +1944,25 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Invoice", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -1976,6 +2111,25 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductSize", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Size", "Size")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductStock", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -2044,6 +2198,17 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Size", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -2223,6 +2388,11 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
                 {
                     b.Navigation("Sections");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Size", b =>
+                {
+                    b.Navigation("ProductSizes");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>

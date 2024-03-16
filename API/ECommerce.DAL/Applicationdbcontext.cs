@@ -32,6 +32,8 @@ namespace ECommerce.DAL
         public DbSet<History> Histories { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Size> Sizes { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)

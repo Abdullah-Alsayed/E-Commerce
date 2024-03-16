@@ -13,10 +13,12 @@ using ECommerce.BLL.Features.ContactUses.Services;
 using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Invoices.Services;
 using ECommerce.BLL.Features.Orders.Services;
 using ECommerce.BLL.Features.Products.Services;
 using ECommerce.BLL.Features.Reviews.Services;
 using ECommerce.BLL.Features.Settings.Services;
+using ECommerce.BLL.Features.Sizes.Services;
 using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
@@ -173,6 +175,7 @@ namespace ECommerce.API
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IOrderService, OrderService>();
@@ -182,6 +185,7 @@ namespace ECommerce.API
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IMailServicies, MailServicies>();
             services.AddScoped<IVendorService, VendorService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<ISettingService, SettingService>();

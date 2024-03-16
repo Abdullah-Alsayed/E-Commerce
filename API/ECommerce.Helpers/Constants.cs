@@ -28,8 +28,13 @@
             public const string LinkNotValid= "linkNotValid";
             public const string ColorNotValid = "colorNotValid";
             public const string PhoneNotValid= "phoneNotValid";
-            public static string SubjectNotValid="";
-            public static string MaxLimete="";
+            public const string SubjectNotValid="";
+            public const string MaxLimete="";
+            public const string StatusIsComplete="";
+            public const string StatusIsCompleteCantDelete="";
+            public const string CantDelete="";
+            public const string IsComplete = "";
+            public const string LastOne="";
         }
         public static class EntitsKeys
         {
@@ -75,8 +80,10 @@
             public const string Cart="";
             public const string Title="";
             public const string Price="";
-            public static string Order="";
-            public static string DeliveryDate="";
+            public const string Order="";
+            public const string DeliveryDate="";
+            public const string Size="";
+            public const string Invoice="";
         }
 
         public static class Gender

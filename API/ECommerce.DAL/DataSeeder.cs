@@ -106,8 +106,7 @@ namespace ECommerce.Core
                     {
                         NameAR = "مكتمل",
                         NameEN = "Complete",
-                        IsCompleted = true,
-                        Order = 5,
+                        Order = 10,
                         CreateBy = systemUser,
                     }
                 );

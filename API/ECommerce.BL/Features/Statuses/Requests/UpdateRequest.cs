@@ -8,6 +8,5 @@ namespace ECommerce.BLL.Features.Statuses.Requests
         public string NameAR { get; set; }
         public string NameEN { get; set; }
         public int Order { get; set; }
-        public bool IsCompleted { get; set; }
     }
 }

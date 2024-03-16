@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Areas.Dtos;
 using ECommerce.BLL.Features.Areas.Requests;
+using ECommerce.BLL.Features.Invoices.Dtos;
+using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;

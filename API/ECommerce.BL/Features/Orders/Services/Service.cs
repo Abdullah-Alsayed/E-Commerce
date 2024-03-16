@@ -6,6 +6,7 @@ using AutoMapper;
 using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.DAL.Entity;
@@ -128,8 +129,10 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
+                var sattus = await _unitOfWork.Status.GetAllAsync(new BaseGridRequest());
                 var Order = _mapper.Map<Order>(request);
                 var Products = request.Products;
+                Order.StatusID = sattus.OrderBy(x => x.Order).LastOrDefault().ID;
                 Order.CreateBy = _userId;
                 Order = await _unitOfWork.Order.AddaAync(Order);
                 var result = _mapper.Map<OrderDto>(Order);

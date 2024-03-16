@@ -140,10 +140,9 @@ namespace ECommerce.BLL.Features.Statuses.Services
                     stat => stat.IsActive && !stat.IsDeleted,
                     null
                 );
-                modifyRows = SetCompleteStatus(request.IsCompleted, modifyRows, allStatus);
                 var status = _mapper.Map<Status>(request);
                 status.CreateBy = _userId;
-                status.Order = allStatus.Count();
+                status.Order = GetCurentOrder(allStatus.OrderBy(x => x.Order).ToList());
                 await _unitOfWork.Status.AddaAync(status);
                 var result = _mapper.Map<StatusDto>(status);
                 #region Send Notification
@@ -204,13 +203,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
                     null
                 );
                 var status = await _unitOfWork.Status.FindAsync(request.ID);
-                modifyRows = allStatus.Any(x =>
-                    x.Order == request.Order && x.IsCompleted && x.IsActive && !x.IsDeleted
-                )
-                    ? 1
-                    : 2;
-                _ = SetCompleteStatus(request.IsCompleted, modifyRows, allStatus);
-                _ = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
+                modifyRows = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
                 _mapper.Map(request, status);
                 status.ModifyBy = _userId;
                 status.ModifyAt = DateTime.UtcNow;
@@ -348,25 +341,6 @@ namespace ECommerce.BLL.Features.Statuses.Services
         }
 
         #region helpers
-        private static int SetCompleteStatus(
-            bool IsCompleted,
-            int modifyRows,
-            IEnumerable<Status> allStatus
-        )
-        {
-            if (IsCompleted)
-            {
-                var completeStatus = allStatus.FirstOrDefault(stat => stat.IsCompleted);
-                if (completeStatus != null)
-                {
-                    completeStatus.IsCompleted = false;
-                    modifyRows++;
-                }
-            }
-
-            return modifyRows;
-        }
-
         private int SwapOrder(
             int neworder,
             int oldOrder,
@@ -378,10 +352,27 @@ namespace ECommerce.BLL.Features.Statuses.Services
             {
                 var oldStatus = allStatus.FirstOrDefault(stat => stat.Order == neworder);
                 if (oldStatus != null)
+                {
                     oldStatus.Order = oldOrder;
+                    modifyRows++;
+                }
             }
 
             return modifyRows;
+        }
+
+        private int GetCurentOrder(List<Status> allStatus)
+        {
+            var order = allStatus.Count;
+            for (int i = 0; i < allStatus.Count(); i++)
+            {
+                if (allStatus[i].Order != (i + 1))
+                {
+                    order = (i + 1);
+                    break;
+                }
+            }
+            return order;
         }
 
         private async Task SendNotification(OperationTypeEnum action) =>

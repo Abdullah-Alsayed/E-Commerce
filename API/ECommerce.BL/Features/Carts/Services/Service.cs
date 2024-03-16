@@ -255,11 +255,17 @@ namespace ECommerce.BLL.Features.Carts.Services
             var modifyRows = 0;
             try
             {
-                var Cart = await _unitOfWork.Cart.FindAsync(request.ID);
-                Cart.DeletedBy = _userId;
-                Cart.DeletedAt = DateTime.UtcNow;
-                Cart.IsDeleted = true;
-                var result = _mapper.Map<CartDto>(Cart);
+                var carts = await _unitOfWork.Cart.GetAllAsync(
+                    cart => cart.ProductID == request.ID && cart.CreateBy == _userId,
+                    null
+                );
+                foreach (var cart in carts)
+                {
+                    cart.DeletedBy = _userId;
+                    cart.DeletedAt = DateTime.UtcNow;
+                    cart.IsDeleted = true;
+                    modifyRows++;
+                }
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Delete);
                 modifyRows++;
@@ -270,15 +276,13 @@ namespace ECommerce.BLL.Features.Carts.Services
                 modifyRows++;
                 #endregion
 
-                modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<CartDto>
+                    return new BaseResponse
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
-                        Result = result
                     };
                 }
                 else

@@ -20,6 +20,8 @@
         Feedback,
         Cart,
         Product,
-        Order
+        Order,
+        Size,
+        Invoice
     }
 }

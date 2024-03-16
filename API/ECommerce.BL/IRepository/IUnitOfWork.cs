@@ -18,11 +18,13 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Feedback> Feedback { get; }
         IBaseRepository<ShoppingCart> Cart { get; }
         IBaseRepository<Order> Order { get; }
+        IBaseRepository<Size> Size { get; }
         IBaseRepository<Category> Category { get; }
         IErrorRepository ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }
         IBaseRepository<Expense> Expense { get; }
         IBaseRepository<Status> Status { get; }
+        IBaseRepository<Invoice> Invoice { get; }
         IBaseRepository<ProductReview> Review { get; }
         IBaseRepository<Color> Color { get; }
         IBaseRepository<Brand> Brand { get; }

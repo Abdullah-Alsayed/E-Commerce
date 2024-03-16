@@ -15,7 +15,6 @@ namespace ECommerce.DAL.Entity
 
         [Range(1, int.MaxValue), Required]
         public int Order { get; set; }
-        public bool IsCompleted { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
     }

@@ -31,8 +31,8 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
         RuleFor(req => req.Order)
             .GreaterThanOrEqualTo(1)
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 1].ToString())
-            .LessThanOrEqualTo(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 5].ToString())
+            .LessThanOrEqualTo(10)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 10].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntitsKeys.Rate]} {_localizer[Constants.MessageKeys.IsRequired]}"

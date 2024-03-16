@@ -23,10 +23,10 @@ namespace ECommerce.BLL.Features.Carts.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.ShoppingCarts.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Products.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Cart]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }
