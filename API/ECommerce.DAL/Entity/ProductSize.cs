@@ -10,7 +10,7 @@ public class ProductSize
     public Guid ProductId { get; set; }
 
     [Required, Range(1, int.MaxValue)]
-    public int Count { get; set; }
+    public int Quantity { get; set; }
 
     public virtual Size Size { get; set; }
     public virtual Product Product { get; set; }

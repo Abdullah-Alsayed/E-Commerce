@@ -35,6 +35,8 @@ namespace ECommerce.DAL
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {

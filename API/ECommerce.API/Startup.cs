@@ -21,6 +21,7 @@ using ECommerce.BLL.Features.Settings.Services;
 using ECommerce.BLL.Features.Sizes.Services;
 using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Features.Statuses.Services;
+using ECommerce.BLL.Features.Stocks.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
 using ECommerce.BLL.Features.Units.Services;
 using ECommerce.BLL.Features.Vendors.Services;
@@ -177,6 +178,7 @@ namespace ECommerce.API
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IColorService, ColorService>();
+            services.AddScoped<IStockService, StockService>();
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ISliderService, SliderService>();

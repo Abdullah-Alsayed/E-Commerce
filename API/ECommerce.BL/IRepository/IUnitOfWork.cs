@@ -12,6 +12,7 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Governorate> Governorate { get; }
         IBaseRepository<Slider> Slider { get; }
         IBaseRepository<Voucher> Voucher { get; }
+        IBaseRepository<Stock> Stock { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
         INotificationRepository Notification { get; }
         IBaseRepository<History> History { get; }

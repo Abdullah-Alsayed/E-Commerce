@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
-    public class ProductStock : BaseEntity
+    public class Stock : BaseEntity
     {
         [Required]
         public Guid ProductID { get; set; }

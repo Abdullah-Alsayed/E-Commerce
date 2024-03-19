@@ -22,6 +22,7 @@
         Product,
         Order,
         Size,
-        Invoice
+        Invoice,
+        Stock
     }
 }

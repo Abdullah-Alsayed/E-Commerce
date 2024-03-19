@@ -35,6 +35,7 @@
             public const string CantDelete="";
             public const string IsComplete = "";
             public const string LastOne="";
+            public const string quantityNotValid="";
         }
         public static class EntitsKeys
         {
@@ -84,6 +85,7 @@
             public const string DeliveryDate="";
             public const string Size="";
             public const string Invoice="";
+            public const string Stock="";
         }
 
         public static class Gender
