@@ -14,7 +14,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateVoucherValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateVoucherValidator> localizer
         )
         {

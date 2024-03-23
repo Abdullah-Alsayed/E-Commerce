@@ -16,7 +16,7 @@ namespace ECommerce.BLL.Features.Brands.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateBrandValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateBrandValidator> localizer
         )
         {

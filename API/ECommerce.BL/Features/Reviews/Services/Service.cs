@@ -126,7 +126,7 @@ public class ReviewService : IReviewService
         {
             var Review = _mapper.Map<ProductReview>(request);
             Review.CreateBy = _userId;
-            Review = await _unitOfWork.Review.AddaAync(Review);
+            Review = await _unitOfWork.Review.AddAsync(Review);
             var result = _mapper.Map<ReviewDto>(Review);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -319,7 +319,7 @@ public class ReviewService : IReviewService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,

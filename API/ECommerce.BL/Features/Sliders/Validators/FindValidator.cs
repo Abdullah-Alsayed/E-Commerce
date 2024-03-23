@@ -12,7 +12,7 @@ public class FindSliderValidator : AbstractValidator<FindSliderRequest>
     private readonly IStringLocalizer<FindSliderValidator> _localizer;
 
     public FindSliderValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindSliderValidator> localizer
     )
     {

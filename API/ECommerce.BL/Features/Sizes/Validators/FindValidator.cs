@@ -12,7 +12,7 @@ public class FindSizeValidator : AbstractValidator<FindSizeRequest>
     private readonly IStringLocalizer<FindSizeValidator> _localizer;
 
     public FindSizeValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindSizeValidator> localizer
     )
     {

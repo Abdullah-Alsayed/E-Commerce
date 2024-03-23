@@ -125,7 +125,7 @@ public class InvoiceService : IInvoiceService
         {
             var Invoice = _mapper.Map<Invoice>(request);
             Invoice.CreateBy = _userId;
-            Invoice = await _unitOfWork.Invoice.AddaAync(Invoice);
+            Invoice = await _unitOfWork.Invoice.AddAsync(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -264,7 +264,7 @@ public class InvoiceService : IInvoiceService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,

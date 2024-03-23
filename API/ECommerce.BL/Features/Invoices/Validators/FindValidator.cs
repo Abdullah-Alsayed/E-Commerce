@@ -12,7 +12,7 @@ public class FindInvoiceValidator : AbstractValidator<FindInvoiceRequest>
     private readonly IStringLocalizer<FindInvoiceValidator> _localizer;
 
     public FindInvoiceValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindInvoiceValidator> localizer
     )
     {

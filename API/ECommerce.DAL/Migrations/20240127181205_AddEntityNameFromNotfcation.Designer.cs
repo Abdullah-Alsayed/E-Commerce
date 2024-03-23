@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
-    [DbContext(typeof(Applicationdbcontext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240127181205_AddEntityNameFromNotfcation")]
     partial class AddEntityNameFromNotfcation
     {

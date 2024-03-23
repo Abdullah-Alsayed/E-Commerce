@@ -12,7 +12,7 @@ public class UpdateGovernorateValidator : AbstractValidator<UpdateGovernorateReq
     private readonly IStringLocalizer<UpdateGovernorateValidator> _localizer;
 
     public UpdateGovernorateValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateGovernorateValidator> localizer
     )
     {

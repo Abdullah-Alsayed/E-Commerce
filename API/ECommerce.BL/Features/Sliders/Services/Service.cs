@@ -141,8 +141,8 @@ namespace ECommerce.BLL.Features.Sliders.Services
             {
                 var Slider = _mapper.Map<Slider>(request);
                 Slider.CreateBy = _userId;
-                Slider = await _unitOfWork.Slider.AddaAync(Slider);
-                Slider.PhotoPath = await _unitOfWork.Slider.UplodPhoto(
+                Slider = await _unitOfWork.Slider.AddAsync(Slider);
+                Slider.PhotoPath = await _unitOfWork.Slider.UploadPhoto(
                     request.FormFile,
                     _environment,
                     PhotoFolder.Slider
@@ -203,7 +203,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             {
                 var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
                 _mapper.Map(request, Slider);
-                Slider.PhotoPath = await _unitOfWork.Slider.UplodPhoto(
+                Slider.PhotoPath = await _unitOfWork.Slider.UploadPhoto(
                     request.FormFile,
                     _environment,
                     PhotoFolder.Slider,
@@ -357,7 +357,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

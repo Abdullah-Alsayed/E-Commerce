@@ -141,8 +141,8 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             {
                 var SubCategory = _mapper.Map<SubCategory>(request);
                 SubCategory.CreateBy = _userId;
-                SubCategory = await _unitOfWork.SubCategory.AddaAync(SubCategory);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
+                SubCategory = await _unitOfWork.SubCategory.AddAsync(SubCategory);
+                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhoto(
                     request.FormFile,
                     _environment,
                     Constants.PhotoFolder.SubCategorys
@@ -203,7 +203,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             {
                 var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
                 _mapper.Map(request, SubCategory);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UplodPhoto(
+                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhoto(
                     request.FormFile,
                     _environment,
                     Constants.PhotoFolder.SubCategorys,
@@ -415,7 +415,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

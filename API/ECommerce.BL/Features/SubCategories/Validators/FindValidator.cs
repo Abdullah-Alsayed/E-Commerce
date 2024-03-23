@@ -12,7 +12,7 @@ public class FindSubCategoryValidator : AbstractValidator<FindSubCategoryRequest
     private readonly IStringLocalizer<FindSubCategoryValidator> _localizer;
 
     public FindSubCategoryValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindSubCategoryValidator> localizer
     )
     {

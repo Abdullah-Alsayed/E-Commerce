@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Sizes.Validators
         private readonly IStringLocalizer<CreateSizeValidator> _localizer;
 
         public DeleteSizeValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateSizeValidator> localizer
         )
         {

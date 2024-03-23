@@ -14,7 +14,7 @@ namespace ECommerce.BLL.Features.Brands.Validators
         private readonly IStringLocalizer<CreateBrandValidator> _localizer;
 
         public DeleteBrandValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateBrandValidator> localizer
         )
         {

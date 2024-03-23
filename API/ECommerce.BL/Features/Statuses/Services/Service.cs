@@ -143,7 +143,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
                 var status = _mapper.Map<Status>(request);
                 status.CreateBy = _userId;
                 status.Order = GetCurentOrder(allStatus.OrderBy(x => x.Order).ToList());
-                await _unitOfWork.Status.AddaAync(status);
+                await _unitOfWork.Status.AddAsync(status);
                 var result = _mapper.Map<StatusDto>(status);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -387,7 +387,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

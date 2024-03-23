@@ -12,7 +12,7 @@ public class UpdateCartValidator : AbstractValidator<UpdateCartRequest>
     private readonly IStringLocalizer<UpdateCartValidator> _localizer;
 
     public UpdateCartValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateCartValidator> localizer
     )
     {

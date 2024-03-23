@@ -12,7 +12,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
     private readonly IStringLocalizer<UpdateUnitValidator> _localizer;
 
     public UpdateUnitValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateUnitValidator> localizer
     )
     {

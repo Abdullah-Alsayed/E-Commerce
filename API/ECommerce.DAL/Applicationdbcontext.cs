@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.DAL
 {
-    public class Applicationdbcontext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public Applicationdbcontext(DbContextOptions<Applicationdbcontext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
         public DbSet<Area> Areas { get; set; }
@@ -37,6 +37,7 @@ namespace ECommerce.DAL
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
+        public DbSet<ProductColor> ProductColors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {

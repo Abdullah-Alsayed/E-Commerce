@@ -1,20 +1,38 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ECommerce.BLL.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.BLL.Repository
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        public ProductRepository(Applicationdbcontext context)
-            : base(context) { }
+        private readonly ApplicationDbContext _context;
+
+        public ProductRepository(ApplicationDbContext context)
+            : base(context)
+        {
+            _context = context;
+        }
 
         public async Task<Product> AddToChart(int ID)
         {
             var Product = await FindAsync(ID);
             return Product;
+        }
+
+        public async Task<Product> GetProductItemAsync(Guid iD)
+        {
+            var product = await _context
+                .Products.Include(x => x.ProductColors)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductSizes)
+                .ThenInclude(x => x.Size)
+                .FirstAsync(x => x.ID == iD);
+
+            return product;
         }
     }
 }

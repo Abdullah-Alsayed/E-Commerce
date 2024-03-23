@@ -12,7 +12,7 @@ public class UpdateSizeValidator : AbstractValidator<UpdateSizeRequest>
     private readonly IStringLocalizer<UpdateSizeValidator> _localizer;
 
     public UpdateSizeValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateSizeValidator> localizer
     )
     {

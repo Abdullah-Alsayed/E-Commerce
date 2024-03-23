@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Reviews.Validators
         private readonly IStringLocalizer<CreateReviewValidator> _localizer;
 
         public DeleteReviewValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateReviewValidator> localizer
         )
         {

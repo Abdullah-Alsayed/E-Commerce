@@ -13,7 +13,7 @@ public class FindAreaValidator : AbstractValidator<FindAreaRequest>
     private readonly IStringLocalizer<FindAreaValidator> _localizer;
 
     public FindAreaValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindAreaValidator> localizer
     )
     {

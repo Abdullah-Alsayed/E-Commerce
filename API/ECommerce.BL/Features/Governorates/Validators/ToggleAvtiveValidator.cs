@@ -13,7 +13,7 @@ namespace ECommerce.BLL.Features.Governorates.Validators
         private readonly IStringLocalizer<ToggleAvtiveGovernorateValidator> _localizer;
 
         public ToggleAvtiveGovernorateValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<ToggleAvtiveGovernorateValidator> localizer
         )
         {

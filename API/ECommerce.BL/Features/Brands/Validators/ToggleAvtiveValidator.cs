@@ -14,7 +14,7 @@ namespace ECommerce.BLL.Features.Brands.Validators
         private readonly IStringLocalizer<ToggleAvtiveBrandValidator> _localizer;
 
         public ToggleAvtiveBrandValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<ToggleAvtiveBrandValidator> localizer
         )
         {

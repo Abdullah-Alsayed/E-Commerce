@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Sliders.Validators
         private readonly IStringLocalizer<CreateSliderValidator> _localizer;
 
         public DeleteSliderValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateSliderValidator> localizer
         )
         {

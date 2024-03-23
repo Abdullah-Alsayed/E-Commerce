@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿// Ignore Spelling: Validator BLL Validators
+
+using System.Linq;
 using ECommerce.BLL.Features.Stocks.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
@@ -12,7 +14,7 @@ namespace ECommerce.BLL.Features.Stocks.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateStockValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateStockValidator> localizer
         )
         {

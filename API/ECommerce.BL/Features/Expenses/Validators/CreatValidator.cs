@@ -15,7 +15,7 @@ namespace ECommerce.BLL.Features.Expenses.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateExpenseValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateExpenseValidator> localizer
         )
         {

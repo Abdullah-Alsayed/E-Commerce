@@ -42,6 +42,7 @@ namespace ECommerce.DAL.Entity
         public virtual Unit Unit { get; set; }
 
         public virtual ICollection<ProductColor> ProductColors { get; set; }
+        public virtual ICollection<ProductSize> ProductSizes { get; set; }
         public virtual ICollection<ProductOrder> ProductOrders { get; set; }
         public virtual ICollection<Stock> ProductStocks { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }

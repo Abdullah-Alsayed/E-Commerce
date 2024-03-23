@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
-    [DbContext(typeof(Applicationdbcontext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240316132538_AddSize")]
     partial class AddSize
     {

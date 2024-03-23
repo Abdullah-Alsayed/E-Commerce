@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
-    [DbContext(typeof(Applicationdbcontext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240314230220_UpdateError2")]
     partial class UpdateError2
     {

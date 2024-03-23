@@ -14,7 +14,7 @@ public class FindBrandValidator : AbstractValidator<FindBrandRequest>
     private readonly IStringLocalizer<FindBrandValidator> _localizer;
 
     public FindBrandValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindBrandValidator> localizer
     )
     {

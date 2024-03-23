@@ -15,7 +15,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
     private readonly IStringLocalizer<UpdateSubCategoryValidator> _localizer;
 
     public UpdateSubCategoryValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateSubCategoryValidator> localizer
     )
     {

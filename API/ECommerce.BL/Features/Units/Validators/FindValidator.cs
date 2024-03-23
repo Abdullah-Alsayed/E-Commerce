@@ -12,7 +12,7 @@ public class FindUnitValidator : AbstractValidator<FindUnitRequest>
     private readonly IStringLocalizer<FindUnitValidator> _localizer;
 
     public FindUnitValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindUnitValidator> localizer
     )
     {

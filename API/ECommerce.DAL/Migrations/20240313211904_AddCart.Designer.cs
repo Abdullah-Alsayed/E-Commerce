@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
-    [DbContext(typeof(Applicationdbcontext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240313211904_AddCart")]
     partial class AddCart
     {

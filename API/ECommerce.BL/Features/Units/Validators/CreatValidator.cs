@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Units.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateUnitValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateUnitValidator> localizer
         )
         {

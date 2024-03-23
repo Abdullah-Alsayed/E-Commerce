@@ -15,7 +15,7 @@ namespace ECommerce.BLL.Features.Sliders.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateSliderValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateSliderValidator> localizer
         )
         {

@@ -12,7 +12,7 @@ public class UpdateFeedbackValidator : AbstractValidator<UpdateFeedbackRequest>
     private readonly IStringLocalizer<UpdateFeedbackValidator> _localizer;
 
     public UpdateFeedbackValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateFeedbackValidator> localizer
     )
     {

@@ -11,7 +11,7 @@ public class CreateContactUsValidator : AbstractValidator<CreateContactUsRequest
     private readonly IStringLocalizer<CreateContactUsValidator> _localizer;
 
     public CreateContactUsValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<CreateContactUsValidator> localizer
     )
     {

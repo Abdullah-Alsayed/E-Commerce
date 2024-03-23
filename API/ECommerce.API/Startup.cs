@@ -114,7 +114,7 @@ namespace ECommerce.API
             });
 
             //****************** Application DB context ******************************
-            services.AddDbContext<Applicationdbcontext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
             );
 
@@ -128,7 +128,7 @@ namespace ECommerce.API
                     Option.Password.RequireLowercase = false;
                     Option.Password.RequireUppercase = false;
                 })
-                .AddEntityFrameworkStores<Applicationdbcontext>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             //****************** JWT ******************************
@@ -220,7 +220,7 @@ namespace ECommerce.API
                 .ApplicationServices.GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             {
-                var context = scope.ServiceProvider.GetRequiredService<Applicationdbcontext>();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 DataSeeder.SeedData(context);
             }
 

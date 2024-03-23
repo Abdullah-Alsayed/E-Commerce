@@ -12,7 +12,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
     private readonly IStringLocalizer<UpdateColorValidator> _localizer;
 
     public UpdateColorValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateColorValidator> localizer
     )
     {

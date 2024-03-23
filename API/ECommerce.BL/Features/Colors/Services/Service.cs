@@ -144,7 +144,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 var color = _mapper.Map<Color>(request);
                 color.CreateBy = _userId;
-                color = await _unitOfWork.Color.AddaAync(color);
+                color = await _unitOfWork.Color.AddAsync(color);
                 var result = _mapper.Map<ColorDto>(color);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -349,7 +349,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

@@ -12,7 +12,7 @@ public class FindOrderValidator : AbstractValidator<FindOrderRequest>
     private readonly IStringLocalizer<FindOrderValidator> _localizer;
 
     public FindOrderValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindOrderValidator> localizer
     )
     {

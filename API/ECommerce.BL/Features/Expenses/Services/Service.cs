@@ -130,12 +130,12 @@ public class ExpenseService : IExpenseService
         {
             var Expense = _mapper.Map<Expense>(request);
             Expense.CreateBy = _userId;
-            Expense.PhotoPath = await _unitOfWork.Expense.UplodPhoto(
+            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
                 request.FormFile,
                 _environment,
                 Constants.PhotoFolder.Expense
             );
-            Expense = await _unitOfWork.Expense.AddaAync(Expense);
+            Expense = await _unitOfWork.Expense.AddAsync(Expense);
             var result = _mapper.Map<ExpenseDto>(Expense);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -190,7 +190,7 @@ public class ExpenseService : IExpenseService
             _mapper.Map(request, Expense);
             Expense.ModifyBy = _userId;
             Expense.ModifyAt = DateTime.UtcNow;
-            Expense.PhotoPath = await _unitOfWork.Expense.UplodPhoto(
+            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
                 request.FormFile,
                 _environment,
                 Constants.PhotoFolder.Expense,
@@ -333,7 +333,7 @@ public class ExpenseService : IExpenseService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,

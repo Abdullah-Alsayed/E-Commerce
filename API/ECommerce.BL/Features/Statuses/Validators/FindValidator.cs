@@ -12,7 +12,7 @@ public class FindStatusValidator : AbstractValidator<FindStatusRequest>
     private readonly IStringLocalizer<FindStatusValidator> _localizer;
 
     public FindStatusValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindStatusValidator> localizer
     )
     {

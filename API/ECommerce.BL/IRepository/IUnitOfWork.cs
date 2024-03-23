@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: BLL
+
+using System;
 using System.Threading.Tasks;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
@@ -7,12 +9,12 @@ namespace ECommerce.BLL.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
-        Applicationdbcontext Context { get; }
+        ApplicationDbContext Context { get; }
         IBaseRepository<SubCategory> SubCategory { get; }
         IBaseRepository<Governorate> Governorate { get; }
         IBaseRepository<Slider> Slider { get; }
         IBaseRepository<Voucher> Voucher { get; }
-        IBaseRepository<Stock> Stock { get; }
+        IStockRepository Stock { get; }
         IBaseRepository<ContactUs> ContactUs { get; }
         INotificationRepository Notification { get; }
         IBaseRepository<History> History { get; }
@@ -34,6 +36,8 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Area> Area { get; }
         IBaseRepository<Vendor> Vendor { get; }
         IUserRepository User { get; }
+        IProductSizeRepository ProductSize { get; }
+        IProductColorRepository ProductColor { get; }
 
         Task<int> SaveAsync();
         Task<bool> IsDone(int modifyRows);

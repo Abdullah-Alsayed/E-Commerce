@@ -76,7 +76,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             {
                 var ContactUs = _mapper.Map<ContactUs>(request);
                 ContactUs.CreateBy = _userId;
-                ContactUs = await _unitOfWork.ContactUs.AddaAync(ContactUs);
+                ContactUs = await _unitOfWork.ContactUs.AddAsync(ContactUs);
                 var result = _mapper.Map<ContactUsDto>(ContactUs);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -174,7 +174,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

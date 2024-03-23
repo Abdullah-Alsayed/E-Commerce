@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: BLL Accessor
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,16 +39,16 @@ namespace ECommerce.BLL.Features.Stocks.Services
             _localizer = localizer;
             _httpContext = httpContextAccessor;
 
-            #region initilize mapper
+            #region initialize mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
                 cfg.CreateMap<Stock, StockDto>().ReverseMap();
                 cfg.CreateMap<Stock, CreateStockRequest>().ReverseMap();
-                cfg.CreateMap<Stock, UpdateStockRequest>().ReverseMap();
+                cfg.CreateMap<Stock, ReturnStockRequest>().ReverseMap();
             });
             _mapper = new Mapper(config);
-            #endregion initilize mapper
+            #endregion
 
             #region Get User Data From Token
             _userId = _httpContext
@@ -67,7 +69,10 @@ namespace ECommerce.BLL.Features.Stocks.Services
         {
             try
             {
-                var Stock = await _unitOfWork.Stock.FindAsync(request.ID);
+                var Stock = await _unitOfWork.Stock.FirstAsync(
+                    x => x.ID == request.ID,
+                    [nameof(Product)]
+                );
                 var result = _mapper.Map<StockDto>(Stock);
                 return new BaseResponse<StockDto>
                 {
@@ -131,7 +136,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             {
                 var Stock = _mapper.Map<Stock>(request);
                 Stock.CreateBy = _userId;
-                Stock = await _unitOfWork.Stock.AddaAync(Stock);
+                modifyRows += await _unitOfWork.Stock.AddStockAsync(Stock, request);
 
                 var result = _mapper.Map<StockDto>(Stock);
                 #region Send Notification
@@ -144,7 +149,6 @@ namespace ECommerce.BLL.Features.Stocks.Services
                 modifyRows++;
                 #endregion
 
-                modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -181,7 +185,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             }
         }
 
-        public async Task<BaseResponse> UpdateAsync(UpdateStockRequest request)
+        public async Task<BaseResponse> ReturnAsync(ReturnStockRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;
@@ -192,6 +196,8 @@ namespace ECommerce.BLL.Features.Stocks.Services
                 Stock.ModifyBy = _userId;
                 Stock.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<StockDto>(Stock);
+                modifyRows = await _unitOfWork.Stock.ReturnItemAsync(request);
+
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -279,7 +285,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

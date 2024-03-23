@@ -13,7 +13,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
         private readonly IStringLocalizer<CreateVoucherValidator> _localizer;
 
         public DeleteVoucherValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateVoucherValidator> localizer
         )
         {

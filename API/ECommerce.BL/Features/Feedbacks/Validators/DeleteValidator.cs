@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
         private readonly IStringLocalizer<CreateFeedbackValidator> _localizer;
 
         public DeleteFeedbackValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateFeedbackValidator> localizer
         )
         {

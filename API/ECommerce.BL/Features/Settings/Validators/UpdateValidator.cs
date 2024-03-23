@@ -15,7 +15,7 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
     private readonly IStringLocalizer<UpdateSettingValidator> _localizer;
 
     public UpdateSettingValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateSettingValidator> localizer
     )
     {

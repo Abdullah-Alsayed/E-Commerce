@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿// Ignore Spelling: Validator
+
+using System.Linq;
 using ECommerce.BLL.Features.Stocks.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
@@ -7,15 +9,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Stocks.Validators;
 
-public class UpdateStockValidator : AbstractValidator<UpdateStockRequest>
+public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
 {
-    private readonly IStringLocalizer<UpdateStockValidator> _localizer;
-    private readonly IStringLocalizer<CreateStockValidator> _createLocalizer;
+    private readonly IStringLocalizer<ReturnStockValidator> _localizer;
 
-    public UpdateStockValidator(
-        Applicationdbcontext context,
-        IStringLocalizer<UpdateStockValidator> localizer,
-        IStringLocalizer<CreateStockValidator> _createLocalizer
+    public ReturnStockValidator(
+        ApplicationDbContext context,
+        IStringLocalizer<ReturnStockValidator> localizer
     )
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
@@ -38,19 +38,6 @@ public class UpdateStockValidator : AbstractValidator<UpdateStockRequest>
             .WithMessage(x =>
                 $" {_localizer[Constants.EntitsKeys.Stock]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
-        RuleFor(req => req.Quantity)
-            .GreaterThanOrEqualTo(1)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
-            .LessThanOrEqualTo(int.MaxValue)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, int.MaxValue].ToString())
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            );
 
         RuleFor(req => req.ProductID)
             .NotEmpty()
@@ -67,23 +54,6 @@ public class UpdateStockValidator : AbstractValidator<UpdateStockRequest>
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
-            );
-
-        RuleFor(req => req.VendorID)
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .Must(ID =>
-            {
-                return context.Vendors.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
-            })
-            .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
 
         RuleFor(req => req.Size)
@@ -181,15 +151,5 @@ public class UpdateStockValidator : AbstractValidator<UpdateStockRequest>
                         $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     );
             });
-
-        RuleFor(req => req)
-            .Must(req =>
-            {
-                var quantitySize = req.Size != null ? req.Size.Sum(x => x.Quantity) : 0;
-                var quantityColor = req.Color != null ? req.Color.Sum(x => x.Quantity) : 0;
-
-                return (quantityColor + quantitySize) == req.Quantity;
-            })
-            .WithMessage(x => $"{_localizer[Constants.MessageKeys.quantityNotValid]}");
     }
 }

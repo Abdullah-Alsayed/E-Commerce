@@ -105,7 +105,7 @@ namespace ECommerce.BLL.Features.Settings.Services
                 _mapper.Map(request, Setting);
                 Setting.ModifyBy = _userId;
                 Setting.ModifyAt = DateTime.UtcNow;
-                Setting.Logo = await _unitOfWork.Setting.UplodPhoto(
+                Setting.Logo = await _unitOfWork.Setting.UploadPhoto(
                     request.FormFile,
                     _environment,
                     Constants.PhotoFolder.Main
@@ -171,7 +171,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

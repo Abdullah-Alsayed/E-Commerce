@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Products.Validators
         private readonly IStringLocalizer<ToggleAvtiveProductValidator> _localizer;
 
         public ToggleAvtiveProductValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<ToggleAvtiveProductValidator> localizer
         )
         {

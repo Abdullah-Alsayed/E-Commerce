@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
         private readonly IStringLocalizer<CreateSubCategoryValidator> _localizer;
 
         public DeleteSubCategoryValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateSubCategoryValidator> localizer
         )
         {

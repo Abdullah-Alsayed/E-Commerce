@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ECommerce.DAL.Migrations
 {
-    [DbContext(typeof(Applicationdbcontext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240309154345_UpdateColorEntity")]
     partial class UpdateColorEntity
     {

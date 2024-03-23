@@ -141,8 +141,8 @@ namespace ECommerce.BLL.Features.Categories.Services
             {
                 var Category = _mapper.Map<Category>(request);
                 Category.CreateBy = _userId;
-                Category = await _unitOfWork.Category.AddaAync(Category);
-                Category.PhotoPath = await _unitOfWork.Category.UplodPhoto(
+                Category = await _unitOfWork.Category.AddAsync(Category);
+                Category.PhotoPath = await _unitOfWork.Category.UploadPhoto(
                     request.FormFile,
                     _environment,
                     Constants.PhotoFolder.Categorys
@@ -203,7 +203,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             {
                 var Category = await _unitOfWork.Category.FindAsync(request.ID);
                 _mapper.Map(request, Category);
-                Category.PhotoPath = await _unitOfWork.Category.UplodPhoto(
+                Category.PhotoPath = await _unitOfWork.Category.UploadPhoto(
                     request.FormFile,
                     _environment,
                     Constants.PhotoFolder.Categorys,
@@ -415,7 +415,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

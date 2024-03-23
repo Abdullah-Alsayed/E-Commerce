@@ -12,7 +12,7 @@ public class UpdateReviewValidator : AbstractValidator<UpdateReviewRequest>
     private readonly IStringLocalizer _localizer;
 
     public UpdateReviewValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<CreateReviewValidator> localizer
     )
     {

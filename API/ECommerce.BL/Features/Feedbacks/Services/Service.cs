@@ -135,7 +135,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             {
                 var Feedback = _mapper.Map<Feedback>(request);
                 Feedback.CreateBy = _userId;
-                Feedback = await _unitOfWork.Feedback.AddaAync(Feedback);
+                Feedback = await _unitOfWork.Feedback.AddAsync(Feedback);
                 var result = _mapper.Map<FeedbackDto>(Feedback);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -340,7 +340,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

@@ -134,7 +134,7 @@ namespace ECommerce.BLL.Features.Units.Services
             {
                 var Unit = _mapper.Map<Unit>(request);
                 Unit.CreateBy = _userId;
-                Unit = await _unitOfWork.Unit.AddaAync(Unit);
+                Unit = await _unitOfWork.Unit.AddAsync(Unit);
                 var result = _mapper.Map<UnitDto>(Unit);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -339,7 +339,7 @@ namespace ECommerce.BLL.Features.Units.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

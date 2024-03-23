@@ -17,7 +17,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
     private readonly IStringLocalizer<UpdateBrandValidator> _localizer;
 
     public UpdateBrandValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateBrandValidator> localizer
     )
     {

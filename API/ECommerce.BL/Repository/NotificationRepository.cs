@@ -8,9 +8,9 @@ namespace ECommerce.BLL.Repository
 {
     public class NotificationRepository : BaseRepository<Notification>, INotificationRepository
     {
-        private readonly Applicationdbcontext _Context;
+        private readonly ApplicationDbContext _Context;
 
-        public NotificationRepository(Applicationdbcontext Context)
+        public NotificationRepository(ApplicationDbContext Context)
             : base(Context) => _Context = Context;
 
         public async Task<Notification> AddNotificationAsync(Notification notification)
@@ -20,7 +20,7 @@ namespace ECommerce.BLL.Repository
             notification.MessageAR = "";
             notification.MessageEN = "";
 
-            _ = await AddaAync(notification);
+            _ = await AddAsync(notification);
 
             // Call Signal R
             return notification;

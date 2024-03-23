@@ -15,7 +15,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateSubCategoryValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateSubCategoryValidator> localizer
         )
         {

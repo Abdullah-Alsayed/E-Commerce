@@ -136,7 +136,7 @@ public class GovernorateService : IGovernorateService
         {
             var governorate = _mapper.Map<Governorate>(request);
             governorate.CreateBy = _userId;
-            governorate = await _unitOfWork.Governorate.AddaAync(governorate);
+            governorate = await _unitOfWork.Governorate.AddAsync(governorate);
             var result = _mapper.Map<GovernorateDto>(governorate);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -399,7 +399,7 @@ public class GovernorateService : IGovernorateService
         );
 
     private async Task LogHistory(OperationTypeEnum action) =>
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,

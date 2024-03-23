@@ -13,7 +13,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
         private readonly IStringLocalizer<ToggleAvtiveSubCategoryValidator> _localizer;
 
         public ToggleAvtiveSubCategoryValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<ToggleAvtiveSubCategoryValidator> localizer
         )
         {

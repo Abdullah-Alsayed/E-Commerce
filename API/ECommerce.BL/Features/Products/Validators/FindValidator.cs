@@ -12,7 +12,7 @@ public class FindProductValidator : AbstractValidator<FindProductRequest>
     private readonly IStringLocalizer<FindProductValidator> _localizer;
 
     public FindProductValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindProductValidator> localizer
     )
     {

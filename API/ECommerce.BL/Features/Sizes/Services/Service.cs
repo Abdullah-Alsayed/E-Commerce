@@ -133,7 +133,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             {
                 var Size = _mapper.Map<Size>(request);
                 Size.CreateBy = _userId;
-                Size = await _unitOfWork.Size.AddaAync(Size);
+                Size = await _unitOfWork.Size.AddAsync(Size);
                 var result = _mapper.Map<SizeDto>(Size);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -338,7 +338,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

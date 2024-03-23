@@ -21,7 +21,7 @@ namespace ECommerce.BLL.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly Applicationdbcontext _context;
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -29,7 +29,7 @@ namespace ECommerce.BLL.Repository
         private readonly JWTHelpers _jwt;
 
         public UserRepository(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             RoleManager<IdentityRole> roleManager,

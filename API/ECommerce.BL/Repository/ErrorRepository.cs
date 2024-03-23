@@ -12,9 +12,9 @@ namespace ECommerce.BLL.Repository
 {
     public class ErrorRepository : BaseRepository<ErrorLog>, IErrorRepository
     {
-        private readonly Applicationdbcontext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ErrorRepository(Applicationdbcontext context)
+        public ErrorRepository(ApplicationDbContext context)
             : base(context)
         {
             _context = context;
@@ -25,7 +25,7 @@ namespace ECommerce.BLL.Repository
             try
             {
                 _context.ChangeTracker.Clear();
-                await AddaAync(
+                await AddAsync(
                     new ErrorLog
                     {
                         Source = ex.InnerException.Source,

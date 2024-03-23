@@ -13,8 +13,8 @@ namespace ECommerce.BLL.IRepository
     public interface IBaseRepository<T>
         where T : class
     {
-        Task<T> AddaAync(T Entity);
-        Task<IEnumerable<T>> AddaRangeAync(IEnumerable<T> Entitys);
+        Task<T> AddAsync(T Entity);
+        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys);
         T Update(T Entity);
         bool Delete(T Entity);
         Task<T> FindAsync(int ID);
@@ -39,22 +39,23 @@ namespace ECommerce.BLL.IRepository
             string orderByDirection = Constants.OrderBY.Ascending
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
-        Task<string> UplodPhoto(
+        Task<string> UploadPhoto(
             IFormFile File,
             IHostEnvironment environment,
             string FolderName,
             string ImgName = null
         );
-        Task<List<string>> UplodPhotos(
+        Task<List<string>> UploadPhotos(
             List<IFormFile> Files,
             IHostEnvironment environment,
             string FolderName,
             List<string> ImgNames = null
         );
 
-        bool ToggleAvtive(bool IsActive);
+        bool ToggleActive(bool IsActive);
         List<string> SearchEntity();
         Task<T> FirstAsync();
         Task<T> FirstAsync(Expression<Func<T, bool>> Criteria);
+        Task<T> FirstAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
     }
 }

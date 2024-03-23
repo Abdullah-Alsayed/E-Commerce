@@ -13,7 +13,7 @@ namespace ECommerce.BLL.Features.Areas.Validators
         private readonly IStringLocalizer<CreateAreaValidator> _localizer;
 
         public DeleteAreaValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateAreaValidator> localizer
         )
         {

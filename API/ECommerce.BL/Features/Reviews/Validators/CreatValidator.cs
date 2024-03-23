@@ -16,7 +16,7 @@ namespace ECommerce.BLL.Features.Reviews.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateReviewValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IHttpContextAccessor httpContextAccessor,
             IStringLocalizer<CreateReviewValidator> localizer
         )

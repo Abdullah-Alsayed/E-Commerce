@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: BLL
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,20 +24,20 @@ namespace ECommerce.BLL.Repository
     public class BaseRepository<T> : IBaseRepository<T>
         where T : class
     {
-        private readonly Applicationdbcontext _context;
+        private readonly ApplicationDbContext _context;
 
-        public BaseRepository(Applicationdbcontext context)
+        public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<T> AddaAync(T Entity)
+        public async Task<T> AddAsync(T Entity)
         {
             await _context.Set<T>().AddAsync(Entity);
             return Entity;
         }
 
-        public async Task<IEnumerable<T>> AddaRangeAync(IEnumerable<T> Entitys)
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys)
         {
             await _context.Set<T>().AddRangeAsync(Entitys);
             return Entitys;
@@ -108,8 +110,9 @@ namespace ECommerce.BLL.Repository
         public async Task<IEnumerable<T>> GetAllAsync(string[] Includes = null)
         {
             IQueryable<T> Query = _context.Set<T>();
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+
+            foreach (var include in Includes)
+                Query = Query.Include(include);
 
             return await Query.ToListAsync();
         }
@@ -182,7 +185,7 @@ namespace ECommerce.BLL.Repository
             return await Query.FirstOrDefaultAsync(Criteria);
         }
 
-        public async Task<string> UplodPhoto(
+        public async Task<string> UploadPhoto(
             IFormFile file,
             IHostEnvironment environment,
             string FolderName,
@@ -221,7 +224,7 @@ namespace ECommerce.BLL.Repository
             return filepath;
         }
 
-        public async Task<List<string>> UplodPhotos(
+        public async Task<List<string>> UploadPhotos(
             List<IFormFile> files,
             IHostEnvironment environment,
             string FolderName,
@@ -233,7 +236,7 @@ namespace ECommerce.BLL.Repository
             var index = 0;
             foreach (var file in files)
             {
-                curentPhoto = await UplodPhoto(
+                curentPhoto = await UploadPhoto(
                     file,
                     environment,
                     FolderName,
@@ -246,7 +249,7 @@ namespace ECommerce.BLL.Repository
             return photos;
         }
 
-        public bool ToggleAvtive(bool IsActive)
+        public bool ToggleActive(bool IsActive)
         {
             return !IsActive;
         }
@@ -358,6 +361,19 @@ namespace ECommerce.BLL.Repository
         public async Task<T> FirstAsync(Expression<Func<T, bool>> Criteria)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(Criteria);
+        }
+
+        public async Task<T> FirstAsync(
+            Expression<Func<T, bool>> Criteria,
+            string[] Includes = null
+        )
+        {
+            IQueryable<T> Query = _context.Set<T>();
+            if (Includes != null)
+                foreach (var include in Includes)
+                    Query = Query.Include(include);
+
+            return await Query.FirstOrDefaultAsync(Criteria);
         }
     }
 }

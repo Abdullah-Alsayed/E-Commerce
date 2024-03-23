@@ -12,7 +12,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
     private readonly IStringLocalizer<UpdateVendorValidator> _localizer;
 
     public UpdateVendorValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateVendorValidator> localizer
     )
     {

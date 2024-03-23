@@ -129,7 +129,7 @@ public class VoucherService : IVoucherService
         {
             var voucher = _mapper.Map<Voucher>(request);
             voucher.CreateBy = _userId;
-            voucher = await _unitOfWork.Voucher.AddaAync(voucher);
+            voucher = await _unitOfWork.Voucher.AddAsync(voucher);
             var result = _mapper.Map<VoucherDto>(voucher);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -375,7 +375,7 @@ public class VoucherService : IVoucherService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,

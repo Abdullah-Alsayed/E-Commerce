@@ -13,7 +13,7 @@ public class UpdateAreaValidator : AbstractValidator<UpdateAreaRequest>
     private readonly IStringLocalizer<UpdateAreaValidator> _localizer;
 
     public UpdateAreaValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateAreaValidator> localizer
     )
     {

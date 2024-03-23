@@ -12,7 +12,7 @@ public class FindExpenseValidator : AbstractValidator<FindExpenseRequest>
     private readonly IStringLocalizer<FindExpenseValidator> _localizer;
 
     public FindExpenseValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindExpenseValidator> localizer
     )
     {

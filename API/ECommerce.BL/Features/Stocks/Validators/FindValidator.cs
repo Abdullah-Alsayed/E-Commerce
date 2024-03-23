@@ -12,7 +12,7 @@ public class FindStockValidator : AbstractValidator<FindStockRequest>
     private readonly IStringLocalizer<FindStockValidator> _localizer;
 
     public FindStockValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindStockValidator> localizer
     )
     {

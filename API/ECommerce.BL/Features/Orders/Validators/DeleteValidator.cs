@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
         private readonly IStringLocalizer<CreateOrderValidator> _localizer;
 
         public DeleteOrderValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateOrderValidator> localizer
         )
         {

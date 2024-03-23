@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Governorates.Validators
         private readonly IStringLocalizer<CreateGovernorateValidator> _localizer;
 
         public DeleteGovernorateValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateGovernorateValidator> localizer
         )
         {

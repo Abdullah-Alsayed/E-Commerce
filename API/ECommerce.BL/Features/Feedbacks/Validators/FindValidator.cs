@@ -12,7 +12,7 @@ public class FindFeedbackValidator : AbstractValidator<FindFeedbackRequest>
     private readonly IStringLocalizer<FindFeedbackValidator> _localizer;
 
     public FindFeedbackValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindFeedbackValidator> localizer
     )
     {

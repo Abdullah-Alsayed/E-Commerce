@@ -70,11 +70,11 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateStock(UpdateStockRequest request)
+        public async Task<BaseResponse> ReturnStock(ReturnStockRequest request)
         {
             try
             {
-                return await _service.UpdateAsync(request);
+                return await _service.ReturnAsync(request);
             }
             catch (Exception ex)
             {

@@ -12,7 +12,7 @@ public class FindGovernorateValidator : AbstractValidator<FindGovernorateRequest
     private readonly IStringLocalizer<FindGovernorateValidator> _localizer;
 
     public FindGovernorateValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindGovernorateValidator> localizer
     )
     {

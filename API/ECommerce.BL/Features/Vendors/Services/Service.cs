@@ -135,7 +135,7 @@ namespace ECommerce.BLL.Features.Vendors.Services
             {
                 var Vendor = _mapper.Map<Vendor>(request);
                 Vendor.CreateBy = _userId;
-                Vendor = await _unitOfWork.Vendor.AddaAync(Vendor);
+                Vendor = await _unitOfWork.Vendor.AddAsync(Vendor);
                 var result = _mapper.Map<VendorDto>(Vendor);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -340,7 +340,7 @@ namespace ECommerce.BLL.Features.Vendors.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

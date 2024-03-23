@@ -15,7 +15,7 @@ public class UpdateExpenseValidator : AbstractValidator<UpdateExpenseRequest>
     private readonly IStringLocalizer<UpdateExpenseValidator> _localizer;
 
     public UpdateExpenseValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateExpenseValidator> localizer
     )
     {

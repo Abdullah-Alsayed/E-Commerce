@@ -12,7 +12,7 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
     private readonly IStringLocalizer<UpdateVoucherValidator> _localizer;
 
     public UpdateVoucherValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateVoucherValidator> localizer
     )
     {

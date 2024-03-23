@@ -134,7 +134,7 @@ namespace ECommerce.BLL.Features.Orders.Services
                 var Products = request.Products;
                 Order.StatusID = sattus.OrderBy(x => x.Order).LastOrDefault().ID;
                 Order.CreateBy = _userId;
-                Order = await _unitOfWork.Order.AddaAync(Order);
+                Order = await _unitOfWork.Order.AddAsync(Order);
                 var result = _mapper.Map<OrderDto>(Order);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -281,7 +281,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

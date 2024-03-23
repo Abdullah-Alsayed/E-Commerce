@@ -12,7 +12,7 @@ public class FindVoucherValidator : AbstractValidator<FindVoucherRequest>
     private readonly IStringLocalizer<FindVoucherValidator> _localizer;
 
     public FindVoucherValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindVoucherValidator> localizer
     )
     {

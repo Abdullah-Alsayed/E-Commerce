@@ -11,7 +11,7 @@ namespace ECommerce.Core
 {
     public static class DataSeeder
     {
-        public static void SeedData(Applicationdbcontext context)
+        public static void SeedData(ApplicationDbContext context)
         {
             var systemUser = Guid.NewGuid().ToString();
             if (!context.Users.Any(x => x.UserName == "System"))

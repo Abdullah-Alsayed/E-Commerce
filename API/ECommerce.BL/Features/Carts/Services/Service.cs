@@ -142,7 +142,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             {
                 var Cart = _mapper.Map<ShoppingCart>(request);
                 Cart.CreateBy = _userId;
-                Cart = await _unitOfWork.Cart.AddaAync(Cart);
+                Cart = await _unitOfWork.Cart.AddAsync(Cart);
                 var result = _mapper.Map<CartDto>(Cart);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -372,7 +372,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

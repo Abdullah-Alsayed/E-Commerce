@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
+using ECommerce.BLL.Features.Sizes.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -48,6 +50,8 @@ namespace ECommerce.BLL.Features.Products.Services
                 cfg.CreateMap<Product, ProductDto>().ReverseMap();
                 cfg.CreateMap<Product, CreateProductRequest>().ReverseMap();
                 cfg.CreateMap<Product, UpdateProductRequest>().ReverseMap();
+                cfg.CreateMap<Color, ColorDto>().ReverseMap();
+                cfg.CreateMap<Size, SizeDto>().ReverseMap();
             });
             _mapper = new Mapper(config);
             #endregion initilize mapper
@@ -74,6 +78,35 @@ namespace ECommerce.BLL.Features.Products.Services
                 var Product = await _unitOfWork.Product.FindAsync(request.ID);
                 var result = _mapper.Map<ProductDto>(Product);
                 return new BaseResponse<ProductDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Find,
+                    EntitiesEnum.Product
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> GetProductItems(GetProductItemsRequest request)
+        {
+            try
+            {
+                var Product = await _unitOfWork.Product.GetProductItemAsync(request.ID);
+                var productDto = _mapper.Map<ProductDto>(Product);
+                var result = GetProductItemsDto(Product);
+                return new BaseResponse<ProductItemDto>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
@@ -139,8 +172,8 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 var Product = _mapper.Map<Product>(request);
                 Product.CreateBy = _userId;
-                Product = await _unitOfWork.Product.AddaAync(Product);
-                Product.ProductPhotos = await _unitOfWork.Product.UplodPhotos(
+                Product = await _unitOfWork.Product.AddAsync(Product);
+                Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
                     request.FormFiles,
                     _environment,
                     PhotoFolder.Products
@@ -201,7 +234,7 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 var Product = await _unitOfWork.Product.FindAsync(request.ID);
                 _mapper.Map(request, Product);
-                Product.ProductPhotos = await _unitOfWork.Product.UplodPhotos(
+                Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
                     request.FormFiles,
                     _environment,
                     PhotoFolder.Products,
@@ -315,7 +348,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveProductRequest request)
+        public async Task<BaseResponse> ToggleActivesAsync(ToggleAvtiveProductRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;
@@ -413,7 +446,7 @@ namespace ECommerce.BLL.Features.Products.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddaAync(
+            await _unitOfWork.History.AddAsync(
                 new History
                 {
                     UserID = _userId,
@@ -421,6 +454,30 @@ namespace ECommerce.BLL.Features.Products.Services
                     Entity = EntitiesEnum.Product
                 }
             );
+
+        private ProductItemDto GetProductItemsDto(Product product)
+        {
+            var result = new ProductItemDto();
+
+            result.Product = _mapper.Map<ProductDto>(product);
+            result.ProductSizes = product
+                .ProductSizes.Select(size => new ProductSizeDto
+                {
+                    Quantity = size.Quantity,
+                    Size = _mapper.Map<SizeDto>(size.Size)
+                })
+                .ToList();
+
+            result.ProductColors = product
+                .ProductColors.Select(color => new ProductColorDto
+                {
+                    Quantity = color.Quantity,
+                    Color = _mapper.Map<ColorDto>(color.Color)
+                })
+                .ToList();
+
+            return result;
+        }
 
         #endregion
     }

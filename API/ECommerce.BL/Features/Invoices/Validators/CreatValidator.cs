@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Invoices.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateInvoiceValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateInvoiceValidator> localizer
         )
         {

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Products.Services;
+using ECommerce.BLL.Features.Products.Validators;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,18 @@ namespace ECommerce.API.Controllers
             try
             {
                 return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<BaseResponse> GetProductItems([FromQuery] GetProductItemsRequest request)
+        {
+            try
+            {
+                return await _service.GetProductItems(request);
             }
             catch (Exception ex)
             {

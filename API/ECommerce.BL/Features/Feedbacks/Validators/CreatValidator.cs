@@ -15,7 +15,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateFeedbackValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IHttpContextAccessor httpContext,
             IStringLocalizer<CreateFeedbackValidator> localizer
         )

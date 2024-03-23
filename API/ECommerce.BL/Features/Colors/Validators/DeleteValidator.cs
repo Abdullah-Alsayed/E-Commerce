@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Colors.Validators
         private readonly IStringLocalizer<CreateColorValidator> _localizer;
 
         public DeleteColorValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateColorValidator> localizer
         )
         {

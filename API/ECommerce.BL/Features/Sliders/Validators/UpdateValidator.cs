@@ -15,7 +15,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
     private readonly IStringLocalizer<UpdateSliderValidator> _localizer;
 
     public UpdateSliderValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<UpdateSliderValidator> localizer
     )
     {

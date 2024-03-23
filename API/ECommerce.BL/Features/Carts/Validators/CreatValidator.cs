@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Carts.Validators
         private readonly IStringLocalizer _localizer;
 
         public CreateCartValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateCartValidator> localizer
         )
         {

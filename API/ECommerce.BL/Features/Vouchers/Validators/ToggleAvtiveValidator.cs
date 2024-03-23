@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
         private readonly IStringLocalizer<ToggleAvtiveVoucherValidator> _localizer;
 
         public ToggleAvtiveVoucherValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<ToggleAvtiveVoucherValidator> localizer
         )
         {

@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Expenses.Validators
         private readonly IStringLocalizer<CreateExpenseValidator> _localizer;
 
         public DeleteExpenseValidator(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             IStringLocalizer<CreateExpenseValidator> localizer
         )
         {

@@ -15,7 +15,7 @@ namespace ECommerce.BL.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public readonly Applicationdbcontext _context;
+        public readonly ApplicationDbContext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -23,7 +23,7 @@ namespace ECommerce.BL.Repository
         private readonly JWTHelpers _jwt;
 
         public UnitOfWork(
-            Applicationdbcontext context,
+            ApplicationDbContext context,
             SignInManager<User> signInManager,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -54,8 +54,10 @@ namespace ECommerce.BL.Repository
             Voucher = new BaseRepository<Voucher>(_context);
             ErrorLog = new ErrorRepository(_context);
             Invoice = new BaseRepository<Invoice>(_context);
+            ProductSize = new ProductSizeRepository(_context);
+            ProductColor = new ProductColorRepository(_context);
             //ProductPhoto = new ProductPhotoRepository(_context);
-            Stock = new BaseRepository<Stock>(_context);
+            Stock = new StockRepository(_context);
             Size = new BaseRepository<Size>(_context);
             Feedback = new BaseRepository<Feedback>(_context);
             Order = new BaseRepository<Order>(_context);
@@ -82,7 +84,7 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Voucher> Voucher { get; private set; }
         public IBaseRepository<ContactUs> ContactUs { get; private set; }
         public INotificationRepository Notification { get; private set; }
-        public IBaseRepository<Stock> Stock { get; private set; }
+        public IStockRepository Stock { get; private set; }
         public IBaseRepository<Size> Size { get; private set; }
         public IErrorRepository ErrorLog { get; private set; }
         public IBaseRepository<History> History { get; private set; }
@@ -102,8 +104,10 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Unit> Unit { get; private set; }
         public IBaseRepository<Area> Area { get; private set; }
         public IUserRepository User { get; private set; }
+        public IProductSizeRepository ProductSize { get; private set; }
+        public IProductColorRepository ProductColor { get; private set; }
 
-        public Applicationdbcontext Context { get; set; }
+        public ApplicationDbContext Context { get; set; }
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 

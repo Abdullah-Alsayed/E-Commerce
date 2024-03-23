@@ -119,7 +119,7 @@ namespace ECommerce.API.Controllers
         #region helpers
         private async Task ErrorLog(Exception ex)
         {
-            await _unitOfWork.ErrorLog.AddaAync(
+            await _unitOfWork.ErrorLog.AddAsync(
                 new ErrorLog { Message = ex.Message, Source = ex.Source, }
             );
             await _unitOfWork.SaveAsync();

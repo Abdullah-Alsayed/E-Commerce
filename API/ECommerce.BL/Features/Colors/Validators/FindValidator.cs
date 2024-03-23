@@ -12,7 +12,7 @@ public class FindColorValidator : AbstractValidator<FindColorRequest>
     private readonly IStringLocalizer<FindColorValidator> _localizer;
 
     public FindColorValidator(
-        Applicationdbcontext context,
+        ApplicationDbContext context,
         IStringLocalizer<FindColorValidator> localizer
     )
     {

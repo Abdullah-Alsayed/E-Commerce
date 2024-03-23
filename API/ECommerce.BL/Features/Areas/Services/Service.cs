@@ -130,7 +130,7 @@ public class AreaService : IAreaService
         {
             var area = _mapper.Map<Area>(request);
             area.CreateBy = _userId;
-            area = await _unitOfWork.Area.AddaAync(area);
+            area = await _unitOfWork.Area.AddAsync(area);
             var result = _mapper.Map<AreaDto>(area);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -377,7 +377,7 @@ public class AreaService : IAreaService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddaAync(
+        await _unitOfWork.History.AddAsync(
             new History
             {
                 UserID = _userId,
