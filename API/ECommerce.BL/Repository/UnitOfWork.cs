@@ -53,7 +53,7 @@ namespace ECommerce.BL.Repository
             Notification = new NotificationRepository(_context);
             Voucher = new BaseRepository<Voucher>(_context);
             ErrorLog = new ErrorRepository(_context);
-            Invoice = new BaseRepository<Invoice>(_context);
+            Invoice = new InvoiceRepository(_context);
             ProductSize = new ProductSizeRepository(_context);
             ProductColor = new ProductColorRepository(_context);
             //ProductPhoto = new ProductPhotoRepository(_context);
@@ -88,7 +88,7 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Size> Size { get; private set; }
         public IErrorRepository ErrorLog { get; private set; }
         public IBaseRepository<History> History { get; private set; }
-        public IBaseRepository<Invoice> Invoice { get; private set; }
+        public IInvoiceRepository Invoice { get; private set; }
         public IBaseRepository<Vendor> Vendor { get; private set; }
         public IBaseRepository<Feedback> Feedback { get; private set; }
         public IBaseRepository<Category> Category { get; private set; }

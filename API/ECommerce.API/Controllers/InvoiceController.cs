@@ -69,6 +69,19 @@ namespace ECommerce.API.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<BaseResponse> ReturnInvoice(ReturnInvoiceRequest request)
+        {
+            try
+            {
+                return await _service.ReturnAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         [HttpDelete]
         public async Task<BaseResponse> DeleteInvoice(DeleteInvoiceRequest request)
         {

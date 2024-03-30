@@ -54,7 +54,7 @@ namespace ECommerce.BLL.Features.Products.Services
                 cfg.CreateMap<Size, SizeDto>().ReverseMap();
             });
             _mapper = new Mapper(config);
-            #endregion initilize mapper
+            #endregion initialize mapper
 
             #region Get User Data From Token
             _userId = _httpContext

@@ -31,6 +31,7 @@ namespace ECommerce.API.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<BaseResponse> GetProductItems([FromQuery] GetProductItemsRequest request)
         {
             try

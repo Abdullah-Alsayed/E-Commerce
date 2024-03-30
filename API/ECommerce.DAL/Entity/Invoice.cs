@@ -7,6 +7,7 @@ namespace ECommerce.DAL.Entity
     {
         [Required]
         public Guid OrderId { get; set; }
+        public bool IsReturn { get; set; } = false;
 
         public virtual Order Order { get; set; }
     }

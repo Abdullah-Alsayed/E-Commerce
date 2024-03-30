@@ -27,7 +27,7 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Setting> Setting { get; }
         IBaseRepository<Expense> Expense { get; }
         IBaseRepository<Status> Status { get; }
-        IBaseRepository<Invoice> Invoice { get; }
+        IInvoiceRepository Invoice { get; }
         IBaseRepository<ProductReview> Review { get; }
         IBaseRepository<Color> Color { get; }
         IBaseRepository<Brand> Brand { get; }

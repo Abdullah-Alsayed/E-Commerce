@@ -11,5 +11,6 @@ namespace ECommerce.BLL.Features.Invoices.Services
         Task<BaseResponse> FindAsync(FindInvoiceRequest request);
         Task<BaseResponse> GetAllAsync(GetAllInvoiceRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
+        Task<BaseResponse> ReturnAsync(ReturnInvoiceRequest request);
     }
 }

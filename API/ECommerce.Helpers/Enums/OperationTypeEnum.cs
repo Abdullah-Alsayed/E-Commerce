@@ -8,6 +8,9 @@
         Toggle,
         GetAll,
         Find,
-        Search
+        Search,
+        Accept,
+        UpdateStatus,
+        Return
     }
 }

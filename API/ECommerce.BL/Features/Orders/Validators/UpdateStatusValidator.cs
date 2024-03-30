@@ -7,13 +7,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Orders.Validators;
 
-public class FindOrderValidator : AbstractValidator<FindOrderRequest>
+public class UpdateStatusValidator : AbstractValidator<UpdateStatusOrderRequest>
 {
-    private readonly IStringLocalizer<FindOrderValidator> _localizer;
+    private readonly IStringLocalizer<UpdateStatusValidator> _localizer;
 
-    public FindOrderValidator(
+    public UpdateStatusValidator(
         ApplicationDbContext context,
-        IStringLocalizer<FindOrderValidator> localizer
+        IStringLocalizer<UpdateStatusValidator> localizer
     )
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
@@ -30,6 +30,16 @@ public class FindOrderValidator : AbstractValidator<FindOrderRequest>
                 $"{_localizer[Constants.EntitsKeys.Order]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
+        RuleFor(req => req.StatusID)
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
+
         RuleFor(req => req)
             .Must(req =>
             {
@@ -37,6 +47,17 @@ public class FindOrderValidator : AbstractValidator<FindOrderRequest>
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntitsKeys.Order]} {_localizer[Constants.MessageKeys.NotFound]}"
+            );
+
+        RuleFor(req => req)
+            .Must(req =>
+            {
+                return context.Statuses.Any(x =>
+                    x.ID == req.StatusID && x.IsActive && !x.IsDeleted
+                );
+            })
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
     }
 }

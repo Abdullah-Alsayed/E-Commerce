@@ -16,5 +16,6 @@ namespace ECommerce.BLL.Features.Orders.Dtos
         public int Count { get; set; }
         public double Discount { get; set; }
         public double SubTotal { get; set; }
+        public bool IsAccept { get; set; }
     }
 }

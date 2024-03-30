@@ -81,5 +81,31 @@ namespace ECommerce.API.Controllers
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
+
+        [HttpPut]
+        public async Task<BaseResponse> AcceptOrder(AcceptOrderRequest request)
+        {
+            try
+            {
+                return await _service.AcceptAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> UpdateStatusOrder(UpdateStatusOrderRequest request)
+        {
+            try
+            {
+                return await _service.UpdateStatusAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
     }
 }

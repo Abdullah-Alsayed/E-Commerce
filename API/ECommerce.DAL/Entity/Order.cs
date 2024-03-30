@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Governorate
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -35,6 +37,8 @@ namespace ECommerce.DAL.Entity
 
         [Required, Range(1, double.MaxValue)]
         public double SubTotal { get; set; }
+
+        public bool IsAccept { get; set; } = false;
 
         public virtual Area Area { get; set; }
         public virtual Status Status { get; set; }

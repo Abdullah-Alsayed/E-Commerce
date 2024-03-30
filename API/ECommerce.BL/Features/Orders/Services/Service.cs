@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Orders.Dtos;
+using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
@@ -231,6 +232,122 @@ namespace ECommerce.BLL.Features.Orders.Services
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
+                    EntitiesEnum.Order
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> AcceptAsync(AcceptOrderRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Order = await _unitOfWork.Order.FindAsync(request.ID);
+                Order.ModifyBy = _userId;
+                Order.ModifyAt = DateTime.UtcNow;
+                Order.IsAccept = true;
+                var result = _mapper.Map<OrderDto>(Order);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.Accept);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.Accept);
+                modifyRows++;
+                #endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<OrderDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Accept,
+                    EntitiesEnum.Order
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> UpdateStatusAsync(UpdateStatusOrderRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Order = await _unitOfWork.Order.FindAsync(request.ID);
+                Order.ModifyBy = _userId;
+                Order.ModifyAt = DateTime.UtcNow;
+                Order.StatusID = request.StatusID;
+                var result = _mapper.Map<OrderDto>(Order);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.UpdateStatus);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.UpdateStatus);
+                modifyRows++;
+                #endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<OrderDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateStatus,
                     EntitiesEnum.Order
                 );
                 return new BaseResponse

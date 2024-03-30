@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Stocks.Dtos;
 using ECommerce.BLL.Features.Stocks.Requests;
 using ECommerce.BLL.IRepository;
@@ -27,6 +28,64 @@ namespace ECommerce.BLL.Repository
             modifyRows++;
             modifyRows += await AddSizeItemAsync(request.Size, request.ProductID);
             modifyRows += await AddColorItemAsync(request.Color, request.ProductID);
+            return modifyRows;
+        }
+
+        public async Task<int> ReturnProductToStock(List<ProductsOrderRequest> productsOrders)
+        {
+            var modifyRows = 0;
+            var products = productsOrders.Select(x => x.ProductID);
+            var stocks = await _context
+                .Stocks.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            var productColors = await _context
+                .ProductColors.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            var productSizes = await _context
+                .ProductSizes.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            foreach (var product in productsOrders)
+            {
+                stocks.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity +=
+                    product.Quantity;
+                productColors.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity +=
+                    product.Quantity;
+                productSizes.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity +=
+                    product.Quantity;
+                modifyRows += 3;
+            }
+            return modifyRows;
+        }
+
+        public async Task<int> RemoveProductFromStock(List<ProductsOrderRequest> productsOrders)
+        {
+            var modifyRows = 0;
+            var products = productsOrders.Select(x => x.ProductID);
+            var stocks = await _context
+                .Stocks.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            var productColors = await _context
+                .ProductColors.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            var productSizes = await _context
+                .ProductSizes.Where(x => products.Contains(x.ProductID))
+                .ToListAsync();
+
+            foreach (var product in productsOrders)
+            {
+                stocks.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity -=
+                    product.Quantity;
+                productColors.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity -=
+                    product.Quantity;
+                productSizes.FirstOrDefault(x => x.ProductID == product.ProductID).Quantity -=
+                    product.Quantity;
+                modifyRows += 3;
+            }
             return modifyRows;
         }
 

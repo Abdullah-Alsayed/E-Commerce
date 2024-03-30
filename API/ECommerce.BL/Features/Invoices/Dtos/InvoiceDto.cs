@@ -6,5 +6,6 @@ namespace ECommerce.BLL.Features.Invoices.Dtos
     public record InvoiceDto : BaseEntityDto
     {
         public Guid OrderID { get; set; }
+        public bool IsReturn { get; set; }
     }
 }

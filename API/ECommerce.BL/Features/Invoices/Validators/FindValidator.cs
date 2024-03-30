@@ -22,9 +22,13 @@ public class FindInvoiceValidator : AbstractValidator<FindInvoiceRequest>
 
         RuleFor(req => req.ID)
             .NotEmpty()
-            .WithMessage(x => Constants.Errors.Register)
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntitsKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .NotNull()
-            .WithMessage(x => Constants.Errors.Register);
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntitsKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
 
         RuleFor(req => req)
             .Must(req =>

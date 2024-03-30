@@ -7,13 +7,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Orders.Validators;
 
-public class FindOrderValidator : AbstractValidator<FindOrderRequest>
+public class AcceptValidator : AbstractValidator<AcceptOrderRequest>
 {
-    private readonly IStringLocalizer<FindOrderValidator> _localizer;
+    private readonly IStringLocalizer<AcceptValidator> _localizer;
 
-    public FindOrderValidator(
+    public AcceptValidator(
         ApplicationDbContext context,
-        IStringLocalizer<FindOrderValidator> localizer
+        IStringLocalizer<AcceptValidator> localizer
     )
     {
         ClassLevelCascadeMode = CascadeMode.Stop;

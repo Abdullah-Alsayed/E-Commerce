@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Invoices.Dtos;
+using ECommerce.BLL.Features.Invoices.Dtos;
 using ECommerce.BLL.Features.Invoices.Requests;
+using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -90,7 +92,7 @@ public class InvoiceService : IInvoiceService
         try
         {
             request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
-                ? nameof(Invoice.OrderId)
+                ? nameof(Invoice.ID)
                 : request.SearchBy;
 
             var Invoices = await _unitOfWork.Invoice.GetAllAsync(request);
@@ -126,6 +128,7 @@ public class InvoiceService : IInvoiceService
             var Invoice = _mapper.Map<Invoice>(request);
             Invoice.CreateBy = _userId;
             Invoice = await _unitOfWork.Invoice.AddAsync(Invoice);
+            modifyRows += await RemoverProductFromStock(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -225,6 +228,61 @@ public class InvoiceService : IInvoiceService
         }
     }
 
+    public async Task<BaseResponse> ReturnAsync(ReturnInvoiceRequest request)
+    {
+        using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+        var modifyRows = 0;
+        try
+        {
+            var Invoice = await _unitOfWork.Invoice.GetInvoiceProductsAsync(request);
+            Invoice.ModifyBy = _userId;
+            Invoice.ModifyAt = DateTime.UtcNow;
+            Invoice.IsReturn = true;
+            modifyRows += await ReturnProductToStock(Invoice);
+            var result = _mapper.Map<InvoiceDto>(Invoice);
+            #region Send Notification
+            await SendNotification(OperationTypeEnum.Return);
+            modifyRows++;
+            #endregion
+
+            #region Log
+            await LogHistory(OperationTypeEnum.Return);
+            modifyRows++;
+            #endregion
+
+            modifyRows++;
+            if (await _unitOfWork.IsDone(modifyRows))
+            {
+                await transaction.CommitAsync();
+                return new BaseResponse<InvoiceDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            else
+            {
+                await transaction.RollbackAsync();
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString(),
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Return, EntitiesEnum.Invoice);
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = _localizer[MessageKeys.Fail].ToString()
+            };
+        }
+    }
+
     public async Task<BaseResponse> GetSearchEntityAsync()
     {
         try
@@ -249,6 +307,29 @@ public class InvoiceService : IInvoiceService
     }
 
     #region helpers
+    private async Task<int> ReturnProductToStock(Invoice invoice)
+    {
+        var products = GetProductOrders(invoice);
+        return await _unitOfWork.Stock.ReturnProductToStock(products);
+    }
+
+    private async Task<int> RemoverProductFromStock(Invoice invoice)
+    {
+        var products = GetProductOrders(invoice);
+        return await _unitOfWork.Stock.RemoveProductFromStock(products);
+    }
+
+    private List<ProductsOrderRequest> GetProductOrders(Invoice invoice)
+    {
+        return invoice
+            .Order.ProductOrders.Select(product => new ProductsOrderRequest
+            {
+                ProductID = product.ProductID,
+                Quantity = product.Quantity
+            })
+            .ToList();
+    }
+
     private async Task SendNotification(OperationTypeEnum action)
     {
         _ = await _unitOfWork.Notification.AddNotificationAsync(
