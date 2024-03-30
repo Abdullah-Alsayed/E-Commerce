@@ -22,17 +22,20 @@ public class FindSliderValidator : AbstractValidator<FindSliderRequest>
 
         RuleFor(req => req.ID)
             .NotEmpty()
-            .WithMessage(x => Constants.Errors.Register)
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .NotNull()
-            .WithMessage(x => Constants.Errors.Register);
-
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
         RuleFor(req => req)
             .Must(req =>
             {
                 return context.Sliders.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
     }
 }

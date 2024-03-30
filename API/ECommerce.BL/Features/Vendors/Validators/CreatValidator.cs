@@ -27,21 +27,21 @@ namespace ECommerce.BLL.Features.Vendors.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.Phone)
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .MaximumLength(20)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
@@ -55,11 +55,11 @@ namespace ECommerce.BLL.Features.Vendors.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req)
@@ -70,7 +70,7 @@ namespace ECommerce.BLL.Features.Vendors.Validators
                     );
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.Exist]}"
+                    $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.Exist]}"
                 );
         }
     }

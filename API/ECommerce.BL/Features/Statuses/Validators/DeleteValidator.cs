@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
                     return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
 
             RuleFor(req => req)
@@ -35,7 +35,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
                     return context.Statuses.Where(x => x.IsActive && !x.IsDeleted).Count() > 1;
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.LastOne]}"
+                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.LastOne]}"
                 );
 
             RuleFor(req => req)
@@ -44,7 +44,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
                     return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Status]} {_localizer[Constants.MessageKeys.IsComplete]} {_localizer[Constants.MessageKeys.CantDelete]}"
+                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.IsComplete]} {_localizer[Constants.MessageKeys.CantDelete]}"
                 );
         }
     }

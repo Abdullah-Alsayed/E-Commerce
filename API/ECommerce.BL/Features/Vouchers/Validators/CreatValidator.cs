@@ -29,21 +29,21 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.Value)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .LessThan(int.MaxValue)
                 .WithMessage(x =>
@@ -60,7 +60,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
                     );
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Voucher]} {_localizer[Constants.MessageKeys.Exist]}"
+                    $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.Exist]}"
                 );
         }
     }

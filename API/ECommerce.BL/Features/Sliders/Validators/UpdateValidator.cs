@@ -29,7 +29,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
                 return context.Sliders.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
         RuleFor(req => req.TitleAR)
             .MaximumLength(100)
@@ -38,11 +38,11 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.TitleAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.TitleAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
@@ -53,7 +53,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleAR]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.TitleAR]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
         RuleFor(req => req.TitleEN)
@@ -63,11 +63,11 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleEN]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.TitleEN]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleEN]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.TitleEN]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
@@ -78,7 +78,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.TitleEN]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.TitleEN]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
         RuleFor(req => req.Description)
@@ -88,21 +88,21 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req.FormFile)
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(path =>
             {

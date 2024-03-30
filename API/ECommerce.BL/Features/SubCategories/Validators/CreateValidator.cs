@@ -30,11 +30,11 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.NameEN)
@@ -44,11 +44,11 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req)
@@ -59,17 +59,17 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                     );
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
+                    $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
                 );
 
             RuleFor(req => req.FormFile)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .Must(path =>
                 {
@@ -100,7 +100,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                     );
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.SubCategory]} {_localizer[Constants.MessageKeys.Exist]}"
+                    $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.Exist]}"
                 );
         }
     }

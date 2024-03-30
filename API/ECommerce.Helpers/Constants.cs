@@ -36,8 +36,9 @@
             public const string IsComplete = "";
             public const string LastOne="";
             public const string quantityNotValid="";
+            public const string IsDefault="";
         }
-        public static class EntitsKeys
+        public static class EntityKeys
         {
             public const string ID = "ID"; // From Token
             public const string FullName = "FullName"; //From Token
@@ -86,6 +87,7 @@
             public const string Size="";
             public const string Invoice="";
             public const string Stock="";
+            public const string Role = "";
         }
 
         public static class Gender

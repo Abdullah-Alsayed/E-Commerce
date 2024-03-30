@@ -12,10 +12,7 @@ namespace ECommerce.BLL.Repository
         private readonly ApplicationDbContext _context;
 
         public ProductRepository(ApplicationDbContext context)
-            : base(context)
-        {
-            _context = context;
-        }
+            : base(context) => _context = context;
 
         public async Task<Product> AddToChart(int ID)
         {
@@ -30,6 +27,7 @@ namespace ECommerce.BLL.Repository
                 .ThenInclude(x => x.Color)
                 .Include(x => x.ProductSizes)
                 .ThenInclude(x => x.Size)
+                .AsNoTracking()
                 .FirstAsync(x => x.ID == iD);
 
             return product;

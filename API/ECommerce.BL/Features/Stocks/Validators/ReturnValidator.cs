@@ -25,45 +25,45 @@ public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
         RuleFor(x => x.ID)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Stock]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Stock]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Stock]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Stock]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(ID =>
             {
                 return context.Statuses.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Stock]} {_localizer[Constants.MessageKeys.NotExist]}"
+                $" {_localizer[Constants.EntityKeys.Stock]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
 
         RuleFor(req => req.ProductID)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(ID =>
             {
                 return context.Products.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
+                $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
 
         RuleFor(req => req.Size)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleForEach(x => x.Size)
@@ -72,18 +72,18 @@ public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
                 Size.RuleFor(req => req.ID)
                     .NotEmpty()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .NotNull()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .Must(ID =>
                     {
                         return context.Sizes.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
                     })
                     .WithMessage(x =>
-                        $" {_localizer[Constants.EntitsKeys.Size]} {_localizer[Constants.MessageKeys.NotExist]}"
+                        $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotExist]}"
                     );
 
                 Size.RuleFor(req => req.Quantity)
@@ -95,22 +95,22 @@ public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
                     )
                     .NotEmpty()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .NotNull()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     );
             });
 
         RuleFor(req => req.Color)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleForEach(req => req.Color)
@@ -120,18 +120,18 @@ public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
                     .RuleFor(x => x.ID)
                     .NotEmpty()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .NotNull()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .Must(ID =>
                     {
                         return context.Colors.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
                     })
                     .WithMessage(x =>
-                        $" {_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.NotExist]}"
+                        $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotExist]}"
                     );
 
                 color
@@ -144,11 +144,11 @@ public class ReturnStockValidator : AbstractValidator<ReturnStockRequest>
                     )
                     .NotEmpty()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     )
                     .NotNull()
                     .WithMessage(x =>
-                        $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                     );
             });
     }

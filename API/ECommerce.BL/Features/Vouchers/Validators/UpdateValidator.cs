@@ -26,7 +26,7 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
                 return context.Vouchers.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Voucher]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
         RuleFor(req => req.Name)
             .MaximumLength(100)
@@ -35,11 +35,11 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
@@ -50,17 +50,17 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
         RuleFor(req => req.Value)
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .LessThan(int.MaxValue)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, int.MaxValue].ToString())

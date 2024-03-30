@@ -26,7 +26,7 @@ public class UpdateFeedbackValidator : AbstractValidator<UpdateFeedbackRequest>
                 return context.Feedbacks.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
 
         RuleFor(req => req.Comment)
@@ -36,11 +36,11 @@ public class UpdateFeedbackValidator : AbstractValidator<UpdateFeedbackRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req.Rating)
@@ -50,11 +50,11 @@ public class UpdateFeedbackValidator : AbstractValidator<UpdateFeedbackRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
     }
 }

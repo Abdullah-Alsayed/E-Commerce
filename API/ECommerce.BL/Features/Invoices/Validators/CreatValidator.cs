@@ -28,7 +28,7 @@ namespace ECommerce.BLL.Features.Invoices.Validators
                     );
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Order]} {_localizer[Constants.MessageKeys.NotExist]}"
+                    $" {_localizer[Constants.EntityKeys.Order]} {_localizer[Constants.MessageKeys.NotExist]}"
                 );
         }
     }

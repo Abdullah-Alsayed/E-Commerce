@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                     return context.SubCategories.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

@@ -28,11 +28,11 @@ public class UpdateReviewValidator : AbstractValidator<UpdateReviewRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req.Rate)
@@ -42,28 +42,28 @@ public class UpdateReviewValidator : AbstractValidator<UpdateReviewRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req.ID)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(ID =>
             {
                 return context.Reviews.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.NotExist]}"
+                $" {_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
     }
 }

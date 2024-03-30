@@ -26,11 +26,11 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
         RuleFor(req => req.Email)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Email]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Email]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Email]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Email]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
@@ -64,11 +64,11 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
         RuleFor(req => req.MainColor)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.MainColor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.MainColor]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.MainColor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.MainColor]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .MaximumLength(10)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 10].ToString())
@@ -78,11 +78,11 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
         RuleFor(req => req.Phone)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .MaximumLength(20)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
@@ -92,11 +92,11 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
         RuleFor(req => req.FormFile)
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(path =>
             {

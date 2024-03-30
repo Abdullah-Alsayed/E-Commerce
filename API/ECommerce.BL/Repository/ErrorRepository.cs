@@ -25,9 +25,9 @@ namespace ECommerce.BLL.Repository
                 await AddAsync(
                     new ErrorLog
                     {
-                        Source = ex.InnerException.Source,
-                        Message = ex.InnerException.Message,
-                        StackTrace = ex.InnerException.StackTrace,
+                        Source = ex.Source,
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace,
                         Operation = action,
                         Entity = entity
                     }

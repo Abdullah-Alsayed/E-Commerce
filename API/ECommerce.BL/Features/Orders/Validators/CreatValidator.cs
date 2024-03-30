@@ -23,35 +23,35 @@ namespace ECommerce.BLL.Features.Orders.Validators
             RuleFor(req => req.AreaID)
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Area]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Area]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .Must(ID =>
                 {
                     return context.Areas.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Area]} {_localizer[Constants.MessageKeys.NotExist]}"
+                    $" {_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.NotExist]}"
                 );
 
             RuleFor(req => req.GovernorateID)
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Governorate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Governorate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .Must(ID =>
                 {
                     return context.Governorates.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Governorate]} {_localizer[Constants.MessageKeys.NotExist]}"
+                    $" {_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.NotExist]}"
                 );
 
             RuleFor(req => req.VoucherID)
@@ -60,7 +60,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
                     return context.Vouchers.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Voucher]} {_localizer[Constants.MessageKeys.NotExist]}"
+                    $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.NotExist]}"
                 )
                 .When(req => req.VoucherID.HasValue);
 
@@ -71,31 +71,31 @@ namespace ECommerce.BLL.Features.Orders.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.DeliveryDate)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.DeliveryDate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.DeliveryDate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.DeliveryDate]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.DeliveryDate]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.Products)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
             RuleForEach(x => x.Products)
                 .ChildRules(Product =>
@@ -104,11 +104,11 @@ namespace ECommerce.BLL.Features.Orders.Validators
                         .RuleFor(x => x.ProductID)
                         .NotNull()
                         .WithMessage(x =>
-                            $"{_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                            $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
                         )
                         .NotEmpty()
                         .WithMessage(x =>
-                            $"{_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                            $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
                         );
                     Product
                         .RuleFor(req => req.Quantity)
@@ -116,11 +116,11 @@ namespace ECommerce.BLL.Features.Orders.Validators
                         .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
                         .NotEmpty()
                         .WithMessage(x =>
-                            $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                         )
                         .NotNull()
                         .WithMessage(x =>
-                            $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
                         );
                 });
         }

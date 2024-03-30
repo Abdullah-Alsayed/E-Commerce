@@ -26,7 +26,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 return context.Vendors.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
         RuleFor(req => req.Name)
             .MaximumLength(100)
@@ -35,11 +35,11 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
@@ -50,7 +50,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Name]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
         RuleFor(req => req.Address)
@@ -60,11 +60,11 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
@@ -75,17 +75,17 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Address]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
         RuleFor(req => req.Phone)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .MaximumLength(20)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
@@ -98,7 +98,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Value]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.Exist]}"
             );
     }
 }

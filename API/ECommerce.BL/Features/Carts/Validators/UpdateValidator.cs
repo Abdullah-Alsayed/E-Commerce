@@ -26,7 +26,7 @@ public class UpdateCartValidator : AbstractValidator<UpdateCartRequest>
                 return context.ShoppingCarts.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Cart]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Cart]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
 
         RuleFor(req => req.Quantity)
@@ -34,11 +34,11 @@ public class UpdateCartValidator : AbstractValidator<UpdateCartRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
     }
 }

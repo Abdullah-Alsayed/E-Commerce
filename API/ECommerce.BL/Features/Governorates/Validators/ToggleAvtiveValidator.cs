@@ -27,7 +27,7 @@ namespace ECommerce.BLL.Features.Governorates.Validators
                     return context.Governorates.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Governorate]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Reviews.Validators
                     return context.Reviews.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Review]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

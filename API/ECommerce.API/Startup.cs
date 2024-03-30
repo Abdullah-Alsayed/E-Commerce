@@ -17,6 +17,7 @@ using ECommerce.BLL.Features.Invoices.Services;
 using ECommerce.BLL.Features.Orders.Services;
 using ECommerce.BLL.Features.Products.Services;
 using ECommerce.BLL.Features.Reviews.Services;
+using ECommerce.BLL.Features.Roles.Services;
 using ECommerce.BLL.Features.Settings.Services;
 using ECommerce.BLL.Features.Sizes.Services;
 using ECommerce.BLL.Features.Sliders.Services;
@@ -27,6 +28,7 @@ using ECommerce.BLL.Features.Units.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core;
 using ECommerce.Core.Services.MailServices;
@@ -35,6 +37,7 @@ using ECommerce.DAL.Entity;
 using FluentValidation.AspNetCore;
 using Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -119,8 +122,10 @@ namespace ECommerce.API
             );
 
             //****************** Identity Setting ******************************
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services
-                .AddIdentity<User, IdentityRole>(Option =>
+                .AddIdentity<User, Role>(Option =>
                 {
                     Option.Password.RequireNonAlphanumeric = false;
                     Option.Password.RequireDigit = false;
@@ -177,6 +182,7 @@ namespace ECommerce.API
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<ISizeService, SizeService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IBrandService, BrandService>();
@@ -200,7 +206,7 @@ namespace ECommerce.API
             #endregion
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -221,7 +227,8 @@ namespace ECommerce.API
                 .CreateScope();
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                DataSeeder.SeedData(context);
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                await DataSeeder.SeedData(context, roleManager);
             }
 
             //****************** Localization ******************************

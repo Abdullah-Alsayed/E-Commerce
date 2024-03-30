@@ -34,7 +34,7 @@ namespace ECommerce.BLL.Features.Products.Validators
                     return context.Products.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

@@ -51,11 +51,11 @@ public class InvoiceService : IInvoiceService
 
         #region Get User Data From Token
         _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntitsKeys.ID)
+            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
             ?.Value;
 
         _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntitsKeys.FullName)
+            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
             ?.Value;
 
         _lang =

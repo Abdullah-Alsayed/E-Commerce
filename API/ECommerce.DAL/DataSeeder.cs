@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
+using System.Threading.Tasks;
+using ECommerce.Core.PermissionsClaims;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +14,20 @@ namespace ECommerce.Core
 {
     public static class DataSeeder
     {
-        public static void SeedData(ApplicationDbContext context)
+        public static async Task SeedData(
+            ApplicationDbContext context,
+            RoleManager<Role> roleManager
+        )
+        {
+            string systemUser = GetUser(context);
+            SeedGovernorates(context, systemUser);
+            await SeedRoles(context, roleManager);
+            SeedSettings(context, systemUser);
+            SeedStatuses(context, systemUser);
+            context.SaveChanges();
+        }
+
+        private static string GetUser(ApplicationDbContext context)
         {
             var systemUser = Guid.NewGuid().ToString();
             if (!context.Users.Any(x => x.UserName == "System"))
@@ -24,13 +40,89 @@ namespace ECommerce.Core
                         FirstName = "System",
                         LastName = "System",
                         Address = "System",
-                        Email = "System"
+                        Email = "System",
+                        CreateAt = DateTime.UtcNow
                     }
                 );
             }
             else
                 systemUser = context.Users.FirstOrDefault(x => x.UserName == "System").Id;
+            return systemUser;
+        }
 
+        private static void SeedStatuses(ApplicationDbContext context, string systemUser)
+        {
+            if (!context.Statuses.Any())
+            {
+                context.Statuses.Add(
+                    new Status
+                    {
+                        NameAR = "مكتمل",
+                        NameEN = "Complete",
+                        Order = 10,
+                        CreateBy = systemUser,
+                    }
+                );
+            }
+        }
+
+        private static void SeedSettings(ApplicationDbContext context, string systemUser)
+        {
+            if (!context.Settings.Any())
+            {
+                context.Settings.Add(
+                    new Setting
+                    {
+                        Address = "Dummy Data",
+                        Email = "test@test.com",
+                        FaceBook = "FaceBook.com",
+                        Instagram = "Instagram.com",
+                        MainColor = "#4990e2",
+                        Logo = "Logo.png",
+                        Phone = "011111111111",
+                        Whatsapp = "whatsapp.com",
+                        Youtube = "Youtube.com",
+                        Title = "Dummy Data",
+                        CreateBy = systemUser,
+                    }
+                );
+            }
+        }
+
+        private static async Task SeedRoles(
+            ApplicationDbContext context,
+            RoleManager<Role> roleManager
+        )
+        {
+            if (!context.Roles.Any())
+            {
+                var admin = new Role
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Constants.Roles.Admin,
+                    Description = Constants.Roles.Admin,
+                    NormalizedName = Constants.Roles.Admin.ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    CreateAt = DateTime.UtcNow,
+                    IsDefault = true
+                };
+                var user = new Role
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Constants.Roles.User,
+                    Description = Constants.Roles.User,
+                    NormalizedName = Constants.Roles.User.ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    CreateAt = DateTime.UtcNow,
+                    IsDefault = true
+                };
+                context.Roles.AddRange(new List<Role> { admin, user });
+                await roleManager.AddPermissionClaim(admin, "Products");
+            }
+        }
+
+        private static void SeedGovernorates(ApplicationDbContext context, string systemUser)
+        {
             if (!context.Governorates.Any())
             {
                 string governoratesJson = File.ReadAllText("Governorates.json");
@@ -58,60 +150,23 @@ namespace ECommerce.Core
                 });
                 context.Governorates.AddRange(governoratesList);
             }
-            if (!context.Roles.Any())
+        }
+
+        private static async Task AddPermissionClaim(
+            this RoleManager<Role> roleManager,
+            Role role,
+            string module
+        )
+        {
+            var allClaims = await roleManager.GetClaimsAsync(role);
+            var allPermissions = Permissions.GeneratePermissionsForModule(module);
+            foreach (var permission in allPermissions)
             {
-                context.Roles.AddRange(
-                    new List<IdentityRole>
-                    {
-                        new IdentityRole
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = Constants.Roles.Admin,
-                            NormalizedName = Constants.Roles.Admin.ToUpper(),
-                            ConcurrencyStamp = Guid.NewGuid().ToString()
-                        },
-                        new IdentityRole
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = Constants.Roles.User,
-                            NormalizedName = Constants.Roles.User.ToUpper(),
-                            ConcurrencyStamp = Guid.NewGuid().ToString()
-                        }
-                    }
-                );
+                if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
+                {
+                    await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
+                }
             }
-            if (!context.Settings.Any())
-            {
-                context.Settings.Add(
-                    new Setting
-                    {
-                        Address = "Dummy Data",
-                        Email = "test@test.com",
-                        FaceBook = "FaceBook.com",
-                        Instagram = "Instagram.com",
-                        MainColor = "#4990e2",
-                        Logo = "Logo.png",
-                        Phone = "011111111111",
-                        Whatsapp = "whatsapp.com",
-                        Youtube = "Youtube.com",
-                        Title = "Dummy Data",
-                        CreateBy = systemUser,
-                    }
-                );
-            }
-            if (!context.Statuses.Any())
-            {
-                context.Statuses.Add(
-                    new Status
-                    {
-                        NameAR = "مكتمل",
-                        NameEN = "Complete",
-                        Order = 10,
-                        CreateBy = systemUser,
-                    }
-                );
-            }
-            context.SaveChanges();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
                     return context.Feedbacks.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

@@ -32,11 +32,11 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req.Rating)
@@ -46,18 +46,18 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntitsKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
 
             RuleFor(req => req)
                 .Must(req =>
                 {
                     var userId = _httpContext
-                        .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntitsKeys.ID)
+                        .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
                         ?.Value;
 
                     return !context.Reviews.Any(x =>

@@ -24,9 +24,9 @@ namespace ECommerce.BLL.IRepository
         Task<User> FindUserByIDAsync(string UserID);
         Task<User> FindUserByNameAsync(string Name);
         Task<User> FindUserByEmailAsync(string Email);
-        Task<bool> EmailExisteAsync(string email);
-        bool PhoneExistes(string PhoneNumber);
-        Task<bool> UserNameExistesAsync(string userName);
+        Task<bool> EmailExistAsync(string email);
+        bool PhoneExist(string PhoneNumber);
+        Task<bool> UserNameExistAsync(string userName);
         Task<bool> IsConfirmedAsync(User user);
         string GetUserID(ClaimsPrincipal user);
         string GetUserName(ClaimsPrincipal user);

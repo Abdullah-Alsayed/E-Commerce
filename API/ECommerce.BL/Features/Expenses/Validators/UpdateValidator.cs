@@ -29,7 +29,7 @@ public class UpdateExpenseValidator : AbstractValidator<UpdateExpenseRequest>
                 return context.Expenses.Any(x => x.ID == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Expense]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Expense]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
 
         RuleFor(req => req.Reference)
@@ -39,21 +39,21 @@ public class UpdateExpenseValidator : AbstractValidator<UpdateExpenseRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Reference]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Reference]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Reference]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Reference]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req.Amount)
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Amount]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Amount]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntitsKeys.Amount]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Amount]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .LessThan(int.MaxValue)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, int.MaxValue].ToString())

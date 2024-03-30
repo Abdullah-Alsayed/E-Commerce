@@ -582,6 +582,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsReturn")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -712,6 +715,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid>("GovernorateID")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsAccept")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -839,10 +845,10 @@ namespace ECommerce.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ColorId")
+                    b.Property<Guid>("ColorID")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid>("ProductID")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
@@ -850,9 +856,9 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ColorId");
+                    b.HasIndex("ColorID");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductID");
 
                     b.ToTable("ProductColors");
                 });
@@ -941,22 +947,75 @@ namespace ECommerce.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid>("ProductID")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("SizeId")
+                    b.Property<Guid>("SizeID")
                         .HasColumnType("uuid");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductID");
 
-                    b.HasIndex("SizeId");
+                    b.HasIndex("SizeID");
 
                     b.ToTable("ProductSizes");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifyBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
@@ -1688,32 +1747,6 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -2058,13 +2091,13 @@ namespace ECommerce.DAL.Migrations
                 {
                     b.HasOne("ECommerce.DAL.Entity.Color", "Color")
                         .WithMany("ProductColors")
-                        .HasForeignKey("ColorId")
+                        .HasForeignKey("ColorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerce.DAL.Entity.Product", "Product")
                         .WithMany("ProductColors")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2114,14 +2147,14 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductSize", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerce.DAL.Entity.Size", "Size")
                         .WithMany("ProductSizes")
-                        .HasForeignKey("SizeId")
+                        .HasForeignKey("SizeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2289,7 +2322,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("ECommerce.DAL.Entity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2316,7 +2349,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("ECommerce.DAL.Entity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2379,6 +2412,8 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("ProductColors");
 
                     b.Navigation("ProductOrders");
+
+                    b.Navigation("ProductSizes");
 
                     b.Navigation("ProductStocks");
 

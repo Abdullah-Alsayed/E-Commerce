@@ -13,8 +13,10 @@ using ECommerce.Core;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerce.BLL.Repository
@@ -24,7 +26,7 @@ namespace ECommerce.BLL.Repository
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMailServicies _mailServices;
         private readonly JWTHelpers _jwt;
 
@@ -32,7 +34,7 @@ namespace ECommerce.BLL.Repository
             ApplicationDbContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            RoleManager<IdentityRole> roleManager,
+            RoleManager<Role> roleManager,
             IMailServicies mailServices,
             JWTHelpers jwt
         )
@@ -179,8 +181,8 @@ namespace ECommerce.BLL.Repository
             BaseResponse userValidationResult = await UserValidation(user, result);
             if (userValidationResult.IsSuccess)
             {
-                IdentityResult Identityresult = await _userManager.CreateAsync(user, password);
-                if (Identityresult.Succeeded && string.IsNullOrEmpty(userId))
+                IdentityResult identityResult = await _userManager.CreateAsync(user, password);
+                if (identityResult.Succeeded && string.IsNullOrEmpty(userId))
                 {
                     _ = await _userManager.AddToRoleAsync(user, Constants.Roles.User);
                     await LoginAsync(user, true);
@@ -189,12 +191,12 @@ namespace ECommerce.BLL.Repository
 
                 return new BaseResponse<CreateUserDto>
                 {
-                    IsSuccess = Identityresult.Succeeded,
-                    Message = Identityresult.Succeeded
+                    IsSuccess = identityResult.Succeeded,
+                    Message = identityResult.Succeeded
                         ? Constants.MessageKeys.Success
-                        : string.Join(",", Identityresult.Errors.Select(x => x.Description)),
+                        : string.Join(",", identityResult.Errors.Select(x => x.Description)),
                     Result =
-                        (Identityresult.Succeeded && string.IsNullOrEmpty(userId))
+                        (identityResult.Succeeded && string.IsNullOrEmpty(userId))
                             ? new CreateUserDto
                             {
                                 Email = user.Email,
@@ -217,13 +219,13 @@ namespace ECommerce.BLL.Repository
             }
         }
 
-        public async Task<bool> EmailExisteAsync(string email)
+        public async Task<bool> EmailExistAsync(string email)
         {
             bool Result = await FindUserByEmailAsync(email) != null;
             return Result;
         }
 
-        public async Task<bool> UserNameExistesAsync(string userName)
+        public async Task<bool> UserNameExistAsync(string userName)
         {
             bool Result = await FindUserByNameAsync(userName) != null;
             return Result;
@@ -246,7 +248,7 @@ namespace ECommerce.BLL.Repository
             return user.Identity.IsAuthenticated;
         }
 
-        public bool PhoneExistes(string PhoneNumber)
+        public bool PhoneExist(string PhoneNumber)
         {
             bool Result = _context.Users.Where(p => p.PhoneNumber == PhoneNumber).Any();
             return Result;
@@ -255,24 +257,24 @@ namespace ECommerce.BLL.Repository
         #region helpers
         private async Task<BaseResponse> UserValidation(User user, BaseResponse result)
         {
-            bool emailExistes = await EmailExisteAsync(user.Email);
-            if (emailExistes)
+            bool emailExist = await EmailExistAsync(user.Email);
+            if (emailExist)
             {
                 result.IsSuccess = false;
                 result.Message = Constants.Errors.Emailexists;
                 return result;
             }
 
-            bool userNameExiste = await UserNameExistesAsync(user.UserName);
-            if (userNameExiste)
+            bool userNameExist = await UserNameExistAsync(user.UserName);
+            if (userNameExist)
             {
                 result.IsSuccess = false;
                 result.Message = Constants.Errors.UserNameExists;
                 return result;
             }
-            bool phoneExistes = PhoneExistes(user.PhoneNumber);
+            bool phoneExists = PhoneExist(user.PhoneNumber);
 
-            if (phoneExistes)
+            if (phoneExists)
             {
                 result.IsSuccess = false;
                 result.Message = Constants.Errors.PhoneNumbeExists;
@@ -322,6 +324,69 @@ namespace ECommerce.BLL.Repository
 
             return jwtSecurityToken;
         }
-    }
         #endregion
+    }
+
+    public class PermissionRequirement : IAuthorizationRequirement
+    {
+        public string Permission { get; private set; }
+
+        public PermissionRequirement(string permission)
+        {
+            Permission = permission;
+        }
+    }
+
+    public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+    {
+        public PermissionAuthorizationHandler() { }
+
+        protected override async Task HandleRequirementAsync(
+            AuthorizationHandlerContext context,
+            PermissionRequirement requirement
+        )
+        {
+            if (context.User == null)
+            {
+                return;
+            }
+            var permissionss = context.User.Claims.Where(x =>
+                x.Type == "Permission"
+                && x.Value == requirement.Permission
+                && x.Issuer == "LOCAL AUTHORITY"
+            );
+            if (permissionss.Any())
+            {
+                context.Succeed(requirement);
+                return;
+            }
+        }
+    }
+
+    public class PermissionPolicyProvider : IAuthorizationPolicyProvider
+    {
+        public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
+
+        public PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
+        {
+            FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
+        }
+
+        public Task<AuthorizationPolicy> GetDefaultPolicyAsync() =>
+            FallbackPolicyProvider.GetDefaultPolicyAsync();
+
+        public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
+        {
+            if (policyName.StartsWith("Permission", StringComparison.OrdinalIgnoreCase))
+            {
+                var policy = new AuthorizationPolicyBuilder();
+                policy.AddRequirements(new PermissionRequirement(policyName));
+                return Task.FromResult(policy.Build());
+            }
+            return FallbackPolicyProvider.GetPolicyAsync(policyName);
+        }
+
+        public Task<AuthorizationPolicy> GetFallbackPolicyAsync() =>
+            FallbackPolicyProvider.GetDefaultPolicyAsync();
+    }
 }

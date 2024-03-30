@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Sizes.Validators
                     return context.Sizes.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Size]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

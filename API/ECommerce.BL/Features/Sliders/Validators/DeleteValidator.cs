@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Sliders.Validators
                     return context.Sliders.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

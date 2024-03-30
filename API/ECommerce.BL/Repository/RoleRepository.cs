@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using static System.Collections.Specialized.BitVector32;
+
+namespace ECommerce.BLL.Repository;
+
+public class RoleRepository : BaseRepository<Role>, IRoleRepository
+{
+    private readonly ApplicationDbContext _context;
+    private readonly RoleManager<Role> _roleManager;
+
+    public RoleRepository(ApplicationDbContext context, RoleManager<Role> roleManager)
+        : base(context)
+    {
+        _context = context;
+        _roleManager = roleManager;
+    }
+
+    public override async Task<List<Role>> GetAllAsync(BaseGridRequest request)
+    {
+        try
+        {
+            var result = new List<Role>();
+            var query = _context.Roles.Where(x => !x.IsDeleted);
+            if (!string.IsNullOrEmpty(request.SortBy))
+                query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+
+            if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
+                query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+
+            var total = await query.CountAsync();
+            if (total > 0)
+            {
+                var skippedPages = request.PageSize * request.PageIndex;
+                result = await query
+                    .Skip(skippedPages)
+                    .Take(request.PageSize)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            await _context.ErrorLogs.AddAsync(
+                new ErrorLog
+                {
+                    Source = ex.Source,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Operation = DAL.Enums.OperationTypeEnum.GetAll,
+                    Entity = DAL.Enums.EntitiesEnum.Role
+                }
+            );
+            await _context.SaveChangesAsync();
+            return new List<Role>();
+        }
+    }
+
+    private IQueryable<Q> OrderByDynamic<Q>(IQueryable<Q> query, string orderByColumn, bool isDesc)
+    {
+        var QType = typeof(Q);
+        orderByColumn =
+            orderByColumn != "ID"
+                ? char.ToUpper(orderByColumn[0]) + orderByColumn.Substring(1)
+                : "Name";
+        // Dynamically creates a call like this: query.OrderBy(p => p.SortColumn)
+        var parameter = Expression.Parameter(QType, "p");
+        Expression resultExpression = null;
+        var property = QType.GetProperty(orderByColumn ?? "Name");
+        // this is the part p.SortColumn
+        var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+        // this is the part p => p.SortColumn
+        var orderByExpression = Expression.Lambda(propertyAccess, parameter);
+
+        // finally, call the "OrderBy" / "OrderByDescending" method with the order by lamba expression
+        resultExpression = Expression.Call(
+            typeof(Queryable),
+            isDesc ? "OrderByDescending" : "OrderBy",
+            new Type[] { QType, property.PropertyType },
+            query.Expression,
+            Expression.Quote(orderByExpression)
+        );
+
+        return query.Provider.CreateQuery<Q>(resultExpression);
+    }
+}

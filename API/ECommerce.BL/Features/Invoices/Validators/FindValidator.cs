@@ -23,11 +23,11 @@ public class FindInvoiceValidator : AbstractValidator<FindInvoiceRequest>
         RuleFor(req => req.ID)
             .NotEmpty()
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $" {_localizer[Constants.EntityKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $" {_localizer[Constants.EntityKeys.Invoice]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
         RuleFor(req => req)
@@ -36,7 +36,7 @@ public class FindInvoiceValidator : AbstractValidator<FindInvoiceRequest>
                 return context.Invoices.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Invoice]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Invoice]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
     }
 }

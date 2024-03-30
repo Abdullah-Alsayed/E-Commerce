@@ -36,6 +36,7 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<Area> Area { get; }
         IBaseRepository<Vendor> Vendor { get; }
         IUserRepository User { get; }
+        IRoleRepository Role { get; }
         IProductSizeRepository ProductSize { get; }
         IProductColorRepository ProductColor { get; }
 

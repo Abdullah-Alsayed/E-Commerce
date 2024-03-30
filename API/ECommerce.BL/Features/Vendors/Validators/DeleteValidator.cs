@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Vendors.Validators
                     return context.Vendors.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

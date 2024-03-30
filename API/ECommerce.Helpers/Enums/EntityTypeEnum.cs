@@ -23,6 +23,7 @@
         Order,
         Size,
         Invoice,
-        Stock
+        Stock,
+        Role
     }
 }

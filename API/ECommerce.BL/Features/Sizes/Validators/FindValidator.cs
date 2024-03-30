@@ -22,9 +22,13 @@ public class FindSizeValidator : AbstractValidator<FindSizeRequest>
 
         RuleFor(req => req.ID)
             .NotEmpty()
-            .WithMessage(x => Constants.Errors.Register)
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .NotNull()
-            .WithMessage(x => Constants.Errors.Register);
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
 
         RuleFor(req => req)
             .Must(req =>
@@ -32,7 +36,7 @@ public class FindSizeValidator : AbstractValidator<FindSizeRequest>
                 return context.Sizes.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Size]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
     }
 }

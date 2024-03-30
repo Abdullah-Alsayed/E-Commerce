@@ -7,7 +7,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +17,7 @@ namespace ECommerce.BL.Repository
         public readonly ApplicationDbContext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMailServicies _mailServices;
         private readonly JWTHelpers _jwt;
 
@@ -26,7 +25,7 @@ namespace ECommerce.BL.Repository
             ApplicationDbContext context,
             SignInManager<User> signInManager,
             UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager,
+            RoleManager<Role> roleManager,
             IMailServicies mailServices,
             IOptions<JWTHelpers> jwt
         )
@@ -38,7 +37,6 @@ namespace ECommerce.BL.Repository
             _mailServices = mailServices;
             _jwt = jwt.Value;
 
-            Product = new ProductRepository(_context);
             User = new UserRepository(
                 _context,
                 _userManager,
@@ -47,6 +45,8 @@ namespace ECommerce.BL.Repository
                 _mailServices,
                 _jwt
             );
+            Role = new RoleRepository(_context, _roleManager);
+            Product = new ProductRepository(_context);
             SubCategory = new BaseRepository<SubCategory>(_context);
             Governorate = new BaseRepository<Governorate>(_context);
             Slider = new BaseRepository<Slider>(_context);
@@ -56,7 +56,6 @@ namespace ECommerce.BL.Repository
             Invoice = new InvoiceRepository(_context);
             ProductSize = new ProductSizeRepository(_context);
             ProductColor = new ProductColorRepository(_context);
-            //ProductPhoto = new ProductPhotoRepository(_context);
             Stock = new StockRepository(_context);
             Size = new BaseRepository<Size>(_context);
             Feedback = new BaseRepository<Feedback>(_context);
@@ -95,7 +94,6 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Expense> Expense { get; private set; }
         public IBaseRepository<Setting> Setting { get; private set; }
         public IBaseRepository<ShoppingCart> Cart { get; private set; }
-
         public IBaseRepository<ProductReview> Review { get; private set; }
         public IBaseRepository<Status> Status { get; private set; }
         public IBaseRepository<Color> Color { get; private set; }
@@ -104,6 +102,7 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Unit> Unit { get; private set; }
         public IBaseRepository<Area> Area { get; private set; }
         public IUserRepository User { get; private set; }
+        public IRoleRepository Role { get; private set; }
         public IProductSizeRepository ProductSize { get; private set; }
         public IProductColorRepository ProductColor { get; private set; }
 

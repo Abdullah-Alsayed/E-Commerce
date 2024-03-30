@@ -22,9 +22,13 @@ public class FindProductValidator : AbstractValidator<FindProductRequest>
 
         RuleFor(req => req.ID)
             .NotEmpty()
-            .WithMessage(x => Constants.Errors.Register)
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .NotNull()
-            .WithMessage(x => Constants.Errors.Register);
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            );
 
         RuleFor(req => req)
             .Must(req =>
@@ -32,7 +36,7 @@ public class FindProductValidator : AbstractValidator<FindProductRequest>
                 return context.Products.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
-                $" {_localizer[Constants.EntitsKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
+                $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
     }
 }

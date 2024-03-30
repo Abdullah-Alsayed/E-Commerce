@@ -56,6 +56,7 @@ namespace ECommerce.DAL.Entity
 
         [StringLength(50)]
         public string Language { get; set; } = "ar-EG";
+
         public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }

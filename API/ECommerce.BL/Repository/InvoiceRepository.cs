@@ -23,6 +23,7 @@ public class InvoiceRepository : BaseRepository<Invoice>, IInvoiceRepository
             var invoice = await _context
                 .Invoices.Include(x => x.Order)
                 .ThenInclude(x => x.ProductOrders)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.ID == request.ID);
             return invoice;
         }

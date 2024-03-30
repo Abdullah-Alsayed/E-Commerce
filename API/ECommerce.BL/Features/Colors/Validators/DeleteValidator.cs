@@ -26,7 +26,7 @@ namespace ECommerce.BLL.Features.Colors.Validators
                     return context.Colors.Any(x => x.ID == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntitsKeys.Color]} {_localizer[Constants.MessageKeys.NotFound]}"
+                    $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotFound]}"
                 );
         }
     }

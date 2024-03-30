@@ -75,7 +75,7 @@ namespace ECommerce.BLL.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(BaseGridRequest request)
+        public virtual async Task<List<T>> GetAllAsync(BaseGridRequest request)
         {
             try
             {
@@ -96,12 +96,16 @@ namespace ECommerce.BLL.Repository
                 if (total > 0)
                 {
                     var skipedPages = request.PageSize * request.PageIndex;
-                    result = await query.Skip(skipedPages).Take(request.PageSize).ToListAsync();
+                    result = await query
+                        .Skip(skipedPages)
+                        .Take(request.PageSize)
+                        .AsNoTracking()
+                        .ToListAsync();
                 }
 
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
                 return new List<T>();
             }
