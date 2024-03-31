@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Account.Dtos;
 using ECommerce.BLL.Features.Account.Requests;
+using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -15,14 +16,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-
         private string _userId = string.Empty;
 
         public AccountController(
@@ -38,7 +38,6 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Route("Register")]
         public async Task<BaseResponse<CreateUserDto>> RegisterAsync(CreateUserRequest request)
         {
             try
@@ -74,7 +73,6 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Route("Login")]
         [AllowAnonymous]
         public async Task<BaseResponse> Login(LoginRequest request)
         {
@@ -97,7 +95,6 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet]
-        [Route("Userinfo")]
         public IActionResult Userinfo()
         {
             string UserID = _unitOfWork.User.GetUserID(User);
@@ -108,8 +105,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet]
-        [Route("Logof")]
-        public async Task<IActionResult> Logof()
+        public async Task<IActionResult> LogOfAsync()
         {
             await _unitOfWork.User.LogOffAsync();
             return Ok();
@@ -119,7 +115,7 @@ namespace ECommerce.API.Controllers
         private async Task ErrorLog(Exception ex)
         {
             await _unitOfWork.ErrorLog.AddAsync(
-                new ErrorLog { Message = ex.Message, Source = ex.Source, }
+                new ErrorLog { Message = ex.Message, Source = ex.Source }
             );
             await _unitOfWork.SaveAsync();
         }

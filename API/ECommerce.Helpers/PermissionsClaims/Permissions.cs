@@ -26,5 +26,13 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Edit = "Permissions.Products.Edit";
             public const string Delete = "Permissions.Products.Delete";
         }
+
+        public static class Units
+        {
+            public const string View = "Permissions.Units.View";
+            public const string Create = "Permissions.Units.Create";
+            public const string Edit = "Permissions.Units.Edit";
+            public const string Delete = "Permissions.Units.Delete";
+        }
     }
 }

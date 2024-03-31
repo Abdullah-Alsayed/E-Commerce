@@ -72,7 +72,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("GovernorateID");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Areas", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Brand", b =>
@@ -127,7 +127,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
@@ -182,7 +182,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
@@ -236,7 +236,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Colors");
+                    b.ToTable("Colors", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ContactUs", b =>
@@ -297,7 +297,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("ContactUs");
+                    b.ToTable("ContactUs", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ErrorLog", b =>
@@ -326,7 +326,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ErrorLogs");
+                    b.ToTable("ErrorLogs", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Expense", b =>
@@ -379,7 +379,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Favorite", b =>
@@ -425,7 +425,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("Favorites");
+                    b.ToTable("Favorites", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Feedback", b =>
@@ -473,7 +473,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Governorate", b =>
@@ -527,7 +527,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Governorates");
+                    b.ToTable("Governorates", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.History", b =>
@@ -552,7 +552,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Histories");
+                    b.ToTable("Histories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Invoice", b =>
@@ -601,7 +601,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
@@ -671,7 +671,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Order", b =>
@@ -758,7 +758,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("VoucherID");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Product", b =>
@@ -836,7 +836,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("UnitID");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductColor", b =>
@@ -860,7 +860,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("ProductColors");
+                    b.ToTable("ProductColors", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductOrder", b =>
@@ -884,7 +884,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("ProductOrders");
+                    b.ToTable("ProductOrders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductReview", b =>
@@ -938,7 +938,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductSize", b =>
@@ -962,7 +962,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("SizeID");
 
-                    b.ToTable("ProductSizes");
+                    b.ToTable("ProductSizes", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
@@ -1073,7 +1073,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("SettingID");
 
-                    b.ToTable("Section");
+                    b.ToTable("Section", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
@@ -1154,7 +1154,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ShoppingCart", b =>
@@ -1203,7 +1203,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("ShoppingCarts");
+                    b.ToTable("ShoppingCarts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Size", b =>
@@ -1252,7 +1252,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Sizes");
+                    b.ToTable("Sizes", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Slider", b =>
@@ -1311,7 +1311,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Sliders");
+                    b.ToTable("Sliders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
@@ -1365,7 +1365,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Statuses");
+                    b.ToTable("Statuses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Stock", b =>
@@ -1419,7 +1419,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("VendorID");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stocks", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.SubCategory", b =>
@@ -1479,7 +1479,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("SubCategories");
+                    b.ToTable("SubCategories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Unit", b =>
@@ -1530,7 +1530,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Units");
+                    b.ToTable("Units", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
@@ -1695,7 +1695,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Vendors");
+                    b.ToTable("Vendors", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
@@ -1744,7 +1744,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Vouchers");
+                    b.ToTable("Vouchers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Units.Requests;
 using ECommerce.BLL.Features.Units.Services;
 using ECommerce.BLL.Response;
+using ECommerce.Core.PermissionsClaims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Permissions.Units.Create)]
         public async Task<BaseResponse> CreateUnit(CreateUnitRequest request)
         {
             try

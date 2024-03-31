@@ -1,8 +1,12 @@
-﻿namespace ECommerce.Core
+﻿using System.IO;
+
+namespace ECommerce.Core
 {
     public static class Constants
     {
         public const string System = "System";
+        public const string Permission= "Permission";
+        public static string Issuer= "E-commerceApi";
 
         public static class Languages
         {
@@ -98,7 +102,7 @@
 
         public static class Roles
         {
-            public const string Admin = "Admin";
+            public const string SuperAdmin = "Super Admin";
             public const string User = "User";
         }
 

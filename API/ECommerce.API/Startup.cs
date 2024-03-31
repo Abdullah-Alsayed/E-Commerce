@@ -25,6 +25,7 @@ using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.Stocks.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
 using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
@@ -228,7 +229,8 @@ namespace ECommerce.API
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-                await DataSeeder.SeedData(context, roleManager);
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                await DataSeeder.SeedData(context, roleManager, userManager);
             }
 
             //****************** Localization ******************************

@@ -9,6 +9,7 @@ using ECommerce.Core.PermissionsClaims;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
+using static ECommerce.Core.Constants;
 
 namespace ECommerce.Core
 {
@@ -16,34 +17,39 @@ namespace ECommerce.Core
     {
         public static async Task SeedData(
             ApplicationDbContext context,
-            RoleManager<Role> roleManager
+            RoleManager<Role> roleManager,
+            UserManager<User> userManager
         )
         {
-            string systemUser = GetUser(context);
-            SeedGovernorates(context, systemUser);
             await SeedRoles(context, roleManager);
+            string systemUser = await GetUser(context, userManager);
+            SeedGovernorates(context, systemUser);
             SeedSettings(context, systemUser);
             SeedStatuses(context, systemUser);
             context.SaveChanges();
         }
 
-        private static string GetUser(ApplicationDbContext context)
+        private static async Task<string> GetUser(
+            ApplicationDbContext context,
+            UserManager<User> userManager
+        )
         {
             var systemUser = Guid.NewGuid().ToString();
             if (!context.Users.Any(x => x.UserName == "System"))
             {
-                context.Users.Add(
-                    new User
-                    {
-                        Id = systemUser,
-                        UserName = "System",
-                        FirstName = "System",
-                        LastName = "System",
-                        Address = "System",
-                        Email = "System",
-                        CreateAt = DateTime.UtcNow
-                    }
-                );
+                var adminUser = new User
+                {
+                    Id = systemUser,
+                    UserName = "System",
+                    FirstName = "System",
+                    LastName = "System",
+                    Address = "System",
+                    Email = "System",
+                    EmailConfirmed = true,
+                    CreateAt = DateTime.UtcNow
+                };
+                await userManager.CreateAsync(adminUser, "P@ssword123");
+                await userManager.AddToRoleAsync(adminUser, Constants.Roles.SuperAdmin);
             }
             else
                 systemUser = context.Users.FirstOrDefault(x => x.UserName == "System").Id;
@@ -96,12 +102,12 @@ namespace ECommerce.Core
         {
             if (!context.Roles.Any())
             {
-                var admin = new Role
+                var SuperAdmin = new Role
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Name = Constants.Roles.Admin,
-                    Description = Constants.Roles.Admin,
-                    NormalizedName = Constants.Roles.Admin.ToUpper(),
+                    Name = Constants.Roles.SuperAdmin,
+                    Description = Constants.Roles.SuperAdmin,
+                    NormalizedName = Constants.Roles.SuperAdmin.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     CreateAt = DateTime.UtcNow,
                     IsDefault = true
@@ -116,8 +122,9 @@ namespace ECommerce.Core
                     CreateAt = DateTime.UtcNow,
                     IsDefault = true
                 };
-                context.Roles.AddRange(new List<Role> { admin, user });
-                await roleManager.AddPermissionClaim(admin, "Products");
+                await roleManager.CreateAsync(SuperAdmin);
+                await roleManager.CreateAsync(user);
+                await roleManager.AddPermissionClaim(SuperAdmin, Constants.EntityKeys.Product);
             }
         }
 
@@ -161,12 +168,11 @@ namespace ECommerce.Core
             var allClaims = await roleManager.GetClaimsAsync(role);
             var allPermissions = Permissions.GeneratePermissionsForModule(module);
             foreach (var permission in allPermissions)
-            {
                 if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
-                {
-                    await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
-                }
-            }
+                    await roleManager.AddClaimAsync(
+                        role,
+                        new Claim(Constants.Permission, permission)
+                    );
         }
     }
 }

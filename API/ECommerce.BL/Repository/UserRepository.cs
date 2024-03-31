@@ -182,9 +182,9 @@ namespace ECommerce.BLL.Repository
             if (userValidationResult.IsSuccess)
             {
                 IdentityResult identityResult = await _userManager.CreateAsync(user, password);
-                if (identityResult.Succeeded && string.IsNullOrEmpty(userId))
+                if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
                 {
-                    _ = await _userManager.AddToRoleAsync(user, Constants.Roles.User);
+                    var roleResult = await _userManager.AddToRoleAsync(user, Constants.Roles.User);
                     await LoginAsync(user, true);
                     token = await CreateJwtToken(user);
                 }
@@ -196,7 +196,7 @@ namespace ECommerce.BLL.Repository
                         ? Constants.MessageKeys.Success
                         : string.Join(",", identityResult.Errors.Select(x => x.Description)),
                     Result =
-                        (identityResult.Succeeded && string.IsNullOrEmpty(userId))
+                        (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
                             ? new CreateUserDto
                             {
                                 Email = user.Email,
@@ -287,12 +287,18 @@ namespace ECommerce.BLL.Repository
 
         private async Task<JwtSecurityToken> CreateJwtToken(User user)
         {
-            IList<Claim> userClaims = await _userManager.GetClaimsAsync(user);
-            IList<string> roles = await _userManager.GetRolesAsync(user);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             List<Claim> roleClaims = new();
 
             foreach (string role in roles)
+            {
+                var rolex = await _roleManager.FindByNameAsync(role);
+                var roleClaimsx = await _roleManager.GetClaimsAsync(rolex);
+                foreach (var Claim in roleClaimsx)
+                    userClaims.Add(Claim);
                 roleClaims.Add(new Claim("roles", role));
+            }
 
             IEnumerable<Claim> claims = new[]
             {
@@ -325,68 +331,5 @@ namespace ECommerce.BLL.Repository
             return jwtSecurityToken;
         }
         #endregion
-    }
-
-    public class PermissionRequirement : IAuthorizationRequirement
-    {
-        public string Permission { get; private set; }
-
-        public PermissionRequirement(string permission)
-        {
-            Permission = permission;
-        }
-    }
-
-    public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
-    {
-        public PermissionAuthorizationHandler() { }
-
-        protected override async Task HandleRequirementAsync(
-            AuthorizationHandlerContext context,
-            PermissionRequirement requirement
-        )
-        {
-            if (context.User == null)
-            {
-                return;
-            }
-            var permissionss = context.User.Claims.Where(x =>
-                x.Type == "Permission"
-                && x.Value == requirement.Permission
-                && x.Issuer == "LOCAL AUTHORITY"
-            );
-            if (permissionss.Any())
-            {
-                context.Succeed(requirement);
-                return;
-            }
-        }
-    }
-
-    public class PermissionPolicyProvider : IAuthorizationPolicyProvider
-    {
-        public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
-
-        public PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
-        {
-            FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
-        }
-
-        public Task<AuthorizationPolicy> GetDefaultPolicyAsync() =>
-            FallbackPolicyProvider.GetDefaultPolicyAsync();
-
-        public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
-        {
-            if (policyName.StartsWith("Permission", StringComparison.OrdinalIgnoreCase))
-            {
-                var policy = new AuthorizationPolicyBuilder();
-                policy.AddRequirements(new PermissionRequirement(policyName));
-                return Task.FromResult(policy.Build());
-            }
-            return FallbackPolicyProvider.GetPolicyAsync(policyName);
-        }
-
-        public Task<AuthorizationPolicy> GetFallbackPolicyAsync() =>
-            FallbackPolicyProvider.GetDefaultPolicyAsync();
     }
 }
