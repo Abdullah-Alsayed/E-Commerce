@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
-using ECommerce.BLL.Features.Account.Dtos;
-using ECommerce.BLL.Features.Account.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Features.Users.Requests;
+using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Response;
-using ECommerce.Core;
-using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
@@ -19,55 +12,20 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
-        private readonly IMapper _mapper;
-        private string _userId = string.Empty;
+        private readonly IUserService _service;
 
-        public UserController(
-            IUnitOfWork unitOfWork,
-            IHttpContextAccessor httpContext,
-            IMapper mapper
-        )
-        {
-            _unitOfWork = unitOfWork;
-            _httpContext = httpContext;
-            _userId = _httpContext.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            _mapper = mapper;
-        }
+        public UserController(IUserService service) => _service = service;
 
         [HttpPost]
-        public async Task<BaseResponse<CreateUserDto>> RegisterAsync(CreateUserRequest request)
+        public async Task<BaseResponse> Register(CreateUserRequest request)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return new BaseResponse<CreateUserDto>
-                    {
-                        IsSuccess = false,
-                        Message = Constants.Errors.Register
-                    };
-
-                var user = _mapper.Map<User>(request);
-                user.Language = Constants.Languages.Ar;
-                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
-
-                var result = await _unitOfWork.User.CreateUserAsync(
-                    user,
-                    request.Password,
-                    _userId
-                );
-                return new BaseResponse<CreateUserDto>
-                {
-                    IsSuccess = result.IsSuccess,
-                    Message = result.Message,
-                    Result = result.Result
-                };
+                return await _service.RegisterAsync(request);
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex);
-                return new BaseResponse<CreateUserDto> { IsSuccess = false, Message = ex.Message };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -77,47 +35,38 @@ namespace ECommerce.API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return new BaseResponse
-                    {
-                        IsSuccess = false,
-                        Message = Constants.Errors.LoginFiled
-                    };
-                var result = await _unitOfWork.User.LoginAsync(request);
-                return result;
+                return await _service.LoginAsync(request);
             }
             catch (Exception ex)
             {
-                await ErrorLog(ex);
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpGet]
-        public IActionResult Userinfo()
+        public async Task<BaseResponse> UserInfo()
         {
-            string UserID = _unitOfWork.User.GetUserID(User);
-            string UserName = _unitOfWork.User.GetUserName(User);
-            _ = _unitOfWork.User.IsAuthenticated(User);
-            List<string> InfoList = new() { UserName, UserID };
-            return Ok(InfoList);
+            try
+            {
+                return await _service.UserInfoAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> LogOfAsync()
+        [HttpPost]
+        public async Task<BaseResponse> LogOfAsync()
         {
-            await _unitOfWork.User.LogOffAsync();
-            return Ok();
+            try
+            {
+                return await _service.LogOfAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
-
-        #region helpers
-        private async Task ErrorLog(Exception ex)
-        {
-            await _unitOfWork.ErrorLog.AddAsync(
-                new ErrorLog { Message = ex.Message, Source = ex.Source }
-            );
-            await _unitOfWork.SaveAsync();
-        }
-        #endregion
     }
 }

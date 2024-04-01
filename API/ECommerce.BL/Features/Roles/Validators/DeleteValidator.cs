@@ -34,7 +34,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return roleManager.Roles.Any(x => x.Id == req.ID.ToString() && !x.IsDefault);
+                    return roleManager.Roles.Any(x => x.Id == req.ID.ToString() && !x.IsMaster);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.IsDefault]}"

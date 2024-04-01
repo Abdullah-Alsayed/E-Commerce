@@ -8,7 +8,7 @@ namespace ECommerce.DAL.Entity
     {
         public string Description { get; set; }
 
-        public bool IsDefault { get; set; } = false;
+        public bool IsMaster { get; set; } = false;
 
         [Required]
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;

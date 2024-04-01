@@ -11,6 +11,9 @@
         Search,
         Accept,
         UpdateStatus,
-        Return
+        Return,
+        Register,
+        Login,
+        LogOff
     }
 }

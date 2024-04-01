@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using ECommerce.BLL.Features.Account.Dtos;
-using ECommerce.BLL.Features.Account.Requests;
+using ECommerce.BLL.Features.Users.Dtos;
+using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;

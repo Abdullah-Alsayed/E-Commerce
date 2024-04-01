@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ECommerce.BLL.Features.Account.Dtos
+namespace ECommerce.BLL.Features.Users.Dtos
 {
     public class LoginDto
     {

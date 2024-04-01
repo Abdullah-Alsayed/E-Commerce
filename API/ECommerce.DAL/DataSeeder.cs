@@ -110,7 +110,7 @@ namespace ECommerce.Core
                     NormalizedName = Constants.Roles.SuperAdmin.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     CreateAt = DateTime.UtcNow,
-                    IsDefault = true
+                    IsMaster = true
                 };
                 var user = new Role
                 {
@@ -120,7 +120,7 @@ namespace ECommerce.Core
                     NormalizedName = Constants.Roles.User.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     CreateAt = DateTime.UtcNow,
-                    IsDefault = true
+                    IsMaster = true
                 };
                 await roleManager.CreateAsync(SuperAdmin);
                 await AddSuperAdminRoleClaim(context, SuperAdmin);

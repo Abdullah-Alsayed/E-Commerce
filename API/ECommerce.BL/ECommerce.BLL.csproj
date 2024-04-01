@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Account\Dtos\" />
     <Folder Include="Interface\" />
   </ItemGroup>
 

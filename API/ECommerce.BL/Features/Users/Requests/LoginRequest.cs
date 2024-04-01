@@ -1,4 +1,4 @@
-﻿namespace ECommerce.BLL.Features.Account.Requests
+﻿namespace ECommerce.BLL.Features.Users.Requests
 {
     public class LoginRequest
     {

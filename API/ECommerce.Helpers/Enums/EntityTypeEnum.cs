@@ -24,6 +24,7 @@
         Size,
         Invoice,
         Stock,
-        Role
+        Role,
+        User
     }
 }
