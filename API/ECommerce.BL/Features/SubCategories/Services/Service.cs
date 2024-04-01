@@ -84,7 +84,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.SubCategory
                 );
                 return new BaseResponse

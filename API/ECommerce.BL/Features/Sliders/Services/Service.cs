@@ -84,7 +84,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.Slider
                 );
                 return new BaseResponse

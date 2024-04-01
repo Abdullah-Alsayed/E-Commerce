@@ -79,7 +79,7 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Area);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Area);
             return new BaseResponse
             {
                 IsSuccess = false,

@@ -78,7 +78,7 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Role);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Role);
                 return new BaseResponse
                 {
                     IsSuccess = false,

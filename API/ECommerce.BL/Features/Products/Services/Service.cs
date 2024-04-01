@@ -88,7 +88,7 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.Product
                 );
                 return new BaseResponse
@@ -117,7 +117,7 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.Product
                 );
                 return new BaseResponse

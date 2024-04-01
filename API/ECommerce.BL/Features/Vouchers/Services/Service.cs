@@ -80,7 +80,7 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Voucher);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Voucher);
             return new BaseResponse
             {
                 IsSuccess = false,

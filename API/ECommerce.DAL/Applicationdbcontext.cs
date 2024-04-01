@@ -1,5 +1,4 @@
 ﻿using ECommerce.DAL.Entity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +38,14 @@ namespace ECommerce.DAL
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
         public DbSet<ProductColor> ProductColors { get; set; }
+        public DbSet<UserClaims> UserClaims { get; set; }
+        public DbSet<RoleClaims> RoleClaims { get; set; }
+
+        public DbSet<TEntity> AddDbSet<TEntity>()
+            where TEntity : class
+        {
+            return Set<TEntity>();
+        }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {

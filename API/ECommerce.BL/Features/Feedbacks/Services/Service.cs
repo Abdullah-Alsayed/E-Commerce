@@ -80,7 +80,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.Feedback
                 );
                 return new BaseResponse

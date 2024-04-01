@@ -81,7 +81,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             {
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Find,
+                    OperationTypeEnum.View,
                     EntitiesEnum.Status
                 );
                 return new BaseResponse

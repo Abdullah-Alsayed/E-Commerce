@@ -123,8 +123,8 @@ namespace ECommerce.Core
                     IsDefault = true
                 };
                 await roleManager.CreateAsync(SuperAdmin);
+                await AddSuperAdminRoleClaim(context, SuperAdmin);
                 await roleManager.CreateAsync(user);
-                await roleManager.AddPermissionClaim(SuperAdmin, Constants.EntityKeys.Product);
             }
         }
 
@@ -159,20 +159,20 @@ namespace ECommerce.Core
             }
         }
 
-        private static async Task AddPermissionClaim(
-            this RoleManager<Role> roleManager,
-            Role role,
-            string module
-        )
+        private static async Task AddSuperAdminRoleClaim(ApplicationDbContext context, Role role)
         {
-            var allClaims = await roleManager.GetClaimsAsync(role);
-            var allPermissions = Permissions.GeneratePermissionsForModule(module);
-            foreach (var permission in allPermissions)
-                if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
-                    await roleManager.AddClaimAsync(
-                        role,
-                        new Claim(Constants.Permission, permission)
-                    );
+            var allPermissions = Permissions.GetAllPermissions();
+            var claims = allPermissions
+                .Select(claim => new RoleClaims
+                {
+                    ClaimType = "Permission",
+                    ClaimValue = claim.Claim,
+                    Module = claim.Module,
+                    Operation = claim.Operation,
+                    RoleId = role.Id,
+                })
+                .ToList();
+            await context.RoleClaims.AddRangeAsync(claims);
         }
     }
 }

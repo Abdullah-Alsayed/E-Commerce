@@ -78,7 +78,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Size);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Size);
                 return new BaseResponse
                 {
                     IsSuccess = false,

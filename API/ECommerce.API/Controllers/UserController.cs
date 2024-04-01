@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Account.Dtos;
 using ECommerce.BLL.Features.Account.Requests;
-using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -18,14 +17,14 @@ namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
         private string _userId = string.Empty;
 
-        public AccountController(
+        public UserController(
             IUnitOfWork unitOfWork,
             IHttpContextAccessor httpContext,
             IMapper mapper

@@ -79,7 +79,7 @@ public class GovernorateService : IGovernorateService
         {
             await _unitOfWork.ErrorLog.ErrorLog(
                 ex,
-                OperationTypeEnum.Find,
+                OperationTypeEnum.View,
                 EntitiesEnum.Governorate
             );
             return new BaseResponse

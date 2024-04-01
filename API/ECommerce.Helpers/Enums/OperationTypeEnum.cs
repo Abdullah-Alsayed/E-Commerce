@@ -7,7 +7,7 @@
         Delete,
         Toggle,
         GetAll,
-        Find,
+        View,
         Search,
         Accept,
         UpdateStatus,

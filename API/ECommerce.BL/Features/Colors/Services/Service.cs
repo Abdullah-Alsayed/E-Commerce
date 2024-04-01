@@ -89,7 +89,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Color);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Color);
                 return new BaseResponse
                 {
                     IsSuccess = false,

@@ -79,7 +79,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Order);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Order);
                 return new BaseResponse
                 {
                     IsSuccess = false,

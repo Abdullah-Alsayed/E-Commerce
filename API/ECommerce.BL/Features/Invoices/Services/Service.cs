@@ -78,7 +78,7 @@ public class InvoiceService : IInvoiceService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Invoice);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Invoice);
             return new BaseResponse
             {
                 IsSuccess = false,

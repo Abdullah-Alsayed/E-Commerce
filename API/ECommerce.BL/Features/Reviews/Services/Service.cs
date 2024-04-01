@@ -77,7 +77,7 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Review);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Review);
             return new BaseResponse
             {
                 IsSuccess = false,

@@ -81,7 +81,7 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Expense);
+            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Expense);
             return new BaseResponse
             {
                 IsSuccess = false,

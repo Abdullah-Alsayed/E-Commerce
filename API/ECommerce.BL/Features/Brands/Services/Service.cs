@@ -87,7 +87,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Find, EntitiesEnum.Brand);
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Brand);
                 return new BaseResponse
                 {
                     IsSuccess = false,
