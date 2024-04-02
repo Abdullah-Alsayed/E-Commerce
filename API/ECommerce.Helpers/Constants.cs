@@ -41,6 +41,7 @@ namespace ECommerce.Core
             public const string LastOne="";
             public const string quantityNotValid="";
             public const string IsDefault="";
+            public const string NotChanged = "NotChanged";
         }
         public static class EntityKeys
         {
@@ -92,6 +93,7 @@ namespace ECommerce.Core
             public const string Invoice="";
             public const string Stock="";
             public const string Role = "";
+            public const string Claim = "";
         }
 
         public static class Gender

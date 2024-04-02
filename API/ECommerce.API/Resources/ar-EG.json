@@ -528,5 +528,9 @@
   "submissionsfolderadd": "إضافة",
   "IdentityUserreset_others_password": "اعادة تعين كلمة المرور لمستخدم اخر",
   "InventoryInventorysystemsetting": "اعدادات المخزن",
-  "InventoryInventoryinvoicedealcreate": "إنشاء صفقة من فاتورة"
+  "InventoryInventoryinvoicedealcreate": "إنشاء صفقة من فاتورة",
+
+
+  /////////////product///////////
+  "Permissions.Products.View": "عرض منتج"
 }

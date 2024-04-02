@@ -165,7 +165,7 @@ namespace ECommerce.Core
             var claims = allPermissions
                 .Select(claim => new RoleClaims
                 {
-                    ClaimType = "Permission",
+                    ClaimType = Constants.Permission,
                     ClaimValue = claim.Claim,
                     Module = claim.Module,
                     Operation = claim.Operation,

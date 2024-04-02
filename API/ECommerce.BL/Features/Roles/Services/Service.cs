@@ -326,6 +326,58 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
         }
 
+        public async Task<BaseResponse> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                modifyRows = await _unitOfWork.Role.UpdateRoleClaimsAsync(request);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.UpdateClaims);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.UpdateClaims);
+                modifyRows++;
+                #endregion
+
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateClaims,
+                    EntitiesEnum.Role
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(

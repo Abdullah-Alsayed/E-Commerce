@@ -19,9 +19,9 @@ namespace ECommerce.Core.PermissionsClaims
             };
         }
 
-        public static List<SeedClaimDto> GetAllPermissions()
+        public static List<ClaimDto> GetAllPermissions()
         {
-            var allPermissions = new List<SeedClaimDto>();
+            var allPermissions = new List<ClaimDto>();
 
             // Get all nested classes within Permissions class
             Type[] nestedClasses = typeof(Permissions).GetNestedTypes();
@@ -36,7 +36,7 @@ namespace ECommerce.Core.PermissionsClaims
                 foreach (FieldInfo field in fields)
                     // Add the value of the field to the list
                     allPermissions.Add(
-                        new SeedClaimDto
+                        new ClaimDto
                         {
                             Claim = (string)field.GetValue(null),
                             Module = nestedClass.Name,
@@ -48,9 +48,9 @@ namespace ECommerce.Core.PermissionsClaims
             return allPermissions;
         }
 
-        public static List<SeedClaimDto> UserPermissions = new List<SeedClaimDto>
+        public static List<ClaimDto> UserPermissions = new List<ClaimDto>
         {
-            new SeedClaimDto
+            new ClaimDto
             {
                 Claim = Product.View,
                 Module = EntitiesEnum.Product.ToString(),

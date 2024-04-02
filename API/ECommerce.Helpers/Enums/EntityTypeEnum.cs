@@ -25,6 +25,7 @@
         Invoice,
         Stock,
         Role,
-        User
+        User,
+        Claims
     }
 }

@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
 {
     public class CreateRoleValidator : AbstractValidator<CreateRoleRequest>
     {
-        private readonly IStringLocalizer _localizer;
+        private readonly IStringLocalizer<CreateRoleValidator> _localizer;
 
         public CreateRoleValidator(
             RoleManager<Role> roleManager,

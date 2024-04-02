@@ -14,6 +14,7 @@
         Return,
         Register,
         Login,
-        LogOff
+        LogOff,
+        UpdateClaims
     }
 }

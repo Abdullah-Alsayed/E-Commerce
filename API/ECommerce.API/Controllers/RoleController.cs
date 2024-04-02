@@ -94,4 +94,17 @@ public class RoleController : ControllerBase
             return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
     }
+
+    [HttpPut]
+    public async Task<BaseResponse> UpdateRoleClaims(UpdateRoleClaimsRequest request)
+    {
+        try
+        {
+            return await _service.UpdateRoleClaimsAsync(request);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
 }

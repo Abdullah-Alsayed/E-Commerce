@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
+using ECommerce.Core;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -64,6 +67,69 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
             );
             await _context.SaveChangesAsync();
             return new List<Role>();
+        }
+    }
+
+    public async Task<int> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request)
+    {
+        try
+        {
+            var modifyRows = 0;
+            string[] parts = new string[3];
+            var requestClaims = request.Claims.Distinct().ToList();
+            var roleClaims = await _context
+                .RoleClaims.Where(role => role.RoleId == request.RoleID)
+                .ToListAsync();
+
+            // Find claims to delete
+            var claimsToDelete = roleClaims
+                .Where(rc => !requestClaims.Contains(rc.ClaimValue))
+                .ToList();
+
+            // Find new claims
+            var newClaimsToAdd = requestClaims
+                .Except(roleClaims.Select(rc => rc.ClaimValue))
+                .ToList();
+
+            if (claimsToDelete != null && claimsToDelete.Any())
+                foreach (var claim in claimsToDelete)
+                {
+                    _context.RoleClaims.Remove(claim);
+                    modifyRows++;
+                }
+
+            if (newClaimsToAdd != null && newClaimsToAdd.Any())
+                foreach (var claim in newClaimsToAdd)
+                {
+                    parts = claim.Split('.');
+                    await _context.RoleClaims.AddAsync(
+                        new RoleClaims
+                        {
+                            ClaimType = Constants.Permission,
+                            ClaimValue = claim,
+                            Module = parts[1],
+                            Operation = parts[2],
+                            RoleId = request.RoleID,
+                        }
+                    );
+                    modifyRows++;
+                }
+
+            return modifyRows;
+        }
+        catch (Exception ex)
+        {
+            await _context.ErrorLogs.AddAsync(
+                new ErrorLog
+                {
+                    Source = ex.Source,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
+                    Entity = DAL.Enums.EntitiesEnum.Role
+                }
+            );
+            return 1;
         }
     }
 
