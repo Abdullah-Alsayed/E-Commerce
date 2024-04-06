@@ -6,6 +6,7 @@ namespace ECommerce.BLL.Features.Users.Services
 {
     public interface IUserService
     {
+        Task<BaseResponse> ChangePasswordAsync(ChangePasswordUserRequest request);
         Task<BaseResponse> LoginAsync(LoginRequest request);
         Task<BaseResponse> LogOfAsync();
 

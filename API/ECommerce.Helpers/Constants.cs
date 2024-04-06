@@ -33,7 +33,7 @@ namespace ECommerce.Core
             public const string ColorNotValid = "colorNotValid";
             public const string PhoneNotValid= "phoneNotValid";
             public const string SubjectNotValid="";
-            public const string MaxLimete="";
+            public const string MaxLimited="";
             public const string StatusIsComplete="";
             public const string StatusIsCompleteCantDelete="";
             public const string CantDelete="";
@@ -42,6 +42,9 @@ namespace ECommerce.Core
             public const string quantityNotValid="";
             public const string IsDefault="";
             public const string NotChanged = "NotChanged";
+            public static string PasswordNotStrong="";
+            public static string NotValid="";
+            public static string PasswordNotMatch;
         }
         public static class EntityKeys
         {
@@ -94,6 +97,10 @@ namespace ECommerce.Core
             public const string Stock="";
             public const string Role = "";
             public const string Claim = "";
+            public const string User = "";
+            public const string UserInThisRole = "";
+            public const string OldPassword="";
+            public const string NewPassword="";
         }
 
         public static class Gender

@@ -107,4 +107,30 @@ public class RoleController : ControllerBase
             return new BaseResponse { IsSuccess = false, Message = ex.Message };
         }
     }
+
+    [HttpPut]
+    public async Task<BaseResponse> UpdateUserClaims(UpdateUserClaimsRequest request)
+    {
+        try
+        {
+            return await _service.UpdateUserClaimsAsync(request);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpPut]
+    public async Task<BaseResponse> UpdateUserRole(UpdateUserRoleRequest request)
+    {
+        try
+        {
+            return await _service.UpdateUserRoleAsync(request);
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
 }

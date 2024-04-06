@@ -175,6 +175,36 @@ namespace ECommerce.BLL.Features.Users.Services
                 }
             );
 
+        public async Task<BaseResponse> ChangePasswordAsync(ChangePasswordUserRequest request)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(request);
+                user.Language = Constants.Languages.Ar;
+                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
+                var result = await _unitOfWork.User.ChangePassword(request, _userId);
+                return new BaseResponse<CreateUserDto>
+                {
+                    IsSuccess = result.IsSuccess,
+                    Message = result.Message,
+                    Result = result.Result
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.ChangePassword,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
         #endregion
     }
 }

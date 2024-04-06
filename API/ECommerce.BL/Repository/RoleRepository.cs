@@ -20,12 +20,99 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
 {
     private readonly ApplicationDbContext _context;
     private readonly RoleManager<Role> _roleManager;
+    private readonly UserManager<User> _userManager;
 
-    public RoleRepository(ApplicationDbContext context, RoleManager<Role> roleManager)
+    public RoleRepository(
+        ApplicationDbContext context,
+        RoleManager<Role> roleManager,
+        UserManager<User> userManager
+    )
         : base(context)
     {
         _context = context;
         _roleManager = roleManager;
+        _userManager = userManager;
+    }
+
+    public async Task<bool> AddUserToRoleAsync(AddUserToRoleRequest request)
+    {
+        try
+        {
+            var response = false;
+            var user = await _userManager.FindByIdAsync(request.UserID);
+            var roles = await _roleManager
+                .Roles.Where(x => request.RoleIDs.Contains(x.Id))
+                .ToListAsync();
+            var rolesName = roles.Select(x => x.Name);
+            var result = await _userManager.AddToRolesAsync(user, rolesName);
+            if (result.Succeeded)
+                response = true;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            await _context.ErrorLogs.AddAsync(
+                new ErrorLog
+                {
+                    Source = ex.Source,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
+                    Entity = DAL.Enums.EntitiesEnum.Role
+                }
+            );
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateUserRoleAsync(UpdateUserRoleRequest request)
+    {
+        try
+        {
+            var response = false;
+            var resultNewRole = new IdentityResult();
+            var resultRoleToDelete = new IdentityResult();
+            var user = await _userManager.FindByIdAsync(request.UserID);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var roles = await _roleManager
+                .Roles.Where(x => request.RoleIDs.Contains(x.Id))
+                .ToListAsync();
+            var rolesName = roles.Select(x => x.Name);
+
+            var newRoles = rolesName.Where(x => !userRoles.Contains(x));
+
+            // Find Role to delete
+            var roleToDelete = userRoles.Where(role => !rolesName.Contains(role));
+
+            // Find new Role
+            var newRoleToAdd = rolesName.Except(userRoles.Select(role => role));
+
+            if (newRoleToAdd != null && newRoleToAdd.Any())
+                resultNewRole = await _userManager.AddToRolesAsync(user, newRoleToAdd);
+
+            if (roleToDelete != null && roleToDelete.Any())
+                resultRoleToDelete = await _userManager.RemoveFromRolesAsync(user, roleToDelete);
+
+            if (resultNewRole.Errors.Count() == 0 && resultRoleToDelete.Errors.Count() == 0)
+                response = true;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            await _context.ErrorLogs.AddAsync(
+                new ErrorLog
+                {
+                    Source = ex.Source,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
+                    Entity = DAL.Enums.EntitiesEnum.Role
+                }
+            );
+            return false;
+        }
     }
 
     public override async Task<List<Role>> GetAllAsync(BaseGridRequest request)
@@ -127,6 +214,69 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                     StackTrace = ex.StackTrace,
                     Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
                     Entity = DAL.Enums.EntitiesEnum.Role
+                }
+            );
+            return 1;
+        }
+    }
+
+    public async Task<int> UpdateUserClaimsAsync(UpdateUserClaimsRequest request)
+    {
+        try
+        {
+            var modifyRows = 0;
+            string[] parts = new string[3];
+            var requestClaims = request.Claims.Distinct().ToList();
+            var userClaims = await _context
+                .UserClaims.Where(role => role.UserId == request.UserID)
+                .ToListAsync();
+
+            // Find claims to delete
+            var claimsToDelete = userClaims
+                .Where(rc => !requestClaims.Contains(rc.ClaimValue))
+                .ToList();
+
+            // Find new claims
+            var newClaimsToAdd = requestClaims
+                .Except(userClaims.Select(rc => rc.ClaimValue))
+                .ToList();
+
+            if (claimsToDelete != null && claimsToDelete.Any())
+                foreach (var claim in claimsToDelete)
+                {
+                    _context.UserClaims.Remove(claim);
+                    modifyRows++;
+                }
+
+            if (newClaimsToAdd != null && newClaimsToAdd.Any())
+                foreach (var claim in newClaimsToAdd)
+                {
+                    parts = claim.Split('.');
+                    await _context.RoleClaims.AddAsync(
+                        new RoleClaims
+                        {
+                            ClaimType = Constants.Permission,
+                            ClaimValue = claim,
+                            Module = parts[1],
+                            Operation = parts[2],
+                            RoleId = request.UserID,
+                        }
+                    );
+                    modifyRows++;
+                }
+
+            return modifyRows;
+        }
+        catch (Exception ex)
+        {
+            await _context.ErrorLogs.AddAsync(
+                new ErrorLog
+                {
+                    Source = ex.Source,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
+                    Entity = DAL.Enums.EntitiesEnum.User
                 }
             );
             return 1;

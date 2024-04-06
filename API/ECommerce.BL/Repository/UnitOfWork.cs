@@ -45,7 +45,7 @@ namespace ECommerce.BL.Repository
                 _mailServices,
                 _jwt
             );
-            Role = new RoleRepository(_context, _roleManager);
+            Role = new RoleRepository(_context, _roleManager, _userManager);
             Product = new ProductRepository(_context);
             SubCategory = new BaseRepository<SubCategory>(_context);
             Governorate = new BaseRepository<Governorate>(_context);

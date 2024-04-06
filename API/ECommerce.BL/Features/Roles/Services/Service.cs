@@ -378,6 +378,162 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
         }
 
+        public async Task<BaseResponse> UpdateUserClaimsAsync(UpdateUserClaimsRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                modifyRows = await _unitOfWork.Role.UpdateUserClaimsAsync(request);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.UpdateClaims);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.UpdateClaims);
+                modifyRows++;
+                #endregion
+
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateClaims,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> AddUserToRoleAsync(AddUserToRoleRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var result = await _unitOfWork.Role.AddUserToRoleAsync(request);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.AddUserInRole);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.AddUserInRole);
+                modifyRows++;
+                #endregion
+
+                if (await _unitOfWork.IsDone(modifyRows) && result)
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.AddUserInRole,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> UpdateUserRoleAsync(UpdateUserRoleRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var result = await _unitOfWork.Role.UpdateUserRoleAsync(request);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.AddUserInRole);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.AddUserInRole);
+                modifyRows++;
+                #endregion
+
+                if (await _unitOfWork.IsDone(modifyRows) && result)
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.AddUserInRole,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(

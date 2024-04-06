@@ -34,5 +34,6 @@ namespace ECommerce.BLL.IRepository
         bool IsAuthenticated(ClaimsPrincipal user);
         Task LoginAsync(User user, bool RememberMe);
         Task LogOffAsync();
+        Task ChangePassword(ChangePasswordUserRequest request, string userId);
     }
 }

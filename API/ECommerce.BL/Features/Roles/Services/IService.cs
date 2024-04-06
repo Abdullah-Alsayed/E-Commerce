@@ -13,5 +13,8 @@ namespace ECommerce.BLL.Features.Roles.Services
         Task<BaseResponse> UpdateAsync(UpdateRoleRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
         Task<BaseResponse> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request);
+        Task<BaseResponse> UpdateUserClaimsAsync(UpdateUserClaimsRequest request);
+        Task<BaseResponse> AddUserToRoleAsync(AddUserToRoleRequest request);
+        Task<BaseResponse> UpdateUserRoleAsync(UpdateUserRoleRequest request);
     }
 }

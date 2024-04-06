@@ -30,6 +30,19 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
+        public async Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request)
+        {
+            try
+            {
+                return await _service.ChangePasswordAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
         [AllowAnonymous]
         public async Task<BaseResponse> Login(LoginRequest request)
         {

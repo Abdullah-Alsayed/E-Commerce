@@ -15,6 +15,7 @@
         Register,
         Login,
         LogOff,
-        UpdateClaims
+        UpdateClaims,
+        AddUserInRole
     }
 }

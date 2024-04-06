@@ -53,7 +53,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
                 {
                     return context.Statuses.Where(x => x.IsActive && !x.IsDeleted).Count() < 5;
                 })
-                .WithMessage(x => $" {_localizer[Constants.MessageKeys.MaxLimete]}");
+                .WithMessage(x => $" {_localizer[Constants.MessageKeys.MaxLimited]}");
 
             RuleFor(req => req)
                 .Must(req =>
