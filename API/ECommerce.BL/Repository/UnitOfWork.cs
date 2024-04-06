@@ -8,6 +8,7 @@ using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace ECommerce.BL.Repository
@@ -15,10 +16,11 @@ namespace ECommerce.BL.Repository
     public class UnitOfWork : IUnitOfWork
     {
         public readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<UserRepository> _localizer;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        private readonly IMailServicies _mailServices;
+        private readonly IMailServices _mailServices;
         private readonly JWTHelpers _jwt;
 
         public UnitOfWork(
@@ -26,8 +28,9 @@ namespace ECommerce.BL.Repository
             SignInManager<User> signInManager,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
-            IMailServicies mailServices,
-            IOptions<JWTHelpers> jwt
+            IMailServices mailServices,
+            IOptions<JWTHelpers> jwt,
+            IStringLocalizer<UserRepository> localizer
         )
         {
             _context = context;
@@ -36,9 +39,11 @@ namespace ECommerce.BL.Repository
             _roleManager = roleManager;
             _mailServices = mailServices;
             _jwt = jwt.Value;
+            _localizer = localizer;
 
             User = new UserRepository(
                 _context,
+                localizer,
                 _userManager,
                 _signInManager,
                 _roleManager,

@@ -179,15 +179,11 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var user = _mapper.Map<User>(request);
-                user.Language = Constants.Languages.Ar;
-                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
                 var result = await _unitOfWork.User.ChangePassword(request, _userId);
-                return new BaseResponse<CreateUserDto>
+                return new BaseResponse
                 {
                     IsSuccess = result.IsSuccess,
-                    Message = result.Message,
-                    Result = result.Result
+                    Message = _localizer[result.Message].ToString()
                 };
             }
             catch (Exception ex)
@@ -195,6 +191,32 @@ namespace ECommerce.BLL.Features.Users.Services
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ChangePassword,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ForgotPasswordAsync(ForgotPasswordUserRequest request)
+        {
+            try
+            {
+                var result = await _unitOfWork.User.ForgotPassword(request, _userId);
+                return new BaseResponse
+                {
+                    IsSuccess = result.IsSuccess,
+                    Message = _localizer[result.Message].ToString()
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.ForgotPassword,
                     EntitiesEnum.User
                 );
                 return new BaseResponse

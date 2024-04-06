@@ -5,8 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
+using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -16,6 +18,8 @@ using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,18 +28,20 @@ namespace ECommerce.BLL.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<UserRepository> _localizer;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<Role> _roleManager;
-        private readonly IMailServicies _mailServices;
+        private readonly IMailServices _mailServices;
         private readonly JWTHelpers _jwt;
 
         public UserRepository(
             ApplicationDbContext context,
+            IStringLocalizer<UserRepository> localizer,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             RoleManager<Role> roleManager,
-            IMailServicies mailServices,
+            IMailServices mailServices,
             JWTHelpers jwt
         )
         {
@@ -45,6 +51,7 @@ namespace ECommerce.BLL.Repository
             _roleManager = roleManager;
             _mailServices = mailServices;
             _jwt = jwt;
+            _localizer = localizer;
         }
 
         public async Task<User> FindUserByIDAsync(string UserID)
@@ -254,6 +261,119 @@ namespace ECommerce.BLL.Repository
             return Result;
         }
 
+        public async Task<BaseResponse> ChangePassword(
+            ChangePasswordUserRequest request,
+            string userId
+        )
+        {
+            try
+            {
+                var user = await GetUser(userId);
+
+                if (user != null)
+                {
+                    var isPasswordValid = await _userManager.CheckPasswordAsync(
+                        user,
+                        request.OldPassword
+                    );
+                    if (isPasswordValid)
+                    {
+                        var result = await _userManager.ChangePasswordAsync(
+                            user,
+                            request.OldPassword,
+                            request.NewPassword
+                        );
+
+                        return new BaseResponse
+                        {
+                            IsSuccess = result.Succeeded,
+                            Message = result.Succeeded
+                                ? Constants.MessageKeys.Success
+                                : Constants.MessageKeys.Fail
+                        };
+                    }
+                    else
+                    {
+                        return new BaseResponse
+                        {
+                            IsSuccess = false,
+                            Message = Constants.MessageKeys.PasswordIsWrong
+                        };
+                    }
+                }
+                else
+                {
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = Constants.MessageKeys.UserNotFound
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<BaseResponse> ForgotPassword(
+            ForgotPasswordUserRequest request,
+            string userId
+        )
+        {
+            try
+            {
+                var user = await GetUser(userId);
+                if (user != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        var url =
+                            $"{Constants.HostName}/api/User/ResetPassword?token={HttpUtility.UrlEncode(token)}&email={user.Email}";
+
+                        var result = await _mailServices.SendAsync(
+                            new EmailDto
+                            {
+                                Body = $"{_localizer[Constants.MessageKeys.ForgotPassword]}: {url}",
+                                Email = user.Email,
+                                Subject = _localizer[Constants.MessageKeys.RestPassword].ToString(),
+                            }
+                        );
+
+                        return new BaseResponse
+                        {
+                            IsSuccess = result,
+                            Message = result
+                                ? Constants.MessageKeys.Success
+                                : Constants.MessageKeys.Fail
+                        };
+                    }
+                    else
+                    {
+                        return new BaseResponse
+                        {
+                            IsSuccess = false,
+                            Message = Constants.MessageKeys.PasswordIsWrong
+                        };
+                    }
+                }
+                else
+                {
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = Constants.MessageKeys.UserNotFound
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         #region helpers
         private async Task<BaseResponse> UserValidation(User user, BaseResponse result)
         {
@@ -330,6 +450,12 @@ namespace ECommerce.BLL.Repository
 
             return jwtSecurityToken;
         }
+
+        private async Task<User> GetUser(string userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
         #endregion
     }
 }

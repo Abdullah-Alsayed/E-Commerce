@@ -16,6 +16,8 @@
         Login,
         LogOff,
         UpdateClaims,
-        AddUserInRole
+        AddUserInRole,
+        ChangePassword,
+        ForgotPassword
     }
 }

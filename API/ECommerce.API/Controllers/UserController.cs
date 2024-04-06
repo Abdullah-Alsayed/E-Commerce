@@ -10,6 +10,7 @@ namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
@@ -17,24 +18,12 @@ namespace ECommerce.API.Controllers
         public UserController(IUserService service) => _service = service;
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<BaseResponse> Register(CreateUserRequest request)
         {
             try
             {
                 return await _service.RegisterAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpPost]
-        public async Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request)
-        {
-            try
-            {
-                return await _service.ChangePasswordAsync(request);
             }
             catch (Exception ex)
             {
@@ -49,6 +38,32 @@ namespace ECommerce.API.Controllers
             try
             {
                 return await _service.LoginAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request)
+        {
+            try
+            {
+                return await _service.ChangePasswordAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request)
+        {
+            try
+            {
+                return await _service.ForgotPasswordAsync(request);
             }
             catch (Exception ex)
             {

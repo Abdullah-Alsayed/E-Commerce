@@ -5,11 +5,11 @@
         public string Email { get; set; }
         public string Body { get; set; }
         public string Subject { get; set; }
-        public string MessageFrom { get; set; } = "info@dinarcrm.com";
-        public string Host { get; set; } = "smtp.sendgrid.net";
-        public string Smtp { get; set; } = "smtp.sendgrid.net";
+        public string MessageFrom { get; set; } = "abdullahalsyead@gmail.com";
+        public string Host { get; set; } = "smtp.gmail.com";
+        public string Smtp { get; set; } = "smtp.gmail.com";
         public int Port { get; set; } = 587;
-        public string UserName { get; set; } = "apikey";
-        public string Password { get; set; } = "SG.3Lm-COLIRYmKXx4Zj3FWeg.XwK7J2_z";
+        public string UserName { get; set; } = "abdullahalsyead@gmail.com";
+        public string Password { get; set; } = "fpdjneakwttwjymb";
     }
 }

@@ -2,8 +2,8 @@
 
 namespace ECommerce.Core.Services.MailServices
 {
-    public interface IMailServicies
+    public interface IMailServices
     {
-        Task SendAsync(EmailDto request);
+        Task<bool> SendAsync(EmailDto request);
     }
 }

@@ -1,12 +1,12 @@
-﻿using System.IO;
-
+﻿
 namespace ECommerce.Core
 {
     public static class Constants
     {
         public const string System = "System";
         public const string Permission= "Permission";
-        public static string Issuer= "E-commerceApi";
+        public const string Issuer= "E-commerceApi";
+        public const string HostName= "localhost:5001";
 
         public static class Languages
         {
@@ -32,19 +32,24 @@ namespace ECommerce.Core
             public const string LinkNotValid= "linkNotValid";
             public const string ColorNotValid = "colorNotValid";
             public const string PhoneNotValid= "phoneNotValid";
-            public const string SubjectNotValid="";
-            public const string MaxLimited="";
-            public const string StatusIsComplete="";
-            public const string StatusIsCompleteCantDelete="";
-            public const string CantDelete="";
-            public const string IsComplete = "";
-            public const string LastOne="";
-            public const string quantityNotValid="";
-            public const string IsDefault="";
+            public const string SubjectNotValid= "SubjectNotValid";
+            public const string MaxLimited= "MaxLimited";
+            public const string StatusIsComplete= "StatusIsComplete";
+            public const string StatusIsCompleteCantDelete= "StatusIsCompleteCantDelete";
+            public const string CantDelete= "CantDelete";
+            public const string IsComplete = "IsComplete";
+            public const string LastOne= "LastOne";
+            public const string quantityNotValid= "quantityNotValid";
+            public const string IsDefault= "IsDefault";
             public const string NotChanged = "NotChanged";
-            public static string PasswordNotStrong="";
-            public static string NotValid="";
-            public static string PasswordNotMatch;
+            public const string PasswordNotStrong= "PasswordNotStrong";
+            public const string NotValid= "NotValid";
+            public const string PasswordNotMatch= "PasswordNotMatch";
+            public const string UserNotFound= "UserNotFound"; 
+            public const string UserInThisRole = "UserInThisRole";
+            public const string PasswordIsWrong= "PasswordIsWrong";
+            public const string ForgotPassword= "Your password reset token is";
+            public const string RestPassword= "Rest Password";
         }
         public static class EntityKeys
         {
@@ -67,40 +72,40 @@ namespace ECommerce.Core
             public const string Status= "status";
             public const string Product = "Product";
             public const string Review= "review";
-            public const string Email="";
-            public const string Whatsapp="";
-            public const string MainColor="";
-            public const string Phone="";
-            public const string Subject="";
-            public const string Message="";
-            public const string Expense="";
-            public const string Amount="";
-            public const string Reference="";
-            public const string Slider= "";
-            public const string TitleAR= "";
-            public const string TitleEN= "";
-            public const string Description= "";
-            public const string Vendor="";
-            public const string Address = "";
-            public const string Feedback="";
-            public const string Comment="";
-            public const string Rate="";
-            public const string Rating="";
-            public const string Quantity="";
-            public const string Cart="";
-            public const string Title="";
-            public const string Price="";
-            public const string Order="";
-            public const string DeliveryDate="";
-            public const string Size="";
-            public const string Invoice="";
-            public const string Stock="";
-            public const string Role = "";
-            public const string Claim = "";
-            public const string User = "";
-            public const string UserInThisRole = "";
-            public const string OldPassword="";
-            public const string NewPassword="";
+            public const string Email= "Email";
+            public const string Whatsapp= "MainColor";
+            public const string MainColor= "MainColor";
+            public const string Phone= "Phone";
+            public const string Subject= "Subject";
+            public const string Message= "Message";
+            public const string Expense= "Expense";
+            public const string Amount= "Amount";
+            public const string Reference= "Reference";
+            public const string Slider= "Slider";
+            public const string TitleAR= "TitleAR";
+            public const string TitleEN= "TitleEN";
+            public const string Description= "Description";
+            public const string Vendor= "Vendor";
+            public const string Address = "Address";
+            public const string Feedback= "Feedback";
+            public const string Comment= "Comment";
+            public const string Rate= "Rate";
+            public const string Rating= "Rating";
+            public const string Quantity= "Quantity";
+            public const string Cart= "Cart";
+            public const string Title= "Title";
+            public const string Price= "Price";
+            public const string Order= "Order";
+            public const string DeliveryDate= "DeliveryDate";
+            public const string Size= "Size";
+            public const string Invoice= "Invoice";
+            public const string Stock= "Stock";
+            public const string Role = "Role";
+            public const string Claim = "Claim";
+            public const string User = "User";
+            public const string OldPassword= "OldPassword";
+            public const string NewPassword= "NewPassword";
+            public const string ConfirmPassword= "ConfirmPassword";
         }
 
         public static class Gender

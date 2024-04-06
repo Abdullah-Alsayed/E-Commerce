@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using SmtpClient = System.Net.Mail.SmtpClient;
 
 namespace ECommerce.Core.Services.MailServices
 {
-    public class MailServicies : IMailServicies
+    public class MailServices : IMailServices
     {
-        public async Task SendAsync(EmailDto emailDto)
+        public async Task<bool> SendAsync(EmailDto emailDto)
         {
             try
             {
@@ -16,20 +17,21 @@ namespace ECommerce.Core.Services.MailServices
                 message.To.Add(new MailAddress(emailDto.Email));
                 message.Subject = emailDto.Subject;
                 message.Body = emailDto.Body;
-
                 SmtpClient smtpClient = new SmtpClient(emailDto.Host, emailDto.Port);
                 smtpClient.UseDefaultCredentials = false;
-                smtpClient.Credentials = new System.Net.NetworkCredential(
+                smtpClient.EnableSsl = true;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Credentials = new NetworkCredential(
                     emailDto.UserName,
                     emailDto.Password
                 );
-                smtpClient.EnableSsl = true;
-
                 await smtpClient.SendMailAsync(message);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to send email: {ex.Message}");
+                return false;
             }
         }
     }

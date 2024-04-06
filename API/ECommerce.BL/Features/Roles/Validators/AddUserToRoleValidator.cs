@@ -68,6 +68,6 @@ public class AddUserToRoleValidator : AbstractValidator<AddUserToRoleRequest>
                     .UserRoles.AsNoTracking()
                     .All(x => x.UserId == req.UserID && req.RoleIDs.Contains(x.RoleId));
             })
-            .WithMessage(x => $"{_localizer[Constants.EntityKeys.UserInThisRole]}");
+            .WithMessage(x => $"{_localizer[Constants.MessageKeys.UserInThisRole]}");
     }
 }

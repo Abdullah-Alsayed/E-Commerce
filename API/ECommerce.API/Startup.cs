@@ -190,10 +190,10 @@ namespace ECommerce.API
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ISliderService, SliderService>();
-            services.AddScoped<IMailServicies, MailServicies>();
+            services.AddScoped<IMailServices, MailServices>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IReviewService, ReviewService>();
-            services.AddScoped<IMailServicies, MailServicies>();
+            services.AddScoped<IMailServices, MailServices>();
             services.AddScoped<IVendorService, VendorService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<IVoucherService, VoucherService>();

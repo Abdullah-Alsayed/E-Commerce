@@ -12,15 +12,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Users.Validators;
 
-internal class ChangePasswordUserValidator : AbstractValidator<ChangePasswordUserRequest>
+public class ChangePasswordUserValidator : AbstractValidator<ChangePasswordUserRequest>
 {
     private readonly IStringLocalizer _localizer;
 
     public ChangePasswordUserValidator(
         ApplicationDbContext context,
-        IStringLocalizer<ChangePasswordUserValidator> localizer,
-        UserManager<User> _userManager,
-        IHttpContextAccessor _httpContext
+        IStringLocalizer<ChangePasswordUserValidator> localizer
     )
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
@@ -47,29 +45,20 @@ internal class ChangePasswordUserValidator : AbstractValidator<ChangePasswordUse
                 $"{_localizer[Constants.EntityKeys.NewPassword]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
 
-        RuleFor(req => req.NewPassword)
-            .Equal(req => req.OldPassword)
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.NewPassword]} {_localizer[Constants.MessageKeys.PasswordNotStrong]}"
+        RuleFor(req => req.ConfirmPassword)
+            .NotNull()
+            .WithMessage(req =>
+                $"{_localizer[Constants.EntityKeys.ConfirmPassword]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotEmpty()
+            .WithMessage(req =>
+                $"{_localizer[Constants.EntityKeys.ConfirmPassword]} {_localizer[Constants.MessageKeys.IsRequired]}"
             );
+
+        RuleFor(req => req.NewPassword)
+            .Equal(req => req.ConfirmPassword)
+            .WithMessage(x => $"{_localizer[Constants.MessageKeys.PasswordNotMatch]}");
 
         //  .Matches(x => "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*]).{8,}$")
-
-        RuleFor(x => x)
-            .MustAsync(
-                async (req, ct) =>
-                {
-                    var userId = _httpContext
-                        .HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
-                        ?.Value;
-                    var user = await _userManager
-                        .Users.AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.Id == userId && x.IsActive && !x.IsDeleted);
-                    return await _userManager.CheckPasswordAsync(user, req.OldPassword);
-                }
-            )
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.OldPassword]} {_localizer[Constants.MessageKeys.NotValid]}"
-            );
     }
 }
