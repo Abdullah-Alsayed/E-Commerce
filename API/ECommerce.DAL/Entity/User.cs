@@ -54,6 +54,9 @@ namespace ECommerce.DAL.Entity
         public bool IsActive { get; set; } = true;
         public bool IsDeleted { get; set; } = false;
 
+        public string DeletedBy { get; set; }
+        public DateTime DeletedAt { get; set; }
+
         [StringLength(50)]
         public string Language { get; set; } = "ar-EG";
 

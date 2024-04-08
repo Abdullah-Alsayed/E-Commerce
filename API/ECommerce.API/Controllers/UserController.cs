@@ -59,11 +59,102 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
+        public async Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request)
+        {
+            try
+            {
+                return await _service.ChangeUserPasswordAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
         public async Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request)
         {
             try
             {
                 return await _service.ForgotPasswordAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request)
+        {
+            try
+            {
+                return await _service.ResetPasswordAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ConfirmEmail(ConfirmEmailUserRequest request)
+        {
+            try
+            {
+                return await _service.ConfirmEmailAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> SendConfirmEmail()
+        {
+            try
+            {
+                return await _service.SendConfirmEmailAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse> CreateUser(CreateUserRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetAll([FromQuery] GetAllUserRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteUser(DeleteUserRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
             }
             catch (Exception ex)
             {

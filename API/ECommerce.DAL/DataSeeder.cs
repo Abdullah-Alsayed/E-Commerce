@@ -112,19 +112,33 @@ namespace ECommerce.Core
                     CreateAt = DateTime.UtcNow,
                     IsMaster = true
                 };
-                var user = new Role
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = Constants.Roles.User,
-                    Description = Constants.Roles.User,
-                    NormalizedName = Constants.Roles.User.ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
-                    CreateAt = DateTime.UtcNow,
-                    IsMaster = true
-                };
+
                 await roleManager.CreateAsync(SuperAdmin);
                 await AddSuperAdminRoleClaim(context, SuperAdmin);
-                await roleManager.CreateAsync(user);
+                await roleManager.CreateAsync(
+                    new Role
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = Constants.Roles.User,
+                        Description = Constants.Roles.User,
+                        NormalizedName = Constants.Roles.User.ToUpper(),
+                        ConcurrencyStamp = Guid.NewGuid().ToString(),
+                        CreateAt = DateTime.UtcNow,
+                        IsMaster = false
+                    }
+                );
+                await roleManager.CreateAsync(
+                    new Role
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = Constants.Roles.Client,
+                        Description = Constants.Roles.Client,
+                        NormalizedName = Constants.Roles.Client.ToUpper(),
+                        ConcurrencyStamp = Guid.NewGuid().ToString(),
+                        CreateAt = DateTime.UtcNow,
+                        IsMaster = false
+                    }
+                );
             }
         }
 

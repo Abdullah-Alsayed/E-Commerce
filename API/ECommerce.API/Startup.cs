@@ -30,6 +30,8 @@ using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Middleware;
+using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core;
 using ECommerce.Core.Services.MailServices;
@@ -175,6 +177,9 @@ namespace ECommerce.API
             services.AddDistributedMemoryCache();
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
+            //****************** Email Settings ******************************
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
             //****************** Services ******************************
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
@@ -247,6 +252,7 @@ namespace ECommerce.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<JwtAuthenticationMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

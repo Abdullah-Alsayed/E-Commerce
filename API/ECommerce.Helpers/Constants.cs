@@ -50,6 +50,11 @@ namespace ECommerce.Core
             public const string PasswordIsWrong= "PasswordIsWrong";
             public const string ForgotPassword= "Your password reset token is";
             public const string RestPassword= "Rest Password";
+            public const string EmailIsConfirm= "EmailIsConfirm";
+        }
+        public static class Message
+        {
+            public const string ConfirmEmail = "ConfirmEmail";
         }
         public static class EntityKeys
         {
@@ -106,6 +111,8 @@ namespace ECommerce.Core
             public const string OldPassword= "OldPassword";
             public const string NewPassword= "NewPassword";
             public const string ConfirmPassword= "ConfirmPassword";
+            public const string Token="Token";
+            public const string UserName= "UserName";
         }
 
         public static class Gender
@@ -118,6 +125,7 @@ namespace ECommerce.Core
         {
             public const string SuperAdmin = "Super Admin";
             public const string User = "User";
+            public const string Client = "Client";
         }
 
         public static class OrderBY

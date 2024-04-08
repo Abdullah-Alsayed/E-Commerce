@@ -18,6 +18,9 @@
         UpdateClaims,
         AddUserInRole,
         ChangePassword,
-        ForgotPassword
+        ForgotPassword,
+        ResetPassword,
+        SendConfirmEmail,
+        ChangeUserPassword
     }
 }

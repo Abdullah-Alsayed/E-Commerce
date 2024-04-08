@@ -40,6 +40,7 @@ namespace ECommerce.DAL
         public DbSet<ProductColor> ProductColors { get; set; }
         public DbSet<UserClaims> UserClaims { get; set; }
         public DbSet<RoleClaims> RoleClaims { get; set; }
+        public DbSet<TokenExperts> TokenExperts { get; set; }
 
         public DbSet<TEntity> AddDbSet<TEntity>()
             where TEntity : class

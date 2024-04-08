@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Azure.Core;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
@@ -21,11 +23,12 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerce.BLL.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly IStringLocalizer<UserRepository> _localizer;
@@ -44,6 +47,7 @@ namespace ECommerce.BLL.Repository
             IMailServices mailServices,
             JWTHelpers jwt
         )
+            : base(context)
         {
             _context = context;
             _userManager = userManager;
@@ -88,16 +92,49 @@ namespace ECommerce.BLL.Repository
             return Result;
         }
 
-        public async Task SendConfirmEmailAsync(User user)
+        public async Task<bool> SendConfirmEmailAsync(User user)
         {
             string Token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             byte[] EncodingToken = Encoding.UTF8.GetBytes(Token);
             string newToken = WebEncoders.Base64UrlEncode(EncodingToken);
-
             string confirmLink =
-                $"https://localhost:44392/Account/ConfirmEmail?ID={user.Id}&Tocken={newToken}";
+                $"{Constants.HostName}/api/User/ConfirmEmail?ID={user.Id}&Token={newToken}";
             string link = "<a href=\"" + confirmLink + "\">Confirm registration</a>";
-            //mailServices.SendMail(user.Email, user.FirstName, txt, link, subject);
+
+            return await _mailServices.SendAsync(
+                new EmailDto
+                {
+                    Email = user.Email,
+                    Body = link,
+                    Subject = _localizer[Constants.Message.ConfirmEmail].ToString()
+                }
+            );
+        }
+
+        public async Task<BaseResponse> ConfirmEmailAsync(string userID, string token)
+        {
+            var user = await GetUser(userID);
+            if (user != null)
+            {
+                byte[] newToken = WebEncoders.Base64UrlDecode(token);
+                string encodeToken = Encoding.UTF8.GetString(newToken);
+                var result = await _userManager.ConfirmEmailAsync(user, encodeToken);
+                return new BaseResponse
+                {
+                    IsSuccess = result.Succeeded,
+                    Message = result.Succeeded
+                        ? _localizer[Constants.MessageKeys.Success].ToString()
+                        : _localizer[Constants.MessageKeys.Fail].ToString()
+                };
+            }
+            else
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = Constants.MessageKeys.UserNotFound
+                };
+            }
         }
 
         public Task ForgotPasswordAsync(object Entity)
@@ -144,7 +181,7 @@ namespace ECommerce.BLL.Repository
                     return new BaseResponse<LoginDto>
                     {
                         IsSuccess = false,
-                        Message = Constants.Errors.LoginFiled
+                        Message = _localizer[Constants.Errors.LoginFiled].ToString()
                     };
             }
             else
@@ -152,7 +189,7 @@ namespace ECommerce.BLL.Repository
                 return new BaseResponse<LoginDto>
                 {
                     IsSuccess = false,
-                    Message = Constants.Errors.LoginFiled
+                    Message = _localizer[Constants.Errors.LoginFiled].ToString()
                 };
             }
         }
@@ -180,7 +217,8 @@ namespace ECommerce.BLL.Repository
         public async Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId
+            string userId,
+            string role = null
         )
         {
             BaseResponse result = new();
@@ -191,9 +229,18 @@ namespace ECommerce.BLL.Repository
                 IdentityResult identityResult = await _userManager.CreateAsync(user, password);
                 if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
                 {
-                    var roleResult = await _userManager.AddToRoleAsync(user, Constants.Roles.User);
+                    var roleResult = new IdentityResult();
+                    if (role != null)
+                        roleResult = await _userManager.AddToRoleAsync(user, role);
+                    else
+                        roleResult = await _userManager.AddToRoleAsync(
+                            user,
+                            Constants.Roles.Client
+                        );
+
                     await LoginAsync(user, true);
                     token = await CreateJwtToken(user);
+                    await SendConfirmEmailAsync(user);
                 }
 
                 return new BaseResponse<CreateUserDto>
@@ -236,13 +283,6 @@ namespace ECommerce.BLL.Repository
         {
             bool Result = await FindUserByNameAsync(userName) != null;
             return Result;
-        }
-
-        public async Task<IdentityResult> ConfirmEmailAsync(User User, string Token)
-        {
-            byte[] newToken = WebEncoders.Base64UrlDecode(Token);
-            string encodeToken = Encoding.UTF8.GetString(newToken);
-            return await _userManager.ConfirmEmailAsync(User, encodeToken);
         }
 
         public async Task<bool> IsConfirmedAsync(User user)
@@ -316,6 +356,43 @@ namespace ECommerce.BLL.Repository
             }
         }
 
+        public async Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request)
+        {
+            try
+            {
+                var user = await GetUser(request.ID);
+                if (user != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var result = await _userManager.ResetPasswordAsync(
+                        user,
+                        token,
+                        request.NewPassword
+                    );
+
+                    return new BaseResponse
+                    {
+                        IsSuccess = result.Succeeded,
+                        Message = result.Succeeded
+                            ? _localizer[Constants.MessageKeys.Success].ToString()
+                            : _localizer[Constants.MessageKeys.Fail].ToString()
+                    };
+                }
+                else
+                {
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = Constants.MessageKeys.UserNotFound
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         public async Task<BaseResponse> ForgotPassword(
             ForgotPasswordUserRequest request,
             string userId
@@ -323,11 +400,10 @@ namespace ECommerce.BLL.Repository
         {
             try
             {
-                var user = await GetUser(userId);
+                var user = await GetUserByEmail(request.Email);
                 if (user != null)
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
                     if (!string.IsNullOrEmpty(token))
                     {
                         var url =
@@ -346,8 +422,8 @@ namespace ECommerce.BLL.Repository
                         {
                             IsSuccess = result,
                             Message = result
-                                ? Constants.MessageKeys.Success
-                                : Constants.MessageKeys.Fail
+                                ? _localizer[Constants.MessageKeys.Success].ToString()
+                                : _localizer[Constants.MessageKeys.Fail].ToString()
                         };
                     }
                     else
@@ -371,6 +447,122 @@ namespace ECommerce.BLL.Repository
             catch (Exception ex)
             {
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<BaseResponse> ResetPassword(
+            ResetPasswordUserRequest request,
+            string userId
+        )
+        {
+            try
+            {
+                var user = await GetUserByEmail(request.Email);
+                if (user != null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(
+                        user,
+                        HttpUtility.UrlDecode(request.Token),
+                        request.NewPassword
+                    );
+                    return new BaseResponse
+                    {
+                        IsSuccess = result.Succeeded,
+                        Message = result.Succeeded
+                            ? Constants.MessageKeys.Success
+                            : _localizer[result.Errors.FirstOrDefault().Code].ToString()
+                    };
+                }
+                else
+                {
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = Constants.MessageKeys.UserNotFound
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<User> DeleteAsync(string UserID, string token)
+        {
+            try
+            {
+                var user = await GetUser(UserID);
+                //var result = _userManager.RemoveAuthenticationTokenAsync();
+                await _context.TokenExperts.AddAsync(
+                    new TokenExperts { Token = token, UserID = UserID }
+                );
+                return user;
+            }
+            catch (Exception ex)
+            {
+                await _context.ErrorLogs.AddAsync(
+                    new ErrorLog
+                    {
+                        Source = ex.Source,
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace,
+                        Operation = DAL.Enums.OperationTypeEnum.GetAll,
+                        Entity = DAL.Enums.EntitiesEnum.User
+                    }
+                );
+                await _context.SaveChangesAsync();
+                return null;
+            }
+        }
+
+        public bool IsTokenExperts(StringValues token)
+        {
+            return _context.TokenExperts.Any(x => x.Token == token);
+        }
+
+        public async Task<List<User>> GetAllAsync(GetAllUserRequest request)
+        {
+            try
+            {
+                var result = new List<User>();
+                var query = _context.Users.Where(x => !x.IsDeleted);
+                if (!string.IsNullOrEmpty(request.SortBy))
+                    query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+
+                if (
+                    !string.IsNullOrEmpty(request.SearchFor)
+                    && !string.IsNullOrEmpty(request.SearchBy)
+                )
+                    query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+
+                var total = await query.CountAsync();
+                if (total > 0)
+                {
+                    var skippedPages = request.PageSize * request.PageIndex;
+                    result = await query
+                        .Skip(skippedPages)
+                        .Take(request.PageSize)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _context.ErrorLogs.AddAsync(
+                    new ErrorLog
+                    {
+                        Source = ex.Source,
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace,
+                        Operation = DAL.Enums.OperationTypeEnum.GetAll,
+                        Entity = DAL.Enums.EntitiesEnum.User
+                    }
+                );
+                await _context.SaveChangesAsync();
+                return new List<User>();
             }
         }
 
@@ -454,6 +646,45 @@ namespace ECommerce.BLL.Repository
         private async Task<User> GetUser(string userId)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
+        private async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x =>
+                x.Email.ToLower() == email.ToLower()
+            );
+        }
+
+        private IQueryable<Q> OrderByDynamic<Q>(
+            IQueryable<Q> query,
+            string orderByColumn,
+            bool isDesc
+        )
+        {
+            var QType = typeof(Q);
+            orderByColumn =
+                orderByColumn != "ID"
+                    ? char.ToUpper(orderByColumn[0]) + orderByColumn.Substring(1)
+                    : "UserName";
+            // Dynamically creates a call like this: query.OrderBy(p => p.SortColumn)
+            var parameter = Expression.Parameter(QType, "p");
+            Expression resultExpression = null;
+            var property = QType.GetProperty(orderByColumn ?? "Name");
+            // this is the part p.SortColumn
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            // this is the part p => p.SortColumn
+            var orderByExpression = Expression.Lambda(propertyAccess, parameter);
+
+            // finally, call the "OrderBy" / "OrderByDescending" method with the order by lamba expression
+            resultExpression = Expression.Call(
+                typeof(Queryable),
+                isDesc ? "OrderByDescending" : "OrderBy",
+                new Type[] { QType, property.PropertyType },
+                query.Expression,
+                Expression.Quote(orderByExpression)
+            );
+
+            return query.Provider.CreateQuery<Q>(resultExpression);
         }
 
         #endregion

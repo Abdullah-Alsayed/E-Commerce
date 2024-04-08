@@ -1,10 +1,13 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Primitives;
 
 namespace ECommerce.BLL.IRepository
 {
@@ -14,10 +17,11 @@ namespace ECommerce.BLL.IRepository
         Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId
+            string userId,
+            string Role = null
         );
-        Task SendConfirmEmailAsync(User user);
-        Task<IdentityResult> ConfirmEmailAsync(User User, string Toke);
+        Task<bool> SendConfirmEmailAsync(User user);
+        Task<BaseResponse> ConfirmEmailAsync(string userID, string toke);
         Task ForgotPasswordAsync(object Entity);
         Task ResetPasswordAsync(string Code);
         Task UpdatePasswordAsync(string username, string password);
@@ -36,5 +40,10 @@ namespace ECommerce.BLL.IRepository
         Task LogOffAsync();
         Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request, string userId);
         Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request, string userId);
+        Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request, string userId);
+        Task<User> DeleteAsync(string ID, string token);
+        bool IsTokenExperts(StringValues token);
+        Task<List<User>> GetAllAsync(GetAllUserRequest request);
+        Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request);
     }
 }
