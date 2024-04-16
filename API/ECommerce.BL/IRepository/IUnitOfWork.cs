@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using ECommerce.BLL.Repository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 
@@ -39,6 +40,7 @@ namespace ECommerce.BLL.IRepository
         IRoleRepository Role { get; }
         IProductSizeRepository ProductSize { get; }
         IProductColorRepository ProductColor { get; }
+        IBaseRepository<Booking> Booking { get; }
 
         Task<int> SaveAsync();
         Task<bool> IsDone(int modifyRows);

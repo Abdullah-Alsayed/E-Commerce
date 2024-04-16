@@ -26,6 +26,7 @@
         Stock,
         Role,
         User,
-        Claims
+        Claims,
+        Booking
     }
 }

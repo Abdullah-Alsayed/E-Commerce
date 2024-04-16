@@ -21,6 +21,7 @@
         ForgotPassword,
         ResetPassword,
         SendConfirmEmail,
-        ChangeUserPassword
+        ChangeUserPassword,
+        Notify
     }
 }

@@ -78,6 +78,7 @@ namespace ECommerce.BL.Repository
             Brand = new BaseRepository<Brand>(_context);
             Unit = new BaseRepository<Unit>(_context);
             Area = new BaseRepository<Area>(_context);
+            Booking = new BaseRepository<Booking>(_context);
             Context = _context;
         }
 
@@ -110,6 +111,7 @@ namespace ECommerce.BL.Repository
         public IRoleRepository Role { get; private set; }
         public IProductSizeRepository ProductSize { get; private set; }
         public IProductColorRepository ProductColor { get; private set; }
+        public IBaseRepository<Booking> Booking { get; private set; }
 
         public ApplicationDbContext Context { get; set; }
 

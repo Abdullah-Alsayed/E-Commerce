@@ -15,5 +15,6 @@ namespace ECommerce.DAL.Entity
         public string Value { get; set; }
 
         public virtual ICollection<ProductColor> ProductColors { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

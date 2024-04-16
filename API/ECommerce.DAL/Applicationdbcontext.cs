@@ -1,4 +1,5 @@
-﻿using ECommerce.DAL.Entity;
+﻿using System.Collections.Generic;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,7 @@ namespace ECommerce.DAL
         public DbSet<UserClaims> UserClaims { get; set; }
         public DbSet<RoleClaims> RoleClaims { get; set; }
         public DbSet<TokenExperts> TokenExperts { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         public DbSet<TEntity> AddDbSet<TEntity>()
             where TEntity : class

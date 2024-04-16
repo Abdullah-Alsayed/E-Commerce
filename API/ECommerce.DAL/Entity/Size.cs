@@ -12,4 +12,5 @@ public class Size : BaseEntity
     public string NameEN { get; set; }
 
     public virtual ICollection<ProductSize> ProductSizes { get; set; }
+    public virtual ICollection<Booking> Bookings { get; set; }
 }

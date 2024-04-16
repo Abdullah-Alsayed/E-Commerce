@@ -47,5 +47,6 @@ namespace ECommerce.DAL.Entity
         public virtual ICollection<Stock> ProductStocks { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<ProductReview> Reviews { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }
