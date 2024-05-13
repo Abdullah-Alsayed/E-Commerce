@@ -14,6 +14,8 @@ namespace ECommerce.BLL.Features.Settings.Requests
         public string Whatsapp { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public string BookingMessage { get; set; }
+
         public IFormFile FormFile { get; set; }
     }
 }

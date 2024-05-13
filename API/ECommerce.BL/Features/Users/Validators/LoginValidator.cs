@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿// Ignore Spelling: Validator
+
+using System.Linq;
+using Azure.Core;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
@@ -31,11 +34,11 @@ public class LoginValidator : AbstractValidator<LoginRequest>
             .Must(req =>
             {
                 return context.Users.Any(x =>
-                    x.UserName.ToLower() == req.UserName.ToLower() && x.IsActive && !x.IsDeleted
+                    x.UserName == req.UserName.ToLower()
+                    || x.Email == req.UserName.ToLower()
+                    || x.PhoneNumber == req.UserName && x.IsActive && !x.IsDeleted
                 );
             })
-            .WithMessage(x =>
-                $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.NotFound]}"
-            );
+            .WithMessage(x => $" {_localizer[Constants.MessageKeys.LoginFiled]}");
     }
 }

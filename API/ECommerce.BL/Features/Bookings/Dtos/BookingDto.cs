@@ -8,7 +8,6 @@ namespace ECommerce.BLL.Features.Bookings.Dtos
         public Guid ProductID { get; set; }
         public Guid ColorID { get; set; }
         public Guid SizeID { get; set; }
-
-        public bool IsNotified { get; set; };
+        public bool IsNotified { get; set; }
     }
 }

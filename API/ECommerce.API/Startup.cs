@@ -36,6 +36,8 @@ using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core;
 using ECommerce.Core.Services.MailServices;
+using ECommerce.Core.Services.WhatsappServices;
+using ECommerce.Core.Services.WhatsappServices.Services;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using FluentValidation.AspNetCore;
@@ -66,6 +68,9 @@ namespace ECommerce.API
         [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
+            //****************** Cors ******************************
+            services.AddCors();
+
             //****************** Fluent Validation ******************************
             services.AddFluentValidation(fluent =>
                 fluent.RegisterValidatorsFromAssemblyContaining<BaseValidator>()
@@ -121,10 +126,13 @@ namespace ECommerce.API
             });
 
             //****************** Application DB context ******************************
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            //);
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
             //****************** Identity Setting ******************************
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -180,6 +188,10 @@ namespace ECommerce.API
 
             //****************** Email Settings ******************************
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
+            //****************** whatsapp Settings ******************************
+            services.Configure<WhatsappSettings>(Configuration.GetSection("WhatsappSettings"));
+            services.AddScoped<IWhatsappServices, WhatsappServices>();
 
             //****************** Services ******************************
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -249,7 +261,13 @@ namespace ECommerce.API
             app.UseRequestLocalization(options);
             app.UseStaticFiles();
             app.UseMiddleware<LocalizerMiddleware>();
-
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials()
+            );
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();

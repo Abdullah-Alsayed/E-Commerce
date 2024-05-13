@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ECommerce.Core;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Identity;
 
@@ -58,7 +59,10 @@ namespace ECommerce.DAL.Entity
         public DateTime DeletedAt { get; set; }
 
         [StringLength(50)]
-        public string Language { get; set; } = "ar-EG";
+        public string Language { get; set; } = Constants.Languages.Ar;
+
+        [StringLength(50)]
+        public string Photo { get; set; } = Constants.DefaultPhotos.User;
 
         public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }

@@ -11,7 +11,7 @@ namespace ECommerce.DAL.Entity
         public bool IsMaster { get; set; } = false;
 
         [Required]
-        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreateAt { get; set; } = DateTime.Now;
         public string CreateBy { get; set; }
         public DateTime DeletedAt { get; set; }
         public string DeletedBy { get; set; }

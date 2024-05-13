@@ -14,5 +14,6 @@ namespace ECommerce.BLL.Features.Settings.Dtos
         public string Whatsapp { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public string BookingMessage { get; set; }
     }
 }

@@ -6,10 +6,10 @@
   "maxNumber": "Max Number is {0}",
   "minNumber": "Min Number is {0}",
   "notFound": "This is not Found",
-  "exist": "Alredy exist",
+  "exist": "Already exist",
   "notExist": "Not exist",
 
-  //-------------------------------Entitys------------------------------
+  //-------------------------------Entitles------------------------------
   "tax": "Tax",
   "nameAr": "The Arabic Name",
   "nameEn": "The English Name",
@@ -23,27 +23,49 @@
 
   //--------------------------Errors---------------------------------
   "InvalidToken": "Invalid Token",
-
-
+  "LoginFiled": "The UserName Or Password Incorrect",
   // --------------------------- Product ---------------------------
 
   "HasReview": "You have already rated this product",
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // --------------------------- Department  ---------------------------
   "departmentname": "Please Enter Department Name",
   "departmentExist": "Department Exist",
-  "ParentIdNotExist": "Parent ID Not Exsit",
+  "ParentIdNotExist": "Parent ID Not Exist",
   "MainDepartment": "can not deleted main department",
   "EmployeeExist": "Employee Exist In Department",
-  "EmployeeNotExist": "Employee Or Department Not Exsit In Employee Department",
+  "EmployeeNotExist": "Employee Or Department Not Exist In Employee Department",
   "EmployeeId": " EmployeeId can not be empty ",
   "DepartmentId": " DepartmentId can not be empty ",
   "DepartmentIsActive": "Department is active ",
   "DepartmentHasEmployee": "Department Has Employee",
 
   // --------------------------- Role  ---------------------------
-  "InvalidBranch": "Ivalid Branch",
-  "ClaimsNotExsit": "Claims Not Exsit",
+  "InvalidBranch": "Invalid Branch",
+  "ClaimsNotExsit": "Claims Not Exist",
   "IsMaster": "Can,t Delete Master Role",
   "DepartmentMain": "Department Main",
   "RoleError": "Role Id {0} Not found",
@@ -64,7 +86,7 @@
   "ExistParentAccount": "Exist Parent Account",
   "RoleIsNotActive": "you can�t assignee user to in active role please select other role",
   "UserAlreadyHasThisRole": "User already has this Role ",
-  "roleIsDeactive": "role Is Deactive",
+  "roleIsDeactive": "role Is De active",
   "roleIsActive": "role Is Active",
   "roleName": "Role Name is exsit please change Role Name ",
 

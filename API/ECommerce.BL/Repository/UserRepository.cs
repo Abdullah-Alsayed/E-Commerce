@@ -173,7 +173,9 @@ namespace ECommerce.BLL.Repository
                             IsAuthenticated = true,
                             Roles = rolesList.ToList(),
                             Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Username = user.UserName
+                            UserName = user.UserName,
+                            FullName = $"{user.FirstName} {user.LastName}",
+                            Photo = user.Photo
                         }
                     };
                 }
@@ -181,7 +183,7 @@ namespace ECommerce.BLL.Repository
                     return new BaseResponse<LoginDto>
                     {
                         IsSuccess = false,
-                        Message = _localizer[Constants.Errors.LoginFiled].ToString()
+                        Message = _localizer[Constants.MessageKeys.LoginFiled].ToString()
                     };
             }
             else
@@ -189,7 +191,7 @@ namespace ECommerce.BLL.Repository
                 return new BaseResponse<LoginDto>
                 {
                     IsSuccess = false,
-                    Message = _localizer[Constants.Errors.LoginFiled].ToString()
+                    Message = _localizer[Constants.MessageKeys.LoginFiled].ToString()
                 };
             }
         }

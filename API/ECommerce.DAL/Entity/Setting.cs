@@ -35,6 +35,8 @@ namespace ECommerce.DAL.Entity
         [StringLength(100)]
         public string Phone { get; set; }
 
+        [StringLength(100)]
+        public string BookingMessage { get; set; }
         public virtual ICollection<Section> Sections { get; set; }
     }
 }

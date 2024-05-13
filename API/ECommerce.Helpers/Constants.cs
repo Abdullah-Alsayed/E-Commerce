@@ -51,6 +51,7 @@ namespace ECommerce.Core
             public const string ForgotPassword= "Your password reset token is";
             public const string RestPassword= "Rest Password";
             public const string EmailIsConfirm= "EmailIsConfirm";
+            public const string LoginFiled = "LoginFiled";
         }
         public static class Message
         {
@@ -147,14 +148,17 @@ namespace ECommerce.Core
             public const string Slider= "Slider";
             public const string Products= "Products";
         }
+        public class DefaultPhotos
+        {
+            public const string User = "User.png";
 
+        }
         public static class Errors
         {
             public const string Emailexists = "Email Already Exists";
             public const string UserNameExists = "UserName Already Exists";
             public const string PhoneNumbeExists = "PhoneNumber Already Exists";
             public const string PhoneNumberFiled = "The PhoneNumber field is not a valid";
-            public const string LoginFiled = "The Useraame Or Password Incorrect";
             public const string CreateFailed = "Create Failed";
             public const string NotFound = "notFound";
             public const string Exist = "exist";
@@ -172,5 +176,7 @@ namespace ECommerce.Core
             public const string Color = "^#?([a-f0-9]{6}|[a-f0-9]{3})$";
             public const string PhoneNumber = "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
         }
+
+     
     }
 }
