@@ -35,6 +35,7 @@ using ECommerce.BLL.Middleware;
 using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core;
+using ECommerce.Core.Middlwares;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.Core.Services.WhatsappServices;
 using ECommerce.Core.Services.WhatsappServices.Services;
@@ -229,6 +230,9 @@ namespace ECommerce.API
 
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //*****************  Global Error Handling  ***************************
+            app.ConfigureExceptionHandler();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -11,6 +11,7 @@ namespace ECommerce.DAL.Entity
         public string Source { get; set; }
         public string StackTrace { get; set; }
         public string Message { get; set; }
+        public string Endpoint { get; set; }
 
         public EntitiesEnum Entity { get; set; }
         public OperationTypeEnum Operation { get; set; }
