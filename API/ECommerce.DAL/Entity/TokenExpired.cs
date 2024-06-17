@@ -2,7 +2,7 @@
 
 namespace ECommerce.DAL.Entity
 {
-    public class TokenExperts
+    public class TokenExpired
     {
         public Guid ID { get; set; } = Guid.NewGuid();
         public string UserID { get; set; }

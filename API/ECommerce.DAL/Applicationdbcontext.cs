@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +43,7 @@ namespace ECommerce.DAL
         public DbSet<ProductColor> ProductColors { get; set; }
         public DbSet<UserClaims> UserClaims { get; set; }
         public DbSet<RoleClaims> RoleClaims { get; set; }
-        public DbSet<TokenExperts> TokenExperts { get; set; }
+        public DbSet<TokenExpired> TokenExpired { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
         public DbSet<TEntity> AddDbSet<TEntity>()
@@ -52,6 +54,14 @@ namespace ECommerce.DAL
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {
+            foreach (
+                var relationship in Builder
+                    .Model.GetEntityTypes()
+                    .SelectMany(e => e.GetForeignKeys())
+            )
+            {
+                relationship.DeleteBehavior = DeleteBehavior.ClientCascade;
+            }
             base.OnModelCreating(Builder);
         }
     }

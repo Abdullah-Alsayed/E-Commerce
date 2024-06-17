@@ -496,8 +496,8 @@ namespace ECommerce.BLL.Repository
             {
                 var user = await GetUser(UserID);
                 //var result = _userManager.RemoveAuthenticationTokenAsync();
-                await _context.TokenExperts.AddAsync(
-                    new TokenExperts { Token = token, UserID = UserID }
+                await _context.TokenExpired.AddAsync(
+                    new TokenExpired { Token = token, UserID = UserID }
                 );
                 return user;
             }
@@ -520,7 +520,7 @@ namespace ECommerce.BLL.Repository
 
         public bool IsTokenExperts(StringValues token)
         {
-            return _context.TokenExperts.Any(x => x.Token == token);
+            return _context.TokenExpired.Any(x => x.Token == token);
         }
 
         public async Task<List<User>> GetAllAsync(GetAllUserRequest request)

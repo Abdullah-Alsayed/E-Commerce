@@ -31,7 +31,7 @@ namespace ECommerce.BLL.Middleware
                 )
                 {
                     var token = authorizationToken.ToString().Replace("Bearer ", "");
-                    var IsTokenExpired = dbContext.TokenExperts.Any(x =>
+                    var IsTokenExpired = dbContext.TokenExpired.Any(x =>
                         x.Token == token.ToString()
                     );
                     if (IsTokenExpired)

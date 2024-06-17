@@ -25,4 +25,8 @@
     <ProjectReference Include="..\ECommerce.Helpers\ECommerce.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
