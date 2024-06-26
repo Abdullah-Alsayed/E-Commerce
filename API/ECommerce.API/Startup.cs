@@ -233,7 +233,7 @@ namespace ECommerce.API
             //*****************  Global Error Handling  ***************************
             app.ConfigureExceptionHandler();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsProduction())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
