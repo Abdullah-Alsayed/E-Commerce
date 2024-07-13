@@ -36,8 +36,8 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
         RuleFor(req => req.NameAR)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -61,8 +61,8 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
         RuleFor(req => req.NameEN)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -84,14 +84,6 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
             );
 
         RuleFor(req => req.FormFile)
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
             .Must(path =>
             {
                 var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
@@ -105,11 +97,13 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
 
                 return true;
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
             .Must(req =>
             {
                 return (req.Length / 1024) > 3000 ? false : true;
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
     }
 }

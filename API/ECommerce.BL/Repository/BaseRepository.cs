@@ -149,8 +149,11 @@ namespace ECommerce.BLL.Repository
                 else
                     Query = Query.OrderByDescending(orderBy);
             }
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+            {
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
+            }
 
             return await Query.Where(Criteria).ToListAsync();
         }
@@ -197,35 +200,40 @@ namespace ECommerce.BLL.Repository
         )
         {
             string Photo = string.Empty;
-            string filepath = string.Empty;
+            string path = string.Empty;
+            string fullPath = string.Empty;
             if (file != null)
             {
-                var Extansion = Path.GetExtension(file.FileName);
+                var extansion = Path.GetExtension(file.FileName);
                 var GuId = Guid.NewGuid().ToString();
-                Photo = GuId + Extansion;
-                filepath = Path.Combine(
+                Photo = GuId + extansion;
+                path = Path.Combine(
                     environment.ContentRootPath,
                     Constants.PhotoFolder.Images,
-                    FolderName,
-                    Photo
+                    FolderName
                 );
-                await file.CopyToAsync(new FileStream(filepath, FileMode.Create));
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                fullPath = Path.Combine(path, Photo);
+                await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
             }
             //Update Photo
             if (PhotoName != null && file != null)
             {
-                var Filepath = Path.Combine(
+                fullPath = Path.Combine(
                     environment.ContentRootPath,
                     Constants.PhotoFolder.Images,
                     FolderName,
                     PhotoName
                 );
-                System.IO.File.Delete(Filepath);
+                System.IO.File.Delete(fullPath);
             }
             if (PhotoName != null && file == null)
                 return PhotoName;
 
-            return filepath;
+            return fullPath;
         }
 
         public async Task<List<string>> UploadPhotos(

@@ -27,6 +27,7 @@
         Role,
         User,
         Claims,
-        Booking
+        Booking,
+        Errors
     }
 }

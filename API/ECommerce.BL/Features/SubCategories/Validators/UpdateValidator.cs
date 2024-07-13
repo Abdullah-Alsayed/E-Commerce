@@ -91,14 +91,6 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
                 $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
         RuleFor(req => req.FormFile)
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
             .Must(path =>
             {
                 var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
@@ -112,11 +104,13 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
 
                 return true;
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
             .Must(req =>
             {
                 return (req.Length / 1024) > 3000 ? false : true;
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
     }
 }

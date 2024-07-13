@@ -11,6 +11,7 @@ using ECommerce.BLL.Features.Carts.Services;
 using ECommerce.BLL.Features.Categories.Services;
 using ECommerce.BLL.Features.Colors.Services;
 using ECommerce.BLL.Features.ContactUses.Services;
+using ECommerce.BLL.Features.Errors.Services;
 using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
@@ -204,6 +205,7 @@ namespace ECommerce.API
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IErrorService, ErrorService>();
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IBrandService, BrandService>();

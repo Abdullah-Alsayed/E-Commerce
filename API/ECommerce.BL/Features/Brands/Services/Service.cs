@@ -88,11 +88,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Brand);
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -126,11 +122,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -188,11 +180,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.Create,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -252,11 +240,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.Update,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -310,11 +294,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -368,11 +348,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
