@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateReview(CreateReviewRequest request)
+        public async Task<BaseResponse> CreateReview([FromBody] CreateReviewRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateReview(UpdateReviewRequest request)
+        public async Task<BaseResponse> UpdateReview([FromBody] UpdateReviewRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteReview(DeleteReviewRequest request)
+        public async Task<BaseResponse> DeleteReview([FromHeader] DeleteReviewRequest request)
         {
             try
             {

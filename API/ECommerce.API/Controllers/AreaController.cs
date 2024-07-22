@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateArea(CreateAreaRequest request)
+        public async Task<BaseResponse> CreateArea([FromBody] CreateAreaRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateArea(UpdateAreaRequest request)
+        public async Task<BaseResponse> UpdateArea([FromBody] UpdateAreaRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveArea(ToggleAvtiveAreaRequest request)
+        public async Task<BaseResponse> ToggleAvtiveArea([FromBody] ToggleAvtiveAreaRequest request)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteArea(DeleteAreaRequest request)
+        public async Task<BaseResponse> DeleteArea([FromHeader] DeleteAreaRequest request)
         {
             try
             {

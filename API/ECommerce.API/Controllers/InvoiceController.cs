@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateInvoice(CreateInvoiceRequest request)
+        public async Task<BaseResponse> CreateInvoice([FromBody] CreateInvoiceRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ReturnInvoice(ReturnInvoiceRequest request)
+        public async Task<BaseResponse> ReturnInvoice([FromBody] ReturnInvoiceRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteInvoice(DeleteInvoiceRequest request)
+        public async Task<BaseResponse> DeleteInvoice([FromHeader] DeleteInvoiceRequest request)
         {
             try
             {

@@ -59,7 +59,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateSubCategory(CreateSubCategoryRequest request)
+        public async Task<BaseResponse> CreateSubCategory(
+            [FromBody] CreateSubCategoryRequest request
+        )
         {
             try
             {
@@ -72,7 +74,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateSubCategory(UpdateSubCategoryRequest request)
+        public async Task<BaseResponse> UpdateSubCategory(
+            [FromBody] UpdateSubCategoryRequest request
+        )
         {
             try
             {
@@ -100,7 +104,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSubCategory(DeleteSubCategoryRequest request)
+        public async Task<BaseResponse> DeleteSubCategory(
+            [FromHeader] DeleteSubCategoryRequest request
+        )
         {
             try
             {

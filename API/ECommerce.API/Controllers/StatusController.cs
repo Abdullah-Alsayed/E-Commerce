@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateStatus(CreateStatusRequest request)
+        public async Task<BaseResponse> CreateStatus([FromBody] CreateStatusRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateStatus(UpdateStatusRequest request)
+        public async Task<BaseResponse> UpdateStatus([FromBody] UpdateStatusRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteStatus(DeleteStatusRequest request)
+        public async Task<BaseResponse> DeleteStatus([FromHeader] DeleteStatusRequest request)
         {
             try
             {

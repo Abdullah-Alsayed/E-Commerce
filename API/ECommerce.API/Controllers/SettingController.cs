@@ -31,7 +31,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateSetting(UpdateSettingRequest request)
+        public async Task<BaseResponse> UpdateSetting([FromBody] UpdateSettingRequest request)
         {
             try
             {

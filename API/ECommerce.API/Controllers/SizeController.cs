@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateSize(CreateSizeRequest request)
+        public async Task<BaseResponse> CreateSize([FromBody] CreateSizeRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateSize(UpdateSizeRequest request)
+        public async Task<BaseResponse> UpdateSize([FromBody] UpdateSizeRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSize(DeleteSizeRequest request)
+        public async Task<BaseResponse> DeleteSize([FromHeader] DeleteSizeRequest request)
         {
             try
             {

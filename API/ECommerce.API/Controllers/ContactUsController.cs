@@ -18,7 +18,7 @@ namespace ECommerce.API.Controllers
         public ContactUsController(IContactUsService service) => _service = service;
 
         [HttpPost]
-        public async Task<BaseResponse> CreateContactUs(CreateContactUsRequest request)
+        public async Task<BaseResponse> CreateContactUs([FromBody] CreateContactUsRequest request)
         {
             try
             {

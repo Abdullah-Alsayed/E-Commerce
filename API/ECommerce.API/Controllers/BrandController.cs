@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateBrand(CreateBrandRequest request)
+        public async Task<BaseResponse> CreateBrand([FromBody] CreateBrandRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateBrand(UpdateBrandRequest request)
+        public async Task<BaseResponse> UpdateBrand([FromBody] UpdateBrandRequest request)
         {
             try
             {
@@ -83,7 +83,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveBrand(ToggleAvtiveBrandRequest request)
+        public async Task<BaseResponse> ToggleAvtiveBrand(
+            [FromBody] ToggleAvtiveBrandRequest request
+        )
         {
             try
             {
@@ -96,7 +98,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteBrand(DeleteBrandRequest request)
+        public async Task<BaseResponse> DeleteBrand([FromHeader] DeleteBrandRequest request)
         {
             try
             {

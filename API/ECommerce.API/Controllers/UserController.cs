@@ -46,7 +46,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request)
+        public async Task<BaseResponse> ChangePassword([FromBody] ChangePasswordUserRequest request)
         {
             try
             {
@@ -59,7 +59,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request)
+        public async Task<BaseResponse> ChangeUserPassword(
+            [FromBody] ChangeUserPasswordRequest request
+        )
         {
             try
             {
@@ -72,7 +74,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request)
+        public async Task<BaseResponse> ForgotPassword([FromBody] ForgotPasswordUserRequest request)
         {
             try
             {
@@ -85,7 +87,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request)
+        public async Task<BaseResponse> ResetPassword([FromBody] ResetPasswordUserRequest request)
         {
             try
             {
@@ -98,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ConfirmEmail(ConfirmEmailUserRequest request)
+        public async Task<BaseResponse> ConfirmEmail([FromBody] ConfirmEmailUserRequest request)
         {
             try
             {
@@ -124,7 +126,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateUser(CreateUserRequest request)
+        public async Task<BaseResponse> CreateUser([FromBody] CreateUserRequest request)
         {
             try
             {
@@ -150,7 +152,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteUser(DeleteUserRequest request)
+        public async Task<BaseResponse> DeleteUser([FromHeader] DeleteUserRequest request)
         {
             try
             {

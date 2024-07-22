@@ -57,7 +57,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<BaseResponse> CreateRole(CreateRoleRequest request)
+    public async Task<BaseResponse> CreateRole([FromBody] CreateRoleRequest request)
     {
         try
         {
@@ -70,7 +70,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRole(UpdateRoleRequest request)
+    public async Task<BaseResponse> UpdateRole([FromBody] UpdateRoleRequest request)
     {
         try
         {
@@ -83,7 +83,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteRole(DeleteRoleRequest request)
+    public async Task<BaseResponse> DeleteRole([FromHeader] DeleteRoleRequest request)
     {
         try
         {
@@ -96,7 +96,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRoleClaims(UpdateRoleClaimsRequest request)
+    public async Task<BaseResponse> UpdateRoleClaims([FromBody] UpdateRoleClaimsRequest request)
     {
         try
         {
@@ -109,7 +109,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateUserClaims(UpdateUserClaimsRequest request)
+    public async Task<BaseResponse> UpdateUserClaims([FromBody] UpdateUserClaimsRequest request)
     {
         try
         {

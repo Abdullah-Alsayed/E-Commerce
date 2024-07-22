@@ -44,7 +44,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateSlider(CreateSliderRequest request)
+        public async Task<BaseResponse> CreateSlider([FromBody] CreateSliderRequest request)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateSlider(UpdateSliderRequest request)
+        public async Task<BaseResponse> UpdateSlider([FromBody] UpdateSliderRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSlider(DeleteSliderRequest request)
+        public async Task<BaseResponse> DeleteSlider([FromHeader] DeleteSliderRequest request)
         {
             try
             {

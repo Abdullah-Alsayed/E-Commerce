@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
@@ -53,6 +54,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -71,7 +73,20 @@ namespace ECommerce.API
         public void ConfigureServices(IServiceCollection services)
         {
             //****************** Cors ******************************
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowSpecificOrigins",
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://localhost:3000") // Replace with your React app URL
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    }
+                );
+            });
 
             //****************** Fluent Validation ******************************
             services.AddFluentValidation(fluent =>
@@ -228,6 +243,7 @@ namespace ECommerce.API
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IGovernorateService, GovernorateService>();
             #endregion
+            services.AddDirectoryBrowser();
         }
 
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -264,18 +280,12 @@ namespace ECommerce.API
             {
                 DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
             };
-            app.UseRequestLocalization(options);
-            app.UseStaticFiles();
-            app.UseMiddleware<LocalizerMiddleware>();
-            app.UseCors(builder =>
-                builder
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowCredentials()
-            );
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRequestLocalization(options);
+            app.UseMiddleware<LocalizerMiddleware>();
             app.UseRouting();
+            app.UseCors("AllowSpecificOrigins");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<JwtAuthenticationMiddleware>();

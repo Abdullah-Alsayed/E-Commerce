@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateVendor(CreateVendorRequest request)
+        public async Task<BaseResponse> CreateVendor([FromBody] CreateVendorRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateVendor(UpdateVendorRequest request)
+        public async Task<BaseResponse> UpdateVendor([FromBody] UpdateVendorRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteVendor(DeleteVendorRequest request)
+        public async Task<BaseResponse> DeleteVendor([FromHeader] DeleteVendorRequest request)
         {
             try
             {

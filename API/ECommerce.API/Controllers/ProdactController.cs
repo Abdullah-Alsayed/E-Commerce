@@ -71,7 +71,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateProduct(CreateProductRequest request)
+        public async Task<BaseResponse> CreateProduct([FromBody] CreateProductRequest request)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateProduct(UpdateProductRequest request)
+        public async Task<BaseResponse> UpdateProduct([FromBody] UpdateProductRequest request)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteProduct(DeleteProductRequest request)
+        public async Task<BaseResponse> DeleteProduct([FromHeader] DeleteProductRequest request)
         {
             try
             {

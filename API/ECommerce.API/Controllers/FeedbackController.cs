@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateFeedback(CreateFeedbackRequest request)
+        public async Task<BaseResponse> CreateFeedback([FromBody] CreateFeedbackRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateFeedback(UpdateFeedbackRequest request)
+        public async Task<BaseResponse> UpdateFeedback([FromBody] UpdateFeedbackRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteFeedback(DeleteFeedbackRequest request)
+        public async Task<BaseResponse> DeleteFeedback([FromHeader] DeleteFeedbackRequest request)
         {
             try
             {

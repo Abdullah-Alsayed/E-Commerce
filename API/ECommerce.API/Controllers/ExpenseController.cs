@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateExpense(CreateExpenseRequest request)
+        public async Task<BaseResponse> CreateExpense([FromBody] CreateExpenseRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateExpense(UpdateExpenseRequest request)
+        public async Task<BaseResponse> UpdateExpense([FromBody] UpdateExpenseRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteExpense(DeleteExpenseRequest request)
+        public async Task<BaseResponse> DeleteExpense([FromHeader] DeleteExpenseRequest request)
         {
             try
             {

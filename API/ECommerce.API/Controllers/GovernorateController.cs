@@ -57,7 +57,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<BaseResponse> CreateGovernorate(CreateGovernorateRequest request)
+    public async Task<BaseResponse> CreateGovernorate([FromBody] CreateGovernorateRequest request)
     {
         try
         {
@@ -70,7 +70,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateGovernorate(UpdateGovernorateRequest request)
+    public async Task<BaseResponse> UpdateGovernorate([FromBody] UpdateGovernorateRequest request)
     {
         try
         {
@@ -83,7 +83,9 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> ToggleAvtiveGovernorate(ToggleAvtiveGovernorateRequest request)
+    public async Task<BaseResponse> ToggleAvtiveGovernorate(
+        [FromBody] ToggleAvtiveGovernorateRequest request
+    )
     {
         try
         {
@@ -96,7 +98,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteGovernorate(DeleteGovernorateRequest request)
+    public async Task<BaseResponse> DeleteGovernorate([FromHeader] DeleteGovernorateRequest request)
     {
         try
         {

@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateOrder(CreateOrderRequest request)
+        public async Task<BaseResponse> CreateOrder([FromBody] CreateOrderRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteOrder(DeleteOrderRequest request)
+        public async Task<BaseResponse> DeleteOrder([FromHeader] DeleteOrderRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> AcceptOrder(AcceptOrderRequest request)
+        public async Task<BaseResponse> AcceptOrder0([FromBody] AcceptOrderRequest request)
         {
             try
             {
@@ -96,7 +96,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateStatusOrder(UpdateStatusOrderRequest request)
+        public async Task<BaseResponse> UpdateStatusOrder(
+            [FromBody] UpdateStatusOrderRequest request
+        )
         {
             try
             {

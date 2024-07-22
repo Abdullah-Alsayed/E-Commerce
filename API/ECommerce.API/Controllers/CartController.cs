@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateCart(CreateCartRequest request)
+        public async Task<BaseResponse> CreateCart([FromBody] CreateCartRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateCart(UpdateCartRequest request)
+        public async Task<BaseResponse> UpdateCart([FromBody] UpdateCartRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteCart(DeleteCartRequest request)
+        public async Task<BaseResponse> DeleteCart([FromHeader] DeleteCartRequest request)
         {
             try
             {

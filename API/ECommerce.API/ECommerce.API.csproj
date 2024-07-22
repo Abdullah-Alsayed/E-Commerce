@@ -37,14 +37,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\Brands\" />
-    <Folder Include="Images\Categorys\" />
-    <Folder Include="Images\Expense\" />
-    <Folder Include="Images\Products\" />
-    <Folder Include="Images\Slider\" />
-    <Folder Include="Images\NotificationsIcon\" />
-    <Folder Include="Images\ProductImg\" />
-    <Folder Include="Images\SubCategorys\" />
+    <Folder Include="wwwroot\Images\NotificationsIcon\" />
+    <Folder Include="wwwroot\Images\ProductImg\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\Brands\48e4ec8c-27ef-4322-9c5f-a520a18d373b.png" />
+    <None Include="wwwroot\Images\Brands\591adea6-20fc-4590-9c80-3f14ef65699f.png" />
+    <None Include="wwwroot\Images\Brands\9394be36-bbe0-46f6-82c5-87141239be1e.png" />
+    <None Include="wwwroot\Images\Brands\e1561a5b-11e6-495e-b480-2511b2a184ed.png" />
+    <None Include="wwwroot\Images\Categorys\2f452026-e9d2-428c-ae5a-f8959d831d02.png" />
+    <None Include="wwwroot\Images\Categorys\f50dd0a2-ab27-4de9-a3da-79ad81895ef5.png" />
+    <None Include="wwwroot\Images\Expense\88499fd3-9b63-43d5-85e6-678e59cca681.png" />
+    <None Include="wwwroot\Images\Main\f838fd29-8852-4169-a3bc-914733c511a1.png" />
+    <None Include="wwwroot\Images\Main\Logo.png" />
+    <None Include="wwwroot\Images\Products\22be2583-2aa3-4f2e-b3fa-d5c62131918b.png" />
+    <None Include="wwwroot\Images\Products\a014fcc0-f08d-4160-b8ca-042a1d40380f.png" />
+    <None Include="wwwroot\Images\Products\e9dd067f-8c75-40ed-ae45-c367f6d2d6c9.png" />
+    <None Include="wwwroot\Images\Slider\9fed7a42-1a11-4151-8533-671e5346a3f1.png" />
+    <None Include="wwwroot\Images\SubCategorys\39d50f5c-a8e2-4e78-8687-8a39874b53c4.png" />
+    <None Include="wwwroot\Images\SubCategorys\7dd7be30-3cb2-4db0-8b87-6b24078681e4.png" />
+    <None Include="wwwroot\Images\SubCategorys\860660bb-7148-40f2-940c-8208f70cd2a5.png" />
+    <None Include="wwwroot\Images\SubCategorys\94a2e8be-f30d-4809-9753-4c36bde4d788.png" />
+    <None Include="wwwroot\Images\SubCategorys\edf6b418-89ac-4955-8be3-73a277ebe6e4.png" />
+    <None Include="wwwroot\Images\SubCategorys\f4fa2bf4-f2e3-4d3e-91f9-8f8c428c9547.png" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

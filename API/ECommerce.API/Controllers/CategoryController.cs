@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateCategory(CreateCategoryRequest request)
+        public async Task<BaseResponse> CreateCategory([FromBody] CreateCategoryRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateCategory(UpdateCategoryRequest request)
+        public async Task<BaseResponse> UpdateCategory([FromBody] UpdateCategoryRequest request)
         {
             try
             {
@@ -83,7 +83,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveCategory(ToggleAvtiveCategoryRequest request)
+        public async Task<BaseResponse> ToggleAvtiveCategory(
+            [FromBody] ToggleAvtiveCategoryRequest request
+        )
         {
             try
             {
@@ -96,7 +98,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteCategory(DeleteCategoryRequest request)
+        public async Task<BaseResponse> DeleteCategory([FromHeader] DeleteCategoryRequest request)
         {
             try
             {

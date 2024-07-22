@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateStock(CreateStockRequest request)
+        public async Task<BaseResponse> CreateStock([FromBody] CreateStockRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ReturnStock(ReturnStockRequest request)
+        public async Task<BaseResponse> ReturnStock([FromBody] ReturnStockRequest request)
         {
             try
             {

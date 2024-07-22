@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateBooking(CreateBookingRequest request)
+        public async Task<BaseResponse> CreateBooking([FromBody] CreateBookingRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateBooking(UpdateBookingRequest request)
+        public async Task<BaseResponse> UpdateBooking([FromBody] UpdateBookingRequest request)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteBooking(DeleteBookingRequest request)
+        public async Task<BaseResponse> DeleteBooking([FromHeader] DeleteBookingRequest request)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> NotifyBooking(NotifyBookingRequest request)
+        public async Task<BaseResponse> NotifyBooking([FromBody] NotifyBookingRequest request)
         {
             try
             {
