@@ -317,7 +317,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveCategoryRequest request)
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveCategoryRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;

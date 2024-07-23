@@ -57,6 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> CreateCategory([FromBody] CreateCategoryRequest request)
         {
             try
@@ -70,6 +71,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> UpdateCategory([FromBody] UpdateCategoryRequest request)
         {
             try
@@ -83,13 +85,13 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveCategory(
-            [FromBody] ToggleAvtiveCategoryRequest request
+        public async Task<BaseResponse> ToggleActiveCategory(
+            [FromBody] ToggleActiveCategoryRequest request
         )
         {
             try
             {
-                return await _service.ToggleAvtiveAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {

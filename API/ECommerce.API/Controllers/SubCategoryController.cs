@@ -59,6 +59,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> CreateSubCategory(
             [FromBody] CreateSubCategoryRequest request
         )
@@ -74,6 +75,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> UpdateSubCategory(
             [FromBody] UpdateSubCategoryRequest request
         )

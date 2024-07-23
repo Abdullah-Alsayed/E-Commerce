@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Categories.Validators
 {
-    public class ToggleAvtiveCategoryValidator : AbstractValidator<ToggleAvtiveCategoryRequest>
+    public class ToggleAvtiveCategoryValidator : AbstractValidator<ToggleActiveCategoryRequest>
     {
         private readonly IStringLocalizer<ToggleAvtiveCategoryValidator> _localizer;
 

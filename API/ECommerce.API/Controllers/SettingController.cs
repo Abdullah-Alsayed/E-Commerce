@@ -31,6 +31,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> UpdateSetting([FromBody] UpdateSettingRequest request)
         {
             try

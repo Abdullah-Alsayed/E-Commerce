@@ -57,6 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> CreateExpense([FromBody] CreateExpenseRequest request)
         {
             try
@@ -70,6 +71,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [Consumes("multipart/form-data")]
         public async Task<BaseResponse> UpdateExpense([FromBody] UpdateExpenseRequest request)
         {
             try

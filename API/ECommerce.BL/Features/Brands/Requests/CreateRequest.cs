@@ -8,6 +8,7 @@ namespace ECommerce.BLL.Features.Brands.Requests
     {
         public string NameAR { get; set; }
         public string NameEN { get; set; }
+
         public IFormFile FormFile { get; set; }
     }
 }

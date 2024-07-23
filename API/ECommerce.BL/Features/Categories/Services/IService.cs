@@ -11,7 +11,7 @@ namespace ECommerce.BLL.Features.Categories.Services
         Task<BaseResponse> FindAsync(FindCategoryRequest request);
         Task<BaseResponse> GetAllAsync(GetAllCategoryRequest request);
         Task<BaseResponse> UpdateAsync(UpdateCategoryRequest request);
-        Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveCategoryRequest request);
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveCategoryRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }
 }
