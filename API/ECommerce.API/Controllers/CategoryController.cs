@@ -58,7 +58,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> CreateCategory([FromBody] CreateCategoryRequest request)
+        public async Task<BaseResponse> CreateCategory([FromForm] CreateCategoryRequest request)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> UpdateCategory([FromBody] UpdateCategoryRequest request)
+        public async Task<BaseResponse> UpdateCategory([FromForm] UpdateCategoryRequest request)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         public async Task<BaseResponse> ToggleActiveCategory(
-            [FromBody] ToggleActiveCategoryRequest request
+            [FromForm] ToggleActiveCategoryRequest request
         )
         {
             try

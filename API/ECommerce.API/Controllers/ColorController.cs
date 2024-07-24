@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateColor([FromBody] CreateColorRequest request)
+        public async Task<BaseResponse> CreateColor([FromForm] CreateColorRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateColor([FromBody] UpdateColorRequest request)
+        public async Task<BaseResponse> UpdateColor([FromForm] UpdateColorRequest request)
         {
             try
             {

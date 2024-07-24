@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateSize([FromBody] CreateSizeRequest request)
+        public async Task<BaseResponse> CreateSize([FromForm] CreateSizeRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateSize([FromBody] UpdateSizeRequest request)
+        public async Task<BaseResponse> UpdateSize([FromForm] UpdateSizeRequest request)
         {
             try
             {

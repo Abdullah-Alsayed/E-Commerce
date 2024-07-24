@@ -57,7 +57,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<BaseResponse> CreateGovernorate([FromBody] CreateGovernorateRequest request)
+    public async Task<BaseResponse> CreateGovernorate([FromForm] CreateGovernorateRequest request)
     {
         try
         {
@@ -70,7 +70,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateGovernorate([FromBody] UpdateGovernorateRequest request)
+    public async Task<BaseResponse> UpdateGovernorate([FromForm] UpdateGovernorateRequest request)
     {
         try
         {
@@ -84,7 +84,7 @@ public class GovernorateController : ControllerBase
 
     [HttpPut]
     public async Task<BaseResponse> ToggleAvtiveGovernorate(
-        [FromBody] ToggleAvtiveGovernorateRequest request
+        [FromForm] ToggleAvtiveGovernorateRequest request
     )
     {
         try

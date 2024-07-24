@@ -46,7 +46,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ChangePassword([FromBody] ChangePasswordUserRequest request)
+        public async Task<BaseResponse> ChangePassword([FromForm] ChangePasswordUserRequest request)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         public async Task<BaseResponse> ChangeUserPassword(
-            [FromBody] ChangeUserPasswordRequest request
+            [FromForm] ChangeUserPasswordRequest request
         )
         {
             try
@@ -74,7 +74,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ForgotPassword([FromBody] ForgotPasswordUserRequest request)
+        public async Task<BaseResponse> ForgotPassword([FromForm] ForgotPasswordUserRequest request)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ResetPassword([FromBody] ResetPasswordUserRequest request)
+        public async Task<BaseResponse> ResetPassword([FromForm] ResetPasswordUserRequest request)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ConfirmEmail([FromBody] ConfirmEmailUserRequest request)
+        public async Task<BaseResponse> ConfirmEmail([FromForm] ConfirmEmailUserRequest request)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateUser([FromBody] CreateUserRequest request)
+        public async Task<BaseResponse> CreateUser([FromForm] CreateUserRequest request)
         {
             try
             {

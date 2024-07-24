@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateVoucher([FromBody] CreateVoucherRequest request)
+        public async Task<BaseResponse> CreateVoucher([FromForm] CreateVoucherRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateVoucher([FromBody] UpdateVoucherRequest request)
+        public async Task<BaseResponse> UpdateVoucher([FromForm] UpdateVoucherRequest request)
         {
             try
             {

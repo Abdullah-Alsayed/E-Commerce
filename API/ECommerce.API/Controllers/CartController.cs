@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateCart([FromBody] CreateCartRequest request)
+        public async Task<BaseResponse> CreateCart([FromForm] CreateCartRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateCart([FromBody] UpdateCartRequest request)
+        public async Task<BaseResponse> UpdateCart([FromForm] UpdateCartRequest request)
         {
             try
             {

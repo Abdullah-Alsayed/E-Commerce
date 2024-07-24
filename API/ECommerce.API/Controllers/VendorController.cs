@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateVendor([FromBody] CreateVendorRequest request)
+        public async Task<BaseResponse> CreateVendor([FromForm] CreateVendorRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateVendor([FromBody] UpdateVendorRequest request)
+        public async Task<BaseResponse> UpdateVendor([FromForm] UpdateVendorRequest request)
         {
             try
             {

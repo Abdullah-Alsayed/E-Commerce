@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateFeedback([FromBody] CreateFeedbackRequest request)
+        public async Task<BaseResponse> CreateFeedback([FromForm] CreateFeedbackRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateFeedback([FromBody] UpdateFeedbackRequest request)
+        public async Task<BaseResponse> UpdateFeedback([FromForm] UpdateFeedbackRequest request)
         {
             try
             {

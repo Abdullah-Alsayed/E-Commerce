@@ -57,8 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> CreateBrand([FromBody] CreateBrandRequest request)
+        public async Task<BaseResponse> CreateBrand([FromForm] CreateBrandRequest request)
         {
             try
             {
@@ -71,8 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> UpdateBrand([FromBody] UpdateBrandRequest request)
+        public async Task<BaseResponse> UpdateBrand([FromForm] UpdateBrandRequest request)
         {
             try
             {
@@ -86,7 +84,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         public async Task<BaseResponse> ToggleAvtiveBrand(
-            [FromBody] ToggleAvtiveBrandRequest request
+            [FromForm] ToggleAvtiveBrandRequest request
         )
         {
             try

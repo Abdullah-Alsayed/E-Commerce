@@ -45,7 +45,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> CreateSlider([FromBody] CreateSliderRequest request)
+        public async Task<BaseResponse> CreateSlider([FromForm] CreateSliderRequest request)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> UpdateSlider([FromBody] UpdateSliderRequest request)
+        public async Task<BaseResponse> UpdateSlider([FromForm] UpdateSliderRequest request)
         {
             try
             {

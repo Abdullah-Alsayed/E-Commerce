@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateReview([FromBody] CreateReviewRequest request)
+        public async Task<BaseResponse> CreateReview([FromForm] CreateReviewRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateReview([FromBody] UpdateReviewRequest request)
+        public async Task<BaseResponse> UpdateReview([FromForm] UpdateReviewRequest request)
         {
             try
             {

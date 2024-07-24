@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateInvoice([FromBody] CreateInvoiceRequest request)
+        public async Task<BaseResponse> CreateInvoice([FromForm] CreateInvoiceRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ReturnInvoice([FromBody] ReturnInvoiceRequest request)
+        public async Task<BaseResponse> ReturnInvoice([FromForm] ReturnInvoiceRequest request)
         {
             try
             {

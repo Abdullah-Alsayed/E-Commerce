@@ -59,7 +59,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPost]
         [Authorize(Permissions.Unit.Create)]
-        public async Task<BaseResponse> CreateUnit([FromBody] CreateUnitRequest request)
+        public async Task<BaseResponse> CreateUnit([FromForm] CreateUnitRequest request)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateUnit([FromBody] UpdateUnitRequest request)
+        public async Task<BaseResponse> UpdateUnit([FromForm] UpdateUnitRequest request)
         {
             try
             {

@@ -57,7 +57,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateStatus([FromBody] CreateStatusRequest request)
+        public async Task<BaseResponse> CreateStatus([FromForm] CreateStatusRequest request)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> UpdateStatus([FromBody] UpdateStatusRequest request)
+        public async Task<BaseResponse> UpdateStatus([FromForm] UpdateStatusRequest request)
         {
             try
             {
