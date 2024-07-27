@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteExpense([FromHeader] DeleteExpenseRequest request)
+        public async Task<BaseResponse> DeleteExpense( DeleteExpenseRequest request)
         {
             try
             {

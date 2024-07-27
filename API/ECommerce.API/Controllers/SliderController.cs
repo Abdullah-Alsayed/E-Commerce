@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSlider([FromHeader] DeleteSliderRequest request)
+        public async Task<BaseResponse> DeleteSlider( DeleteSliderRequest request)
         {
             try
             {

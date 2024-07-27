@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteCategory([FromHeader] DeleteCategoryRequest request)
+        public async Task<BaseResponse> DeleteCategory( DeleteCategoryRequest request)
         {
             try
             {

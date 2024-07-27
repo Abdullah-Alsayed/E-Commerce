@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteVoucher([FromHeader] DeleteVoucherRequest request)
+        public async Task<BaseResponse> DeleteVoucher( DeleteVoucherRequest request)
         {
             try
             {

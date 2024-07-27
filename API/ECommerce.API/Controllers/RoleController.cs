@@ -83,7 +83,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteRole([FromHeader] DeleteRoleRequest request)
+    public async Task<BaseResponse> DeleteRole( DeleteRoleRequest request)
     {
         try
         {

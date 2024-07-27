@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSize([FromHeader] DeleteSizeRequest request)
+        public async Task<BaseResponse> DeleteSize( DeleteSizeRequest request)
         {
             try
             {

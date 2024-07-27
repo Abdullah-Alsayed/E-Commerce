@@ -152,7 +152,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteUser([FromHeader] DeleteUserRequest request)
+        public async Task<BaseResponse> DeleteUser( DeleteUserRequest request)
         {
             try
             {

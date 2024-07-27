@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteColor([FromHeader] DeleteColorRequest request)
+        public async Task<BaseResponse> DeleteColor( DeleteColorRequest request)
         {
             try
             {

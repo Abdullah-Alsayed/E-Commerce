@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveBrand(
+        public async Task<BaseResponse> ToggleActiveBrand(
             [FromForm] ToggleAvtiveBrandRequest request
         )
         {
@@ -98,7 +98,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteBrand([FromHeader] DeleteBrandRequest request)
+        public async Task<BaseResponse> DeleteBrand(DeleteBrandRequest request)
         {
             try
             {

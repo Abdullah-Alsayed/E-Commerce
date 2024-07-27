@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteFeedback([FromHeader] DeleteFeedbackRequest request)
+        public async Task<BaseResponse> DeleteFeedback( DeleteFeedbackRequest request)
         {
             try
             {

@@ -96,7 +96,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteArea([FromHeader] DeleteAreaRequest request)
+        public async Task<BaseResponse> DeleteArea( DeleteAreaRequest request)
         {
             try
             {

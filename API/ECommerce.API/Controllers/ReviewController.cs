@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteReview([FromHeader] DeleteReviewRequest request)
+        public async Task<BaseResponse> DeleteReview( DeleteReviewRequest request)
         {
             try
             {

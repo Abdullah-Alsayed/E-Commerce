@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteVendor([FromHeader] DeleteVendorRequest request)
+        public async Task<BaseResponse> DeleteVendor( DeleteVendorRequest request)
         {
             try
             {

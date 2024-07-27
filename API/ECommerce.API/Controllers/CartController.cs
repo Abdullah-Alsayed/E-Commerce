@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteCart([FromHeader] DeleteCartRequest request)
+        public async Task<BaseResponse> DeleteCart( DeleteCartRequest request)
         {
             try
             {

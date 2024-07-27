@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteUnit([FromHeader] DeleteUnitRequest request)
+        public async Task<BaseResponse> DeleteUnit( DeleteUnitRequest request)
         {
             try
             {

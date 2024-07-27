@@ -98,7 +98,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteGovernorate([FromHeader] DeleteGovernorateRequest request)
+    public async Task<BaseResponse> DeleteGovernorate( DeleteGovernorateRequest request)
     {
         try
         {
