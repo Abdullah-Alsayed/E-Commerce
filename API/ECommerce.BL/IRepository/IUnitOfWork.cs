@@ -21,7 +21,7 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<History> History { get; }
         IBaseRepository<Feedback> Feedback { get; }
         IBaseRepository<ShoppingCart> Cart { get; }
-        IBaseRepository<Order> Order { get; }
+        IOrderRepository Order { get; }
         IBaseRepository<Size> Size { get; }
         IBaseRepository<Category> Category { get; }
         IErrorRepository ErrorLog { get; }

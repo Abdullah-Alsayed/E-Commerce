@@ -115,27 +115,22 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         }
     }
 
-    public override async Task<List<Role>> GetAllAsync(BaseGridRequest request)
+    public override async Task<List<Role>> GetAllAsync(
+        BaseGridRequest request,
+        List<string> Includes = null
+    )
     {
         try
         {
             var result = new List<Role>();
             var query = _context.Roles.Where(x => !x.IsDeleted);
-            if (!string.IsNullOrEmpty(request.SortBy))
-                query = OrderByDynamic(query, request.SortBy, request.IsDescending);
-
-            if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
-                query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+            query = ApplyDynamicQuery(request, query);
 
             var total = await query.CountAsync();
             if (total > 0)
             {
-                var skippedPages = request.PageSize * request.PageIndex;
-                result = await query
-                    .Skip(skippedPages)
-                    .Take(request.PageSize)
-                    .AsNoTracking()
-                    .ToListAsync();
+                query = ApplyPagination(request, query);
+                result = await query.AsNoTracking().ToListAsync();
             }
 
             return result;

@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using ECommerce.BLL.DTO;
+using ECommerce.BLL.Features.Areas.Dtos;
+using ECommerce.BLL.Features.Governorates.Dtos;
+using ECommerce.BLL.Features.Statuses.Dtos;
+using ECommerce.BLL.Features.Users.Dtos;
+using ECommerce.DAL.Entity;
 
 namespace ECommerce.BLL.Features.Orders.Dtos
 {
@@ -17,5 +23,12 @@ namespace ECommerce.BLL.Features.Orders.Dtos
         public double Discount { get; set; }
         public double SubTotal { get; set; }
         public bool IsAccept { get; set; }
+
+        public AreaDto Area { get; set; }
+        public StatusDto Status { get; set; }
+        public GovernorateDto Governorate { get; set; }
+        public UserDto User { get; set; }
+
+        public List<ProductOrderDto> ProductOrders { get; set; }
     }
 }

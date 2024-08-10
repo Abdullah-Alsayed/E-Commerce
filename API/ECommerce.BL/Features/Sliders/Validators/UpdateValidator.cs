@@ -34,8 +34,8 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
         RuleFor(req => req.TitleAR)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.TitleAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -59,8 +59,8 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
         RuleFor(req => req.TitleEN)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.TitleEN]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -84,8 +84,8 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
         RuleFor(req => req.Description)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"

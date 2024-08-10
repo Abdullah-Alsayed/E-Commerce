@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Areas.Dtos;
+using ECommerce.BLL.Features.Governorates.Dtos;
 using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Requests;
+using ECommerce.BLL.Features.Products.Dtos;
+using ECommerce.BLL.Features.Statuses.Dtos;
+using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
@@ -44,6 +49,12 @@ namespace ECommerce.BLL.Features.Orders.Services
             {
                 cfg.AllowNullCollections = true;
                 cfg.CreateMap<Order, OrderDto>().ReverseMap();
+                cfg.CreateMap<Area, AreaDto>().ReverseMap();
+                cfg.CreateMap<Status, StatusDto>().ReverseMap();
+                cfg.CreateMap<Governorate, GovernorateDto>().ReverseMap();
+                cfg.CreateMap<DAL.Entity.ProductOrder, ProductOrderDto>().ReverseMap();
+                cfg.CreateMap<Product, ProductDto>().ReverseMap();
+                cfg.CreateMap<User, UserDto>().ReverseMap();
                 cfg.CreateMap<Order, CreateOrderRequest>().ReverseMap();
             });
             _mapper = new Mapper(config);
@@ -130,13 +141,10 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var sattus = await _unitOfWork.Status.GetAllAsync(new BaseGridRequest());
-                var Order = _mapper.Map<Order>(request);
-                var Products = request.Products;
-                Order.StatusID = sattus.OrderBy(x => x.Order).LastOrDefault().ID;
-                Order.CreateBy = _userId;
-                Order = await _unitOfWork.Order.AddAsync(Order);
-                var result = _mapper.Map<OrderDto>(Order);
+                var order = _mapper.Map<Order>(request);
+                order.CreateBy = _userId;
+                modifyRows += await _unitOfWork.Order.AddAsync(order, request.Products);
+                var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
                 modifyRows++;
@@ -147,7 +155,7 @@ namespace ECommerce.BLL.Features.Orders.Services
                 modifyRows++;
                 #endregion
 
-                modifyRows++;
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();

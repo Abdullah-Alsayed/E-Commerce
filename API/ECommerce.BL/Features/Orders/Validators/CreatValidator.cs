@@ -54,6 +54,23 @@ namespace ECommerce.BLL.Features.Orders.Validators
                     $" {_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.NotExist]}"
                 );
 
+            RuleFor(req => req.StatusID)
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .Must(ID =>
+                {
+                    return context.Statuses.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                })
+                .WithMessage(x =>
+                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotExist]}"
+                );
+
             RuleFor(req => req.VoucherID)
                 .Must(ID =>
                 {
@@ -67,8 +84,8 @@ namespace ECommerce.BLL.Features.Orders.Validators
             RuleFor(req => req.Address)
                 .MaximumLength(100)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-                .MinimumLength(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+                .MinimumLength(3)
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -91,11 +108,11 @@ namespace ECommerce.BLL.Features.Orders.Validators
             RuleFor(req => req.Products)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Products]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Cart]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Products]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
             RuleForEach(x => x.Products)
                 .ChildRules(Product =>

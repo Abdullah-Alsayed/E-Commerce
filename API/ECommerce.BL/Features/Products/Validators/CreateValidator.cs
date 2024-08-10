@@ -26,8 +26,8 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.Title)
                 .MaximumLength(100)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-                .MinimumLength(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+                .MinimumLength(3)
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Title]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -40,8 +40,8 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.Description)
                 .MaximumLength(100)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-                .MinimumLength(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+                .MinimumLength(3)
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"

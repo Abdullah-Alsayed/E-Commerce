@@ -64,7 +64,7 @@ namespace ECommerce.BL.Repository
             Stock = new StockRepository(_context);
             Size = new BaseRepository<Size>(_context);
             Feedback = new BaseRepository<Feedback>(_context);
-            Order = new BaseRepository<Order>(_context);
+            Order = new OrderRepository(_context);
             History = new BaseRepository<History>(_context);
             Vendor = new BaseRepository<Vendor>(_context);
             ContactUs = new BaseRepository<ContactUs>(_context);
@@ -85,7 +85,7 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<SubCategory> SubCategory { get; private set; }
         public IBaseRepository<Governorate> Governorate { get; private set; }
         public IBaseRepository<Slider> Slider { get; private set; }
-        public IBaseRepository<Order> Order { get; private set; }
+        public IOrderRepository Order { get; private set; }
         public IBaseRepository<Voucher> Voucher { get; private set; }
         public IBaseRepository<ContactUs> ContactUs { get; private set; }
         public INotificationRepository Notification { get; private set; }

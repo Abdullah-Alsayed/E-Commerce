@@ -28,8 +28,8 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
             RuleFor(req => req.Comment)
                 .MaximumLength(100)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-                .MinimumLength(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+                .MinimumLength(3)
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Comment]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -43,7 +43,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
                 .GreaterThanOrEqualTo(1)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
                 .LessThanOrEqualTo(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"

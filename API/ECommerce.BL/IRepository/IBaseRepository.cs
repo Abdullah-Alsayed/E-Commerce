@@ -20,7 +20,7 @@ namespace ECommerce.BLL.IRepository
         Task<T> FindAsync(int ID);
         Task<T> FindAsync(Guid ID);
         Task<IEnumerable<T>> GetAllAsync();
-        Task<List<T>> GetAllAsync(BaseGridRequest request);
+        Task<List<T>> GetAllAsync(BaseGridRequest request, List<string> Includes = null);
 
         Task<IEnumerable<T>> GetAllAsync(string[] Includes = null);
         Task<IEnumerable<T>> GetAllAsync(

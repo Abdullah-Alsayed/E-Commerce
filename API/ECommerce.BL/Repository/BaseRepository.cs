@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.BLL.Repository
 {
@@ -75,32 +76,25 @@ namespace ECommerce.BLL.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public virtual async Task<List<T>> GetAllAsync(BaseGridRequest request)
+        public virtual async Task<List<T>> GetAllAsync(
+            BaseGridRequest request,
+            List<string> Includes = null
+        )
         {
             try
             {
                 var result = new List<T>();
                 IQueryable<T> query = _context.Set<T>();
+                foreach (var include in Includes)
+                    query = query.Include(include);
 
-                query = IsDeletedDynamic(query, request.IsDeleted);
-
-                if (!string.IsNullOrEmpty(request.SortBy))
-                    query = OrderByDynamic(query, request.SortBy, request.IsDescending);
-                if (
-                    !string.IsNullOrEmpty(request.SearchFor)
-                    && !string.IsNullOrEmpty(request.SearchBy)
-                )
-                    query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+                query = ApplyDynamicQuery(request, query);
 
                 var total = await query.CountAsync();
                 if (total > 0)
                 {
-                    var skipedPages = request.PageSize * request.PageIndex;
-                    result = await query
-                        .Skip(skipedPages)
-                        .Take(request.PageSize)
-                        .AsNoTracking()
-                        .ToListAsync();
+                    query = ApplyPagination(request, query);
+                    result = await query.AsNoTracking().ToListAsync();
                 }
 
                 return result;
@@ -109,6 +103,22 @@ namespace ECommerce.BLL.Repository
             {
                 return new List<T>();
             }
+        }
+
+        public static IQueryable<T> ApplyPagination(BaseGridRequest request, IQueryable<T> query)
+        {
+            var skipedPages = request.PageSize * request.PageIndex;
+            return query.Skip(skipedPages).Take(request.PageSize);
+        }
+
+        public IQueryable<T> ApplyDynamicQuery(BaseGridRequest request, IQueryable<T> query)
+        {
+            query = IsDeletedDynamic(query, request.IsDeleted);
+            if (!string.IsNullOrEmpty(request.SortBy))
+                query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+            if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
+                query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+            return query;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(string[] Includes = null)

@@ -31,8 +31,8 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
         RuleFor(req => req.NameAR)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.NameAR]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -56,8 +56,8 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
         RuleFor(req => req.NameEN)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(5)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 5].ToString())
+            .MinimumLength(3)
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
             .NotEmpty()
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.NameEn]} {_localizer[Constants.MessageKeys.IsRequired]}"

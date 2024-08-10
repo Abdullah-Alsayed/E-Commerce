@@ -115,7 +115,8 @@ namespace ECommerce.Core
             public const string Token="Token";
             public const string UserName= "UserName";
             public const string Booking= "Booking";
-        }
+			public const  string Products= "Products";
+		}
 
         public static class Gender
         {
