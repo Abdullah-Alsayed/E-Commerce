@@ -206,7 +206,7 @@ namespace ECommerce.BLL.Repository
             IFormFile file,
             IHostEnvironment environment,
             string FolderName,
-            string PhotoName = null
+            string photoName = null
         )
         {
             string Photo = string.Empty;
@@ -217,31 +217,22 @@ namespace ECommerce.BLL.Repository
                 var extansion = Path.GetExtension(file.FileName);
                 var GuId = Guid.NewGuid().ToString();
                 Photo = GuId + extansion;
-                path = Path.Combine(
-                    environment.ContentRootPath,
-                    Constants.PhotoFolder.Images,
-                    FolderName
-                );
+                path = $"{Constants.PhotoFolder.Images}/{FolderName}";
 
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-                fullPath = Path.Combine(path, Photo);
+                fullPath = $"{path}/{Photo}";
                 await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
             }
             //Update Photo
-            if (PhotoName != null && file != null)
+            if (photoName != null && file != null)
             {
-                fullPath = Path.Combine(
-                    environment.ContentRootPath,
-                    Constants.PhotoFolder.Images,
-                    FolderName,
-                    PhotoName
-                );
+                fullPath = $"{Constants.PhotoFolder.Images}/{FolderName}/{photoName}";
                 System.IO.File.Delete(fullPath);
             }
-            if (PhotoName != null && file == null)
-                return PhotoName;
+            if (photoName != null && file == null)
+                return photoName;
 
             return fullPath;
         }

@@ -40,10 +40,10 @@ namespace ECommerce.BLL.IRepository
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
         Task<string> UploadPhoto(
-            IFormFile File,
+            IFormFile file,
             IHostEnvironment environment,
             string FolderName,
-            string ImgName = null
+            string photoName = null
         );
         Task<List<string>> UploadPhotos(
             List<IFormFile> Files,

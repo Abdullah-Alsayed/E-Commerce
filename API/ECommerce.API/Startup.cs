@@ -75,17 +75,10 @@ namespace ECommerce.API
             //****************** Cors ******************************
             services.AddCors(options =>
             {
-                options.AddPolicy(
-                    "AllowSpecificOrigins",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost:3000") // Replace with your React app URL
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials();
-                    }
-                );
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
             });
 
             //****************** Fluent Validation ******************************
@@ -281,11 +274,29 @@ namespace ECommerce.API
                 DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
             };
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseWhen(
+                context => !context.Request.Path.StartsWithSegments("/Images"),
+                appBuilder =>
+                {
+                    appBuilder.UseAuthentication();
+                    appBuilder.UseAuthorization();
+                }
+            );
+
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(env.ContentRootPath, "Images")
+                    ),
+                    RequestPath = "/Images",
+                    ServeUnknownFileTypes = true
+                }
+            );
             app.UseRequestLocalization(options);
             app.UseMiddleware<LocalizerMiddleware>();
+            app.UseCors();
             app.UseRouting();
-            app.UseCors("AllowSpecificOrigins");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<JwtAuthenticationMiddleware>();
