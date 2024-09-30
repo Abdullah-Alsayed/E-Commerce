@@ -85,8 +85,9 @@ namespace ECommerce.BLL.Repository
             {
                 var result = new List<T>();
                 IQueryable<T> query = _context.Set<T>();
-                foreach (var include in Includes)
-                    query = query.Include(include);
+                if (Includes != null)
+                    foreach (var include in Includes)
+                        query = query.Include(include);
 
                 query = ApplyDynamicQuery(request, query);
 

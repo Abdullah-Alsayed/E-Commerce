@@ -26,7 +26,7 @@ namespace ECommerce.Core
             SeedGovernorates(context, systemUser);
             SeedSettings(context, systemUser);
             SeedStatuses(context, systemUser);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private static async Task<string> GetUser(

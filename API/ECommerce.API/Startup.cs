@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
@@ -54,7 +53,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -73,13 +71,7 @@ namespace ECommerce.API
         public void ConfigureServices(IServiceCollection services)
         {
             //****************** Cors ******************************
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
-            });
+            services.AddCors();
 
             //****************** Fluent Validation ******************************
             services.AddFluentValidation(fluent =>
@@ -236,7 +228,6 @@ namespace ECommerce.API
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IGovernorateService, GovernorateService>();
             #endregion
-            services.AddDirectoryBrowser();
         }
 
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -273,29 +264,17 @@ namespace ECommerce.API
             {
                 DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
             };
-            app.UseHttpsRedirection();
-            app.UseWhen(
-                context => !context.Request.Path.StartsWithSegments("/Images"),
-                appBuilder =>
-                {
-                    appBuilder.UseAuthentication();
-                    appBuilder.UseAuthorization();
-                }
-            );
-
-            app.UseStaticFiles(
-                new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(
-                        Path.Combine(env.ContentRootPath, "Images")
-                    ),
-                    RequestPath = "/Images",
-                    ServeUnknownFileTypes = true
-                }
-            );
             app.UseRequestLocalization(options);
+            app.UseStaticFiles();
             app.UseMiddleware<LocalizerMiddleware>();
-            app.UseCors();
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials()
+            );
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
