@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
@@ -53,6 +54,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -265,7 +267,16 @@ namespace ECommerce.API
                 DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
             };
             app.UseRequestLocalization(options);
-            app.UseStaticFiles();
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(env.ContentRootPath, "Images")
+                    ),
+                    RequestPath = "/Images",
+                    ServeUnknownFileTypes = true
+                }
+            );
             app.UseMiddleware<LocalizerMiddleware>();
             app.UseCors(builder =>
                 builder
