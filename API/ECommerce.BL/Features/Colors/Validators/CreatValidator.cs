@@ -62,8 +62,7 @@ namespace ECommerce.BLL.Features.Colors.Validators
                 .Must(req =>
                 {
                     return !context.Colors.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
                         || x.Value == req.Value && x.IsActive && !x.IsDeleted
                     );
                 })

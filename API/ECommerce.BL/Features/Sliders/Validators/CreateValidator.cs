@@ -98,8 +98,9 @@ namespace ECommerce.BLL.Features.Sliders.Validators
                 .Must(req =>
                 {
                     return !context.Sliders.Any(x =>
-                        x.TitleEN == req.TitleEN
-                        || x.TitleAR == req.TitleAR && x.IsActive && !x.IsDeleted
+                        (x.TitleEN == req.TitleEN || x.TitleAR == req.TitleAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

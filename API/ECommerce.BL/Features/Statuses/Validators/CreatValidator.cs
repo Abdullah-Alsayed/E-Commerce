@@ -59,8 +59,9 @@ namespace ECommerce.BLL.Features.Statuses.Validators
                 .Must(req =>
                 {
                     return !context.Statuses.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

@@ -95,8 +95,9 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                 .Must(req =>
                 {
                     return !context.SubCategories.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

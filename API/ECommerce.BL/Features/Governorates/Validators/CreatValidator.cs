@@ -68,8 +68,9 @@ namespace ECommerce.BLL.Features.Governorates.Validators
                 .Must(req =>
                 {
                     return !context.Governorates.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

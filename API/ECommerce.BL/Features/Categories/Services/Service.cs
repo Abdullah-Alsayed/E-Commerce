@@ -148,6 +148,7 @@ namespace ECommerce.BLL.Features.Categories.Services
                     Constants.PhotoFolder.Categorys
                 );
                 var result = _mapper.Map<CategoryDto>(Category);
+                modifyRows++;
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
                 modifyRows++;
@@ -158,7 +159,6 @@ namespace ECommerce.BLL.Features.Categories.Services
                 modifyRows++;
                 #endregion
 
-                modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();

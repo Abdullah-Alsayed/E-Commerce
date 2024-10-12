@@ -85,8 +85,9 @@ namespace ECommerce.BLL.Features.Brands.Validators
                 .Must(req =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

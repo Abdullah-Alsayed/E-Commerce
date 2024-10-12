@@ -52,8 +52,9 @@ namespace ECommerce.BLL.Features.Sizes.Validators
                 .Must(req =>
                 {
                     return !context.Sizes.Any(x =>
-                        x.NameEN == req.NameEN
-                        || x.NameAR == req.NameAR && x.IsActive && !x.IsDeleted
+                        (x.NameEN == req.NameEN || x.NameAR == req.NameAR)
+                        && x.IsActive
+                        && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>
