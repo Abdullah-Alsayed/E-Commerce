@@ -183,8 +183,9 @@ namespace ECommerce.BLL.Repository
                 else
                     Query = Query.OrderByDescending(orderBy);
             }
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
 
             return await Query.ToListAsync();
         }

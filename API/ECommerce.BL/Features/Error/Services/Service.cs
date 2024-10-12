@@ -62,12 +62,19 @@ public class ErrorService : IErrorService
     {
         try
         {
-            var errors = await _unitOfWork.ErrorLog.GetAllAsync(
-                x => x.Entity == Entity,
-                null,
-                y => y.Date,
-                Constants.OrderBY.Descending
-            );
+            var errors =
+                Entity != 0
+                    ? await _unitOfWork.ErrorLog.GetAllAsync(
+                        x => x.Entity == Entity,
+                        null,
+                        y => y.Date,
+                        Constants.OrderBY.Descending
+                    )
+                    : await _unitOfWork.ErrorLog.GetAllAsync(
+                        null,
+                        y => y.Date,
+                        Constants.OrderBY.Descending
+                    );
             var group = errors.GroupBy(x => x.Date.Date);
             var response = group
                 .Select(x => new ErrorDto
