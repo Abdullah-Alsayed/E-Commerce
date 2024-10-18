@@ -80,8 +80,19 @@ public class ErrorService : IErrorService
                 .Select(x => new ErrorDto
                 {
                     Date = x.Key,
-                    Errors = x.ToList(),
-                    Count = x.Count()
+                    Errors = x.Select(err => new ErrorLogDto
+                        {
+                            Date = err.Date,
+                            Endpoint = err.Endpoint,
+                            Entity = err.Entity.ToString(),
+                            ID = err.ID,
+                            Message = err.Message,
+                            Operation = err.Operation.ToString(),
+                            Source = err.Source,
+                            StackTrace = err.StackTrace
+                        })
+                        .ToList(),
+                    Count = x.Count(),
                 })
                 .ToList();
             return new BaseResponse<BaseGridResponse<List<ErrorDto>>>

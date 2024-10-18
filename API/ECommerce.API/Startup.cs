@@ -250,17 +250,6 @@ namespace ECommerce.API
                 });
             }
 
-            //****************** Data Seeder ******************************
-            using var scope = app
-                .ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
-            {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                await DataSeeder.SeedData(context, roleManager, userManager);
-            }
-
             //****************** Localization ******************************
             var options = new RequestLocalizationOptions
             {

@@ -9,6 +9,7 @@ using ECommerce.Core.PermissionsClaims;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using static ECommerce.Core.Constants;
 
 namespace ECommerce.Core
@@ -23,9 +24,9 @@ namespace ECommerce.Core
         {
             await SeedRoles(context, roleManager);
             string systemUser = await GetUser(context, userManager);
-            SeedGovernorates(context, systemUser);
-            SeedSettings(context, systemUser);
-            SeedStatuses(context, systemUser);
+            await SeedGovernorates(context, systemUser);
+            await SeedSettings(context, systemUser);
+            await SeedStatuses(context, systemUser);
             await context.SaveChangesAsync();
         }
 
@@ -35,7 +36,8 @@ namespace ECommerce.Core
         )
         {
             var systemUser = Guid.NewGuid().ToString();
-            if (!context.Users.Any(x => x.UserName == "System"))
+            var hasDefault = await context.Users.AnyAsync(x => x.UserName == "System");
+            if (!hasDefault)
             {
                 var adminUser = new User
                 {
@@ -52,15 +54,21 @@ namespace ECommerce.Core
                 await userManager.AddToRoleAsync(adminUser, Constants.Roles.SuperAdmin);
             }
             else
-                systemUser = context.Users.FirstOrDefault(x => x.UserName == "System").Id;
+            {
+                var defaultUser = await context.Users.FirstOrDefaultAsync(x =>
+                    x.UserName == "System"
+                );
+                systemUser = defaultUser.Id;
+            }
             return systemUser;
         }
 
-        private static void SeedStatuses(ApplicationDbContext context, string systemUser)
+        private static async Task SeedStatuses(ApplicationDbContext context, string systemUser)
         {
-            if (!context.Statuses.Any())
+            var hasStatuses = await context.Statuses.AnyAsync();
+            if (!hasStatuses)
             {
-                context.Statuses.Add(
+                await context.Statuses.AddAsync(
                     new Status
                     {
                         NameAR = "مكتمل",
@@ -72,11 +80,12 @@ namespace ECommerce.Core
             }
         }
 
-        private static void SeedSettings(ApplicationDbContext context, string systemUser)
+        private static async Task SeedSettings(ApplicationDbContext context, string systemUser)
         {
-            if (!context.Settings.Any())
+            var hasSettings = await context.Settings.AnyAsync();
+            if (!hasSettings)
             {
-                context.Settings.Add(
+                await context.Settings.AddAsync(
                     new Setting
                     {
                         Address = "Dummy Data",
@@ -100,7 +109,8 @@ namespace ECommerce.Core
             RoleManager<Role> roleManager
         )
         {
-            if (!context.Roles.Any())
+            var hasRoles = await context.Roles.AnyAsync();
+            if (!hasRoles)
             {
                 var SuperAdmin = new Role
                 {
@@ -142,12 +152,13 @@ namespace ECommerce.Core
             }
         }
 
-        private static void SeedGovernorates(ApplicationDbContext context, string systemUser)
+        private static async Task SeedGovernorates(ApplicationDbContext context, string systemUser)
         {
-            if (!context.Governorates.Any())
+            var hasGovernorates = await context.Governorates.AnyAsync();
+            if (!hasGovernorates)
             {
-                string governoratesJson = File.ReadAllText("Governorates.json");
-                string AreasJson = File.ReadAllText("Areas.json");
+                string governoratesJson = await File.ReadAllTextAsync("Governorates.json");
+                string AreasJson = await File.ReadAllTextAsync("Areas.json");
                 var governorates = JsonSerializer.Deserialize<List<GovernorateJson>>(
                     governoratesJson
                 );
@@ -169,7 +180,7 @@ namespace ECommerce.Core
                         .ToList(),
                     CreateBy = systemUser,
                 });
-                context.Governorates.AddRange(governoratesList);
+                await context.Governorates.AddRangeAsync(governoratesList);
             }
         }
 
