@@ -214,29 +214,33 @@ namespace ECommerce.BLL.Repository
             string Photo = string.Empty;
             string path = string.Empty;
             string fullPath = string.Empty;
-            if (file != null)
+            try
             {
-                var extansion = Path.GetExtension(file.FileName);
-                var GuId = Guid.NewGuid().ToString();
-                Photo = GuId + extansion;
-                path = $"{Constants.PhotoFolder.Images}/{FolderName}";
+                if (file != null)
+                {
+                    var extension = Path.GetExtension(file.FileName);
+                    var GuId = Guid.NewGuid().ToString();
+                    Photo = GuId + extension;
+                    path = $"{Constants.PhotoFolder.Images}/{FolderName}";
 
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
 
-                fullPath = $"{path}/{Photo}";
-                await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
+                    fullPath = $"{path}/{Photo}";
+                    await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
+                }
+                //Update Photo
+                if (photoName != null && file != null && System.IO.File.Exists(photoName))
+                    System.IO.File.Delete(photoName);
+                if (photoName != null && file == null)
+                    return photoName;
+
+                return fullPath;
             }
-            //Update Photo
-            if (photoName != null && file != null)
+            catch (Exception ex)
             {
-                fullPath = $"{Constants.PhotoFolder.Images}/{FolderName}/{photoName}";
-                System.IO.File.Delete(fullPath);
+                return $"{Constants.PhotoFolder.Images}/default.png";
             }
-            if (photoName != null && file == null)
-                return photoName;
-
-            return fullPath;
         }
 
         public async Task<List<string>> UploadPhotos(
