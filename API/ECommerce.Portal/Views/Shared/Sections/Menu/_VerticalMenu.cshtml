@@ -1,0 +1,178 @@
+@inject IStringLocalizer<HomeController> _Localizer;
+@using ECommerce.Core.Helpers
+@using ECommerce.Core.PermissionsClaims
+@using ECommerce.Portal.Controllers
+@using Microsoft.Extensions.Localization
+@{
+    TempData.Keep();
+    string? currentPage = ViewContext.HttpContext.Request.Path;
+    var roleId =1;
+    var permissions = new List<string>();
+}
+
+<!-- Menu -->
+@* ! Do this simple *@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+
+    @* ! Hide app brand if navbar-full *@
+    <div class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
+        <a href="/" class="app-brand-link">
+            <span class="app-brand-logo demo">
+                @await Html.PartialAsync("../_Partials/_Macros")
+            </span>
+            <span class="app-brand-text demo menu-text fw-bold ms-2">@TempData.Peek("appName")</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4854 4.88844C11.0081 4.41121 10.2344 4.41121 9.75715 4.88844L4.51028 10.1353C4.03297 10.6126 4.03297 11.3865 4.51028 11.8638L9.75715 17.1107C10.2344 17.5879 11.0081 17.5879 11.4854 17.1107C11.9626 16.6334 11.9626 15.8597 11.4854 15.3824L7.96672 11.8638C7.48942 11.3865 7.48942 10.6126 7.96672 10.1353L11.4854 6.61667C11.9626 6.13943 11.9626 5.36568 11.4854 4.88844Z" fill="currentColor" fill-opacity="0.6" />
+                <path d="M15.8683 4.88844L10.6214 10.1353C10.1441 10.6126 10.1441 11.3865 10.6214 11.8638L15.8683 17.1107C16.3455 17.5879 17.1192 17.5879 17.5965 17.1107C18.0737 16.6334 18.0737 15.8597 17.5965 15.3824L14.0778 11.8638C13.6005 11.3865 13.6005 10.6126 14.0778 10.1353L17.5965 6.61667C18.0737 6.13943 18.0737 5.36568 17.5965 4.88844C17.1192 4.41121 16.3455 4.41121 15.8683 4.88844Z" fill="currentColor" fill-opacity="0.38" />
+            </svg>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+
+  @* ! Starter Kit menu-items *@
+  <ul class="menu-inner py-1">
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage == "/" ? " active" : "")'>
+                  <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                      <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
+              <div data-i18n="@_Localizer["Statistics"]">@_Localizer["Statistics"]</div>
+            </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/Booking/Calendar") ? " active" : "")'>
+              <a asp-controller="Booking" asp-action="Calendar" class="menu-link">
+                  <i class="menu-icon tf-icons mdi mdi-calendar-blank-outline"></i>
+                  <div data-i18n="Calendar">@_Localizer["Calendar"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith("/BusinessSiteService/List") ? " active" : "")'>
+              <a asp-controller="BusinessSiteService" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-beach m-1"></span>
+                  <div data-i18n="@_Localizer["Services"]">@_Localizer["Services"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/BusinessSiteFeature/List") ? " active" : "")'>
+              <a asp-controller="BusinessSiteFeature" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-waves-arrow-up m-1"></span>
+                  <div data-i18n="@_Localizer["ServiceFeature"]">@_Localizer["ServiceFeature"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/BusinessSiteRule/List") ? " active" : "")'>
+              <a asp-controller="BusinessSiteRule" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-file-sign m-1"></span>
+                  <div data-i18n="@_Localizer["BusinessSiteRule"]">@_Localizer["BusinessSiteRule"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith("/BusinessSiteServiceFacility/List") ? " active" : "")'>
+              <a asp-controller="BusinessSiteServiceFacility" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-sail-boat m-1"></span>
+                  <div data-i18n="@_Localizer["BusinessSiteServiceFacility"]">@_Localizer["BusinessSiteServiceFacility"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/FacilityOption/List") ? " active" : "")'>
+              <a asp-controller="FacilityOption" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-select-place m-1"></span>
+                  <div data-i18n="@_Localizer["FacilityOption"]">@_Localizer["FacilityOption"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith("/FacilityOptionType/List") ? " active" : "")'>
+              <a asp-controller="FacilityOptionType" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-select-place m-1"></span>
+                  <div data-i18n="@_Localizer["FacilityOptionType"]">@_Localizer["FacilityOptionType"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith("/FacilitySlots/List") ? " active" : "")'>
+              <a asp-controller="FacilitySlots" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-slot-machine m-1"></span>
+                  <div data-i18n="@_Localizer["FacilitySlots"]">@_Localizer["FacilitySlots"]</div>
+              </a>
+          </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/Booking/List") ? " active" : "")'>
+              <a asp-controller="Booking" asp-action="List" class="menu-link">
+                  <span class="menu-icon tf-icons mdi mdi-ticket-account m-1"></span>
+                  <div data-i18n="@_Localizer["Booking"]">@_Localizer["Booking"]</div>
+              </a>
+          </li>
+        }
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/User/List") ? " active open" : "")'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer["Roles&PUsers"]">@_Localizer["Roles&Users"]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+                    {
+                      <li class='menu-item@(currentPage.StartsWith("/Role/List") ? " active" : "")'>
+                          <a asp-controller="Role" asp-action="List" class="menu-link">
+                              <span class="menu-icon tf-icons mdi mdi-security m-1"></span>
+                              <div data-i18n="@_Localizer["Roles"]">@_Localizer["Roles"]</div>
+                          </a>
+                      </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+                    {
+                      <li class='menu-item@(currentPage.StartsWith("/User/List") ? " active" : "")'>
+                          <a asp-controller="User" asp-action="List" class="menu-link">
+                              <span class="menu-icon tf-icons mdi mdi-account-wrench m-1"></span>
+                              <div data-i18n="@_Localizer["Users"]">@_Localizer["Users"]</div>
+                          </a>
+                      </li>
+                    }
+                </ul>
+            </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+          <li class='menu-item@(currentPage.StartsWith("/Invoice/List") ? " active" : "")'>
+              <a asp-controller="Invoice" asp-action="List" class="menu-link">
+                  <span class="mdi mdi-account-wrench m-1"></span>
+                  <div data-i18n="@_Localizer["Invoices"]">@_Localizer["Invoices"]</div>
+              </a>
+          </li>
+        }
+      </ul>
+</aside>
+<!-- / Menu -->

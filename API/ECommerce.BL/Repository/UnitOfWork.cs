@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Repository;
-using ECommerce.Core;
+using ECommerce.Core.Helpers;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;

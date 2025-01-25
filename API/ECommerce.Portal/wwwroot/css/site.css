@@ -1,0 +1,131 @@
+/* Custom styles goes here */
+
+:root {
+  --background: #4285f4;
+  --icon-color: #344955;
+  --width: 50px;
+  --height: 50px;
+  --border-radius: 100%;
+}
+
+
+/* Upload File */
+.custum-file-upload {
+  height: 200px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #e8e8e8;
+  background-color: transparent;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 48px 35px -48px #e8e8e8;
+}
+
+  .custum-file-upload .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+    .custum-file-upload .icon svg {
+      height: 80px;
+      fill: #e8e8e8;
+    }
+
+  .custum-file-upload .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+    .custum-file-upload .text span {
+      font-weight: 400;
+      color: #e8e8e8;
+    }
+
+  .custum-file-upload input {
+    display: none;
+  }
+
+  .custum-file-upload img {
+    height: -webkit-fill-available;
+    max-width: 100%;
+  }
+
+tbody img {
+  width: 75%
+}
+
+.show-Password {
+  left: 90%;
+  position: relative;
+  bottom: 35px;
+}
+/* Accordions
+  ========================================================================== */
+.accordion {
+  margin-bottom: 20px;
+}
+
+.accordion-group {
+  border: 1px solid #e5e5e5;
+  margin-bottom: 2px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  border-radius: 4px;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.accordion-inner {
+  border-top: 1px solid #e5e5e5;
+  padding: 10px 20px;
+  margin: 15px;
+}
+
+.accordion-heading .accordion-toggle {
+  display: block;
+  position: relative;
+  color: #434343;
+}
+
+  .accordion-heading .accordion-toggle:before {
+    color: #505050;
+    content: "\f47";
+    display: inline-block;
+    float: right;
+    font-family: "entypo";
+    font-size: 18px;
+    margin-left: 10px;
+    position: relative;
+    -webkit-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
+  }
+
+  .accordion-heading .accordion-toggle.collapsed:before {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+
+.accordion-heading .title {
+  margin: 0;
+  padding: 20px 20px;
+  font-size: 18px;
+  background-color: #3f9e5c14;
+  border: 2px solid #fb8e41;
+  border-radius: 5px;
+}
+tbody, thead th {
+  text-align: center !important
+}

@@ -14,6 +14,7 @@ using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Helpers;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;

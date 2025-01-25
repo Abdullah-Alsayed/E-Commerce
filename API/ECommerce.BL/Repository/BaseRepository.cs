@@ -268,6 +268,36 @@ namespace ECommerce.BLL.Repository
             return photos;
         }
 
+        public async Task DeleteFile(string fullPath)
+        {
+            try
+            {
+                string directoryPath = System.IO.Path.GetDirectoryName(fullPath);
+
+                // Check if the directory exists
+                if (!System.IO.Directory.Exists(directoryPath))
+                {
+                    Console.WriteLine("Directory does not exist.");
+                    return;
+                }
+
+                // Check if the file exists
+                if (System.IO.File.Exists(fullPath))
+                {
+                    System.IO.File.Delete(fullPath);
+                    Console.WriteLine("File deleted successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("File does not exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
         public bool ToggleActive(bool IsActive)
         {
             return !IsActive;
