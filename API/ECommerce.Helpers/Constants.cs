@@ -15,6 +15,7 @@ namespace ECommerce.Core
             public const string Ar = "ar-EG";
             public const string En = "en-US";
         }
+
         public static class MessageKeys
         {
             public const string Exist = "exist";
@@ -53,10 +54,12 @@ namespace ECommerce.Core
             public const string EmailIsConfirm= "EmailIsConfirm";
             public const string LoginFiled = "LoginFiled";
         }
+
         public static class Message
         {
             public const string ConfirmEmail = "ConfirmEmail";
         }
+
         public static class EntityKeys
         {
             public const string ID = "ID"; // From Token
@@ -149,11 +152,13 @@ namespace ECommerce.Core
             public const string Slider= "Slider";
             public const string Products= "Products";
         }
-        public class DefaultPhotos
+
+        public static class DefaultPhotos
         {
             public const string User = "User.png";
 
         }
+
         public static class Errors
         {
             public const string Emailexists = "Email Already Exists";
@@ -172,12 +177,28 @@ namespace ECommerce.Core
             public const string Edit = "Edit.png";
             public const string Delete = "Delete.png";
         }
+
         public static class Regex
         {
             public const string Color = "^#?([a-f0-9]{6}|[a-f0-9]{3})$";
             public const string PhoneNumber = "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
         }
 
-     
+        public static class Claims
+        {
+            public const string RoleID = "RoleID";
+
+            public const string RoleName = "RoleName";
+
+            public const string UserID = "UserID";
+
+            public const string Name = "Name";
+
+            public const string UserPhoto = "UserPhoto";
+
+            public const string UserRole = "UserRole";
+
+            public const string Language = "Language";
+        }
     }
 }

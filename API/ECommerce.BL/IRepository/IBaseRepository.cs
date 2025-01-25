@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
-using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
@@ -51,6 +50,8 @@ namespace ECommerce.BLL.IRepository
             string FolderName,
             List<string> ImgNames = null
         );
+
+        Task DeleteFile(string fullPath);
 
         bool ToggleActive(bool IsActive);
         List<string> SearchEntity();

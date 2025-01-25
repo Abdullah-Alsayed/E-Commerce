@@ -32,11 +32,12 @@ using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
+using ECommerce.BLL.Injector;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Middleware;
 using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
-using ECommerce.Core;
+using ECommerce.Core.Helpers;
 using ECommerce.Core.Middlwares;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.Core.Services.WhatsappServices;
@@ -137,6 +138,7 @@ namespace ECommerce.API
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
+
             //****************** Identity Setting ******************************
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -190,46 +192,7 @@ namespace ECommerce.API
             services.AddDistributedMemoryCache();
             services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
-            //****************** Email Settings ******************************
-            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-
-            //****************** whatsapp Settings ******************************
-            services.Configure<WhatsappSettings>(Configuration.GetSection("WhatsappSettings"));
-            services.AddScoped<IWhatsappServices, WhatsappServices>();
-
-            //****************** Services ******************************
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            #region Feature Services
-            services.AddScoped<IAreaService, AreaService>();
-            services.AddScoped<ICartService, CartService>();
-            services.AddScoped<IUnitService, UnitService>();
-            services.AddScoped<ISizeService, SizeService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IErrorService, ErrorService>();
-            services.AddScoped<IColorService, ColorService>();
-            services.AddScoped<IStockService, StockService>();
-            services.AddScoped<IBrandService, BrandService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IMailServices, MailServices>();
-            services.AddScoped<IMailServices, MailServices>();
-            services.AddScoped<ISliderService, SliderService>();
-            services.AddScoped<IStatusService, StatusService>();
-            services.AddScoped<IReviewService, ReviewService>();
-            services.AddScoped<IVendorService, VendorService>();
-            services.AddScoped<IBookingService, BookingService>();
-            services.AddScoped<IInvoiceService, InvoiceService>();
-            services.AddScoped<IVoucherService, VoucherService>();
-            services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<ISettingService, SettingService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IFeedbackService, FeedbackService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IContactUsService, ContactUsService>();
-            services.AddScoped<ISubCategoryService, SubCategoryService>();
-            services.AddScoped<IGovernorateService, GovernorateService>();
-            #endregion
+            Injector.InjectServices(services, Configuration);
         }
 
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
