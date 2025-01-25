@@ -215,6 +215,24 @@ namespace ECommerce.BLL.Features.Users.Services
             }
         }
 
+        public async Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext)
+        {
+            try
+            {
+                var result = await _unitOfWork.User.WebLoginAsync(request, httpContext);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Login, EntitiesEnum.User);
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
         public async Task<BaseResponse> UserInfoAsync()
         {
             var result = _unitOfWork.User.IsAuthenticated(_httpContext.HttpContext.User);

@@ -1,0 +1,98 @@
+﻿using System;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Expenses.Requests;
+using ECommerce.BLL.Features.Expenses.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ECommerce.API.Controllers
+{
+    [Authorize]
+    public class ExpenseController : Controller
+    {
+        private readonly IExpenseService _service;
+
+        public ExpenseController(IExpenseService service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindExpense([FromQuery] FindExpenseRequest request)
+        {
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetAllExpense([FromQuery] GetAllExpenseRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> CreateExpense([FromForm] CreateExpenseRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> UpdateExpense([FromForm] UpdateExpenseRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteExpense(DeleteExpenseRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.BLL.Features.Users.Services
 {
@@ -11,6 +12,7 @@ namespace ECommerce.BLL.Features.Users.Services
         Task<BaseResponse> CreateAsync(CreateUserRequest request);
         Task<BaseResponse> ForgotPasswordAsync(ForgotPasswordUserRequest request);
         Task<BaseResponse> LoginAsync(LoginRequest request);
+        Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext);
         Task<BaseResponse> LogOfAsync();
         Task<BaseResponse> DeleteAsync(DeleteUserRequest request);
 

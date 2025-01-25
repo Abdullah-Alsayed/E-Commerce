@@ -2,6 +2,7 @@ using System.Globalization;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Injector;
+using ECommerce.Core.Middlwares;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using LocalizationAPI.Localization;
@@ -28,7 +29,8 @@ builder
     })
     .AddCookie(options =>
     {
-        options.LoginPath = "/User/Login";
+        options.LoginPath = "/User/Login"; // Match your actual Login action path
+        options.AccessDeniedPath = "/User/Login"; // Optional
     });
 
 //****************** Application DB context ******************************
@@ -78,7 +80,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-} //****************** Localization ******************************
+}
+else
+{
+    app.ConfigureExceptionHandler(); // Use your custom exception handler
+}
+
+//****************** Localization ******************************
 var options = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture(new CultureInfo("ar-EG"))
@@ -88,12 +96,12 @@ app.UseMiddleware<LocalizerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseAuthentication();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Dashboard}/{action=Statistics}/{id?}"
+);
 
 app.Run();

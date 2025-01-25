@@ -22,6 +22,7 @@ using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.Stocks.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
 using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
@@ -29,6 +30,7 @@ using ECommerce.BLL.IRepository;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.Core.Services.WhatsappServices;
 using ECommerce.Core.Services.WhatsappServices.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,6 +40,20 @@ namespace ECommerce.BLL.Injector
     {
         public static void InjectServices(IServiceCollection services, IConfiguration configuration)
         {
+            //****************** Email Settings ******************************
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+
+            //****************** whatsapp Settings ******************************
+            services.Configure<WhatsappSettings>(configuration.GetSection("WhatsappSettings"));
+            services.AddScoped<IWhatsappServices, WhatsappServices>();
+
+            //****************** Services ******************************
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            //****************** Features ******************************
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUnitService, UnitService>();
@@ -66,16 +82,6 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IContactUsService, ContactUsService>();
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IGovernorateService, GovernorateService>();
-
-            //****************** Email Settings ******************************
-            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-
-            //****************** whatsapp Settings ******************************
-            services.Configure<WhatsappSettings>(configuration.GetSection("WhatsappSettings"));
-            services.AddScoped<IWhatsappServices, WhatsappServices>();
-
-            //****************** Services ******************************
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
     }
 }

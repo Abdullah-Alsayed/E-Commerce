@@ -1,6 +1,3 @@
-
-@using ECommerce.Portal.Controllers
-@using Microsoft.Extensions.Localization
 @{
   @* using this variables to load front pages assets *@
   bool isFront = ViewData["isFront"] is bool isFrontValue ? isFrontValue : false;
@@ -10,7 +7,7 @@
   ViewData["contentType"] = ViewData["container"] is string container && container == "container-xxl" ? "layout-compact" : "layout-wide";
 }
 @{
-    @inject IStringLocalizer<UserController> _Localizer;
+    @inject IStringLocalizer<AccountController> _Localizer;
     var lang = @_Localizer["dir"].ToString();
 }
 @await Html.PartialAsync("Sections/_Variables")
