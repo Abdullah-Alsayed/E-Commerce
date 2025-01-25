@@ -21,7 +21,7 @@ function Login(event) {
 
   // Send AJAX request (or whatever action you need)
   $.ajax({
-    url: '/User/Login',
+      url: '/Account/Login',
     type: 'POST',
     data: formData,
     success: function (result) {

@@ -18,7 +18,10 @@ using ECommerce.Core.Helpers;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -145,7 +148,7 @@ namespace ECommerce.BLL.Repository
 
         public async Task<BaseResponse> LoginAsync(LoginRequest request)
         {
-            var user = _userManager.Users.FirstOrDefault(x =>
+            var user = await _userManager.Users.FirstOrDefaultAsync(x =>
                 x.UserName == request.UserName.ToLower()
                 || x.Email == request.UserName.ToLower()
                 || x.PhoneNumber == request.UserName
@@ -178,6 +181,58 @@ namespace ECommerce.BLL.Repository
                             FullName = $"{user.FirstName} {user.LastName}",
                             Photo = user.Photo
                         }
+                    };
+                }
+                else
+                    return new BaseResponse<LoginDto>
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[Constants.MessageKeys.LoginFiled].ToString()
+                    };
+            }
+            else
+            {
+                return new BaseResponse<LoginDto>
+                {
+                    IsSuccess = false,
+                    Message = _localizer[Constants.MessageKeys.LoginFiled].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x =>
+                x.UserName == request.UserName.ToLower()
+                || x.Email == request.UserName.ToLower()
+                || x.PhoneNumber == request.UserName
+            );
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(
+                    user.UserName,
+                    request.Password,
+                    request.RememberMe,
+                    false
+                );
+
+                if (result.Succeeded)
+                {
+                    var claims = await GetUserClaims(user);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims,
+                        CookieAuthenticationDefaults.AuthenticationScheme
+                    );
+                    var authProperties = new AuthenticationProperties { AllowRefresh = true, };
+                    await httpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties
+                    );
+                    return new BaseResponse<LoginDto>
+                    {
+                        IsSuccess = result.Succeeded,
+                        Message = Constants.MessageKeys.Success,
                     };
                 }
                 else
@@ -602,6 +657,26 @@ namespace ECommerce.BLL.Repository
 
         private async Task<JwtSecurityToken> CreateJwtToken(User user)
         {
+            IEnumerable<Claim> claims = await GetUserClaims(user);
+
+            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_jwt.Key));
+            SigningCredentials signingCredentials =
+                new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+            JwtSecurityToken jwtSecurityToken =
+                new(
+                    issuer: _jwt.Issuer,
+                    audience: _jwt.Audience,
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(_jwt.DurationInDays),
+                    signingCredentials: signingCredentials
+                );
+
+            return jwtSecurityToken;
+        }
+
+        private async Task<IEnumerable<Claim>> GetUserClaims(User user)
+        {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
             List<Claim> roleClaims = new();
@@ -629,21 +704,7 @@ namespace ECommerce.BLL.Repository
             }
                 .Union(userClaims)
                 .Union(roleClaims);
-
-            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_jwt.Key));
-            SigningCredentials signingCredentials =
-                new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-            JwtSecurityToken jwtSecurityToken =
-                new(
-                    issuer: _jwt.Issuer,
-                    audience: _jwt.Audience,
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(_jwt.DurationInDays),
-                    signingCredentials: signingCredentials
-                );
-
-            return jwtSecurityToken;
+            return claims;
         }
 
         private async Task<User> GetUser(string userId)

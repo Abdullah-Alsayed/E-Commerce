@@ -1,13 +1,9 @@
-@using ECommerce.Core
-@using ECommerce.Core.Helpers
-@using ECommerce.Portal.Controllers
-@using Microsoft.Extensions.Localization
 @* ! Brand demo (display only for navbar-full and hide on below xl) *@
 @{
 
     var userPhoto = User.Identity.IsAuthenticated ? AuthHelper.GetClaimValue(User, Constants.Claims.UserPhoto) : "/img/avatars/1.png";
 }
-@inject IStringLocalizer<UserController> _Localizer;
+@inject IStringLocalizer<AccountController> _Localizer;
 
 @if (ViewData["navbarFull"] != null)
 {

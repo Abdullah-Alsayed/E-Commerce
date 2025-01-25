@@ -6,6 +6,7 @@ using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Primitives;
 
@@ -37,6 +38,7 @@ namespace ECommerce.BLL.IRepository
         string GetRoleID(ClaimsPrincipal user);
         bool IsAuthenticated(ClaimsPrincipal user);
         Task LoginAsync(User user, bool RememberMe);
+        Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext);
         Task LogOffAsync();
         Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request, string userId);
         Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request, string userId);

@@ -1,16 +1,18 @@
-﻿using ECommerce.BLL.Features.Users.Requests;
+﻿using System;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerce.Portal.Controllers
+namespace ECommerce.API.Controllers
 {
-    public class UserController : Controller
+    public class AccountController : Controller
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service) => _service = service;
+        public AccountController(IUserService service) => _service = service;
 
         [HttpPost]
         [AllowAnonymous]
@@ -26,13 +28,27 @@ namespace ECommerce.Portal.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Login(string returnUrl = "/")
+        {
+            // Validate the ReturnUrl to prevent open redirect vulnerabilities
+            if (!Url.IsLocalUrl(returnUrl))
+            {
+                returnUrl = "/";
+            }
+
+            ViewData["ReturnUrl"] = returnUrl; // Pass the ReturnUrl to the view
+            return View();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<BaseResponse> Login(LoginRequest request)
         {
             try
             {
-                return await _service.LoginAsync(request);
+                return await _service.WebLoginAsync(request, HttpContext);
             }
             catch (Exception ex)
             {
