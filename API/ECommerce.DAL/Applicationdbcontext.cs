@@ -1,12 +1,15 @@
-﻿using ECommerce.DAL.Entity;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.DAL
 {
-    public class Applicationdbcontext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
-        public Applicationdbcontext(DbContextOptions<Applicationdbcontext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
         public DbSet<Area> Areas { get; set; }
@@ -20,19 +23,45 @@ namespace ECommerce.DAL
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductPhoto> productPhotos { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
-        public DbSet<PromoCode> PromoCodes { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<ProductReview> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
-        public DbSet<SliderPhoto> SliderPhotos { get; set; }
+        public DbSet<Slider> Sliders { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<History> Histories { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Size> Sizes { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
+        public DbSet<ProductColor> ProductColors { get; set; }
+        public DbSet<UserClaims> UserClaims { get; set; }
+        public DbSet<RoleClaims> RoleClaims { get; set; }
+        public DbSet<TokenExpired> TokenExpired { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+
+        public DbSet<TEntity> AddDbSet<TEntity>()
+            where TEntity : class
+        {
+            return Set<TEntity>();
+        }
 
         protected override void OnModelCreating(ModelBuilder Builder)
         {
+            foreach (
+                var relationship in Builder
+                    .Model.GetEntityTypes()
+                    .SelectMany(e => e.GetForeignKeys())
+            )
+            {
+                relationship.DeleteBehavior = DeleteBehavior.ClientCascade;
+            }
             base.OnModelCreating(Builder);
         }
     }

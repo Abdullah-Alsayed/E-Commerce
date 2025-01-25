@@ -1,102 +1,100 @@
-﻿using AutoMapper;
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Response;
+using ECommerce.Core.PermissionsClaims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class UnitController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IUnitService _service;
 
-        public UnitController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public UnitController(IUnitService service) => _service = service;
 
         [HttpGet]
-        //[Route(nameof(FindUnit))]
-        public async Task<IActionResult> FindUnit(int ID)
+        public async Task<BaseResponse> FindUnit([FromQuery] FindUnitRequest request)
         {
-            var Unit = await _unitOfWork.Unit.FindAsync(ID);
-            if (Unit == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Unit);
-        }
-
-        [HttpGet]
-        //[Route(nameof(FindAllUnit))]
-        public async Task<IActionResult> FindAllUnit()
-        {
-            var Units = await _unitOfWork.Unit.GetAllAsync(
-                new[] { "User" },
-                o => o.NameAR,
-                Constants.OrderBY.Descending
-            );
-            if (Units == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Units);
-        }
-
-        [HttpPost]
-        //[Route(nameof(CreateUnit))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateUnit(UnitDto dto)
-        {
-            Unit Entity = _mapper.Map<Unit>(dto);
-            Entity.CreateAt = DateTime.Now;
-            Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Unit = await _unitOfWork.Unit.AddaAync(Entity);
-            if (Unit == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Unit);
-        }
-
-        // PUT api/<UnitController>/5
-        [HttpPut]
-        //[Route(nameof(UpdateUnit))]
-        public async Task<IActionResult> UpdateUnit(int ID, UnitDto dto)
-        {
-            var Unit = await _unitOfWork.Unit.FindAsync(ID);
-            if (Unit == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Unit);
-                Unit.ModifyBy = _unitOfWork.User.GetUserID(User);
-                Unit.ModifyAt = DateTime.Now;
-                await _unitOfWork.SaveAsync();
-                return Ok(Unit);
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
-        //[HttpDelete]
-        ////[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteUnit))]
-        //public async Task<IActionResult> DeleteUnit(int ID)
-        //{
-        //    var Unit = await _unitOfWork.Unit.FindAsync(ID);
-        //    if (!_unitOfWork.Unit.Delete(Unit))
-        //        return NotFound(Constants.Errors.NotFound);
-        //    else
-        //      await _unitOfWork.SaveAsync();
-        //    return Ok();
-        //}
+        [HttpGet]
+        public async Task<BaseResponse> GetAllUnit([FromQuery] GetAllUnitRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Permissions.Unit.Create)]
+        public async Task<BaseResponse> CreateUnit([FromForm] CreateUnitRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> UpdateUnit([FromForm] UpdateUnitRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteUnit( DeleteUnitRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
     }
 }

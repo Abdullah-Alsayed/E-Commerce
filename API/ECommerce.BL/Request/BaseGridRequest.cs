@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.BLL.Request
 {
-    public class BaseGridRequest
+    public record BaseGridRequest
     {
         public string SearchFor { get; set; } = string.Empty;
         public string SortBy { get; set; } = "ID";

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 
 namespace LocalizationAPI.Localization
 {
@@ -76,13 +76,13 @@ namespace LocalizationAPI.Localization
                         continue;
 
                     // Read the key value as a string (might return null)
-                    string? key = reader.Value as string;
+                    string key = reader.Value as string;
 
                     // Read
                     reader.Read();
 
                     // Deserialize the found string (might return null)
-                    string? value = _jsonSerializer.Deserialize<string>(reader);
+                    string value = _jsonSerializer.Deserialize<string>(reader);
 
                     // return an IEnumerable<> of LocalizedStrings containing the cache key and the strings. false = string was found
                     yield return new LocalizedString(key, value, false);
@@ -90,7 +90,7 @@ namespace LocalizationAPI.Localization
             }
         }
 
-        private string? GetJsonValue(string propertyName, string filePath)
+        private string GetJsonValue(string propertyName, string filePath)
         {
             // If the properte and filepath is null, return null
             if (propertyName == null)

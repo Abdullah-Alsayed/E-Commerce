@@ -1,115 +1,115 @@
-﻿using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
+using ECommerce.BLL.Features.Categories.Requests;
+using ECommerce.BLL.Features.Categories.Services;
+using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly ICategoryService _service;
 
-        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public CategoryController(ICategoryService service) => _service = service;
 
         [HttpGet]
-        //[Route(nameof(FindCategory))]
-        public async Task<IActionResult> FindCategory(Guid ID)
+        public async Task<BaseResponse> FindCategory([FromQuery] FindCategoryRequest request)
         {
-            var Category = await _unitOfWork.Category.GetItemAsync(
-                x => x.ID == ID,
-                new[] { "User" }
-            );
-            if (Category == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Category);
-        }
-
-        [HttpGet]
-        //[Route(nameof(FindAllCategory))]
-        public async Task<IActionResult> FindAllCategory()
-        {
-            var Categorys = await _unitOfWork.Category.GetAllAsync(
-                new[] { "User" },
-                o => o.NameAR,
-                Constants.OrderBY.Descending
-            );
-            if (Categorys == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Categorys);
-        }
-
-        [HttpPost]
-        //[Route(nameof(CreateCategory))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateCategory([FromQuery] CategoryDto dto)
-        {
-            Category Entity = _mapper.Map<Category>(dto);
-            Entity.CreateAt = DateTime.Now;
-            Entity.CreateBy = _unitOfWork.User.GetUserID(User);
-            Entity.PhotoPath = await _unitOfWork.Category.UplodPhoto(
-                dto.File,
-                Constants.PhotoFolder.Categorys
-            );
-
-            var Category = await _unitOfWork.Category.AddaAync(Entity);
-            if (Category == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Category);
-        }
-
-        // PUT api/<CategoryController>/5
-        [HttpPut]
-        //[Route(nameof(UpdateCategory))]
-        public async Task<IActionResult> UpdateCategory(int ID, [FromQuery] CategoryDto dto)
-        {
-            var Category = await _unitOfWork.Category.FindAsync(ID);
-            if (Category == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Category);
-                Category.ModifyAt = DateTime.Now;
-                Category.ModifyBy = _unitOfWork.User.GetUserID(User);
-                Category.PhotoPath = await _unitOfWork.Category.UplodPhoto(
-                    dto.File,
-                    Constants.PhotoFolder.Categorys,
-                    Category.PhotoPath
-                );
-                await _unitOfWork.SaveAsync();
-                return Ok(Category);
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
-        //[HttpDelete]
-        ////[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteCategory))]
-        //public async Task<IActionResult> DeleteCategory(int ID)
-        //{
-        //    var Category = await _unitOfWork.Category.FindAsync(ID);
-        //    if (!_unitOfWork.Category.Delete(Category))
-        //        return NotFound(Constants.Errors.NotFound);
-        //    else
-        //      await _unitOfWork.SaveAsync();
-        //    return Ok();
-        //}
+        [HttpGet]
+        public async Task<BaseResponse> GetAllCategory([FromQuery] GetAllCategoryRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> CreateCategory([FromForm] CreateCategoryRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> UpdateCategory([FromForm] UpdateCategoryRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ToggleActiveCategory(
+            [FromForm] ToggleActiveCategoryRequest request
+        )
+        {
+            try
+            {
+                return await _service.ToggleActiveAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteCategory( DeleteCategoryRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
     }
 }

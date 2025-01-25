@@ -1,4 +1,9 @@
-﻿namespace ECommerce.BLL.Request
+﻿using System;
+
+namespace ECommerce.BLL.Request
 {
-    public class BaseRequest { }
+    public record BaseRequest
+    {
+        public Guid ID { get; set; }
+    }
 }

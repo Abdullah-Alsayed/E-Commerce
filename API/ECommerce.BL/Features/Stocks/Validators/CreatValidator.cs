@@ -1,0 +1,184 @@
+﻿// Ignore Spelling: Validator BLL Validators
+
+using System.Linq;
+using ECommerce.BLL.Features.Stocks.Requests;
+using ECommerce.Core;
+using ECommerce.DAL;
+using FluentValidation;
+using Microsoft.Extensions.Localization;
+
+namespace ECommerce.BLL.Features.Stocks.Validators
+{
+    public class CreateStockValidator : AbstractValidator<CreateStockRequest>
+    {
+        private readonly IStringLocalizer _localizer;
+
+        public CreateStockValidator(
+            ApplicationDbContext context,
+            IStringLocalizer<CreateStockValidator> localizer
+        )
+        {
+            ClassLevelCascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            _localizer = localizer;
+
+            RuleFor(req => req.Quantity)
+                .GreaterThanOrEqualTo(1)
+                .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
+                .LessThanOrEqualTo(int.MaxValue)
+                .WithMessage(x =>
+                    _localizer[Constants.MessageKeys.MinNumber, int.MaxValue].ToString()
+                )
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                );
+
+            RuleFor(req => req.ProductID)
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .Must(ID =>
+                {
+                    return context.Products.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                })
+                .WithMessage(x =>
+                    $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
+                );
+
+            RuleFor(req => req.VendorID)
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .Must(ID =>
+                {
+                    return context.Vendors.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                })
+                .WithMessage(x =>
+                    $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotExist]}"
+                );
+
+            RuleFor(req => req.Size)
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                );
+
+            RuleForEach(x => x.Size)
+                .ChildRules(Size =>
+                {
+                    Size.RuleFor(req => req.ID)
+                        .NotEmpty()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .NotNull()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .Must(ID =>
+                        {
+                            return context.Sizes.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                        })
+                        .WithMessage(x =>
+                            $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotExist]}"
+                        );
+
+                    Size.RuleFor(req => req.Quantity)
+                        .GreaterThanOrEqualTo(1)
+                        .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
+                        .LessThanOrEqualTo(int.MaxValue)
+                        .WithMessage(x =>
+                            _localizer[Constants.MessageKeys.MinNumber, int.MaxValue].ToString()
+                        )
+                        .NotEmpty()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .NotNull()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        );
+                });
+
+            RuleFor(req => req.Color)
+                .NotEmpty()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .NotNull()
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                );
+
+            RuleForEach(req => req.Color)
+                .ChildRules(color =>
+                {
+                    color
+                        .RuleFor(x => x.ID)
+                        .NotEmpty()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .NotNull()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .Must(ID =>
+                        {
+                            return context.Colors.Any(x =>
+                                x.ID == ID && x.IsActive && !x.IsDeleted
+                            );
+                        })
+                        .WithMessage(x =>
+                            $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotExist]}"
+                        );
+
+                    color
+                        .RuleFor(req => req.Quantity)
+                        .GreaterThanOrEqualTo(1)
+                        .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
+                        .LessThanOrEqualTo(int.MaxValue)
+                        .WithMessage(x =>
+                            _localizer[Constants.MessageKeys.MinNumber, int.MaxValue].ToString()
+                        )
+                        .NotEmpty()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        )
+                        .NotNull()
+                        .WithMessage(x =>
+                            $"{_localizer[Constants.EntityKeys.Quantity]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                        );
+                });
+
+            RuleFor(req => req)
+                .Must(req =>
+                {
+                    var quantitySize = req.Size != null ? req.Size.Sum(x => x.Quantity) : 0;
+                    var quantityColor = req.Color != null ? req.Color.Sum(x => x.Quantity) : 0;
+
+                    return (quantityColor + quantitySize) == req.Quantity;
+                })
+                .WithMessage(x => $"{_localizer[Constants.MessageKeys.quantityNotValid]}");
+        }
+    }
+}

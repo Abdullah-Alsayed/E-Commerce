@@ -1,19 +1,48 @@
 {
   //---------------------------- LOCALIZAER AR ---------------------------//
 
-  "fail": "خطأ العملية",
+  "fail": "لقد حدث خطاء في العملبه حاول مره اخره في وقت لاحق",
   "success": "تمت العملية بنجاح",
   "isRequired": "مطلوب",
   "maxNumber": "{0} اقصي رقم هو",
   "minNumber": "{0} اقل رقم هو",
   "notFound": "ليس موجود",
   "exist": "موجود بالفعل",
+  "notExist": "غير موجود",
 
   //-------------------------------Entitys------------------------------
   "tax": "الضريبه",
   "nameAr": "الاسم العربي",
   "nameEn": "الاسم الانجليزي",
-  "governorates": "المحافظه",
+  "governorate": "المحافظه",
+  "area": "المنطقه",
+  "color": "اللون",
+  "voucher": "القسيمه",
+  "value": "القيمه",
+  "name": "الاسم",
+  "Email": "البريد",
+
+  //--------------------------Errors---------------------------------
+  "InvalidToken": "رمز غير صالح حاول مره اخري",
+  "LoginFiled": "اسم المستخدم أو كلمة المرور غير صحيحة",
+
+
+  // --------------------------- Product ---------------------------
+  "HasReview": "لقد قيمت هذا المنتج بالفعل",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -94,7 +123,6 @@
   "UserNotExsitOrDeleted": "الموظف غير موجود او تم حذفة",
   "RefreshToken": "من فضلك ادخل التوكن",
   "NotValidUsername": "الاسم غير صحيح",
-  "Email": "البريد غير صحيح",
   "Phone": "الرقم غير صحيح",
   "invalidUser": "كود المستخدم غير صحيح",
   "userIsDeleted": "لا يمكن اتمام عملية استرجاع كلمة السر لمستخدم محذوف",
@@ -520,5 +548,9 @@
   "submissionsfolderadd": "إضافة",
   "IdentityUserreset_others_password": "اعادة تعين كلمة المرور لمستخدم اخر",
   "InventoryInventorysystemsetting": "اعدادات المخزن",
-  "InventoryInventoryinvoicedealcreate": "إنشاء صفقة من فاتورة"
+  "InventoryInventoryinvoicedealcreate": "إنشاء صفقة من فاتورة",
+
+
+  /////////////product///////////
+  "Permissions.Products.View": "عرض منتج"
 }

@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using ECommerce.Core;
 using ECommerce.DAL.Enums;
-using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.DAL.Entity
 {
@@ -11,19 +12,19 @@ namespace ECommerce.DAL.Entity
         public User()
         {
             Notifications = new HashSet<Notification>();
-            SliderPhotos = new HashSet<SliderPhoto>();
             Governorates = new HashSet<Governorate>();
             SubCategorys = new HashSet<SubCategory>();
-            PromoCodes = new HashSet<PromoCode>();
+            Reviews = new HashSet<ProductReview>();
+            PromoCodes = new HashSet<Voucher>();
             Categorys = new HashSet<Category>();
             Favorites = new HashSet<Favorite>();
             Products = new HashSet<Product>();
             Expenses = new HashSet<Expense>();
             Settings = new HashSet<Setting>();
             Statuses = new HashSet<Status>();
-            Reviews = new HashSet<Review>();
-            Brands = new HashSet<Brand>();
+            Sliders = new HashSet<Slider>();
             Orders = new HashSet<Order>();
+            Brands = new HashSet<Brand>();
             Areas = new HashSet<Area>();
             Units = new HashSet<Unit>();
         }
@@ -51,26 +52,34 @@ namespace ECommerce.DAL.Entity
         public string CreateBy { get; set; }
         public DateTime? LastLogin { get; set; }
 
-        public bool IsActive { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
+
+        public string DeletedBy { get; set; }
+        public DateTime DeletedAt { get; set; }
 
         [StringLength(50)]
-        public string Language { get; set; } = "ar-EG";
-        public virtual ICollection<SliderPhoto> SliderPhotos { get; set; }
+        public string Language { get; set; } = Constants.Languages.Ar;
+
+        [StringLength(50)]
+        public string Photo { get; set; } = Constants.DefaultPhotos.User;
+
+        public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<SubCategory> SubCategorys { get; set; }
-        public virtual ICollection<PromoCode> PromoCodes { get; set; }
+        public virtual ICollection<Voucher> PromoCodes { get; set; }
         public virtual ICollection<Category> Categorys { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Expense> Expenses { get; set; }
         public virtual ICollection<Setting> Settings { get; set; }
         public virtual ICollection<Status> Statuses { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<ProductReview> Reviews { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Brand> Brands { get; set; }
         public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<Unit> Units { get; set; }
+        public virtual ICollection<History> Histories { get; set; }
     }
 }

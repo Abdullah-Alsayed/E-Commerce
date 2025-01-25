@@ -1,98 +1,98 @@
-﻿using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
+using ECommerce.BLL.Features.Reviews.Requests;
+using ECommerce.BLL.Features.Reviews.Services;
+using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class ReviewController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IReviewService _service;
 
-        public ReviewController(IUnitOfWork unitOfWork, IMapper mapper)
+        public ReviewController(IReviewService service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindReview([FromQuery] FindReviewRequest request)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        //[Route(nameof(FindReview))]
-        public async Task<IActionResult> FindReview(int ID)
+        public async Task<BaseResponse> GetAllReview([FromQuery] GetAllReviewRequest request)
         {
-            var Review = await _unitOfWork.Review.FindAsync(ID);
-            if (Review == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Review);
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        // [Route(nameof(FindAllReview))]
-        public async Task<IActionResult> FindAllReview()
+        public async Task<BaseResponse> GetSearchEntity()
         {
-            var Reviews = await _unitOfWork.Review.GetAllAsync(new[] { "Product" });
-            if (Reviews == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Reviews);
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpPost]
-        //[Route(nameof(CreateReview))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateReview([FromForm] ReviewDto dto)
+        public async Task<BaseResponse> CreateReview([FromForm] CreateReviewRequest request)
         {
-            var Mapping = _mapper.Map<Review>(dto);
-            Mapping.CreateAt = DateTime.Now;
-            Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Review = await _unitOfWork.Review.AddaAync(Mapping);
-            if (Review == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Review);
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
-        // PUT api/<ReviewController>/5
         [HttpPut]
-        //[Route(nameof(UpdateReview))]
-        public async Task<IActionResult> UpdateReview(int ID, [FromForm] ReviewDto dto)
+        public async Task<BaseResponse> UpdateReview([FromForm] UpdateReviewRequest request)
         {
-            var Review = await _unitOfWork.Review.FindAsync(ID);
-            if (Review == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Review);
-                await _unitOfWork.SaveAsync();
-                return Ok(Review);
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteReview))]
-        public async Task<IActionResult> SetAvtiveReview(int ID)
+        public async Task<BaseResponse> DeleteReview( DeleteReviewRequest request)
         {
-            var Review = await _unitOfWork.Review.FindAsync(ID);
-            if (Review == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                _unitOfWork.Review.Delete(Review);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
     }
 }

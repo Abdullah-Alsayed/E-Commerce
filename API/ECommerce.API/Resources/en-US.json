@@ -6,61 +6,66 @@
   "maxNumber": "Max Number is {0}",
   "minNumber": "Min Number is {0}",
   "notFound": "This is not Found",
-  "exist": "Alredy exist",
+  "exist": "Already exist",
+  "notExist": "Not exist",
 
-  //-------------------------------Entitys------------------------------
+  //-------------------------------Entitles------------------------------
   "tax": "Tax",
   "nameAr": "The Arabic Name",
   "nameEn": "The English Name",
-  "governorates": "The Governorate",
-
-  "MessageChangePassword": "Operation done successfully, please login with your new password.",
-  "UserNameRequired": "Username is required.",
-  "PasswordRequired": "Password is required",
-  "tokenRequired": "token Required",
-  "LanguageRequired": "please Enter Language",
-  "InvalidLanguage": "Please Enter Valid Language",
-  "invalidLogin": "The data entered is incorrect",
-  "islocked": "account is Locked please try again later after 1 hours",
-  "invalidCurrency": "Invalid Currency Id",
-  "uniqDay": "Can not duplicate days of work",
-  "finishingHours": "Must startingHours less than finishingHours",
-  "invalidEnum": "invalid Enum",
-  "invalidTimeZone": "Invalid Timezone",
+  "governorate": "The Governorate",
+  "area": "The Area",
+  "color": "The Color",
+  "voucher": "The voucher",
+  "value": "The value",
+  "name": "The Name",
 
 
-  "Saturday": "Saturday",
-  "Sunday": "Sunday",
-  "Monday": "Monday",
-  "Tuesday": "Tuesday",
-  "Wednesday": "Wednesday",
-  "Thursday": "Thursday",
-  "Friday": "Friday",
-  "invalidCurrencies": "Invalid Currencies Id",
+  //--------------------------Errors---------------------------------
+  "InvalidToken": "Invalid Token",
+  "LoginFiled": "The UserName Or Password Incorrect",
+  // --------------------------- Product ---------------------------
 
-  "invalidPhoneNumber": "invalid Phone Number",
-  "canUpdateBusinessTypeIdFirstUpdate": "can Update Business Type Id First Update only",
-  // --------------------------- Secuiry System  ---------------------------
+  "HasReview": "You have already rated this product",
 
-  "AuthorizedDomains": "Invalid Domain",
-  "InvalidIp": "Invalid IP Must Be IPv4 or IPv6  ",
-  "InvalidIpLogin": "Invalid Ip Address",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // --------------------------- Department  ---------------------------
   "departmentname": "Please Enter Department Name",
   "departmentExist": "Department Exist",
-  "ParentIdNotExist": "Parent ID Not Exsit",
+  "ParentIdNotExist": "Parent ID Not Exist",
   "MainDepartment": "can not deleted main department",
   "EmployeeExist": "Employee Exist In Department",
-  "EmployeeNotExist": "Employee Or Department Not Exsit In Employee Department",
+  "EmployeeNotExist": "Employee Or Department Not Exist In Employee Department",
   "EmployeeId": " EmployeeId can not be empty ",
   "DepartmentId": " DepartmentId can not be empty ",
   "DepartmentIsActive": "Department is active ",
   "DepartmentHasEmployee": "Department Has Employee",
 
   // --------------------------- Role  ---------------------------
-  "InvalidBranch": "Ivalid Branch",
-  "ClaimsNotExsit": "Claims Not Exsit",
+  "InvalidBranch": "Invalid Branch",
+  "ClaimsNotExsit": "Claims Not Exist",
   "IsMaster": "Can,t Delete Master Role",
   "DepartmentMain": "Department Main",
   "RoleError": "Role Id {0} Not found",
@@ -81,7 +86,7 @@
   "ExistParentAccount": "Exist Parent Account",
   "RoleIsNotActive": "you can�t assignee user to in active role please select other role",
   "UserAlreadyHasThisRole": "User already has this Role ",
-  "roleIsDeactive": "role Is Deactive",
+  "roleIsDeactive": "role Is De active",
   "roleIsActive": "role Is Active",
   "roleName": "Role Name is exsit please change Role Name ",
 
@@ -360,9 +365,11 @@
 
   "Folder": "Folder",
   "FormTemplate": "FormTemplate",
-  "BusinessDomain": "BusinessDomain"
+  "BusinessDomain": "BusinessDomain",
 
 
 
   //--------------------------- End Claims ---------------------------
+  "Permissions.Products.View": "Products View"
+
 }

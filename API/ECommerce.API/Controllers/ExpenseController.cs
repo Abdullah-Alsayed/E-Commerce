@@ -1,100 +1,100 @@
-﻿using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
+using ECommerce.BLL.Features.Expenses.Requests;
+using ECommerce.BLL.Features.Expenses.Services;
+using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class ExpenseController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IExpenseService _service;
 
-        public ExpenseController(IUnitOfWork unitOfWork, IMapper mapper)
+        public ExpenseController(IExpenseService service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindExpense([FromQuery] FindExpenseRequest request)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        //[Route(nameof(FindExpense))]
-        public async Task<IActionResult> FindExpense(int ID)
+        public async Task<BaseResponse> GetAllExpense([FromQuery] GetAllExpenseRequest request)
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(ID);
-            if (Expense == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Expense);
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        // [Route(nameof(FindAllExpense))]
-        public async Task<IActionResult> FindAllExpense()
+        public async Task<BaseResponse> GetSearchEntity()
         {
-            var Expenses = await _unitOfWork.Expense.GetAllAsync();
-            if (Expenses == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Expenses);
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpPost]
-        //[Route(nameof(CreateExpense))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateExpense([FromForm] ExpenseDto dto)
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> CreateExpense([FromForm] CreateExpenseRequest request)
         {
-            var Mapping = _mapper.Map<Expense>(dto);
-            Mapping.CreateAt = DateTime.Now;
-            Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Expense = await _unitOfWork.Expense.AddaAync(Mapping);
-            if (Expense == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Expense);
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
-        // PUT api/<ExpenseController>/5
         [HttpPut]
-        //[Route(nameof(UpdateExpense))]
-        public async Task<IActionResult> UpdateExpense(int ID, [FromForm] ExpenseDto dto)
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> UpdateExpense([FromForm] UpdateExpenseRequest request)
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(ID);
-            if (Expense == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Expense);
-                Expense.ModifyAt = DateTime.Now;
-                Expense.ModifyBy = _unitOfWork.User.GetUserID(User);
-                await _unitOfWork.SaveAsync();
-                return Ok(Expense);
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteExpense))]
-        public async Task<IActionResult> SetAvtiveExpense(int ID)
+        public async Task<BaseResponse> DeleteExpense( DeleteExpenseRequest request)
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(ID);
-            if (Expense == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                _unitOfWork.Expense.Delete(Expense);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
     }
 }

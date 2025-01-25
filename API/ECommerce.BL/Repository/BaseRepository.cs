@@ -1,49 +1,44 @@
-﻿using Azure;
-using ECommerce.BLL.Futures.Governorates.Requests;
-using ECommerce.BLL.IRepository;
-using ECommerce.BLL.Request;
-using ECommerce.BLL.Response;
-using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-using ECommerce.Services;
-using MailKit.Search;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿// Ignore Spelling: BLL
+
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
+using ECommerce.BL.Repository;
+using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
+using ECommerce.Core;
+using ECommerce.DAL;
+using ECommerce.DAL.Entity;
+using ECommerce.DAL.Enums;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.BLL.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T>
         where T : class
     {
-        private readonly Applicationdbcontext _context;
-        private readonly IHostingEnvironment hosting;
+        private readonly ApplicationDbContext _context;
 
-        public BaseRepository(Applicationdbcontext context, IHostingEnvironment hosting)
+        public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
-            this.hosting = hosting;
         }
 
-        public async Task<T> AddaAync(T Entity)
+        public async Task<T> AddAsync(T Entity)
         {
             await _context.Set<T>().AddAsync(Entity);
             return Entity;
         }
 
-        public async Task<IEnumerable<T>> AddaRangeAync(IEnumerable<T> Entitys)
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys)
         {
             await _context.Set<T>().AddRangeAsync(Entitys);
             return Entitys;
@@ -81,43 +76,58 @@ namespace ECommerce.BLL.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(BaseGridRequest request)
+        public virtual async Task<List<T>> GetAllAsync(
+            BaseGridRequest request,
+            List<string> Includes = null
+        )
         {
             try
             {
                 var result = new List<T>();
                 IQueryable<T> query = _context.Set<T>();
+                if (Includes != null)
+                    foreach (var include in Includes)
+                        query = query.Include(include);
 
-                query = IsDeletedDynamic(query, request.IsDeleted);
-
-                if (!string.IsNullOrEmpty(request.SortBy))
-                    query = OrderByDynamic(query, request.SortBy, request.IsDescending);
-                if (
-                    !string.IsNullOrEmpty(request.SearchFor)
-                    && !string.IsNullOrEmpty(request.SearchBy)
-                )
-                    query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+                query = ApplyDynamicQuery(request, query);
 
                 var total = await query.CountAsync();
                 if (total > 0)
                 {
-                    var skipedPages = request.PageSize * request.PageIndex;
-                    result = await query.Skip(skipedPages).Take(request.PageSize).ToListAsync();
+                    query = ApplyPagination(request, query);
+                    result = await query.AsNoTracking().ToListAsync();
                 }
 
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
                 return new List<T>();
             }
         }
 
+        public static IQueryable<T> ApplyPagination(BaseGridRequest request, IQueryable<T> query)
+        {
+            var skipedPages = request.PageSize * request.PageIndex;
+            return query.Skip(skipedPages).Take(request.PageSize);
+        }
+
+        public IQueryable<T> ApplyDynamicQuery(BaseGridRequest request, IQueryable<T> query)
+        {
+            query = IsDeletedDynamic(query, request.IsDeleted);
+            if (!string.IsNullOrEmpty(request.SortBy))
+                query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+            if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
+                query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+            return query;
+        }
+
         public async Task<IEnumerable<T>> GetAllAsync(string[] Includes = null)
         {
             IQueryable<T> Query = _context.Set<T>();
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+
+            foreach (var include in Includes)
+                Query = Query.Include(include);
 
             return await Query.ToListAsync();
         }
@@ -128,8 +138,9 @@ namespace ECommerce.BLL.Repository
         )
         {
             IQueryable<T> Query = _context.Set<T>();
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
 
             return await Query.Where(Criteria).ToListAsync();
         }
@@ -149,8 +160,11 @@ namespace ECommerce.BLL.Repository
                 else
                     Query = Query.OrderByDescending(orderBy);
             }
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+            {
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
+            }
 
             return await Query.Where(Criteria).ToListAsync();
         }
@@ -169,8 +183,9 @@ namespace ECommerce.BLL.Repository
                 else
                     Query = Query.OrderByDescending(orderBy);
             }
-            foreach (var incluse in Includes)
-                Query = Query.Include(incluse);
+            if (Includes != null)
+                foreach (var incluse in Includes)
+                    Query = Query.Include(incluse);
 
             return await Query.ToListAsync();
         }
@@ -189,38 +204,71 @@ namespace ECommerce.BLL.Repository
             return await Query.FirstOrDefaultAsync(Criteria);
         }
 
-        public async Task<string> UplodPhoto(
-            IFormFile File,
+        public async Task<string> UploadPhoto(
+            IFormFile file,
+            IHostEnvironment environment,
             string FolderName,
-            string PhotoName = null
+            string photoName = null
         )
         {
-            string Photo = null;
-            if (File != null)
+            string Photo = string.Empty;
+            string path = string.Empty;
+            string fullPath = string.Empty;
+            try
             {
-                var Extansion = Path.GetExtension(File.FileName);
-                var GuId = Guid.NewGuid().ToString();
-                Photo = GuId + Extansion;
-                var Filepath = Path.Combine(hosting.ContentRootPath, "Images", FolderName, Photo);
-                await File.CopyToAsync(new FileStream(Filepath, FileMode.Create));
-            }
-            if (PhotoName != null && File != null)
-            {
-                var Filepath = Path.Combine(
-                    hosting.ContentRootPath,
-                    "Images",
-                    FolderName,
-                    PhotoName
-                );
-                System.IO.File.Delete(Filepath);
-            }
-            if (PhotoName != null && File == null)
-                return PhotoName;
+                if (file != null)
+                {
+                    var extension = Path.GetExtension(file.FileName);
+                    var GuId = Guid.NewGuid().ToString();
+                    Photo = GuId + extension;
+                    path = $"{Constants.PhotoFolder.Images}/{FolderName}";
 
-            return Photo;
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+
+                    fullPath = $"{path}/{Photo}";
+                    await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
+                }
+                //Update Photo
+                if (photoName != null && file != null && System.IO.File.Exists(photoName))
+                    System.IO.File.Delete(photoName);
+                if (photoName != null && file == null)
+                    return photoName;
+
+                return fullPath;
+            }
+            catch (Exception ex)
+            {
+                return $"{Constants.PhotoFolder.Images}/default.png";
+            }
         }
 
-        public bool ToggleAvtive(bool IsActive)
+        public async Task<List<string>> UploadPhotos(
+            List<IFormFile> files,
+            IHostEnvironment environment,
+            string FolderName,
+            List<string> ImgNames = null
+        )
+        {
+            var photos = new List<string>();
+            var curentPhoto = string.Empty;
+            var index = 0;
+            foreach (var file in files)
+            {
+                curentPhoto = await UploadPhoto(
+                    file,
+                    environment,
+                    FolderName,
+                    ImgNames != null ? ImgNames[index] : null
+                );
+                photos.Add(curentPhoto);
+                index++;
+            }
+
+            return photos;
+        }
+
+        public bool ToggleActive(bool IsActive)
         {
             return !IsActive;
         }
@@ -322,6 +370,29 @@ namespace ECommerce.BLL.Repository
                 .ToList();
 
             return stringProperties;
+        }
+
+        public async Task<T> FirstAsync()
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync();
+        }
+
+        public async Task<T> FirstAsync(Expression<Func<T, bool>> Criteria)
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync(Criteria);
+        }
+
+        public async Task<T> FirstAsync(
+            Expression<Func<T, bool>> Criteria,
+            string[] Includes = null
+        )
+        {
+            IQueryable<T> Query = _context.Set<T>();
+            if (Includes != null)
+                foreach (var include in Includes)
+                    Query = Query.Include(include);
+
+            return await Query.FirstOrDefaultAsync(Criteria);
         }
     }
 }

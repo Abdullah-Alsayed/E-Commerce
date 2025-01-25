@@ -1,16 +1,10 @@
-﻿using AutoMapper;
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.DAL.Entity;
-using ECommerce.DAL.Enums;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
+﻿using System;
 using System.Threading.Tasks;
-using Constants = ECommerce.Helpers.Constants;
+using ECommerce.BLL.Features.Colors.Requests;
+using ECommerce.BLL.Features.Colors.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
@@ -19,114 +13,86 @@ namespace ECommerce.API.Controllers
     [Authorize]
     public class ColorController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IColorService _service;
 
-        private string _userId = string.Empty;
-
-        public ColorController(
-            IUnitOfWork unitOfWork,
-            IHttpContextAccessor httpContext,
-            IMapper mapper
-        )
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _httpContext = httpContext;
-            _userId = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
+        public ColorController(IColorService service) => _service = service;
 
         [HttpGet]
-        //[Route(nameof(FindColor))]
-        public async Task<IActionResult> FindColor(int ID)
-        {
-            Color Color = await _unitOfWork.Color.FindAsync(ID);
-            return Color == null ? NotFound(Constants.Errors.NotFound) : Ok(Color);
-        }
-
-        [HttpGet]
-        // [Route(nameof(FindAllColor))]
-        public async Task<IActionResult> FindAllColor()
-        {
-            System.Collections.Generic.IEnumerable<Color> Colors =
-                await _unitOfWork.Color.GetAllAsync();
-            return Colors == null ? NotFound(Constants.Errors.NotFound) : Ok(Colors);
-        }
-
-        [HttpPost]
-        //[Route(nameof(CreateColor))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateColor(ColorDto dto)
+        public async Task<BaseResponse> FindColor([FromQuery] FindColorRequest request)
         {
             try
             {
-                Color mapping = _mapper.Map<Color>(dto);
-                mapping.CreateBy = _userId;
-                Color color = await _unitOfWork.Color.AddaAync(mapping);
-                if (color == null)
-                {
-                    return BadRequest(Constants.Errors.CreateFailed);
-                }
-                else
-                {
-                    _ = await _unitOfWork.Notification.AddNotificationAsync(
-                        new Notification
-                        {
-                            CreateBy = _userId,
-                            operationTypeEnum = OperationTypeEnum.Create,
-                            Icon = Constants.NotificationIcons.Add,
-                            Title = "AddColor",
-                            Subject = "AddColor",
-                            Message = "AddColor",
-                        }
-                    );
-                }
-
-                return Ok(color);
+                return await _service.FindAsync(request);
             }
             catch (Exception ex)
             {
-                _ = await _unitOfWork.ErrorLog.AddaAync(
-                    new ErrorLog { Source = ex.Source, Message = ex.StackTrace, }
-                );
-                return BadRequest(ex.Message);
-            }
-            finally
-            {
-                _ = await _unitOfWork.SaveAsync();
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
-        // PUT api/<ColorController>/5
-        [HttpPut]
-        //[Route(nameof(UpdateColor))]
-        public async Task<IActionResult> UpdateColor(int ID, ColorDto dto)
+        [HttpGet]
+        public async Task<BaseResponse> GetAllColor([FromQuery] GetAllColorRequest request)
         {
-            Color color = await _unitOfWork.Color.FindAsync(ID);
-            if (color == null)
+            try
             {
-                return BadRequest(Constants.Errors.NotFound);
+                return await _service.GetAllAsync(request);
             }
-            else
+            catch (Exception ex)
             {
-                _ = _mapper.Map(dto, color);
-                _ = await _unitOfWork.SaveAsync();
-                return Ok(color);
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
-        //[HttpDelete]
-        ////[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteColor))]
-        //public async Task<IActionResult> DeleteColor(int ID)
-        //{
-        //    var color = await _unitOfWork.Color.FindAsync(ID);
-        //    if (!_unitOfWork.Color.Delete(color))
-        //        return NotFound(Constants.Errors.NotFound);
-        //    else
-        //      await _unitOfWork.SaveAsync();
-        //    return Ok();
-        //}
+        [HttpGet]
+        public async Task<BaseResponse> GetSearchEntity()
+        {
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse> CreateColor([FromForm] CreateColorRequest request)
+        {
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> UpdateColor([FromForm] UpdateColorRequest request)
+        {
+            try
+            {
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpDelete]
+        public async Task<BaseResponse> DeleteColor( DeleteColorRequest request)
+        {
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
     }
 }

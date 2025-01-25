@@ -2,15 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Enums\LanguageEnum.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Enums\LanguageEnum.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
@@ -29,7 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ECommerce.Helpers\ECommerce.Helpers.csproj" />
+    <ProjectReference Include="..\ECommerce.Helpers\ECommerce.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

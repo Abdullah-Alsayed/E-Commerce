@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Helpers;
+﻿namespace ECommerce.Core;
 
 public class JWTHelpers
 {

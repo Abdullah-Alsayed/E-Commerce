@@ -12,8 +12,6 @@ namespace ECommerce.DAL.Entity
             Orders = new HashSet<Order>();
         }
 
-        public Guid ID { get; set; }
-
         [StringLength(100), Required]
         public string NameAR { get; set; }
 

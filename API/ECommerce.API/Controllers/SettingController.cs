@@ -1,51 +1,46 @@
-﻿using AutoMapper;
-using ECommerce.BLL.IRepository;
-using ECommerce.DAL;
-using ECommerce.Helpers;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using ECommerce.BLL.Features.Settings.Requests;
+using ECommerce.BLL.Features.Settings.Services;
+using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class SettingController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _Mapper;
+        private readonly ISettingService _service;
 
-        public SettingController(IUnitOfWork UnitOfWork, IMapper mapper)
-        {
-            _unitOfWork = UnitOfWork;
-            _Mapper = mapper;
-        }
+        public SettingController(ISettingService service) => _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> UpdateSetting()
+        public async Task<BaseResponse> GetSetting()
         {
-            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID != Guid.Empty, null);
-            if (Setting == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Setting);
+            try
+            {
+                return await _service.GetAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateSetting(SettingDto Dto)
+        [Consumes("multipart/form-data")]
+        public async Task<BaseResponse> UpdateSetting([FromForm] UpdateSettingRequest request)
         {
-            var Setting = await _unitOfWork.Setting.GetItemAsync(s => s.ID != Guid.Empty);
-            if (Setting == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
+            try
             {
-                _Mapper.Map(Dto, Setting);
-                Setting.ModifyBy = _unitOfWork.User.GetUserID(User);
-                Setting.ModifyAt = DateTime.Now;
-                await _unitOfWork.SaveAsync();
-                return Ok(Setting);
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
     }

@@ -1,100 +1,98 @@
-﻿using ECommerce.BLL.DTO;
-using ECommerce.BLL.IRepository;
-using ECommerce.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
+using ECommerce.BLL.Features.Statuses.Requests;
+using ECommerce.BLL.Features.Statuses.Services;
+using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-using ECommerce.DAL.Entity;
-using ECommerce.Helpers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize]
     public class StatusController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IStatusService _service;
 
-        public StatusController(IUnitOfWork unitOfWork, IMapper mapper)
+        public StatusController(IStatusService service) => _service = service;
+
+        [HttpGet]
+        public async Task<BaseResponse> FindStatus([FromQuery] FindStatusRequest request)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            try
+            {
+                return await _service.FindAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        //[Route(nameof(FindStatus))]
-        public async Task<IActionResult> FindStatus(int ID)
+        public async Task<BaseResponse> GetAllStatus([FromQuery] GetAllStatusRequest request)
         {
-            var Status = await _unitOfWork.Status.FindAsync(ID);
-            if (Status == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Status);
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpGet]
-        // [Route(nameof(FindAllStatus))]
-        public async Task<IActionResult> FindAllStatus()
+        public async Task<BaseResponse> GetSearchEntity()
         {
-            var Statuss = await _unitOfWork.Status.GetAllAsync();
-            if (Statuss == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                return Ok(Statuss);
+            try
+            {
+                return await _service.GetSearchEntityAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
         [HttpPost]
-        //[Route(nameof(CreateStatus))]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        public async Task<IActionResult> CreateStatus(StatusDto dto)
+        public async Task<BaseResponse> CreateStatus([FromForm] CreateStatusRequest request)
         {
-            var Mapping = _mapper.Map<Status>(dto);
-            Mapping.CreateAt = DateTime.Now;
-            Mapping.CreateBy = _unitOfWork.User.GetUserID(User);
-
-            var Status = await _unitOfWork.Status.AddaAync(Mapping);
-            if (Status == null)
-                return BadRequest(Constants.Errors.CreateFailed);
-            else
-                await _unitOfWork.SaveAsync();
-            return Ok(Status);
+            try
+            {
+                return await _service.CreateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
 
-        // PUT api/<StatusController>/5
         [HttpPut]
-        //[Route(nameof(UpdateStatus))]
-        public async Task<IActionResult> UpdateStatus(int ID, StatusDto dto)
+        public async Task<BaseResponse> UpdateStatus([FromForm] UpdateStatusRequest request)
         {
-            var Status = await _unitOfWork.Status.FindAsync(ID);
-            if (Status == null)
-                return BadRequest(Constants.Errors.NotFound);
-            else
+            try
             {
-                _mapper.Map(dto, Status);
-                Status.ModifyAt = DateTime.Now;
-                Status.ModifyBy = _unitOfWork.User.GetUserID(User);
-                await _unitOfWork.SaveAsync();
-                return Ok(Status);
+                return await _service.UpdateAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = nameof(Constants.Roles.Admin))]
-        //[Route(nameof(DeleteStatus))]
-        public async Task<IActionResult> SetAvtiveStatus(int ID)
+        public async Task<BaseResponse> DeleteStatus( DeleteStatusRequest request)
         {
-            var Status = await _unitOfWork.Status.FindAsync(ID);
-            if (Status == null)
-                return NotFound(Constants.Errors.NotFound);
-            else
-                Status.IsActive = _unitOfWork.Status.ToggleAvtive(Status.IsActive);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            try
+            {
+                return await _service.DeleteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
         }
     }
 }

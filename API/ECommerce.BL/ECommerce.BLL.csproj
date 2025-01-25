@@ -12,7 +12,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.DAL\ECommerce.DAL.csproj" />
-    <ProjectReference Include="..\ECommerce.Services\ECommerce.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Account\Dtos\" />
+    <Folder Include="Interface\" />
   </ItemGroup>
 
 </Project>

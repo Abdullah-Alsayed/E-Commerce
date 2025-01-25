@@ -1,10 +1,13 @@
-﻿using ECommerce.BLL.Futures.Account.Dtos;
-using ECommerce.BLL.Futures.Account.Requests;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Users.Dtos;
+using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 
 namespace ECommerce.BLL.IRepository
 {
@@ -14,19 +17,20 @@ namespace ECommerce.BLL.IRepository
         Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId
+            string userId,
+            string Role = null
         );
-        Task SendConfirmEmailAsync(User user);
-        Task<IdentityResult> ConfirmEmailAsync(User User, string Toke);
+        Task<bool> SendConfirmEmailAsync(User user);
+        Task<BaseResponse> ConfirmEmailAsync(string userID, string toke);
         Task ForgotPasswordAsync(object Entity);
         Task ResetPasswordAsync(string Code);
         Task UpdatePasswordAsync(string username, string password);
         Task<User> FindUserByIDAsync(string UserID);
         Task<User> FindUserByNameAsync(string Name);
         Task<User> FindUserByEmailAsync(string Email);
-        Task<bool> EmailExisteAsync(string email);
-        bool PhoneExistes(string PhoneNumber);
-        Task<bool> UserNameExistesAsync(string userName);
+        Task<bool> EmailExistAsync(string email);
+        bool PhoneExist(string PhoneNumber);
+        Task<bool> UserNameExistAsync(string userName);
         Task<bool> IsConfirmedAsync(User user);
         string GetUserID(ClaimsPrincipal user);
         string GetUserName(ClaimsPrincipal user);
@@ -34,5 +38,12 @@ namespace ECommerce.BLL.IRepository
         bool IsAuthenticated(ClaimsPrincipal user);
         Task LoginAsync(User user, bool RememberMe);
         Task LogOffAsync();
+        Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request, string userId);
+        Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request, string userId);
+        Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request, string userId);
+        Task<User> DeleteAsync(string ID, string token);
+        bool IsTokenExperts(StringValues token);
+        Task<List<User>> GetAllAsync(GetAllUserRequest request);
+        Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request);
     }
 }

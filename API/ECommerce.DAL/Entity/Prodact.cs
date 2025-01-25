@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.DAL.Entity
 {
@@ -9,22 +9,23 @@ namespace ECommerce.DAL.Entity
         public Product()
         {
             ProductOrders = new HashSet<ProductOrder>();
-            ProductPhotos = new HashSet<ProductPhoto>();
             Favorites = new HashSet<Favorite>();
-            Reviews = new HashSet<Review>();
+            Reviews = new HashSet<ProductReview>();
         }
 
-        public Guid BrandID { get; set; }
-        public Guid UnitID { get; set; }
+        public Guid? BrandID { get; set; }
 
         [Required]
-        public Guid SubCategoryID { get; set; }
+        public Guid UnitID { get; set; }
+
+        public Guid? SubCategoryID { get; set; }
 
         [Required]
         public Guid CategoryID { get; set; }
 
         [Required, StringLength(150)]
         public string Title { get; set; }
+
         public string Description { get; set; }
 
         [Required, Range(1, double.MaxValue)]
@@ -33,16 +34,19 @@ namespace ECommerce.DAL.Entity
         [Range(0, double.MaxValue)]
         public double DiscountLabel { get; set; }
 
-        public virtual SubCategory SubCategory { get; set; } = new SubCategory();
-        public virtual Category Category { get; set; } = new Category();
-        public virtual Brand Brand { get; set; } = new Brand();
-        public virtual Unit Unit { get; set; } = new Unit();
+        public List<string> ProductPhotos { get; set; }
+
+        public virtual SubCategory SubCategory { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual Brand Brand { get; set; }
+        public virtual Unit Unit { get; set; }
 
         public virtual ICollection<ProductColor> ProductColors { get; set; }
+        public virtual ICollection<ProductSize> ProductSizes { get; set; }
         public virtual ICollection<ProductOrder> ProductOrders { get; set; }
-        public virtual ICollection<ProductPhoto> ProductPhotos { get; set; }
-        public virtual ICollection<ProductStock> ProductStocks { get; set; }
+        public virtual ICollection<Stock> ProductStocks { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<ProductReview> Reviews { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }
