@@ -1,7 +1,6 @@
 @* ! Brand demo (display only for navbar-full and hide on below xl) *@
-@{
-
-    var userPhoto = User.Identity.IsAuthenticated ? AuthHelper.GetClaimValue(User, Constants.Claims.UserPhoto) : "/img/avatars/1.png";
+@{  
+    var userPhoto = User.Identity.IsAuthenticated ? Context.Request.Cookies[Constants.Claims.UserPhoto] : $"/Images/{Constants.PhotoFolder.User}/{Constants.DefaultPhotos.User}";
 }
 @inject IStringLocalizer<AccountController> _Localizer;
 
@@ -73,12 +72,12 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <a class="dropdown-item" href="@Url.Action("UpdateLanguage","User",new { language = Constants.Languages.En , path = ViewContext.HttpContext.Request.Path})" data-language="en" data-text-direction="ltr">
+                    <a class="dropdown-item" href="@Url.Action("UpdateLanguage","Account",new { language = Constants.Languages.En , path = ViewContext.HttpContext.Request.Path})" data-language="en" data-text-direction="ltr">
                         <span class="align-middle">English</span>
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="@Url.Action("UpdateLanguage","User",new { language =Constants.Languages.Ar,path = ViewContext.HttpContext.Request.Path})" data-language="ar" data-text-direction="rtl">
+                    <a class="dropdown-item" href="@Url.Action("UpdateLanguage","Account",new { language =Constants.Languages.Ar,path = ViewContext.HttpContext.Request.Path})" data-language="ar" data-text-direction="rtl">
                         <span class="align-middle">Arabic</span>
                     </a>
                 </li>
@@ -374,7 +373,7 @@
             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                 <div class="avatar avatar-online">
 
-                    <img src="@userPhoto" alt = "user Photo" class="w-px-40 h-auto rounded-circle">
+                    <img src="/Images/@Constants.PhotoFolder.User/@userPhoto" alt="user Photo" class="w-px-40 h-auto rounded-circle">
                 </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -383,14 +382,14 @@
                         <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                                 <div class="avatar avatar-online">
-                                    <img src="@userPhoto" alt="user photo" class="w-px-40 h-auto rounded-circle">
+                                    <img src="/Images/@Constants.PhotoFolder.User/@userPhoto" alt="user photo" class="w-px-40 h-auto rounded-circle">
                                 </div>
                             </div>
                             <div class="flex-grow-1">
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <span class="fw-medium d-block">@AuthHelper.GetClaimValue(User, Constants.Claims.Name)</span>
-                                    <small class="text-muted">@AuthHelper.GetClaimValue(User, Constants.Claims.UserRole)</small>
+                                    <span class="fw-medium d-block">@Context.Request.Cookies[Constants.Claims.FullName]</span>
+                                    <small class="text-muted">@Context.Request.Cookies[Constants.Claims.RoleName]</small>
                                 }
                             </div>
                         </div>
@@ -406,7 +405,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="btn btn-sm btn-danger d-flex waves-effect waves-light" href="/User/Logout">
+                    <a class="btn btn-sm btn-danger d-flex waves-effect waves-light" href="/Account/Logout">
                         <small class="align-middle">@_Localizer["Logout"]</small>
                         <i class="ri-logout-box-r-line ms-2 ri-16px"></i>
                     </a>

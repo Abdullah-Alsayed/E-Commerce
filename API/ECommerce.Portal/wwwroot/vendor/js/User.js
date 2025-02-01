@@ -25,7 +25,7 @@ function Login(event) {
     type: 'POST',
     data: formData,
     success: function (result) {
-      if (result.success) {
+        if (result.isSuccess) {
         location.replace("/");
       }
       else {

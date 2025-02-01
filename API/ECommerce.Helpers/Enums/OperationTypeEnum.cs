@@ -22,6 +22,7 @@
         ResetPassword,
         SendConfirmEmail,
         ChangeUserPassword,
-        Notify
+        Notify,
+        UpdateLanguage
     }
 }

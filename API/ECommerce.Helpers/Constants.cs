@@ -1,4 +1,6 @@
 ﻿
+using System.IO;
+
 namespace ECommerce.Core
 {
     public static class Constants
@@ -151,6 +153,7 @@ namespace ECommerce.Core
             public const string Expense= "Expense";
             public const string Slider= "Slider";
             public const string Products= "Products";
+            public const string User= "User";
         }
 
         public static class DefaultPhotos
@@ -199,6 +202,16 @@ namespace ECommerce.Core
             public const string UserRole = "UserRole";
 
             public const string Language = "Language";
+
+            public const string ID = "ID";
+
+            public const string UserName = "UserName";
+
+            public const string FirstName = "FirstName";
+
+            public const string LastName = "LastName";
+
+            public const string FullName = "FullName";
         }
     }
 }

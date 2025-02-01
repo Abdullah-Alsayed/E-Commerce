@@ -5,9 +5,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Azure.Core;
+using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
@@ -203,8 +205,8 @@ namespace ECommerce.BLL.Repository
         public async Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x =>
-                x.UserName == request.UserName.ToLower()
-                || x.Email == request.UserName.ToLower()
+                x.UserName.ToLower() == request.UserName.ToLower()
+                || x.Email.ToLower() == request.UserName.ToLower()
                 || x.PhoneNumber == request.UserName
             );
             if (user != null)
@@ -219,16 +221,25 @@ namespace ECommerce.BLL.Repository
                 if (result.Succeeded)
                 {
                     var claims = await GetUserClaims(user);
+
+                    // Merge all claims while ensuring uniqueness by Type
+                    var authProperties = new AuthenticationProperties { AllowRefresh = true };
+
+                    // Create a new ClaimsIdentity
                     var claimsIdentity = new ClaimsIdentity(
                         claims,
                         CookieAuthenticationDefaults.AuthenticationScheme
                     );
-                    var authProperties = new AuthenticationProperties { AllowRefresh = true, };
+
+                    await SetDataOnCookie(httpContext, user);
+
+                    // Sign in the user with the updated claims
                     await httpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties
                     );
+
                     return new BaseResponse<LoginDto>
                     {
                         IsSuccess = result.Succeeded,
@@ -690,20 +701,23 @@ namespace ECommerce.BLL.Repository
                 roleClaims.Add(new Claim("roles", role));
             }
 
-            IEnumerable<Claim> claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("ID", user.Id),
-                new Claim("Language", user.Language),
-                new Claim("UserName", user.UserName),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-                new Claim("FullName", $"{user.FirstName} {user.LastName}")
+                new Claim(Constants.Claims.ID, user.Id),
+                new Claim(Constants.Claims.Language, user.Language),
+                new Claim(Constants.Claims.UserName, user.UserName),
+                new Claim(Constants.Claims.FirstName, user.FirstName),
+                new Claim(Constants.Claims.LastName, user.LastName),
+                new Claim(Constants.Claims.FullName, $"{user.FirstName} {user.LastName}"),
+                new Claim(Constants.Claims.UserPhoto, user.Photo)
             }
-                .Union(userClaims)
-                .Union(roleClaims);
+                .Concat(userClaims)
+                .Concat(roleClaims)
+                .Concat(new List<Claim> { new Claim("abdullah", "value") });
+
             return claims;
         }
 
@@ -749,6 +763,24 @@ namespace ECommerce.BLL.Repository
             );
 
             return query.Provider.CreateQuery<Q>(resultExpression);
+        }
+
+        private async Task SetDataOnCookie(HttpContext httpContext, User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleName = string.Join(",", roles);
+
+            httpContext.Response.Cookies.Append(Constants.Claims.ID, user.Id);
+            httpContext.Response.Cookies.Append(Constants.Claims.Language, user.Language);
+            httpContext.Response.Cookies.Append(Constants.Claims.UserName, user.UserName);
+            httpContext.Response.Cookies.Append(Constants.Claims.FirstName, user.FirstName);
+            httpContext.Response.Cookies.Append(Constants.Claims.LastName, user.LastName);
+            httpContext.Response.Cookies.Append(
+                Constants.Claims.FullName,
+                $"{user.FirstName} {user.LastName}"
+            );
+            httpContext.Response.Cookies.Append(Constants.Claims.UserPhoto, user.Photo);
+            httpContext.Response.Cookies.Append(Constants.Claims.RoleName, roleName);
         }
 
         #endregion

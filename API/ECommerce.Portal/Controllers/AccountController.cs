@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Response;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.API.Controllers
 {
@@ -48,7 +50,8 @@ namespace ECommerce.API.Controllers
         {
             try
             {
-                return await _service.WebLoginAsync(request, HttpContext);
+                var result = await _service.WebLoginAsync(request, HttpContext);
+                return result;
             }
             catch (Exception ex)
             {
@@ -188,17 +191,16 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<BaseResponse> LogOfAsync()
+        public async Task<IActionResult> Logout()
         {
-            try
-            {
-                return await _service.LogOfAsync();
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+            await HttpContext.SignOutAsync();
+            return Redirect("Login");
+        }
+
+        public async Task<IActionResult> UpdateLanguage(string language, string path)
+        {
+            var response = await _service.UpdateLanguage(language, HttpContext, Response);
+            return Redirect(path);
         }
     }
 }

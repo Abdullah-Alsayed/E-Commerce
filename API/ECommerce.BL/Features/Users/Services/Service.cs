@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Azure.Core;
@@ -13,10 +14,14 @@ using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
+using Twilio.Http;
 using static ECommerce.Core.Constants;
 
 namespace ECommerce.BLL.Features.Users.Services
@@ -25,8 +30,8 @@ namespace ECommerce.BLL.Features.Users.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
         private readonly IStringLocalizer<UserService> _localizer;
+        private readonly IUserContext _userContext;
 
         private string _userId = Constants.System;
         private string _userName = Constants.System;
@@ -35,12 +40,12 @@ namespace ECommerce.BLL.Features.Users.Services
         public UserService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<UserService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
@@ -52,20 +57,6 @@ namespace ECommerce.BLL.Features.Users.Services
             });
             _mapper = new Mapper(config);
             #endregion initilize mapper
-
-            #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
-
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
-
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
-            #endregion
         }
 
         public async Task<BaseResponse> RegisterAsync(CreateUserRequest request)
@@ -466,6 +457,58 @@ namespace ECommerce.BLL.Features.Users.Services
             }
         }
 
+        public async Task<BaseResponse> UpdateLanguage(
+            string language,
+            HttpContext httpContext,
+            HttpResponse response
+        )
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var user = await _unitOfWork.User.FindUserByIDAsync(_userContext.UserId.Value);
+                user.Language = language;
+                var result = _mapper.Map<UserDto>(user);
+                modifyRows++;
+
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    await UpdateLanguageOnCookie(language, httpContext, response);
+                    return new BaseResponse<UserDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateLanguage,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(
@@ -488,6 +531,32 @@ namespace ECommerce.BLL.Features.Users.Services
                 }
             );
 
+        private static async Task UpdateLanguageOnCookie(
+            string language,
+            HttpContext httpContext,
+            HttpResponse response
+        )
+        {
+            var currentUser = httpContext.User;
+            var claimsIdentity = currentUser.Identity as ClaimsIdentity;
+
+            // Update the claims with the new language
+            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("Language"));
+
+            claimsIdentity.AddClaim(new Claim("Language", language ?? ""));
+
+            // Update the authentication cookie with the new claims
+            await httpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { AllowRefresh = true }
+            );
+            response.Cookies.Append(
+                "PreferredLanguage",
+                language,
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+        }
         #endregion
     }
 }

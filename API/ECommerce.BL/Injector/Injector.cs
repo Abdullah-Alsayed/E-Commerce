@@ -28,6 +28,7 @@ using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.IRepository;
 using ECommerce.Core.Services.MailServices;
+using ECommerce.Core.Services.User;
 using ECommerce.Core.Services.WhatsappServices;
 using ECommerce.Core.Services.WhatsappServices.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,9 @@ namespace ECommerce.BLL.Injector
 
             //****************** Services ******************************
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            //****************** UserContext ******************************
+            services.AddScoped<IUserContext, UserContext>();
 
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();

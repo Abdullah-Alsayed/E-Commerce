@@ -26,5 +26,10 @@ namespace ECommerce.BLL.Features.Users.Services
         Task<BaseResponse> SendConfirmEmailAsync();
         Task<BaseResponse> UserInfoAsync();
         Task<BaseResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request);
+        Task<BaseResponse> UpdateLanguage(
+            string language,
+            HttpContext httpContext,
+            HttpResponse response
+        );
     }
 }
