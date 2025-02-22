@@ -47,7 +47,7 @@
 
         @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
         {
-            <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/User/List") ? " active open" : "")'>
+            <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/Account/List") ? " active open" : "")'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
                     <div data-i18n="@_Localizer["Roles&PUsers"]">@_Localizer["Roles&Users"]</div>

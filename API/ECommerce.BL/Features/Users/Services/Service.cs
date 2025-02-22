@@ -4,24 +4,21 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using Azure.Core;
-using ECommerce.BLL.Features.Units.Dtos;
-using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Users.Dtos;
-using ECommerce.BLL.Features.Users.Dtos;
-using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.AvatarService;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
-using Twilio.Http;
 using static ECommerce.Core.Constants;
 
 namespace ECommerce.BLL.Features.Users.Services
@@ -32,26 +29,28 @@ namespace ECommerce.BLL.Features.Users.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStringLocalizer<UserService> _localizer;
         private readonly IUserContext _userContext;
-
-        private string _userId = Constants.System;
-        private string _userName = Constants.System;
-        private string _lang = Languages.Ar;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IValidator<CreateUserRequest> _validator;
 
         public UserService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<UserService> localizer,
-            IUserContext userContext
+            IUserContext userContext,
+            IHttpContextAccessor httpContext,
+            IValidator<CreateUserRequest> validator
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
             _userContext = userContext;
-
+            _httpContext = httpContext;
+            _validator = validator;
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
                 cfg.CreateMap<User, UserDto>().ReverseMap();
+                cfg.CreateMap<Role, RoleDto>().ReverseMap();
                 cfg.CreateMap<User, CreateUserRequest>().ReverseMap();
                 cfg.CreateMap<User, UpdateUserRequest>().ReverseMap();
             });
@@ -65,11 +64,21 @@ namespace ECommerce.BLL.Features.Users.Services
             {
                 var user = _mapper.Map<User>(request);
                 user.Language = Constants.Languages.Ar;
-                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
-                var result = await _unitOfWork.User.CreateUserAsync(
+                user.CreateBy = string.IsNullOrEmpty(_userContext.UserId.Value)
+                    ? Constants.System
+                    : _userContext.UserId.Value;
+                if (string.IsNullOrEmpty(request.RoleId))
+                {
+                    var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
+                    user.RoleId = role?.Id ?? Guid.Empty.ToString();
+                }
+                else
+                    user.RoleId = request.RoleId;
+
+                var result = await _unitOfWork.User.RegisterUserAsync(
                     user,
                     request.Password,
-                    _userId
+                    _userContext.UserId.Value
                 );
                 return new BaseResponse<CreateUserDto>
                 {
@@ -97,17 +106,65 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
+                //var validator = await _validator.ValidateAsync(request);
+
+                //if (validator.Errors.Any())
+                //    return new BaseResponse
+                //    {
+                //        IsSuccess = false,
+                //        Message = string.Join(",", validator.Errors)
+                //    };
+
                 var user = _mapper.Map<User>(request);
-                user.UserName = request.UserName.ToLower();
                 user.Email = request.Email.ToLower();
                 user.Language = Constants.Languages.Ar;
-                user.CreateBy = string.IsNullOrEmpty(_userId) ? Constants.System : _userId;
+                if (string.IsNullOrEmpty(request.RoleId))
+                {
+                    var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
+                    user.RoleId = role?.Id ?? Guid.Empty.ToString();
+                }
+                else
+                    user.RoleId = request.RoleId;
+
+                user.CreateBy = string.IsNullOrEmpty(_userContext.UserId.Value)
+                    ? Constants.System
+                    : _userContext.UserId.Value;
+
                 var result = await _unitOfWork.User.CreateUserAsync(
                     user,
                     request.Password,
-                    _userId,
-                    Constants.Roles.User
+                    _userContext.UserId.Value
                 );
+
+                if (result.IsSuccess && !string.IsNullOrEmpty(user.Id))
+                    await _unitOfWork.Role.AddUserToRoleAsync(
+                        new Roles.Requests.AddUserToRoleRequest
+                        {
+                            UserID = user.Id,
+                            RoleIDs = new List<string> { user.RoleId }
+                        }
+                    );
+                if (result.IsSuccess)
+                {
+                    if (request.ProfilePicture != null)
+                        user.Photo = await _unitOfWork.User.UploadPhotoAsync(
+                            request.ProfilePicture,
+                            Constants.PhotoFolder.User
+                        );
+                    else
+                    {
+                        var file = await AvatarService.GetAvatarAsFormFileAsync(
+                            $"{request.FirstName} {request.LastName}"
+                        );
+                        var url = await _unitOfWork.User.UploadPhotoAsync(
+                            file,
+                            Constants.PhotoFolder.User
+                        );
+
+                        user.Photo = url;
+                    }
+                    await _unitOfWork.SaveAsync();
+                }
                 return new BaseResponse<CreateUserDto>
                 {
                     IsSuccess = result.IsSuccess,
@@ -137,7 +194,7 @@ namespace ECommerce.BLL.Features.Users.Services
             try
             {
                 var User = await _unitOfWork.User.DeleteAsync(request.ID.ToString(), request.Token);
-                User.DeletedBy = _userId;
+                User.DeletedBy = _userContext.UserId.Value;
                 User.DeletedAt = DateTime.UtcNow;
                 User.IsDeleted = true;
                 var result = _mapper.Map<UserDto>(User);
@@ -227,7 +284,8 @@ namespace ECommerce.BLL.Features.Users.Services
         public async Task<BaseResponse> UserInfoAsync()
         {
             var result = _unitOfWork.User.IsAuthenticated(_httpContext.HttpContext.User);
-            List<string> userInfo = new() { _userName, _userId, result.ToString() };
+            List<string> userInfo =
+                new() { _userContext.UserName.Value, _userContext.UserId.Value, result.ToString() };
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -266,7 +324,10 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ChangePassword(request, _userId);
+                var result = await _unitOfWork.User.ChangePassword(
+                    request,
+                    _userContext.UserId.Value
+                );
                 return new BaseResponse
                 {
                     IsSuccess = result.IsSuccess,
@@ -318,7 +379,10 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ForgotPassword(request, _userId);
+                var result = await _unitOfWork.User.ForgotPassword(
+                    request,
+                    _userContext.UserId.Value
+                );
                 return new BaseResponse { IsSuccess = result.IsSuccess, Message = result.Message };
             }
             catch (Exception ex)
@@ -340,7 +404,10 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ResetPassword(request, _userId);
+                var result = await _unitOfWork.User.ResetPassword(
+                    request,
+                    _userContext.UserId.Value
+                );
                 return new BaseResponse { IsSuccess = result.IsSuccess, Message = result.Message };
             }
             catch (Exception ex)
@@ -384,7 +451,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var user = await _unitOfWork.User.FindUserByIDAsync(_userId);
+                var user = await _unitOfWork.User.FindUserByIDAsync(_userContext.UserId.Value);
                 var isConfirm = await _unitOfWork.User.IsConfirmedAsync(user);
                 if (!isConfirm)
                 {
@@ -421,16 +488,18 @@ namespace ECommerce.BLL.Features.Users.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllUserRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<UserDto>>>> GetAllAsync(
+            GetAllUserRequest request
+        )
         {
             try
             {
                 request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
-                    ? nameof(User.UserName)
+                    ? nameof(User.CreateAt)
                     : request.SearchBy;
 
-                var Users = await _unitOfWork.User.GetAllAsync(request);
-                var response = _mapper.Map<List<UserDto>>(Users);
+                var users = await _unitOfWork.User.GetAllAsync(request);
+                var response = _mapper.Map<List<UserDto>>(users);
                 return new BaseResponse<BaseGridResponse<List<UserDto>>>
                 {
                     IsSuccess = true,
@@ -438,7 +507,7 @@ namespace ECommerce.BLL.Features.Users.Services
                     Result = new BaseGridResponse<List<UserDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response.Count
                     }
                 };
             }
@@ -449,7 +518,31 @@ namespace ECommerce.BLL.Features.Users.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.User
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<UserDto>>>
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> GetAsync(string userId)
+        {
+            try
+            {
+                var user = await _unitOfWork.User.GetAsync(userId);
+                var response = _mapper.Map<UserDto>(user);
+                return new BaseResponse<UserDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = response
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Get, EntitiesEnum.User);
+                return new BaseResponse<BaseGridResponse<List<UserDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -514,8 +607,8 @@ namespace ECommerce.BLL.Features.Users.Services
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification
                 {
-                    CreateBy = _userId,
-                    CreateName = _userName,
+                    CreateBy = _userContext.UserId.Value,
+                    CreateName = _userContext.UserName.Value,
                     OperationType = action,
                     Entity = EntitiesEnum.User
                 }
@@ -525,7 +618,7 @@ namespace ECommerce.BLL.Features.Users.Services
             await _unitOfWork.History.AddAsync(
                 new History
                 {
-                    UserID = _userId,
+                    UserID = _userContext.UserId.Value,
                     Action = action,
                     Entity = EntitiesEnum.User
                 }
@@ -557,6 +650,12 @@ namespace ECommerce.BLL.Features.Users.Services
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
             );
         }
+
+        public async Task SeedData()
+        {
+            await _unitOfWork.User.SeedData();
+        }
+
         #endregion
     }
 }

@@ -2,5 +2,8 @@
 
 namespace ECommerce.BLL.Features.Users.Requests
 {
-    public record GetAllUserRequest : BaseGridRequest { }
+    public record GetAllUserRequest : BaseGridRequest
+    {
+        public bool StaffOnly { get; set; } = false;
+    }
 }

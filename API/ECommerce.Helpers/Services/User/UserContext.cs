@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.Core.Services.User;
@@ -24,7 +26,9 @@ public class UserContext : IUserContext
             )
             {
                 var userId = _httpContextAccessor
-                    .HttpContext.User.Claims.FirstOrDefault(x => x.Type == Constants.Claims.ID)
+                    .HttpContext.User.Claims.FirstOrDefault(x =>
+                        x.Type == ClaimTypes.NameIdentifier
+                    )
                     ?.Value;
 
                 if (string.IsNullOrEmpty(userId))

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using ECommerce.BLL.Request;
 using ECommerce.DAL.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.BLL.Features.Users.Requests
 {
@@ -13,8 +14,7 @@ namespace ECommerce.BLL.Features.Users.Requests
         [Required, StringLength(100)]
         public string LastName { get; set; }
 
-        [Required]
-        public DateTime CreatDate { get; set; }
+        public string RoleId { get; set; }
 
         [Required]
         public UserGanderEnum Gander { get; set; }
@@ -36,15 +36,9 @@ namespace ECommerce.BLL.Features.Users.Requests
 
         [Compare(nameof(Password))]
         public string ComparePassword { get; set; }
-        public bool Rememberme { get; set; }
 
-        [
-            Required,
-            RegularExpression(
-                @"^([0-9]{11})$",
-                ErrorMessage = "The PhoneNumber field is not a valid"
-            )
-        ]
         public string PhoneNumber { get; set; }
+
+        public IFormFile ProfilePicture { get; set; }
     }
 }

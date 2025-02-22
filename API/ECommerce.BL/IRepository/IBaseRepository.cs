@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ECommerce.BLL.Request;
@@ -38,15 +39,10 @@ namespace ECommerce.BLL.IRepository
             string orderByDirection = Constants.OrderBY.Ascending
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
-        Task<string> UploadPhoto(
-            IFormFile file,
-            IHostEnvironment environment,
-            string FolderName,
-            string photoName = null
-        );
+        Task<string> UploadPhotoAsync(IFormFile file, string folderName, string photoName = null);
+        Task<string> UploadPhotoAsync(Stream file, string folderName);
         Task<List<string>> UploadPhotos(
             List<IFormFile> Files,
-            IHostEnvironment environment,
             string FolderName,
             List<string> ImgNames = null
         );

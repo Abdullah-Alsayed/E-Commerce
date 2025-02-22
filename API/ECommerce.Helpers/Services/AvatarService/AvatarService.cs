@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Core.Services.AvatarService
 {
-    internal class AvatarService
+    public static class AvatarService
     {
         private static readonly HttpClient HttpClient = new HttpClient();
 

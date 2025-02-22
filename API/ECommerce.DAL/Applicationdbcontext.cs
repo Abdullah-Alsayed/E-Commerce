@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
+﻿using System.Linq;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -52,17 +50,54 @@ namespace ECommerce.DAL
             return Set<TEntity>();
         }
 
-        protected override void OnModelCreating(ModelBuilder Builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             foreach (
-                var relationship in Builder
+                var relationship in builder
                     .Model.GetEntityTypes()
                     .SelectMany(e => e.GetForeignKeys())
             )
             {
                 relationship.DeleteBehavior = DeleteBehavior.ClientCascade;
             }
-            base.OnModelCreating(Builder);
+
+            //builder.Entity<User>(b =>
+            //{
+            //    // Each User can have many entries in the UserRole join table
+            //    b.HasMany(e => e.UserRoles)
+            //        .WithOne(e => e.User)
+            //        .HasForeignKey(ur => ur.UserId)
+            //        .IsRequired();
+            //});
+            //builder.Entity<Role>(b =>
+            //{
+            //    // Each Role can have many entries in the UserRole join table
+            //    b.HasMany(e => e.UserRoles)
+            //        .WithOne(e => e.Role)
+            //        .HasForeignKey(ur => ur.RoleId)
+            //        .IsRequired();
+            //});
+
+            //builder.Entity<IdentityUserRole<string>>(b =>
+            //{
+            //    b.ToTable("UserRole");
+            //});
+
+            //builder.Entity<UserRole>(userRole =>
+            //{
+            //    userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            //    userRole
+            //        .HasOne(ur => ur.Role)
+            //        .WithMany(r => r.UserRoles)
+            //        .HasForeignKey(ur => ur.RoleId);
+
+            //    userRole
+            //        .HasOne(ur => ur.User)
+            //        .WithMany(r => r.UserRoles)
+            //        .HasForeignKey(ur => ur.UserId);
+            //});
+            base.OnModelCreating(builder);
         }
     }
 }

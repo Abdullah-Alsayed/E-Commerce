@@ -1,20 +1,28 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using ECommerce.BLL.Features.Roles.Requests;
+using ECommerce.BLL.Features.Roles.Services;
+using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core.PermissionsClaims;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace ECommerce.API.Controllers
+namespace ECommerce.Portal.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IUserService _service;
+        private readonly IRoleService _roleService;
 
-        public AccountController(IUserService service) => _service = service;
+        public AccountController(IUserService service, IRoleService roleService)
+        {
+            _service = service;
+            _roleService = roleService;
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -44,6 +52,13 @@ namespace ECommerce.API.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> SeedData()
+        {
+            await _service.SeedData();
+            return Json(new object { });
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<BaseResponse> Login(LoginRequest request)
@@ -57,6 +72,58 @@ namespace ECommerce.API.Controllers
             {
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
+        }
+
+        [AllowAnonymous]
+        public IActionResult AccessDenied() => View();
+
+        [Authorize(Policy = Permissions.Users.View)]
+        public async Task<IActionResult> List()
+        {
+            var response = await _roleService.GetAllAsync(new GetAllRoleRequest { });
+            return View(response.Result.Items);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Permissions.Users.View)]
+        public async Task<IActionResult> Table([FromBody] DataTableRequest request)
+        {
+            var search = request?.Search?.Value;
+            var dir = request?.Order?.FirstOrDefault()?.Dir ?? "desc";
+            bool isDescending = (dir == "desc");
+            var columns = new List<string>
+            {
+                nameof(UserDto.FirstName),
+                nameof(UserDto.LastName),
+                nameof(UserDto.Address),
+                nameof(UserDto.Photo),
+                nameof(UserDto.PhoneNumber),
+                nameof(DAL.Entity.User.Role.Name),
+                nameof(UserDto.LastLogin),
+                nameof(UserDto.CreateAt),
+            };
+            string sortColumn = columns[request?.Order?.FirstOrDefault()?.Column ?? 6];
+            var response = await _service.GetAllAsync(
+                new GetAllUserRequest
+                {
+                    IsDescending = isDescending,
+                    SortBy = sortColumn,
+                    PageSize = request?.Length ?? 0,
+                    PageIndex = request != null ? (request.Start / request.Length) : 0,
+                    SearchFor = search,
+                    StaffOnly = true
+                }
+            );
+
+            var jsonResponse = new
+            {
+                draw = request?.Draw ?? 0,
+                recordsTotal = response?.Count ?? 0,
+                recordsFiltered = response?.Count ?? 0,
+                data = response?.Result.Items ?? new List<UserDto>()
+            };
+
+            return Json(jsonResponse);
         }
 
         [HttpPut]
@@ -140,7 +207,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> CreateUser([FromForm] CreateUserRequest request)
+        public async Task<BaseResponse> Create([FromForm] CreateUserRequest request)
         {
             try
             {
@@ -166,11 +233,23 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteUser(DeleteUserRequest request)
+        public async Task<BaseResponse> Delete(string id)
         {
             try
             {
-                return await _service.DeleteAsync(request);
+                return await _service.DeleteAsync(new DeleteUserRequest { ID = Guid.Parse(id) });
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<BaseResponse> Get(string id)
+        {
+            try
+            {
+                return await _service.GetAsync(id);
             }
             catch (Exception ex)
             {

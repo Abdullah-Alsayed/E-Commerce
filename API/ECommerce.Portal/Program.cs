@@ -1,10 +1,13 @@
 using System.Globalization;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Users.Filter;
+using ECommerce.BLL.Features.Users.Validators;
 using ECommerce.BLL.Injector;
 using ECommerce.Core.Middlwares;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using LocalizationAPI.Localization;
 using MasBeach.BackEnd.Portal.Localization.LocalizationManger;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -58,7 +61,11 @@ builder
     .AddDefaultTokenProviders();
 
 //****************** Auto Mapper ******************************
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(Program));
+
+//****************** Fluent Validation ******************************
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
 
 //****************** Http Context Accessor ******************************
 builder.Services.AddHttpContextAccessor();

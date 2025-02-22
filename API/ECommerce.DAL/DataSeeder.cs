@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ECommerce.Core.PermissionsClaims;
@@ -10,7 +9,6 @@ using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static ECommerce.Core.Constants;
 
 namespace ECommerce.Core
 {
@@ -22,12 +20,19 @@ namespace ECommerce.Core
             UserManager<User> userManager
         )
         {
-            await SeedRoles(context, roleManager);
-            string systemUser = await GetUser(context, userManager);
-            await SeedGovernorates(context, systemUser);
-            await SeedSettings(context, systemUser);
-            await SeedStatuses(context, systemUser);
-            await context.SaveChangesAsync();
+            try
+            {
+                await SeedRoles(context, roleManager);
+                string systemUser = await GetUser(context, userManager);
+                await SeedGovernorates(context, systemUser);
+                await SeedSettings(context, systemUser);
+                await SeedStatuses(context, systemUser);
+                await context.SaveChangesAsync();
+            }
+            catch (global::System.Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static async Task<string> GetUser(
@@ -42,12 +47,13 @@ namespace ECommerce.Core
                 var adminUser = new User
                 {
                     Id = systemUser,
-                    UserName = "System",
-                    FirstName = "System",
-                    LastName = "System",
-                    Address = "System",
-                    Email = "System",
+                    UserName = Constants.System,
+                    FirstName = Constants.System,
+                    LastName = Constants.System,
+                    Address = Constants.System,
+                    Email = Constants.System,
                     EmailConfirmed = true,
+                    Photo = $"/Images/{Constants.PhotoFolder.User}/{Constants.DefaultPhotos.User}",
                     CreateAt = DateTime.UtcNow
                 };
                 await userManager.CreateAsync(adminUser, "P@ssword123");

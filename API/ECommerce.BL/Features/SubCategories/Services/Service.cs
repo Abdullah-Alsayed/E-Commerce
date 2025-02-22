@@ -142,9 +142,8 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                 var SubCategory = _mapper.Map<SubCategory>(request);
                 SubCategory.CreateBy = _userId;
                 SubCategory = await _unitOfWork.SubCategory.AddAsync(SubCategory);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhoto(
+                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.SubCategorys
                 );
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
@@ -203,9 +202,8 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             {
                 var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
                 _mapper.Map(request, SubCategory);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhoto(
+                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.SubCategorys,
                     SubCategory.PhotoPath
                 );

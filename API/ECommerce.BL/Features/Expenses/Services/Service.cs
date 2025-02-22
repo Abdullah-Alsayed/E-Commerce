@@ -130,9 +130,8 @@ public class ExpenseService : IExpenseService
         {
             var Expense = _mapper.Map<Expense>(request);
             Expense.CreateBy = _userId;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
+            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
                 request.FormFile,
-                _environment,
                 Constants.PhotoFolder.Expense
             );
             Expense = await _unitOfWork.Expense.AddAsync(Expense);
@@ -190,9 +189,8 @@ public class ExpenseService : IExpenseService
             _mapper.Map(request, Expense);
             Expense.ModifyBy = _userId;
             Expense.ModifyAt = DateTime.UtcNow;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
+            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
                 request.FormFile,
-                _environment,
                 Constants.PhotoFolder.Expense,
                 Expense.PhotoPath
             );

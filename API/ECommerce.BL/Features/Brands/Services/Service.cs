@@ -135,9 +135,8 @@ namespace ECommerce.BLL.Features.Brands.Services
                 var brand = _mapper.Map<Brand>(request);
                 brand.CreateBy = _userId;
                 brand = await _unitOfWork.Brand.AddAsync(brand);
-                brand.PhotoPath = await _unitOfWork.Brand.UploadPhoto(
+                brand.PhotoPath = await _unitOfWork.Brand.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.Brands
                 );
                 var result = _mapper.Map<BrandDto>(brand);
@@ -192,9 +191,8 @@ namespace ECommerce.BLL.Features.Brands.Services
             {
                 var brand = await _unitOfWork.Brand.FindAsync(request.ID);
                 _mapper.Map(request, brand);
-                brand.PhotoPath = await _unitOfWork.Brand.UploadPhoto(
+                brand.PhotoPath = await _unitOfWork.Brand.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.Brands,
                     brand.PhotoPath
                 );

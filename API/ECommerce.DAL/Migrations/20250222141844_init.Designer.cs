@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240617123614_init")]
+    [Migration("20250222141844_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace ECommerce.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1645,7 +1645,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("CreateBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
@@ -1696,6 +1696,12 @@ namespace ECommerce.DAL.Migrations
                     b.Property<double>("MaxUseDiscount")
                         .HasColumnType("float");
 
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifyBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -1714,8 +1720,11 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Photo")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -1736,6 +1745,8 @@ namespace ECommerce.DAL.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1873,7 +1884,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.ToTable("AspNetRoleClaims", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRoleClaim<string>");
+                    b.HasDiscriminator().HasValue("IdentityRoleClaim<string>");
 
                     b.UseTphMappingStrategy();
                 });
@@ -1907,7 +1918,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.ToTable("AspNetUserClaims", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<string>");
+                    b.HasDiscriminator().HasValue("IdentityUserClaim<string>");
 
                     b.UseTphMappingStrategy();
                 });
@@ -2062,7 +2073,7 @@ namespace ECommerce.DAL.Migrations
             modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
-                        .WithMany("Categorys")
+                        .WithMany("Categories")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
@@ -2458,7 +2469,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
-                        .WithMany("SubCategorys")
+                        .WithMany("SubCategories")
                         .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
@@ -2477,6 +2488,16 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
@@ -2638,7 +2659,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Brands");
 
-                    b.Navigation("Categorys");
+                    b.Navigation("Categories");
 
                     b.Navigation("Expenses");
 
@@ -2664,7 +2685,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Statuses");
 
-                    b.Navigation("SubCategorys");
+                    b.Navigation("SubCategories");
 
                     b.Navigation("Units");
                 });

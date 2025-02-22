@@ -13,10 +13,10 @@ namespace ECommerce.DAL.Entity
         {
             Notifications = new HashSet<Notification>();
             Governorates = new HashSet<Governorate>();
-            SubCategorys = new HashSet<SubCategory>();
+            SubCategories = new HashSet<SubCategory>();
             Reviews = new HashSet<ProductReview>();
             PromoCodes = new HashSet<Voucher>();
-            Categorys = new HashSet<Category>();
+            Categories = new HashSet<Category>();
             Favorites = new HashSet<Favorite>();
             Products = new HashSet<Product>();
             Expenses = new HashSet<Expense>();
@@ -55,21 +55,26 @@ namespace ECommerce.DAL.Entity
         public bool IsActive { get; set; } = true;
         public bool IsDeleted { get; set; } = false;
 
-        public string DeletedBy { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public DateTime? ModifyAt { get; set; }
+        public string? DeletedBy { get; set; }
+        public string? ModifyBy { get; set; }
 
         [StringLength(50)]
         public string Language { get; set; } = Constants.Languages.Ar;
 
-        [StringLength(50)]
+        [StringLength(255)]
         public string Photo { get; set; } = Constants.DefaultPhotos.User;
 
+        public string RoleId { get; set; }
+
+        public virtual Role Role { get; set; }
         public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<SubCategory> SubCategorys { get; set; }
+        public virtual ICollection<SubCategory> SubCategories { get; set; }
         public virtual ICollection<Voucher> PromoCodes { get; set; }
-        public virtual ICollection<Category> Categorys { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Expense> Expenses { get; set; }

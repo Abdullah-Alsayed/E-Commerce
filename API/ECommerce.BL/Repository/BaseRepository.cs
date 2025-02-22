@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -204,64 +205,127 @@ namespace ECommerce.BLL.Repository
             return await Query.FirstOrDefaultAsync(Criteria);
         }
 
-        public async Task<string> UploadPhoto(
+        public async Task<string> UploadPhotoAsync(
             IFormFile file,
-            IHostEnvironment environment,
-            string FolderName,
+            string folderName,
             string photoName = null
         )
         {
-            string Photo = string.Empty;
-            string path = string.Empty;
             string fullPath = string.Empty;
             try
             {
                 if (file != null)
                 {
+                    // Get file extension
                     var extension = Path.GetExtension(file.FileName);
-                    var GuId = Guid.NewGuid().ToString();
-                    Photo = GuId + extension;
-                    path = $"{Constants.PhotoFolder.Images}/{FolderName}";
+                    var guid = Guid.NewGuid().ToString();
+                    var fileName = guid + extension;
 
-                    if (!Directory.Exists(path))
-                        Directory.CreateDirectory(path);
+                    // Get the absolute path for saving in wwwroot
+                    var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var directoryPath = Path.Combine(wwwRootPath, "Images", folderName);
 
-                    fullPath = $"{path}/{Photo}";
-                    await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
+                    // Ensure directory exists
+                    if (!Directory.Exists(directoryPath))
+                        Directory.CreateDirectory(directoryPath);
+
+                    // Full file path
+                    fullPath = Path.Combine(directoryPath, fileName);
+
+                    // Save the file
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    // Convert absolute path to relative path for DB storage
+                    fullPath = $"/Images/{folderName}/{fileName}";
                 }
-                //Update Photo
-                if (photoName != null && file != null && System.IO.File.Exists(photoName))
-                    System.IO.File.Delete(photoName);
-                if (photoName != null && file == null)
+
+                // Delete old photo if provided
+                if (!string.IsNullOrEmpty(photoName) && file != null)
+                {
+                    var oldFilePath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        photoName.TrimStart('/')
+                    );
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                // If no new file is uploaded but old photo exists, return the old photo
+                if (!string.IsNullOrEmpty(photoName) && file == null)
                     return photoName;
 
                 return fullPath;
             }
             catch (Exception ex)
             {
-                return $"{Constants.PhotoFolder.Images}/default.png";
+                Console.WriteLine(ex.Message);
+                return "/Images/default.png"; // Return default image on error
             }
+        }
+
+        public async Task<string> UploadPhotoAsync(Stream file, string folderName)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var extension = ".png"; // Assuming avatar is always PNG
+                    var fileName = guid + extension;
+
+                    // Get wwwroot path
+                    var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var directoryPath = Path.Combine(wwwRootPath, "Images", folderName);
+
+                    // Ensure directory exists
+                    if (!Directory.Exists(directoryPath))
+                        Directory.CreateDirectory(directoryPath);
+
+                    // Create full path
+                    var fullPath = Path.Combine(directoryPath, fileName);
+
+                    // Save file
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    // Return relative path (for storing in DB)
+                    return $"/Images/{folderName}/{fileName}";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            // Return default image if an error occurs
+            return "/Images/default.png";
         }
 
         public async Task<List<string>> UploadPhotos(
             List<IFormFile> files,
-            IHostEnvironment environment,
             string FolderName,
             List<string> ImgNames = null
         )
         {
             var photos = new List<string>();
-            var curentPhoto = string.Empty;
+            var currentPhoto = string.Empty;
             var index = 0;
             foreach (var file in files)
             {
-                curentPhoto = await UploadPhoto(
+                currentPhoto = await UploadPhotoAsync(
                     file,
-                    environment,
                     FolderName,
                     ImgNames != null ? ImgNames[index] : null
                 );
-                photos.Add(curentPhoto);
+                photos.Add(currentPhoto);
                 index++;
             }
 
@@ -288,9 +352,7 @@ namespace ECommerce.BLL.Repository
                     Console.WriteLine("File deleted successfully.");
                 }
                 else
-                {
                     Console.WriteLine("File does not exist.");
-                }
             }
             catch (Exception ex)
             {

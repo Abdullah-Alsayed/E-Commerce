@@ -172,6 +172,7 @@ namespace ECommerce.Core
             public const string NotFound = "notFound";
             public const string Exist = "exist";
             public const string Register = "Register Failed";
+            public const string PhoneNumbeIsnotValid = "PhoneNumbeIsnotValid";
         }
 
         public static class NotificationIcons

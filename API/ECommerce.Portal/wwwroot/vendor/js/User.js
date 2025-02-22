@@ -44,7 +44,7 @@ function Login(event) {
 
 function createUser(message, event) {
   confirmNewPasswordValidation(message,'CreateForm' ,event);
-  submitFormData('#CreateForm', 'User', 'Create', 'UserList', event);
+  submitFormData('#CreateForm', 'Account', 'Create', 'UserList', event);
 }
 
 function confirmNewPasswordValidation(message,formId,event) {
@@ -52,8 +52,8 @@ function confirmNewPasswordValidation(message,formId,event) {
 
   event.preventDefault();
   // Validate Confirm Password
-  const password = document.getElementById('NewPassword').value;
-  const confirmPassword = document.getElementById('ConfirmNewPassword');
+    const password = document.getElementById('Password').value;
+  const confirmPassword = document.getElementById('ComparePassword');
 
   if (password !== confirmPassword.value) {
     confirmPassword.setCustomValidity(message);

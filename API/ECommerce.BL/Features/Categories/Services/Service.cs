@@ -142,9 +142,8 @@ namespace ECommerce.BLL.Features.Categories.Services
                 var Category = _mapper.Map<Category>(request);
                 Category.CreateBy = _userId;
                 Category = await _unitOfWork.Category.AddAsync(Category);
-                Category.PhotoPath = await _unitOfWork.Category.UploadPhoto(
+                Category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.Categorys
                 );
                 var result = _mapper.Map<CategoryDto>(Category);
@@ -203,9 +202,8 @@ namespace ECommerce.BLL.Features.Categories.Services
             {
                 var Category = await _unitOfWork.Category.FindAsync(request.ID);
                 _mapper.Map(request, Category);
-                Category.PhotoPath = await _unitOfWork.Category.UploadPhoto(
+                Category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.Categorys,
                     Category.PhotoPath
                 );

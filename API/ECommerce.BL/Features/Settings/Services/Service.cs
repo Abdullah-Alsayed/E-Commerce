@@ -105,9 +105,8 @@ namespace ECommerce.BLL.Features.Settings.Services
                 _mapper.Map(request, Setting);
                 Setting.ModifyBy = _userId;
                 Setting.ModifyAt = DateTime.UtcNow;
-                Setting.Logo = await _unitOfWork.Setting.UploadPhoto(
+                Setting.Logo = await _unitOfWork.Setting.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
                     Constants.PhotoFolder.Main
                 );
                 var result = _mapper.Map<SettingDto>(Setting);

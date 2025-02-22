@@ -175,7 +175,6 @@ namespace ECommerce.BLL.Features.Products.Services
                 Product = await _unitOfWork.Product.AddAsync(Product);
                 Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
                     request.FormFiles,
-                    _environment,
                     PhotoFolder.Products
                 );
                 var result = _mapper.Map<ProductDto>(Product);
@@ -236,7 +235,6 @@ namespace ECommerce.BLL.Features.Products.Services
                 _mapper.Map(request, Product);
                 Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
                     request.FormFiles,
-                    _environment,
                     PhotoFolder.Products,
                     Product.ProductPhotos
                 );

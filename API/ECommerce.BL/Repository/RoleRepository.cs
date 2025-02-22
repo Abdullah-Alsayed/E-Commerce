@@ -34,6 +34,16 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         _userManager = userManager;
     }
 
+    public async Task<Role> FindByName(string name)
+    {
+        return await _roleManager.FindByNameAsync(name);
+    }
+
+    public async Task<Role> FindById(string id)
+    {
+        return await _roleManager.FindByIdAsync(id);
+    }
+
     public async Task<bool> AddUserToRoleAsync(AddUserToRoleRequest request)
     {
         try

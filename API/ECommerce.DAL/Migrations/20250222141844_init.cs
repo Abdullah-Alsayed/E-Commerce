@@ -25,104 +25,14 @@ namespace ECommerce.DAL.Migrations
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
-                    NormalizedName = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                }
-            );
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    LastName = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Gander = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(
-                        type: "nvarchar(200)",
-                        maxLength: 200,
-                        nullable: false
-                    ),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    MaxUseDiscount = table.Column<double>(type: "float", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Language = table.Column<string>(
-                        type: "nvarchar(50)",
-                        maxLength: 50,
-                        nullable: true
-                    ),
-                    Photo = table.Column<string>(
-                        type: "nvarchar(50)",
-                        maxLength: 50,
-                        nullable: true
-                    ),
-                    UserName = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
-                    NormalizedUserName = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
-                    Email = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
-                    NormalizedEmail = table.Column<string>(
-                        type: "nvarchar(256)",
-                        maxLength: 256,
-                        nullable: true
-                    ),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(
-                        type: "datetimeoffset",
-                        nullable: true
-                    ),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                }
-            );
+                });
 
             migrationBuilder.CreateTable(
                 name: "ErrorLogs",
@@ -140,8 +50,7 @@ namespace ECommerce.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ErrorLogs", x => x.ID);
-                }
-            );
+                });
 
             migrationBuilder.CreateTable(
                 name: "TokenExpired",
@@ -154,24 +63,18 @@ namespace ECommerce.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TokenExpired", x => x.ID);
-                }
-            );
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table
-                        .Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Discriminator = table.Column<string>(
-                        type: "nvarchar(34)",
-                        maxLength: 34,
-                        nullable: false
-                    ),
+                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
                     Module = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Operation = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -183,26 +86,68 @@ namespace ECommerce.DAL.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Gander = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    MaxUseDiscount = table.Column<double>(type: "float", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifyBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Language = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Photo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table
-                        .Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Discriminator = table.Column<string>(
-                        type: "nvarchar(34)",
-                        maxLength: 34,
-                        nullable: false
-                    ),
+                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
                     Module = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Operation = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -214,10 +159,8 @@ namespace ECommerce.DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
@@ -225,27 +168,19 @@ namespace ECommerce.DAL.Migrations
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(
-                        type: "nvarchar(max)",
-                        nullable: true
-                    ),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserLogins",
-                        x => new { x.LoginProvider, x.ProviderKey }
-                    );
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
@@ -262,17 +197,14 @@ namespace ECommerce.DAL.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
@@ -285,60 +217,26 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserTokens",
-                        x => new
-                        {
-                            x.UserId,
-                            x.LoginProvider,
-                            x.Name
-                        }
-                    );
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Brands",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    PhotoPath = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -352,46 +250,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Brands_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    PhotoPath = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -405,42 +277,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Categories_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Colors",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Value = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    Value = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -454,51 +304,21 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Colors_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ContactUs",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Phone = table.Column<string>(
-                        type: "nvarchar(50)",
-                        maxLength: 50,
-                        nullable: false
-                    ),
-                    Subject = table.Column<string>(
-                        type: "nvarchar(70)",
-                        maxLength: 70,
-                        nullable: false
-                    ),
-                    Message = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: false
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -512,10 +332,8 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ContactUs_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Expenses",
@@ -523,31 +341,11 @@ namespace ECommerce.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
-                    Reference = table.Column<string>(
-                        type: "nvarchar(150)",
-                        maxLength: 150,
-                        nullable: false
-                    ),
-                    PhotoPath = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    Reference = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -561,10 +359,8 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Expenses_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Feedbacks",
@@ -573,21 +369,9 @@ namespace ECommerce.DAL.Migrations
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -601,42 +385,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Feedbacks_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Governorates",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Tax = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -650,10 +412,8 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Governorates_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Histories",
@@ -672,54 +432,24 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Histories_AspNetUsers_UserID",
                         column: x => x.UserID,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Subject = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    MessageAR = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: false
-                    ),
-                    MessageEN = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: false
-                    ),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    MessageAR = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    MessageEN = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     OperationType = table.Column<int>(type: "int", nullable: false),
                     Entity = table.Column<int>(type: "int", nullable: false),
                     CreateName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -733,86 +463,28 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Notifications_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Settings",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    Logo = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: true
-                    ),
-                    Address = table.Column<string>(
-                        type: "nvarchar(150)",
-                        maxLength: 150,
-                        nullable: true
-                    ),
-                    MainColor = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    FaceBook = table.Column<string>(
-                        type: "nvarchar(200)",
-                        maxLength: 200,
-                        nullable: true
-                    ),
-                    Instagram = table.Column<string>(
-                        type: "nvarchar(200)",
-                        maxLength: 200,
-                        nullable: true
-                    ),
-                    Youtube = table.Column<string>(
-                        type: "nvarchar(200)",
-                        maxLength: 200,
-                        nullable: true
-                    ),
-                    Whatsapp = table.Column<string>(
-                        type: "nvarchar(200)",
-                        maxLength: 200,
-                        nullable: true
-                    ),
-                    Email = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    Phone = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    BookingMessage = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Logo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    MainColor = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    FaceBook = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Instagram = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Youtube = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Whatsapp = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BookingMessage = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -826,37 +498,19 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Settings_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Sizes",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -870,47 +524,21 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Sizes_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Sliders",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TitleAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    TitleEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Description = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    TitleAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TitleEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -924,42 +552,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Sliders_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Statuses",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -973,41 +579,19 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Statuses_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Units",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1021,46 +605,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Units_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Vendors",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    Phone = table.Column<string>(
-                        type: "nvarchar(11)",
-                        maxLength: 11,
-                        nullable: false
-                    ),
-                    Address = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1074,37 +632,19 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Vendors_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Vouchers",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1118,10 +658,8 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Vouchers_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
-                }
-            );
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "SubCategories",
@@ -1129,36 +667,12 @@ namespace ECommerce.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameAR = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    NameEN = table.Column<string>(
-                        type: "nvarchar(100)",
-                        maxLength: 100,
-                        nullable: false
-                    ),
-                    PhotoPath = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: true
-                    ),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1172,16 +686,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_SubCategories_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SubCategories_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Categories",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Areas",
@@ -1191,21 +702,9 @@ namespace ECommerce.DAL.Migrations
                     GovernorateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1219,16 +718,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Areas_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Areas_Governorates_GovernorateID",
                         column: x => x.GovernorateID,
                         principalTable: "Governorates",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Section",
@@ -1240,21 +736,9 @@ namespace ECommerce.DAL.Migrations
                     PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Order = table.Column<int>(type: "int", nullable: false),
                     SettingID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1268,16 +752,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Section_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Section_Settings_SettingID",
                         column: x => x.SettingID,
                         principalTable: "Settings",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Products",
@@ -1288,30 +769,14 @@ namespace ECommerce.DAL.Migrations
                     UnitID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubCategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(
-                        type: "nvarchar(150)",
-                        maxLength: 150,
-                        nullable: false
-                    ),
+                    Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: false),
                     DiscountLabel = table.Column<double>(type: "float", nullable: false),
                     ProductPhotos = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1325,34 +790,28 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Products_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Brands_BrandID",
                         column: x => x.BrandID,
                         principalTable: "Brands",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Products_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Categories",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Products_SubCategories_SubCategoryID",
                         column: x => x.SubCategoryID,
                         principalTable: "SubCategories",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Products_Units_UnitID",
                         column: x => x.UnitID,
                         principalTable: "Units",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
@@ -1363,11 +822,7 @@ namespace ECommerce.DAL.Migrations
                     StatusID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GovernorateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VoucherID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Address = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: false
-                    ),
+                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsOffLine = table.Column<bool>(type: "bit", nullable: false),
                     Tax = table.Column<int>(type: "int", nullable: false),
@@ -1375,21 +830,9 @@ namespace ECommerce.DAL.Migrations
                     Discount = table.Column<double>(type: "float", nullable: false),
                     SubTotal = table.Column<double>(type: "float", nullable: false),
                     IsAccept = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1403,34 +846,28 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Orders_Areas_AreaID",
                         column: x => x.AreaID,
                         principalTable: "Areas",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Orders_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Governorates_GovernorateID",
                         column: x => x.GovernorateID,
                         principalTable: "Governorates",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Orders_Statuses_StatusID",
                         column: x => x.StatusID,
                         principalTable: "Statuses",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Orders_Vouchers_VoucherID",
                         column: x => x.VoucherID,
                         principalTable: "Vouchers",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Bookings",
@@ -1441,21 +878,9 @@ namespace ECommerce.DAL.Migrations
                     ColorID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SizeID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsNotified = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1469,28 +894,23 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Bookings_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bookings_Colors_ColorID",
                         column: x => x.ColorID,
                         principalTable: "Colors",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Bookings_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Bookings_Sizes_SizeID",
                         column: x => x.SizeID,
                         principalTable: "Sizes",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Favorites",
@@ -1498,21 +918,9 @@ namespace ECommerce.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1526,16 +934,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Favorites_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Favorites_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ProductColors",
@@ -1553,16 +958,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductColors_Colors_ColorID",
                         column: x => x.ColorID,
                         principalTable: "Colors",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ProductColors_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ProductSizes",
@@ -1580,16 +982,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductSizes_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ProductSizes_Sizes_SizeID",
                         column: x => x.SizeID,
                         principalTable: "Sizes",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Reviews",
@@ -1597,27 +996,11 @@ namespace ECommerce.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Review = table.Column<string>(
-                        type: "nvarchar(255)",
-                        maxLength: 255,
-                        nullable: false
-                    ),
+                    Review = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Rate = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1631,16 +1014,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Reviews_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Reviews_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ShoppingCarts",
@@ -1649,21 +1029,9 @@ namespace ECommerce.DAL.Migrations
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1677,16 +1045,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ShoppingCarts_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ShoppingCarts_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Stocks",
@@ -1696,21 +1061,9 @@ namespace ECommerce.DAL.Migrations
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VendorID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1724,22 +1077,18 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Stocks_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Stocks_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Stocks_Vendors_VendorID",
                         column: x => x.VendorID,
                         principalTable: "Vendors",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Invoices",
@@ -1748,21 +1097,9 @@ namespace ECommerce.DAL.Migrations
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsReturn = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: false
-                    ),
-                    ModifyBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
-                    DeletedBy = table.Column<string>(
-                        type: "nvarchar(450)",
-                        maxLength: 450,
-                        nullable: true
-                    ),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1776,16 +1113,13 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Invoices_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id"
-                    );
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Invoices_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ProductOrders",
@@ -1803,462 +1137,443 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductOrders_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
-                        principalColumn: "ID"
-                    );
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ProductOrders_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID"
-                    );
-                }
-            );
+                        principalColumn: "ID");
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Areas_CreateBy",
                 table: "Areas",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Areas_GovernorateID",
                 table: "Areas",
-                column: "GovernorateID"
-            );
+                column: "GovernorateID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
-                column: "RoleId"
-            );
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true,
-                filter: "[NormalizedName] IS NOT NULL"
-            );
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
-                column: "UserId"
-            );
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
-                column: "UserId"
-            );
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
-                column: "RoleId"
-            );
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
-                column: "NormalizedEmail"
-            );
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_RoleId",
+                table: "AspNetUsers",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL"
-            );
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ColorID",
                 table: "Bookings",
-                column: "ColorID"
-            );
+                column: "ColorID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_CreateBy",
                 table: "Bookings",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ProductID",
                 table: "Bookings",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_SizeID",
                 table: "Bookings",
-                column: "SizeID"
-            );
+                column: "SizeID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Brands_CreateBy",
                 table: "Brands",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_CreateBy",
                 table: "Categories",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Colors_CreateBy",
                 table: "Colors",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactUs_CreateBy",
                 table: "ContactUs",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Expenses_CreateBy",
                 table: "Expenses",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Favorites_CreateBy",
                 table: "Favorites",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Favorites_ProductID",
                 table: "Favorites",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_CreateBy",
                 table: "Feedbacks",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Governorates_CreateBy",
                 table: "Governorates",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_UserID",
                 table: "Histories",
-                column: "UserID"
-            );
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_CreateBy",
                 table: "Invoices",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_OrderId",
                 table: "Invoices",
-                column: "OrderId"
-            );
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_CreateBy",
                 table: "Notifications",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_AreaID",
                 table: "Orders",
-                column: "AreaID"
-            );
+                column: "AreaID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CreateBy",
                 table: "Orders",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_GovernorateID",
                 table: "Orders",
-                column: "GovernorateID"
-            );
+                column: "GovernorateID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_StatusID",
                 table: "Orders",
-                column: "StatusID"
-            );
+                column: "StatusID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_VoucherID",
                 table: "Orders",
-                column: "VoucherID"
-            );
+                column: "VoucherID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductColors_ColorID",
                 table: "ProductColors",
-                column: "ColorID"
-            );
+                column: "ColorID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductColors_ProductID",
                 table: "ProductColors",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductOrders_OrderID",
                 table: "ProductOrders",
-                column: "OrderID"
-            );
+                column: "OrderID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductOrders_ProductID",
                 table: "ProductOrders",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandID",
                 table: "Products",
-                column: "BrandID"
-            );
+                column: "BrandID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryID",
                 table: "Products",
-                column: "CategoryID"
-            );
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CreateBy",
                 table: "Products",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SubCategoryID",
                 table: "Products",
-                column: "SubCategoryID"
-            );
+                column: "SubCategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_UnitID",
                 table: "Products",
-                column: "UnitID"
-            );
+                column: "UnitID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSizes_ProductID",
                 table: "ProductSizes",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSizes_SizeID",
                 table: "ProductSizes",
-                column: "SizeID"
-            );
+                column: "SizeID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_CreateBy",
                 table: "Reviews",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductID",
                 table: "Reviews",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Section_CreateBy",
                 table: "Section",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Section_SettingID",
                 table: "Section",
-                column: "SettingID"
-            );
+                column: "SettingID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Settings_CreateBy",
                 table: "Settings",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_CreateBy",
                 table: "ShoppingCarts",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_ProductID",
                 table: "ShoppingCarts",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sizes_CreateBy",
                 table: "Sizes",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sliders_CreateBy",
                 table: "Sliders",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Statuses_CreateBy",
                 table: "Statuses",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_CreateBy",
                 table: "Stocks",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_ProductID",
                 table: "Stocks",
-                column: "ProductID"
-            );
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_VendorID",
                 table: "Stocks",
-                column: "VendorID"
-            );
+                column: "VendorID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubCategories_CategoryID",
                 table: "SubCategories",
-                column: "CategoryID"
-            );
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubCategories_CreateBy",
                 table: "SubCategories",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Units_CreateBy",
                 table: "Units",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vendors_CreateBy",
                 table: "Vendors",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vouchers_CreateBy",
                 table: "Vouchers",
-                column: "CreateBy"
-            );
+                column: "CreateBy");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "AspNetRoleClaims");
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
 
-            migrationBuilder.DropTable(name: "AspNetUserClaims");
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
 
-            migrationBuilder.DropTable(name: "AspNetUserLogins");
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
 
-            migrationBuilder.DropTable(name: "AspNetUserRoles");
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
 
-            migrationBuilder.DropTable(name: "AspNetUserTokens");
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
 
-            migrationBuilder.DropTable(name: "Bookings");
+            migrationBuilder.DropTable(
+                name: "Bookings");
 
-            migrationBuilder.DropTable(name: "ContactUs");
+            migrationBuilder.DropTable(
+                name: "ContactUs");
 
-            migrationBuilder.DropTable(name: "ErrorLogs");
+            migrationBuilder.DropTable(
+                name: "ErrorLogs");
 
-            migrationBuilder.DropTable(name: "Expenses");
+            migrationBuilder.DropTable(
+                name: "Expenses");
 
-            migrationBuilder.DropTable(name: "Favorites");
+            migrationBuilder.DropTable(
+                name: "Favorites");
 
-            migrationBuilder.DropTable(name: "Feedbacks");
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
 
-            migrationBuilder.DropTable(name: "Histories");
+            migrationBuilder.DropTable(
+                name: "Histories");
 
-            migrationBuilder.DropTable(name: "Invoices");
+            migrationBuilder.DropTable(
+                name: "Invoices");
 
-            migrationBuilder.DropTable(name: "Notifications");
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
-            migrationBuilder.DropTable(name: "ProductColors");
+            migrationBuilder.DropTable(
+                name: "ProductColors");
 
-            migrationBuilder.DropTable(name: "ProductOrders");
+            migrationBuilder.DropTable(
+                name: "ProductOrders");
 
-            migrationBuilder.DropTable(name: "ProductSizes");
+            migrationBuilder.DropTable(
+                name: "ProductSizes");
 
-            migrationBuilder.DropTable(name: "Reviews");
+            migrationBuilder.DropTable(
+                name: "Reviews");
 
-            migrationBuilder.DropTable(name: "Section");
+            migrationBuilder.DropTable(
+                name: "Section");
 
-            migrationBuilder.DropTable(name: "ShoppingCarts");
+            migrationBuilder.DropTable(
+                name: "ShoppingCarts");
 
-            migrationBuilder.DropTable(name: "Sliders");
+            migrationBuilder.DropTable(
+                name: "Sliders");
 
-            migrationBuilder.DropTable(name: "Stocks");
+            migrationBuilder.DropTable(
+                name: "Stocks");
 
-            migrationBuilder.DropTable(name: "TokenExpired");
+            migrationBuilder.DropTable(
+                name: "TokenExpired");
 
-            migrationBuilder.DropTable(name: "AspNetRoles");
+            migrationBuilder.DropTable(
+                name: "Colors");
 
-            migrationBuilder.DropTable(name: "Colors");
+            migrationBuilder.DropTable(
+                name: "Orders");
 
-            migrationBuilder.DropTable(name: "Orders");
+            migrationBuilder.DropTable(
+                name: "Sizes");
 
-            migrationBuilder.DropTable(name: "Sizes");
+            migrationBuilder.DropTable(
+                name: "Settings");
 
-            migrationBuilder.DropTable(name: "Settings");
+            migrationBuilder.DropTable(
+                name: "Products");
 
-            migrationBuilder.DropTable(name: "Products");
+            migrationBuilder.DropTable(
+                name: "Vendors");
 
-            migrationBuilder.DropTable(name: "Vendors");
+            migrationBuilder.DropTable(
+                name: "Areas");
 
-            migrationBuilder.DropTable(name: "Areas");
+            migrationBuilder.DropTable(
+                name: "Statuses");
 
-            migrationBuilder.DropTable(name: "Statuses");
+            migrationBuilder.DropTable(
+                name: "Vouchers");
 
-            migrationBuilder.DropTable(name: "Vouchers");
+            migrationBuilder.DropTable(
+                name: "Brands");
 
-            migrationBuilder.DropTable(name: "Brands");
+            migrationBuilder.DropTable(
+                name: "SubCategories");
 
-            migrationBuilder.DropTable(name: "SubCategories");
+            migrationBuilder.DropTable(
+                name: "Units");
 
-            migrationBuilder.DropTable(name: "Units");
+            migrationBuilder.DropTable(
+                name: "Governorates");
 
-            migrationBuilder.DropTable(name: "Governorates");
+            migrationBuilder.DropTable(
+                name: "Categories");
 
-            migrationBuilder.DropTable(name: "Categories");
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
-            migrationBuilder.DropTable(name: "AspNetUsers");
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
         }
     }
 }

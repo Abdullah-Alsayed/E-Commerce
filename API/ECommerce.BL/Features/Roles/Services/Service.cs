@@ -8,6 +8,7 @@ using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -22,20 +23,19 @@ namespace ECommerce.BLL.Features.Roles.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IStringLocalizer<RoleService> _localizer;
-
-        private string _userId = Constants.System;
-        private string _userName = Constants.System;
-        private string _lang = Languages.Ar;
+        private readonly IUserContext _userContext;
 
         public RoleService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<RoleService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessors,
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _httpContext = httpContextAccessors;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
@@ -47,20 +47,6 @@ namespace ECommerce.BLL.Features.Roles.Services
             });
             _mapper = new Mapper(config);
             #endregion initilize mapper
-
-            #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
-
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
-
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
-            #endregion
         }
 
         public async Task<BaseResponse> FindAsync(FindRoleRequest request)
@@ -87,7 +73,9 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllRoleRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<RoleDto>>>> GetAllAsync(
+            GetAllRoleRequest request
+        )
         {
             try
             {
@@ -95,8 +83,8 @@ namespace ECommerce.BLL.Features.Roles.Services
                     ? nameof(Role.Name)
                     : request.SearchBy;
 
-                var Roles = await _unitOfWork.Role.GetAllAsync(request);
-                var response = _mapper.Map<List<RoleDto>>(Roles);
+                var roles = await _unitOfWork.Role.GetAllAsync(request);
+                var response = _mapper.Map<List<RoleDto>>(roles);
                 return new BaseResponse<BaseGridResponse<List<RoleDto>>>
                 {
                     IsSuccess = true,
@@ -115,7 +103,7 @@ namespace ECommerce.BLL.Features.Roles.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Role
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<RoleDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -130,7 +118,7 @@ namespace ECommerce.BLL.Features.Roles.Services
             try
             {
                 var Role = _mapper.Map<Role>(request);
-                Role.CreateBy = _userId;
+                Role.CreateBy = _userContext.UserId.Value;
                 Role.NormalizedName = request.Name.ToUpper();
                 Role = await _unitOfWork.Role.AddAsync(Role);
                 var result = _mapper.Map<RoleDto>(Role);
@@ -189,7 +177,7 @@ namespace ECommerce.BLL.Features.Roles.Services
             {
                 var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID.ToString());
                 _mapper.Map(request, Role);
-                Role.ModifyBy = _userId;
+                Role.ModifyBy = _userContext.UserId.Value;
                 Role.ModifyAt = DateTime.UtcNow;
                 Role.NormalizedName = request.Name.ToUpper();
                 _unitOfWork.Role.Update(Role);
@@ -248,7 +236,7 @@ namespace ECommerce.BLL.Features.Roles.Services
             try
             {
                 var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID.ToString());
-                Role.DeletedBy = _userId;
+                Role.DeletedBy = _userContext.UserId.Value;
                 Role.DeletedAt = DateTime.UtcNow;
                 Role.IsDeleted = true;
                 var result = _mapper.Map<RoleDto>(Role);
@@ -539,8 +527,8 @@ namespace ECommerce.BLL.Features.Roles.Services
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification
                 {
-                    CreateBy = _userId,
-                    CreateName = _userName,
+                    CreateBy = _userContext.UserId.Value,
+                    CreateName = _userContext.UserName.Value,
                     OperationType = action,
                     Entity = EntitiesEnum.Role
                 }
@@ -550,7 +538,7 @@ namespace ECommerce.BLL.Features.Roles.Services
             await _unitOfWork.History.AddAsync(
                 new History
                 {
-                    UserID = _userId,
+                    UserID = _userContext.UserId.Value,
                     Action = action,
                     Entity = EntitiesEnum.Role
                 }

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +19,7 @@ namespace ECommerce.BLL.Features.Users.Services
         Task<BaseResponse> DeleteAsync(DeleteUserRequest request);
 
         //Task<BaseResponse> FindAsync(FindUserRequest request);
-        Task<BaseResponse> GetAllAsync(GetAllUserRequest request);
+        Task<BaseResponse<BaseGridResponse<List<UserDto>>>> GetAllAsync(GetAllUserRequest request);
 
         //Task<BaseResponse> UpdateAsync(UpdateUserRequest request);
         //Task<BaseResponse> GetSearchEntityAsync();
@@ -31,5 +33,7 @@ namespace ECommerce.BLL.Features.Users.Services
             HttpContext httpContext,
             HttpResponse response
         );
+        Task SeedData();
+        Task<BaseResponse> GetAsync(string userId);
     }
 }

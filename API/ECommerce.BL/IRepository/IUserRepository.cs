@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Dtos;
@@ -7,19 +6,22 @@ using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Primitives;
 
 namespace ECommerce.BLL.IRepository
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<User>
     {
         Task<BaseResponse> LoginAsync(LoginRequest request);
         Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId,
-            string Role = null
+            string userId
+        );
+        Task<BaseResponse<CreateUserDto>> RegisterUserAsync(
+            User user,
+            string password,
+            string userId
         );
         Task<bool> SendConfirmEmailAsync(User user);
         Task<BaseResponse> ConfirmEmailAsync(string userID, string toke);
@@ -46,6 +48,8 @@ namespace ECommerce.BLL.IRepository
         Task<User> DeleteAsync(string ID, string token);
         bool IsTokenExperts(StringValues token);
         Task<List<User>> GetAllAsync(GetAllUserRequest request);
+        Task<User> GetAsync(string userId);
         Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request);
+        Task SeedData();
     }
 }

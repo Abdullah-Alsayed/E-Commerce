@@ -35,13 +35,16 @@ Array.prototype.slice.call(bsValidationForms).forEach(function (form) {
 
 
 
-function initializeDataTable(tableId, controler, action, entity, columnsConfig, language, withAction = true) {
+function initializeDataTable(tableId, controler, action, columnsConfig, language, withAction = true) {
 
   if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
     $(`#${tableId}`).DataTable().destroy();
   }
 
   const filterId = $(`#${tableId}`).attr('data-filterId');
+  // Find the index of the 'createAt' column dynamically
+  let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
+  if (createAtIndex === -1) createAtIndex = 0; // Default to first column if not found
 
   $(`#${tableId}`).DataTable({
     language: {
@@ -86,7 +89,7 @@ function initializeDataTable(tableId, controler, action, entity, columnsConfig, 
         searchable: false, // Disable searching for this column
         render: function (data, type, row) {
           // Generate Add and Delete buttons
-          let currentId = row[`${entity}Id`];
+          let currentId = row[`id`];
           return `
           <div class="d-flex">
               <button type="button" onclick=fetchData('${controler}','Get','${currentId}') class="btn btn-icon me-2 btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateFormModal">
@@ -99,7 +102,7 @@ function initializeDataTable(tableId, controler, action, entity, columnsConfig, 
         }
       }
     ] : [...columnsConfig],
-    order: [[0, 'desc']]
+      order: [[createAtIndex, 'desc']]
   });
 }
 
@@ -149,7 +152,7 @@ function submitFormData(formSelector, controler, action, table, e) {
     processData: false, // Prevent jQuery from processing the data
     contentType: false, // Prevent jQuery from setting the content type
     success: function (response) {
-      if (response.success) {
+      if (response.isSuccess) {
         toastSuccess(response.message);
         $(formSelector)[0].reset(); // Reset the form
         $(`${formSelector}Modal`).modal('hide'); // Hide the modal after success
@@ -181,10 +184,10 @@ function DeleteRecord(controller, action, table) {
 
   $.ajax({
     url: `/${controller}/${action}`,
-    type: 'POST',
+    type: 'DELETE',
     data: { id: recordId },
     success: function (response) {
-      if (response.success) {
+      if (response.isSuccess) {
         toastSuccess(response.message); // Display success message
         $('#DeleteRecord').modal('hide'); // Hide modal
         $(`#${table}`).DataTable().ajax.reload(); // Reload DataTable
@@ -216,9 +219,9 @@ function fetchData(controller, action, id) {
     type: 'GET',
     dataType: 'json',
     success: function (response) {
-      if (response.success) {
+      if (response.isSuccess) {
         // Populate the form with data
-        for (let key in response.data) {
+        for (let key in response.result) {
           let pascalCaseKey = toPascalCase(key); // Convert key to PascalCase
           let input = $('#UpdateForm').find(`[name="${pascalCaseKey}"]`);
           if (input.length) {
@@ -231,7 +234,7 @@ function fetchData(controller, action, id) {
               HandelImgeCase(response, pascalCaseKey, key);
             }
             else {
-              input.val(response.data[key]);
+              input.val(response.result[key]);
             }
           }
         }
@@ -308,7 +311,7 @@ function toPascalCase(str) {
 }
 
 function HandelOptionCase(response, key, input) {
-  let valueToSelect = response.data[key];
+  let valueToSelect = response.result[key];
   let options = input.find('option');
 
   // Loop through the options and set the matching option as selected
@@ -324,8 +327,8 @@ function HandelOptionCase(response, key, input) {
 
 function HandelImgeCase(response, pascalCaseKey, key) {
   let imagePreview = $(`#UpdateForm #${pascalCaseKey}`);
-  if (imagePreview.length && response.data[key]) {
-    imagePreview.prop('src', response.data[key]);
+  if (imagePreview.length && response.result[key]) {
+    imagePreview.prop('src', response.result[key]);
   } else {
     imagePreview.attr('src', '/path-to-default-placeholder.png');
   }

@@ -31,6 +31,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using Twilio.Http;
 
 namespace ECommerce.BLL.Repository
 {
@@ -286,26 +287,65 @@ namespace ECommerce.BLL.Repository
         public async Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId,
-            string role = null
+            string userId
         )
         {
             BaseResponse result = new();
             var token = new JwtSecurityToken();
+            // Generate unique username
+            user.UserName = await GenerateUniqueUsernameAsync(user.FirstName, user.LastName);
+            BaseResponse userValidationResult = await UserValidation(user, result);
+            if (userValidationResult.IsSuccess)
+            {
+                IdentityResult identityResult = await _userManager.CreateAsync(user, password);
+                return new BaseResponse<CreateUserDto>
+                {
+                    IsSuccess = identityResult.Succeeded,
+                    Message = identityResult.Succeeded
+                        ? Constants.MessageKeys.Success
+                        : string.Join(",", identityResult.Errors.Select(x => x.Description)),
+                    Result =
+                        (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
+                            ? new CreateUserDto
+                            {
+                                Email = user.Email,
+                                ExpiresOn = token.ValidTo,
+                                IsAuthenticated = true,
+                                Roles = new List<string> { Constants.Roles.User },
+                                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                                Username = user.UserName
+                            }
+                            : null
+                };
+            }
+            else
+            {
+                return new BaseResponse<CreateUserDto>
+                {
+                    IsSuccess = userValidationResult.IsSuccess,
+                    Message = userValidationResult.Message
+                };
+            }
+        }
+
+        public async Task<BaseResponse<CreateUserDto>> RegisterUserAsync(
+            User user,
+            string password,
+            string userId
+        )
+        {
+            BaseResponse result = new();
+            var token = new JwtSecurityToken();
+            // Generate unique username
+            user.UserName = await GenerateUniqueUsernameAsync(user.FirstName, user.LastName);
             BaseResponse userValidationResult = await UserValidation(user, result);
             if (userValidationResult.IsSuccess)
             {
                 IdentityResult identityResult = await _userManager.CreateAsync(user, password);
                 if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
                 {
-                    var roleResult = new IdentityResult();
-                    if (role != null)
-                        roleResult = await _userManager.AddToRoleAsync(user, role);
-                    else
-                        roleResult = await _userManager.AddToRoleAsync(
-                            user,
-                            Constants.Roles.Client
-                        );
+                    if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
+                        await _userManager.AddToRoleAsync(user, user.RoleId);
 
                     await LoginAsync(user, true);
                     token = await CreateJwtToken(user);
@@ -340,6 +380,34 @@ namespace ECommerce.BLL.Repository
                     Message = userValidationResult.Message
                 };
             }
+        }
+
+        private async Task<string> GenerateUniqueUsernameAsync(string firstName, string lastName)
+        {
+            // Ensure first and last names are not null or empty
+            firstName = string.IsNullOrWhiteSpace(firstName) ? "" : firstName.Trim().ToLower();
+            lastName = string.IsNullOrWhiteSpace(lastName) ? "" : lastName.Trim().ToLower();
+
+            // Base username logic
+            string baseUsername;
+            if (!string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+                baseUsername = $"{firstName}.{lastName}";
+            else if (!string.IsNullOrEmpty(firstName))
+                baseUsername = firstName;
+            else if (!string.IsNullOrEmpty(lastName))
+                baseUsername = lastName;
+            else
+                baseUsername = "user";
+
+            string username = baseUsername;
+            int counter = 1;
+
+            while (await _context.Users.AnyAsync(u => u.UserName == username))
+            {
+                username = $"{baseUsername}{counter}";
+                counter++;
+            }
+            return username;
         }
 
         public async Task<bool> EmailExistAsync(string email)
@@ -595,7 +663,10 @@ namespace ECommerce.BLL.Repository
             try
             {
                 var result = new List<User>();
-                var query = _context.Users.Where(x => !x.IsDeleted);
+                var query = _context
+                    .Users.Include(x => x.Role)
+                    .Where(u => !u.IsDeleted && u.UserName != Constants.System);
+
                 if (!string.IsNullOrEmpty(request.SortBy))
                     query = OrderByDynamic(query, request.SortBy, request.IsDescending);
 
@@ -608,12 +679,8 @@ namespace ECommerce.BLL.Repository
                 var total = await query.CountAsync();
                 if (total > 0)
                 {
-                    var skippedPages = request.PageSize * request.PageIndex;
-                    result = await query
-                        .Skip(skippedPages)
-                        .Take(request.PageSize)
-                        .AsNoTracking()
-                        .ToListAsync();
+                    query = ApplyPagination(request, query);
+                    result = await query.AsNoTracking().ToListAsync();
                 }
 
                 return result;
@@ -635,6 +702,33 @@ namespace ECommerce.BLL.Repository
             }
         }
 
+        public async Task<User> GetAsync(string userId)
+        {
+            try
+            {
+                var query = await _context
+                    .Users.Include(x => x.Role)
+                    .FirstOrDefaultAsync(u => !u.IsDeleted && u.Id == userId);
+
+                return query;
+            }
+            catch (Exception ex)
+            {
+                await _context.ErrorLogs.AddAsync(
+                    new ErrorLog
+                    {
+                        Source = ex.Source,
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace,
+                        Operation = DAL.Enums.OperationTypeEnum.Get,
+                        Entity = DAL.Enums.EntitiesEnum.User
+                    }
+                );
+                await _context.SaveChangesAsync();
+                return default;
+            }
+        }
+
         #region helpers
         private async Task<BaseResponse> UserValidation(User user, BaseResponse result)
         {
@@ -653,6 +747,15 @@ namespace ECommerce.BLL.Repository
                 result.Message = Constants.Errors.UserNameExists;
                 return result;
             }
+            bool phoneValid = GeneralHelpers.IsPhoneValid(user.PhoneNumber);
+
+            if (phoneValid)
+            {
+                result.IsSuccess = false;
+                result.Message = Constants.Errors.PhoneNumbeIsnotValid;
+                return result;
+            }
+
             bool phoneExists = PhoneExist(user.PhoneNumber);
 
             if (phoneExists)
@@ -696,15 +799,17 @@ namespace ECommerce.BLL.Repository
             {
                 var rolex = await _roleManager.FindByNameAsync(role);
                 var roleClaimsx = await _roleManager.GetClaimsAsync(rolex);
-                foreach (var Claim in roleClaimsx)
-                    userClaims.Add(Claim);
+                foreach (var claim in roleClaimsx)
+                    userClaims.Add(claim);
+
                 roleClaims.Add(new Claim("roles", role));
             }
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(Constants.Claims.ID, user.Id),
                 new Claim(Constants.Claims.Language, user.Language),
@@ -781,6 +886,11 @@ namespace ECommerce.BLL.Repository
             );
             httpContext.Response.Cookies.Append(Constants.Claims.UserPhoto, user.Photo);
             httpContext.Response.Cookies.Append(Constants.Claims.RoleName, roleName);
+        }
+
+        public async Task SeedData()
+        {
+            await DataSeeder.SeedData(_context, _roleManager, _userManager);
         }
 
         #endregion
