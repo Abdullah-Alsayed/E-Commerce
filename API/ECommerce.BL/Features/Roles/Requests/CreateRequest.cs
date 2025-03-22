@@ -6,6 +6,7 @@ namespace ECommerce.BLL.Features.Roles.Requests
     public record CreateRoleRequest
     {
         public string Name { get; set; }
+        public string NameEn { get; set; }
         public string Description { get; set; }
     }
 }

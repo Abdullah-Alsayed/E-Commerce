@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Helpers;
@@ -44,18 +45,22 @@ namespace ECommerce.BLL.Features.Users.Validators
                 .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .Must(req =>
                 {
-                    return GeneralHelpers.IsPhoneValid(req);
+                    var result = Regex.IsMatch(
+                        req,
+                        @"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"
+                    );
+                    return result;
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.Exist]}"
+                    $" {_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.NotValid]}"
                 );
 
             RuleFor(req => req)

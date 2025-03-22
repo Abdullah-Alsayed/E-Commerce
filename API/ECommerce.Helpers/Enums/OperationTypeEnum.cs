@@ -24,6 +24,8 @@
         SendConfirmEmail,
         ChangeUserPassword,
         Notify,
-        UpdateLanguage
+        UpdateLanguage,
+        Active,
+        UnActive
     }
 }

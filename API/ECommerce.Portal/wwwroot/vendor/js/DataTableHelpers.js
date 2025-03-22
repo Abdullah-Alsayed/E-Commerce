@@ -41,7 +41,6 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
     $(`#${tableId}`).DataTable().destroy();
   }
 
-  const filterId = $(`#${tableId}`).attr('data-filterId');
   // Find the index of the 'createAt' column dynamically
   let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
   if (createAtIndex === -1) createAtIndex = 0; // Default to first column if not found
@@ -67,13 +66,15 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
       return: true
     },
     ajax: {
-      url: `/${controler}/${action}?id=${filterId}`,
+      url: `/${controler}/${action}`,
       type: 'POST',
       contentType: 'application/json',
-      data: function (d) {
-        let data = JSON.stringify(d);
-        console.log(data);
-        return data;
+        data: function (d) {
+            const filters = getFilters(); // Collect all filters dynamically
+            Object.assign(d, filters);   // Merge filters into the request payload
+            let data = JSON.stringify(d);
+            console.log(data);
+            return data;
       },
       error: function (xhr, status, error) {
         console.error('Error:', error);
@@ -143,10 +144,11 @@ function submitFormData(formSelector, controler, action, table, e) {
   }
 
   const updateRecordId = $(`#updateRecordId`).val();
+  formData.append('id', updateRecordId);
 
   // Send data via AJAX
   $.ajax({
-    url: `/${controler}/${action}?id=${updateRecordId}`,
+    url: `/${controler}/${action}`,
     type: 'POST',
     data: formData,
     processData: false, // Prevent jQuery from processing the data
@@ -159,7 +161,7 @@ function submitFormData(formSelector, controler, action, table, e) {
         resetImagePreview(formSelector) // Reset the Photo
         $(`#${table}`).DataTable().ajax.reload(); // Reload DataTable
       } else {
-        toastError(response.message);
+        toastError(response.message,5000);
       }
     },
     error: function (xhr, status, error) {
@@ -352,3 +354,29 @@ function validateImageFile(file) {
 
   return true; // Valid file
 } 
+
+const getFilters = () => {
+    const filters = {};
+    $(`#filter-container .filter`).each(function () {
+        const key = $(this).data('filter'); // Get the filter key from the data attribute
+        const value = $(this).val();       // Get the selected value
+        filters[key] = value;              // Add to the filters object
+    });
+    return filters;
+};
+
+function convertUTCToLocal(utcDate) {
+    if (!utcDate) return '-'; // Handle null/empty values
+
+    let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's time zone
+
+    // Convert to UTC correctly by appending 'Z' if it's missing
+    let date = new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z');
+
+    // Convert UTC to local time using the user's time zone
+    let localTime = date.toLocaleString(undefined, { timeZone: userTimeZone });
+
+    return localTime;
+}
+
+

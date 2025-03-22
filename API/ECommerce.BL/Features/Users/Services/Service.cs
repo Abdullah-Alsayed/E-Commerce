@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +7,7 @@ using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.AvatarService;
@@ -49,7 +49,12 @@ namespace ECommerce.BLL.Features.Users.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<User, UserDto>().ReverseMap();
+                cfg.CreateMap<User, UserDto>()
+                    .ForMember(
+                        dest => dest.GanderName,
+                        opt => opt.MapFrom(src => localizer[src.Gander.ToString()])
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Role, RoleDto>().ReverseMap();
                 cfg.CreateMap<User, CreateUserRequest>().ReverseMap();
                 cfg.CreateMap<User, UpdateUserRequest>().ReverseMap();
@@ -106,15 +111,6 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                //var validator = await _validator.ValidateAsync(request);
-
-                //if (validator.Errors.Any())
-                //    return new BaseResponse
-                //    {
-                //        IsSuccess = false,
-                //        Message = string.Join(",", validator.Errors)
-                //    };
-
                 var user = _mapper.Map<User>(request);
                 user.Email = request.Email.ToLower();
                 user.Language = Constants.Languages.Ar;
@@ -187,6 +183,68 @@ namespace ECommerce.BLL.Features.Users.Services
             }
         }
 
+        public async Task<BaseResponse> UpdateAsync(UpdateUserRequest request)
+        {
+            var photo = string.Empty;
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var user = await _unitOfWork.User.FindUserByIDAsync(request.ID.ToString());
+                _mapper.Map(request, user);
+                photo = await _unitOfWork.User.UploadPhotoAsync(
+                    request.ProfilePicture,
+                    Constants.PhotoFolder.User,
+                    user.Photo
+                );
+                user.Photo = photo;
+                user.ModifyBy = _userContext.UserId.Value;
+                user.ModifyAt = DateTime.UtcNow;
+                var result = _mapper.Map<UserDto>(user);
+                #region Send Notification
+                await SendNotification(OperationTypeEnum.Update);
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(OperationTypeEnum.Update);
+                modifyRows++;
+                #endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<UserDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.User.DeleteFile(photo);
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Update,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         public async Task<BaseResponse> DeleteAsync(DeleteUserRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
@@ -209,6 +267,66 @@ namespace ECommerce.BLL.Features.Users.Services
                 #endregion
 
                 modifyRows += 2;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<UserDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.User
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActive(BaseRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var User = await _unitOfWork.User.FindUserByIDAsync(request.ID.ToString());
+                User.IsActive = !User.IsActive;
+                var result = _mapper.Map<UserDto>(User);
+                modifyRows++;
+                #region Send Notification
+                await SendNotification(
+                    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
+                );
+                modifyRows++;
+                #endregion
+
+                #region Log
+                await LogHistory(
+                    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
+                );
+                modifyRows++;
+                #endregion
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -565,26 +683,15 @@ namespace ECommerce.BLL.Features.Users.Services
                 var result = _mapper.Map<UserDto>(user);
                 modifyRows++;
 
-                if (await _unitOfWork.IsDone(modifyRows))
+                await _unitOfWork.SaveAsync();
+                await transaction.CommitAsync();
+                await UpdateLanguageOnCookie(language, httpContext, response);
+                return new BaseResponse<UserDto>
                 {
-                    await transaction.CommitAsync();
-                    await UpdateLanguageOnCookie(language, httpContext, response);
-                    return new BaseResponse<UserDto>
-                    {
-                        IsSuccess = true,
-                        Message = _localizer[MessageKeys.Success].ToString(),
-                        Result = result
-                    };
-                }
-                else
-                {
-                    await transaction.RollbackAsync();
-                    return new BaseResponse
-                    {
-                        IsSuccess = false,
-                        Message = _localizer[MessageKeys.Fail].ToString(),
-                    };
-                }
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
             }
             catch (Exception ex)
             {
@@ -632,11 +739,16 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             var currentUser = httpContext.User;
             var claimsIdentity = currentUser.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                var existingClaim = claimsIdentity.FindFirst("Language");
 
-            // Update the claims with the new language
-            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("Language"));
+                if (existingClaim != null)
+                    claimsIdentity.RemoveClaim(existingClaim);
 
-            claimsIdentity.AddClaim(new Claim("Language", language ?? ""));
+                // Add the new claim
+                claimsIdentity.AddClaim(new Claim("Language", language ?? ""));
+            }
 
             // Update the authentication cookie with the new claims
             await httpContext.SignInAsync(

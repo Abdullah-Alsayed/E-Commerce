@@ -37,11 +37,11 @@ namespace ECommerce.BLL.Features.Vendors.Validators
             RuleFor(req => req.Phone)
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .MaximumLength(20)
                 .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())

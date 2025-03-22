@@ -45,7 +45,7 @@
           </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Users.View) || AuthHelper.CanAccess(permissions, Permissions.Role.View))
         {
             <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/Account/List") ? " active open" : "")'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -53,21 +53,21 @@
                     <div data-i18n="@_Localizer["Roles&PUsers"]">@_Localizer["Roles&Users"]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
-                    {
-                        <li class='menu-item@(currentPage.StartsWith("/Role/List") ? " active" : "")'>
-                            <a asp-controller="Role" asp-action="List" class="menu-link">
-                                <span class="menu-icon tf-icons mdi mdi-security m-1"></span>
-                                <div data-i18n="@_Localizer["Roles"]">@_Localizer["Roles"]</div>
-                            </a>
-                        </li>
-                    }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Users.View))
                     {
                         <li class='menu-item@(currentPage.StartsWith("/Account/List") ? " active" : "")'>
                             <a asp-controller="Account" asp-action="List" class="menu-link">
                                 <span class="menu-icon tf-icons mdi mdi-account-wrench m-1"></span>
                                 <div data-i18n="@_Localizer["Users"]">@_Localizer["Users"]</div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Role.View))
+                    {
+                        <li class='menu-item@(currentPage.StartsWith("/Role/List") ? " active" : "")'>
+                            <a asp-controller="Role" asp-action="List" class="menu-link">
+                                <span class="menu-icon tf-icons mdi mdi-security m-1"></span>
+                                <div data-i18n="@_Localizer["Roles"]">@_Localizer["Roles"]</div>
                             </a>
                         </li>
                     }

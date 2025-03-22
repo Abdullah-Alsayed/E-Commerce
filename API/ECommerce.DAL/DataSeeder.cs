@@ -122,6 +122,7 @@ namespace ECommerce.Core
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = Constants.Roles.SuperAdmin,
+                    NameEn = "المسؤل",
                     Description = Constants.Roles.SuperAdmin,
                     NormalizedName = Constants.Roles.SuperAdmin.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
@@ -136,6 +137,7 @@ namespace ECommerce.Core
                     {
                         Id = Guid.NewGuid().ToString(),
                         Name = Constants.Roles.User,
+                        NameEn = "مستخدم",
                         Description = Constants.Roles.User,
                         NormalizedName = Constants.Roles.User.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
@@ -148,6 +150,7 @@ namespace ECommerce.Core
                     {
                         Id = Guid.NewGuid().ToString(),
                         Name = Constants.Roles.Client,
+                        NameEn = "عميل",
                         Description = Constants.Roles.Client,
                         NormalizedName = Constants.Roles.Client.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),

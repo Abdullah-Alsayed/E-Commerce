@@ -76,7 +76,7 @@ namespace ECommerce.Core
             public const string Value = "value";
             public const string Name="name";
             public const string Photo="photo";
-            public const string Brand = "barnd";
+            public const string Brand = "brand";
             public const string Category= "category";
             public const string SubCategory= "subCategory";
             public const string Unit= "unit";
@@ -86,7 +86,7 @@ namespace ECommerce.Core
             public const string Email= "Email";
             public const string Whatsapp= "MainColor";
             public const string MainColor= "MainColor";
-            public const string Phone= "Phone";
+            public const string PhoneNumber = "PhoneNumber";
             public const string Subject= "Subject";
             public const string Message= "Message";
             public const string Expense= "Expense";
@@ -120,8 +120,27 @@ namespace ECommerce.Core
             public const string Token="Token";
             public const string UserName= "UserName";
             public const string Booking= "Booking";
-			public const  string Products= "Products";
-		}
+			public const string Products= "Products";
+            public const string LastName = "LastName";
+            public const string FirstName = "FirstName";
+            public const string Password = "Password";
+            public const string CreatedAt = "CreatedAt";
+            public const string IsActive = "IsActive";
+            public const string LastLogin = "LastLogin";
+            public const string Age = "Age";
+            public const string Gander = "Gander";
+        }
+
+        public static class LabelKeys
+        {
+            public const string SelectRole = "SelectRole";
+            public const string ClickToUploadImage = "ClickToUploadImage";
+            public const string Close = "Close";
+            public const string SaveChanges = "SaveChanges";
+            public const string Action = "Action";
+            public const string SelectGender = "SelectGender";
+            public const string Permission = "Permission";
+        }
 
         public static class Gender
         {

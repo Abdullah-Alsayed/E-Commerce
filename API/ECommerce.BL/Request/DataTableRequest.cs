@@ -10,7 +10,7 @@ namespace ECommerce.BLL.Request
         public int Start { get; set; }
         public int Length { get; set; }
         public DataTableSearch Search { get; set; }
-        public int BusinessSiteFacilityId { get; set; }
+        public string RoleId { get; set; }
         public int BusinessSiteServiceId { get; set; }
         public int FacilityOptionId { get; set; }
         public int Type { get; set; }

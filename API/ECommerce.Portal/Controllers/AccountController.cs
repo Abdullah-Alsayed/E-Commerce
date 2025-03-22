@@ -6,7 +6,6 @@ using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core.PermissionsClaims;
-using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,13 +41,12 @@ namespace ECommerce.Portal.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = "/")
         {
-            // Validate the ReturnUrl to prevent open redirect vulnerabilities
             if (!Url.IsLocalUrl(returnUrl))
             {
                 returnUrl = "/";
             }
 
-            ViewData["ReturnUrl"] = returnUrl; // Pass the ReturnUrl to the view
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
@@ -96,13 +94,18 @@ namespace ECommerce.Portal.Controllers
                 nameof(UserDto.FirstName),
                 nameof(UserDto.LastName),
                 nameof(UserDto.Address),
+                nameof(UserDto.Email),
                 nameof(UserDto.Photo),
                 nameof(UserDto.PhoneNumber),
+                nameof(UserDto.Gander),
                 nameof(DAL.Entity.User.Role.Name),
                 nameof(UserDto.LastLogin),
+                nameof(UserDto.IsActive),
                 nameof(UserDto.CreateAt),
             };
-            string sortColumn = columns[request?.Order?.FirstOrDefault()?.Column ?? 6];
+            string sortColumn = columns[
+                request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1
+            ];
             var response = await _service.GetAllAsync(
                 new GetAllUserRequest
                 {
@@ -111,7 +114,8 @@ namespace ECommerce.Portal.Controllers
                     PageSize = request?.Length ?? 0,
                     PageIndex = request != null ? (request.Start / request.Length) : 0,
                     SearchFor = search,
-                    StaffOnly = true
+                    StaffOnly = true,
+                    RoleId = request?.RoleId
                 }
             );
 
@@ -207,15 +211,60 @@ namespace ECommerce.Portal.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> Create([FromForm] CreateUserRequest request)
+        [Authorize(Policy = Permissions.Users.Create)]
+        public async Task<IActionResult> Create([FromForm] CreateUserRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(
+                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+                );
+            }
+
             try
             {
-                return await _service.CreateAsync(request);
+                var result = await _service.CreateAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return StatusCode(
+                    500,
+                    new BaseResponse { IsSuccess = false, Message = ex.Message }
+                );
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Permissions.Users.Delete)]
+        public async Task<IActionResult> Update([FromForm] UpdateUserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(
+                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+                );
+            }
+
+            try
+            {
+                var result = await _service.UpdateAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new BaseResponse { IsSuccess = false, Message = ex.Message }
+                );
             }
         }
 
@@ -232,7 +281,21 @@ namespace ECommerce.Portal.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<BaseResponse> ToggleActive([FromBody] BaseRequest request)
+        {
+            try
+            {
+                return await _service.ToggleActive(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         [HttpDelete]
+        [Authorize(Policy = Permissions.Users.Delete)]
         public async Task<BaseResponse> Delete(string id)
         {
             try
@@ -279,7 +342,10 @@ namespace ECommerce.Portal.Controllers
         public async Task<IActionResult> UpdateLanguage(string language, string path)
         {
             var response = await _service.UpdateLanguage(language, HttpContext, Response);
-            return Redirect(path);
+            if (response.IsSuccess)
+                return Redirect(path);
+            else
+                return View();
         }
     }
 }

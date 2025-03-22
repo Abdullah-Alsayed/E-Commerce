@@ -1,0 +1,561 @@
+{
+  //---------------------------- LOCALIZAER AR ---------------------------//
+
+  "fail": "لقد حدث خطاء في العملبه حاول مره اخره في وقت لاحق",
+  "success": "تمت العملية بنجاح",
+  "isRequired": "مطلوب",
+  "maxNumber": "{0} اقصي رقم هو",
+  "minNumber": "{0} اقل رقم هو",
+  "notFound": "ليس موجود",
+  "exist": "موجود بالفعل",
+  "notExist": "غير موجود",
+
+  //-------------------------------Entitys------------------------------
+  "tax": "الضريبه",
+  "nameAr": "الاسم العربي",
+  "nameEn": "الاسم الانجليزي",
+  "governorate": "المحافظه",
+  "area": "المنطقه",
+  "color": "اللون",
+  "voucher": "القسيمه",
+  "value": "القيمه",
+  "name": "الاسم",
+  "Email": "البريد",
+  "FirstName": "الاسم الاول",
+
+  //--------------------------Errors---------------------------------
+  "InvalidToken": "رمز غير صالح حاول مره اخري",
+  "LoginFiled": "اسم المستخدم أو كلمة المرور غير صحيحة",
+
+
+
+  //----------------------------Actions-----------------------------
+  "Create": "اضافه",
+
+  // --------------------------- Product ---------------------------
+  "HasReview": "لقد قيمت هذا المنتج بالفعل",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "MessageChangePassword": "تم تغير كلمة السر بنجاح قم بتسجيل الدخول",
+  "UserNameRequired": "من فضلك ادخل اسم المستخدم",
+  "PasswordRequired": "من فضلك ادخل كلمه المرور",
+  "tokenRequired": "الرمز المميز مطلوب",
+  "LanguageRequired": "من فضلك ادخل اللغة",
+  "InvalidLanguage": "من فضلك ادخل اللغة الصحيحة",
+  "invalidLogin": "البيانات المدخلة غير صحيحة",
+  "islocked": "الحساب موقوف مؤقتا برجاء المحاولة مرة اخري خلال ساعة",
+  "canUpdateBusinessTypeIdFirstUpdate": "يمكن تحديث نوع العمل أول تحديث فقط",
+  "invalidTimeZone": "الوقت المحدد غير موجود",
+  "invalidCurrencies": "كود العملة غير صحيح",
+  "Saturday": "السبت",
+  "Sunday": "الأحد",
+  "Monday": "الأثنين",
+  "Tuesday": "الثلاثاء",
+  "Wednesday": "الأربعاء",
+  "Thursday": "الخميس",
+  "Friday": "الجمعة",
+  // --------------------------- Secuiry System  ---------------------------
+
+  "AuthorizedDomains": "الدومين غير صحيح",
+  "InvalidIp": "عنوان الاي بي خطئ يجب ان يكون IPv4 او IPv6",
+  "InvalidIpLogin": "غير مسموح بالدخول من هذه العنوان",
+  // --------------------------- Department  ---------------------------
+  "departmentname": "من فضلك ادخل اسم القسم",
+  "departmentExist": "القسم موجود بنفس الاسم",
+
+  "ParentIdNotExist": "القسم الفرعي غير موجود",
+  "DepartmentMain": "القسم الرئيسي غير موجود",
+  "MainDepartment": "لا يمكنك حذف قسم رئيسي",
+  "EmployeeExist": "الموظف بالفعل موجود علي قسم الموظفين",
+  "EmployeeNotExist": "الموظف او القسم غير موجودين في قسم الموظفين",
+  "InvalidBranch": "الفرع غير صحيح",
+  "EmployeeId": "كود الموظف غير موجود",
+  "DepartmentId": "كود القسم غير موجود",
+  "DepartmentIsActive": "القسم مفعل",
+  "DepartmentHasEmployee": "القسم يحتوي علي موظفين",
+
+  // --------------------------- Role  ---------------------------
+
+  "IsMaster": "هذه الدور اساسي ولا يمكن حذفه",
+  "RoleError": "خطأ في الدرو",
+  "RoleDepartment": "القسم او الدرو خطأ",
+  "RoleId": "الدور غير صحيح",
+  "RoleEmpty": "الدور فارغ",
+  "RolemaxLength": "اقصي عدد للحروف 200 حرف",
+  "RoleMinLength": "عدد حروف الدور يجب ان تزيد عن {}",
+  "ClaimsNotExsit": "الصلاحية غير موجودة",
+  "BadRequest": "خطأ في الأتصال",
+  "RoleExist": "الدور موجود",
+  "InValidRoleUser": "يوجد خطاء بالمستخدم او بالدرو",
+  "RoleNotExist": "الدور غير موجود",
+  "RoleMax": "عدد الادوار وصل للحد الاقصي",
+  "RoleDuplicate": "الدور مكرر",
+  "RoleHasUser": "الدور لدية مستخدمين",
+  "Invalidcommand": "قيمة سلسلة غير صالحة للأمر",
+  "InvalidPlanId": "رقم الخطة غير صحيح",
+  "ExistParentAccount": "يوجد حساب بالفعل علي هذه الخطة",
+  "UserNotDeleted": "المستخدم غير محذوف ",
+  "RoleIsNotActive": "لا يمكنك اضافة مستخدم علي دور غير مفعل",
+  "roleIsActivated": "الدور مفعل بالفعل",
+  "UserAlreadyHasThisRole": " المستخدم بالفعل يمتلك هذه الدور",
+  "roleIsDeactive": "بالفعل الدور غير مفعل",
+  "roleIsActive": "الدور مفعل بالفعل",
+  "roleNameAr": "اسم الدور باللغة العربية موجود بالفعل برجاء تغير اسم الدور",
+  "roleNameEn": "اسم الدور باللغة الانجليزيو موجود بالفعل برجاء تغير اسم الدور",
+  "roleName": "اسم الدور موجود بالفعل برجاء تغير الاسم",
+
+
+  // --------------------------- Claims  ---------------------------
+  "RoleClaims": "يجب اضافة صلاحيات للدور",
+  "claimsExsit": "الصلاحيه موجوده",
+  // --------------------------- User  ---------------------------
+  "UserNotExsitOrDeleted": "الموظف غير موجود او تم حذفة",
+  "RefreshToken": "من فضلك ادخل التوكن",
+  "NotValidUsername": "الاسم غير صحيح",
+  "Phone": "الرقم غير صحيح",
+  "invalidUser": "كود المستخدم غير صحيح",
+  "userIsDeleted": "لا يمكن اتمام عملية استرجاع كلمة السر لمستخدم محذوف",
+  "UserId": "من فضلك ادخل رقم المستخدم بشكل صحيح",
+  "NotValidEmail": "البريد الالكتروني غير صحيح",
+  "PasswordNotmatch": "كلمة المرور غير متساوية",
+  "PasswordNotStrong": "الرقم السري ضعيف",
+  "PasswordMoreThan": "كلمة المرور يجب الا تتجاوز 200 حرف ",
+  "ValidName": "الاسم غير صحيح",
+  "NotValidCharacterName": "حروف الاسم غير صحيح",
+  "EmailTaken": "البريد الالكتروني موجود بالفعل",
+  "PhoneTaken": "رقم الهاتف موجود بالفعل",
+  "UserNameTaken": "اسم المستخدم موجود بالفعل",
+  "NumberUserMax": "وصلت للحد الاقصي من المستخدمين",
+  "NumberBulkMax": "وصلت للحد الاقصي من المستخدمين",
+  "EmptyPic": "صورة فارغة",
+  "PicMoreThan2Mb": "حجم الصورة يجب الا يتجاوز 2 ميجا",
+  "UserIdNotFound": "المستخدم غير موجود",
+  "emailDuplicate": "البريد الإلكتروني مكرر",
+  "phoneNumberDuplicate": "رقم الهاتف مكرر",
+  "NotHavePermissions": "ليس لديك أذونات",
+  "usernameDuplicate": "اسم المستخدم مكرر",
+  "companyIsBlock": "اتصل بفريق الدعم لدينا",
+  "userNotActive": "المستخدم غير مفعل",
+  "limitedVisibility": "لا يمكن تغير الرؤية المحدودة للحساب الرئيسي للمزيد من المعلومات تواصل معنا",
+  "invalidVisibility": "خطئ في اختيار النوع للروئية المحدودة",
+  "changelimitedVisibility": "ليس لديك صلاحية لتغير صلاحية الروئية",
+  "LimitedVisibilityRequired": " الصلاحية مطلوبة",
+  // --------------------------- Company  ---------------------------
+
+  "CompanyNotExsitOrDeleted": "الشركة غير موجودة أو محذوفة",
+  "noEmailSettings": "هذه الشركه ليس لها اعدادات بريد",
+  "companyIsExpired": "الشركة منتهية الصلاحية يجب تجديد الاشتراك",
+  "domainExist": "لا يمكنك تغير الدومين للمزيد من التفاصيل برجاء التواصل معنا",
+  "timezoneNotExist": "كود الوقت الزمني غير صحيح",
+  // --------------------------- Appointments  ---------------------------
+
+
+
+  "appointments.stage.add": "اضافة حجز",
+  "appointments.stage.edit": "تعديل حجز",
+  "appointments.stage.delete": "حذف حجز",
+  "appointments.stage.activate": "تفعيل حجز",
+  "appointments.stage.deactivate": "الغاء تفعيل الحجز",
+  "appointments.stage.view": "عرض الحجز",
+  "appointments.voucher.manage": "appointments.voucher.manage",
+  "appointments.appointment.setting": "appointments.appointment.setting",
+  "appointments.appointment.add": "appointments.appointment.add",
+  "appointments.appointment.edit": "appointments.appointment.edit",
+  "appointments.appointment.delete": "appointments.appointment.delete",
+  "appointments.appointment.view": "appointments.appointment.view",
+  "appointments.appointmentsource.add": "appointments.appointmentsource.add",
+  "appointments.appointmentsource.edit": "appointments.appointmentsource.edit",
+  "appointments.appointmentsource.delete": "appointments.appointmentsource.delete",
+  "appointments.appointmentsource.view": "appointments.appointmentsource.view",
+  "appointments.appointment.manageblocktime": "appointments.appointment.manageblocktime",
+  "appointments.resource.add": "appointments.resource.add",
+  "appointments.resource.edit": "appointments.resource.edit",
+  "appointments.resource.delete": "appointments.resource.delete",
+  "appointments.resource.view": "appointments.resource.view",
+
+  // --------------------------- ClientsClaims  ---------------------------
+
+  "clients.company.add": "clients.company.add  AR",
+  "clients.company.edit": "clients.company.edit AR ",
+  "clients.company.activate": "clients.company.activate AR",
+  "clients.company.delete": "clients.company.delete AR",
+  "clients.department.add": "clients.department.add AR",
+  "clients.department.edit": "clients.department.edit AR",
+  "clients.department.activate": "clients.department.activate AR",
+  "clients.department.deactivate": "clients.department.deactivate AR",
+  "clients.department.delete": "clients.department.delete AR",
+  "clients.department.view": "clients.department.view AR",
+  "clients.branch.add": "clients.branch.add AR",
+  "clients.branch.edit": "clients.branch.edit AR ",
+  "clients.branch.delete": "clients.branch.delete AR ",
+  "clients.branch.view": "clients.branch.view AR ",
+  "clients.employee.add": "clients.employee.add AR ",
+  "clients.employee.edit": "clients.employee.edit AR ",
+  "clients.employee.activate": "clients.employee.activate AR",
+  "clients.employee.deactivate": "clients.employee.deactivate AR",
+  "clients.employee.delete": "clients.employee.delete AR",
+  "clients.employee.view": "clients.employee.view AR",
+  "clients.employee.reset_others_password": "clients.employee.reset_others_password AR",
+  "clients.employee.profiles.edit": "clients.employee.profiles.edit AR",
+
+  // --------------------------- ContactsClaims  ---------------------------
+
+  "contacts.contact.add": "contacts.contact.add AR",
+  "contacts.contact.edit": "contacts.contact.edit AR",
+  "contacts.contact.delete": "contacts.contact.delete AR",
+  "contacts.contact.file.add": "contacts.contact.file.add AR",
+  "contacts.contact.view": "contacts.contact.view AR",
+
+  // --------------------------- DealsClaims  ---------------------------
+
+
+  "deals.deal.add": "deals.deal.add",
+  "deals.deal.edit": "deals.deal.edit",
+  "deals.deal.delete": "deals.deal.delete",
+  "deals.file.add": "deals.file.add",
+  "deals.file.delete": "deals.file.delete",
+  "deals.deal.view": "deals.deal.view",
+  "deals.deal.freeze": "deals.deal.freeze",
+  "deals.deal.unfreeze": "deals.deal.unfreeze",
+  "deals.deal.bulkfreeze": "deals.deal.bulkfreeze",
+  "deals.deal.move": "deals.deal.move",
+  "deals.comment.add": "deals.comment.add",
+  "deals.comment.edit": "deals.comment.edit",
+  "deals.comment.view": "deals.comment.view",
+  "deals.pipeline.add": "deals.pipeline.add",
+  "deals.pipeline.edit": "deals.pipeline.edit",
+  "deals.pipeline.default": "deals.pipeline.default",
+  "deals.pipeline.view": "deals.pipeline.view",
+  "deals.pipeline.delete": "deals.pipeline.delete",
+  "deals.stage.add": "deals.stage.add",
+  "deals.stage.edit": "deals.stage.edit",
+  "deals.stage.delete": "deals.stage.delete",
+  "deals.stage.view": "deals.stage.view",
+  "deals.stage.default": "deals.stage.default",
+  "deals.stage.order": "deals.stage.order",
+  "deals.report.view": "deals.report.view",
+  "deals.automation.add": "deals.automation.add",
+  "deals.automation.edit": "deals.automation.edit",
+  "deals.automation.delete": "deals.automation.delete",
+  "deals.automation.view": "deals.automation.view",
+
+
+  // --------------------------- FoldersClaims  ---------------------------
+
+
+  "folders.folder.add": "folders.folder.add",
+  "folders.folder.edit": "folders.folder.edit",
+  "folders.folder.delete": "folders.folder.delete",
+  "folders.folder.view": "folders.folder.view",
+
+
+  // --------------------------- FormTemplatesClaims  ---------------------------
+
+
+  "formtemplates.folder.add": "formtemplates.folder.add",
+  "formtemplates.folder.edit": "formtemplates.folder.edit",
+  "formtemplates.folder.delete": "formtemplates.folder.delete",
+  "formtemplates.folder.view": "formtemplates.folder.view",
+
+
+
+
+  // --------------------------- IdentityClaims  ---------------------------
+
+
+  "security.role.add": "security.role.add",
+  "security.role.edit": "security.role.edit",
+  "security.role.activate": "security.role.activate",
+  "security.role.deactivate": "security.role.deactivate",
+  "security.role.delete": "security.role.delete",
+  "security.role.view": "security.role.view",
+  "security.role.department.assign": "security.role.department.assign",
+  "security.role.department.remove": "security.role.department.remove",
+  "security.role.employee.assign": "security.role.employee.assign",
+  "security.role.employee.remove": "security.role.employee.remove",
+
+
+
+  // --------------------------- InventoryClaims  ---------------------------
+
+
+
+  "inventory.inventory.view": "inventory.inventory.view",
+  "inventory.inventory.edit": "inventory.inventory.edit",
+  "inventory.product.add": "inventory.product.add",
+  "inventory.product.edit": "inventory.product.edit",
+  "inventory.product.delete": "inventory.product.delete",
+  "inventory.product.view": "inventory.product.view",
+  "inventory.contactbalance.addpayment": "inventory.contactbalance.addpayment",
+  "inventory.contactbalance.withdrawpayment": "inventory.contactbalance.withdrawpayment",
+  "inventory.contactbalance.view": "inventory.contactbalance.view",
+  "inventory.invoice.refund": "inventory.invoice.refund",
+  "inventory.invoice.deal.create": "inventory.invoice.deal.create",
+  "inventory.stockorder.view": "inventory.stockorder.view",
+  "inventory.stock.add": "inventory.stock.add",
+  "inventory.stock.return": "inventory.stock.return",
+
+
+  // --------------------------- PlatformClaims  ---------------------------
+
+
+  "platform.businessdomain.add": "platform.businessdomain.add",
+  "platform.businessdomain.edit": "platform.businessdomain.edit",
+  "platform.businessdomain.delete": "platform.businessdomain.delete",
+  "platform.businessdomain.view": "platform.businessdomain.view",
+
+
+
+  // --------------------------- PurposesClaims  ---------------------------
+
+
+  "purposes.folder.add": "purposes.folder.add",
+  "purposes.folder.edit": "purposes.folder.edit",
+  "purposes.folder.delete": "purposes.folder.delete",
+  "purposes.folder.view": "purposes.folder.view",
+
+  // --------------------------- SubmissionsClaims  ---------------------------
+
+
+  "submissions.folder.add": "submissions.folder.add",
+  "submissions.folder.edit": "submissions.folder.edit",
+  "submissions.folder.delete": "submissions.folder.delete",
+  "submissions.folder.view": "submissions.folder.view",
+
+
+  // --------------------------- TasksClaims  ---------------------------
+
+
+  //--------------------------------Storage--------------------------------------//
+  "invalidFile": "الملف غير موجود",
+  "fileIsprohibited": "الملف محظور",
+  "maxStorage": "لقد وصلت للحد الاقصي من المساحة التخزينية برجاء زيادة مساحة التخزين من خلال التواصل معنا",
+  "folderNameEmpty": "اسم المجلد فارغ",
+  "fileNameEmpty": "اسم الملف فارغ",
+  "FolderNameNotExist": "اسم المجلد غير موجود",
+  "fileNotExsit": "الملف غير موجود",
+  "folderNotFound": "الملجلد غير موجود",
+  "invalidFolderId": "{0} كود المجلد غير صحيح",
+  "folderPrivate": "المجلد خاص بالفعل",
+  "folderPublic": "الملف عام بالفعل",
+  "ownerFolder": "فقط منشئ المجلد بامكانة عمل التعديلات",
+  "folderNameExsit": "{0} اسم المجلد موجود بالفعل سوف يكون اسم المجلد",
+  "filenotExsit": "الملف غير موجود",
+  "deplicatedSharedIds": "كود المستخدم مكرر",
+  "folderAlearyOnlyMe": "المجلد خاص بالفعل بدون اي مشاركة",
+  "invalidSharedIds": "كود المستخدم غير صحيح",
+  "canNotCopySameFolder": "لا يمكن نسخ الملف علي نفس المجلد",
+  "fileIsEmpty": "يجب اضافة صورة",
+
+
+
+  //--------------------------------Otp--------------------------------------//
+  "enterEmailOrPhone": "من فضلك ادخل البريد الالكتروني او رقم الهاتف",
+  "sendType": "من فضلك اختر الطريقة المناسبة لك لاسترجاع كلمة السر",
+  "invalidEmail": "البريد الالكتروني غير صحيح",
+  "invalidPhone": "رقم الهاتف غير صحيح",
+  "requiredOtp": "من فضلك ادخل الرمز المميز",
+  "otpMaxLength": "اقصي عدد للارقام 6 ارقام",
+  "invalidOtp": "الرمز المميز غير صحيح",
+  "invalidSendType": "الطريقة المختارة للارسال غير صحيحة",
+  "otpExpired": "الرمز المميز منتهي الصلاحية",
+  "requiredNewPassword": "من فضلك ادخل كلمة السر الجديدة",
+  "requiredConfirmPassword": "من فضلك ادخل تاكيد كلمة السر",
+  "passwordNotMatch": "كلمة السر غير متساوية",
+  "tokenUsed": "تم استخدم التوكن بالفعل",
+
+
+
+  "Folder": "مجلد",
+  "FormTemplate": "نموذج النموذج",
+  "BusinessDomain": "نطاق الأعمال",
+  // ---------------------------End Claims---------------------------
+  "Tasks": "المهام",
+  "Appointments": "المواعيد",
+  "Deals": "الصفقات",
+  "Inventory": "المخزون",
+  "Contacts": "جهات الاتصال",
+  "Identity": "إدارة المستخدمين",
+  "Chat": "الدردشة",
+
+  "Board": "لوحة",
+  "Task": "المهمة",
+  "Ticket": "التذكرة",
+  "Pipeline": "الأنابيب",
+  "Appointment": "الحجز",
+  "Resource": "مورد",
+  "AutomationRule": "قاعدة الأتمتة",
+  "Deal": "الصفقة",
+  "Pipelinestage": "مرحلة الأنابيب",
+  "Product": "المنتج",
+  "Role": "الدور",
+  "Company": "الشركة",
+  "User": "المستخدم",
+  "Storage": "التخزين",
+  "Account": "الحساب",
+  "Contact": "العميل",
+
+  "TasksBoardadd": "إضافة",
+  "TasksBoardconfig": "تعديل",
+  "TasksBoardedit": "تعديل",
+  "TasksBoarddelete": "حذف",
+  "TasksBoardownedit": "تعديل",
+  "TasksBoardowndelete": "حذف",
+  "TasksBoardview": "مشاهدة",
+  "TasksBoardviewall": "مشاهدة",
+  "TasksTaskadd": "إضافة",
+  "TasksTaskedit": "تعديل",
+  "TasksTaskdelete": "حذف",
+  "TasksTaskmemberdelete": "حذف",
+  "TasksTaskmemberadd": "إضافة",
+  "TasksTaskownedit": "تعديل",
+  "TasksTaskfileadd": "إضافة",
+  "TasksTaskview": "مشاهدة",
+  "TasksTaskboardtemplateedit": "تعديل",
+  "TasksTasksystemsetting": "تعديل",
+  "TasksTicketAdd": "إضافة",
+  "TasksTicketedit": "تعديل",
+  "TasksTicketdelete": "حذف",
+  "TasksTicketView": "مشاهدة",
+  "AppointmentsPipelinestageadd": "إضافة",
+  "AppointmentsPipelinestageedit": "تعديل",
+  "AppointmentsPipelinestagedelete": "حذف",
+  "AppointmentsPipelinestageactivate": "تعديل",
+  "AppointmentsPipelinestagedeactivate": "تعديل",
+  "AppointmentsPipelinestageview": "مشاهدة",
+  "AppointmentsPipelineview": "مشاهدة",
+  "AppointmentsAppointmentvouchermanage": "تعديل",
+  "AppointmentsAppointmentsetting": "تعديل",
+  "AppointmentsAppointmentadd": "إضافة",
+  "AppointmentsAppointmentedit": "تعديل",
+  "AppointmentsAppointmentdelete": "حذف",
+  "AppointmentsAppointmentview": "مشاهدة",
+  "AppointmentsAppointmentdashboardview": "مشاهدة",
+  "AppointmentsAppointmentstagerulemanage": "تعديل",
+  "AppointmentsAppointmentsystemsetting": "تعديل",
+  "AppointmentsResourceblocktimemanage": "تعديل",
+  "AppointmentsResourceadd": "إضافة",
+  "AppointmentsResourceedit": "تعديل",
+  "AppointmentsResourcedelete": "حذف",
+  "AppointmentsResourceview": "مشاهدة",
+  "AppointmentsResourcemanage": "تعديل",
+  "AppointmentsAutomationRuleadd": "إضافة",
+  "AppointmentsAutomationRuleedit": "تعديل",
+  "AppointmentsAutomationRuledelete": "حذف",
+  "AppointmentsAutomationRuleview": "مشاهدة",
+  "DealsDealadd": "إضافة",
+  "DealsDealedit": "تعديل",
+  "DealsDealdelete": "حذف",
+  "DealsDealfileadd": "إضافة",
+  "DealsDealfiledelete": "حذف",
+  "DealsDealview": "مشاهدة",
+  "DealsDealfreeze": "تعديل",
+  "DealsDealsystemsetting": "تعديل",
+  "DealsDealunfreeze": "تعديل",
+  "DealsDealbulkfreeze": "تعديل",
+  "DealsDealmove": "تعديل",
+  "DealsDealcommentadd": "إضافة",
+  "DealsDealcommentedit": "تعديل",
+  "DealsDealcommentdelete": "حذف",
+  "DealsDealcommentview": "مشاهدة",
+  "DealsDealreportview": "مشاهدة",
+  "DealsDealstageruleadd": "إضافة",
+  "DealsDealstageruleedit": "تعديل",
+  "DealsDealstageruledelete": "حذف",
+  "DealsDealstageruleview": "مشاهدة",
+  "DealsDealstagerulerecovery": "تعديل",
+  "DealsPipelineadd": "إضافة",
+  "DealsPipelineedit": "تعديل",
+  "DealsPipelinedefault": "تعديل",
+  "DealsPipelineview": "مشاهدة",
+  "DealsPipelinedelete": "حذف",
+  "DealsPipelinestageadd": "إضافة",
+  "DealsPipelinestageview": "مشاهدة",
+  "DealsPipelinestageedit": "تعديل",
+  "DealsPipelinestagedelete": "حذف",
+  "DealsPipelinestagedefault": "تعديل",
+  "DealsPipelinestageorder": "تعديل",
+  "DealsAutomationRuleadd": "إضافة",
+  "DealsAutomationRuleedit": "تعديل",
+  "DealsAutomationRuledelete": "حذف",
+  "DealsAutomationRuleview": "مشاهدة",
+  "InventoryInventoryview": "مشاهدة",
+  "InventoryInventoryedit": "تعديل",
+  "InventoryInventorycontactbalanceaddpayment": "إضافة",
+  "InventoryInventorycontactbalancewithdrawpayment": "حذف",
+  "InventoryInventorycontactbalanceview": "مشاهدة",
+  "InventoryInventoryinvoicerefund": "حذف",
+  "InventoryInventoryinvoicecreate": "إضافة",
+  "InventoryInventorystockview": "مشاهدة",
+  "InventoryInventorystockadd": "إضافة",
+  "InventoryInventorystockreturn": "حذف",
+  "InventoryInventorystocksystemsetting": "تعديل",
+  "InventoryInventorydashboardview": "مشاهدة",
+  "InventoryInventoryinvoicetemplateedit": "تعديل",
+  "InventoryInventoryCategoryView": "مشاهدة",
+  "InventoryInventoryUnitView": "مشاهدة",
+  "InventoryInventoryVendorView": "مشاهدة",
+  "InventoryProductadd": "إضافة",
+  "InventoryProductedit": "تعديل",
+  "InventoryProductdelete": "حذف",
+  "InventoryProductview": "مشاهدة",
+  "InventoryProductproducttemplateedit": "تعديل",
+  "IdentityRoleadd": "إضافة",
+  "IdentityRoleedit": "تعديل",
+  "IdentityRoleactivate": "تعديل",
+  "IdentityRoledelete": "حذف",
+  "IdentityRoleview": "مشاهدة",
+  "IdentityRoledepartmentassign": "تعديل",
+  "IdentityRoleemployeeassign": "تعديل",
+  "IdentityRoleemployeeremove": "تعديل",
+  "IdentityCompanysecuritysystemedit": "تعديل",
+  "IdentityCompanyadd": "إضافة",
+  "IdentityCompanyedit": "تعديل",
+  "IdentityCompanyactivate": "تعديل",
+  "IdentityCompanydelete": "حذف",
+  "IdentityCompanyview": "مشاهدة",
+  "IdentityCompanybranchdelete": "حذف",
+  "IdentityUseradd": "إضافة",
+  "IdentityUseredit": "تعديل",
+  "IdentityUseractivate": "تعديل",
+  "IdentityUserrecovery": "تعديل",
+  "IdentityUserdelete": "حذف",
+  "IdentityUserview": "مشاهدة",
+  "IdentityUserresetotherspassword": "تعديل",
+  "IdentityUserprofilesedit": "تعديل",
+  "IdentityStoragemanage": "تعديل",
+  "ContactsContactadd": "إضافة",
+  "ContactsContactedit": "تعديل",
+  "ContactsContactdelete": "حذف",
+  "ContactsContactactivate": "تعديل",
+  "ContactsContactdeactivate": "تعديل",
+  "ContactsContactfileadd": "إضافة",
+  "ContactsContactfiledelete": "حذف",
+  "ContactsContactview": "مشاهدة",
+  "ContactsContactcontacttemplateedit": "تعديل",
+  "ContactsContactsystemsetting": "تعديل",
+  "submissionsfolderadd": "إضافة",
+  "IdentityUserreset_others_password": "اعادة تعين كلمة المرور لمستخدم اخر",
+  "InventoryInventorysystemsetting": "اعدادات المخزن",
+  "InventoryInventoryinvoicedealcreate": "إنشاء صفقة من فاتورة",
+
+
+  /////////////product///////////
+  "Permissions.Products.View": "عرض منتج"
+}

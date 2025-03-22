@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.Features.Roles.Services;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core.PermissionsClaims;
+using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +18,45 @@ public class RoleController : Controller
     private readonly IRoleService _service;
 
     public RoleController(IRoleService service) => _service = service;
+
+    [Authorize(Policy = Permissions.Role.View)]
+    public IActionResult List() => View();
+
+    [HttpPost]
+    [Authorize(Policy = Permissions.Role.View)]
+    public async Task<IActionResult> Table([FromBody] DataTableRequest request)
+    {
+        var search = request?.Search?.Value;
+        var dir = request?.Order?.FirstOrDefault()?.Dir ?? "desc";
+        bool isDescending = (dir == "desc");
+        var columns = new List<string>
+        {
+            nameof(Role.Name),
+            nameof(Role.NameEn),
+            nameof(Role.Description),
+            nameof(Role.CreateAt),
+        };
+        string sortColumn = columns[request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1];
+        var response = await _service.GetAllAsync(
+            new GetAllRoleRequest
+            {
+                IsDescending = isDescending,
+                SortBy = sortColumn,
+                PageSize = request?.Length ?? 0,
+                PageIndex = request != null ? (request.Start / request.Length) : 0,
+                SearchFor = search,
+            }
+        );
+        var jsonResponse = new
+        {
+            draw = request?.Draw ?? 0,
+            recordsTotal = response?.Count ?? 0,
+            recordsFiltered = response?.Count ?? 0,
+            data = response?.Result.Items ?? new List<RoleDto>()
+        };
+
+        return Json(jsonResponse);
+    }
 
     [HttpGet]
     public async Task<BaseResponse> FindRole([FromQuery] FindRoleRequest request)

@@ -3,6 +3,7 @@ using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Validators;
 using ECommerce.BLL.Injector;
+using ECommerce.BLL.Validators;
 using ECommerce.Core.Middlwares;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
@@ -56,6 +57,7 @@ builder
         Option.Password.RequiredUniqueChars = 0;
         Option.Password.RequireLowercase = false;
         Option.Password.RequireUppercase = false;
+        Option.Password.RequiredLength = 3;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -64,8 +66,12 @@ builder
 builder.Services.AddAutoMapper(typeof(Program));
 
 //****************** Fluent Validation ******************************
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+//builder.Services.AddFluentValidationAutoValidation();
+//builder.Services.AddValidatorsFromAssemblyContaining<BaseValidator>();
+
+builder
+    .Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BaseValidator>());
 
 //****************** Http Context Accessor ******************************
 builder.Services.AddHttpContextAccessor();

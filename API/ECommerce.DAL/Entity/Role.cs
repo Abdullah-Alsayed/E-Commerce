@@ -7,6 +7,7 @@ namespace ECommerce.DAL.Entity
 {
     public class Role : IdentityRole
     {
+        public string NameEn { get; set; }
         public string Description { get; set; }
 
         public bool IsMaster { get; set; } = false;
