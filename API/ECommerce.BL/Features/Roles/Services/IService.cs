@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Roles.Requests;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 
 namespace ECommerce.BLL.Features.Roles.Services
@@ -18,5 +19,6 @@ namespace ECommerce.BLL.Features.Roles.Services
         Task<BaseResponse> UpdateUserClaimsAsync(UpdateUserClaimsRequest request);
         Task<BaseResponse> AddUserToRoleAsync(AddUserToRoleRequest request);
         Task<BaseResponse> UpdateUserRoleAsync(UpdateUserRoleRequest request);
+        Task<BaseResponse<List<RoleClaimsDto>>> GetClaimsAsync(BaseRequest request);
     }
 }

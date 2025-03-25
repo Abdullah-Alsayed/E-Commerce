@@ -33,10 +33,16 @@ namespace ECommerce.BLL.Repository
             _context = context;
         }
 
-        public async Task<T> AddAsync(T Entity)
+        public async Task<T> AddAsync(T entity, string userId = Constants.System)
         {
-            await _context.Set<T>().AddAsync(Entity);
-            return Entity;
+            //if (entity is IAuditable auditableEntity)
+            //{
+            //    auditableEntity.CreatedOn = DateTime.UtcNow;
+            //    auditableEntity.CreatorId = userId;
+            //}
+
+            await _context.Set<T>().AddAsync(entity);
+            return entity;
         }
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys)

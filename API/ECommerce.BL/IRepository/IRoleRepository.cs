@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ECommerce.BLL.Features.Roles.Requests;
+using ECommerce.Core;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,6 +13,8 @@ namespace ECommerce.BLL.IRepository
         Task<bool> UpdateUserRoleAsync(UpdateUserRoleRequest request);
         Task<int> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request);
         Task<int> UpdateUserClaimsAsync(UpdateUserClaimsRequest request);
+        Task<List<string>> GetRoleClaims(string roleID);
+
         Task<Role> FindByName(string name);
         Task<Role> FindById(string id);
     }

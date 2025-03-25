@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ECommerce.Core.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.DAL.Entity
@@ -10,7 +10,7 @@ namespace ECommerce.DAL.Entity
         public string NameEn { get; set; }
         public string Description { get; set; }
 
-        public bool IsMaster { get; set; } = false;
+        public RoleTypeEnum RoleType { get; set; } = RoleTypeEnum.User;
 
         [Required]
         public DateTime CreateAt { get; set; } = DateTime.Now;

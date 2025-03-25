@@ -6,8 +6,10 @@ using AutoMapper;
 using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.PermissionsClaims;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
@@ -117,11 +119,13 @@ namespace ECommerce.BLL.Features.Roles.Services
             var modifyRows = 0;
             try
             {
-                var Role = _mapper.Map<Role>(request);
-                Role.CreateBy = _userContext.UserId.Value;
-                Role.NormalizedName = request.Name.ToUpper();
-                Role = await _unitOfWork.Role.AddAsync(Role);
-                var result = _mapper.Map<RoleDto>(Role);
+                var role = _mapper.Map<Role>(request);
+
+                role = await _unitOfWork.Role.AddAsync(role, _userContext.UserId.Value);
+                role.CreateBy = _userContext.UserId.Value;
+                role.NormalizedName = request.Name.ToUpper();
+
+                var result = _mapper.Map<RoleDto>(role);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
                 modifyRows++;
@@ -515,6 +519,53 @@ namespace ECommerce.BLL.Features.Roles.Services
                     EntitiesEnum.User
                 );
                 return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse<List<RoleClaimsDto>>> GetClaimsAsync(BaseRequest request)
+        {
+            try
+            {
+                var roleClaims = await _unitOfWork.Role.GetRoleClaims(request.ID.ToString());
+                var allPermissions = Permissions.GetAllPermissions();
+                var claims = allPermissions
+                    .GroupBy(x => x.Module)
+                    .Select(claims => new RoleClaimsDto
+                    {
+                        Key = claims.Key,
+                        RoleID = request.ID.ToString(),
+                        Claims = claims
+                            .Select(claim => new ClaimDto
+                            {
+                                IsChecked = roleClaims.Exists(x => x == claim.Claim),
+                                Claim = claim.Claim,
+                                Module = claim.Module,
+                                Operation = claim.Operation,
+                            })
+                            .ToList()
+                    })
+                    .ToList();
+
+                return new BaseResponse<List<RoleClaimsDto>>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[Constants.MessageKeys.Success],
+                    Count = claims.Count,
+                    Result = claims
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateClaims,
+                    EntitiesEnum.Role
+                );
+                return new BaseResponse<List<RoleClaimsDto>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()

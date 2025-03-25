@@ -127,7 +127,7 @@ namespace ECommerce.Core
                     NormalizedName = Constants.Roles.SuperAdmin.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     CreateAt = DateTime.UtcNow,
-                    IsMaster = true
+                    RoleType = Enums.RoleTypeEnum.SuberAdmin
                 };
 
                 await roleManager.CreateAsync(SuperAdmin);
@@ -141,8 +141,8 @@ namespace ECommerce.Core
                         Description = Constants.Roles.User,
                         NormalizedName = Constants.Roles.User.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
-                        CreateAt = DateTime.UtcNow,
-                        IsMaster = false
+                        CreateAt = DateTime.UtcNow.AddSeconds(1),
+                        RoleType = Enums.RoleTypeEnum.User
                     }
                 );
                 await roleManager.CreateAsync(
@@ -155,7 +155,7 @@ namespace ECommerce.Core
                         NormalizedName = Constants.Roles.Client.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
                         CreateAt = DateTime.UtcNow,
-                        IsMaster = false
+                        RoleType = Enums.RoleTypeEnum.Client
                     }
                 );
             }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
@@ -12,7 +11,6 @@ using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ECommerce.BLL.Repository;
 
@@ -43,6 +41,13 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
     {
         return await _roleManager.FindByIdAsync(id);
     }
+
+    //public async Task<T> AddAsync(Role role, string userId = Constants.System)
+    //{
+    //    role.CreateBy = userId;
+    //    role.NormalizedName = role.Name.ToUpper();
+    //    await _context.Roles.AddAsync(role);
+    //}
 
     public async Task<bool> AddUserToRoleAsync(AddUserToRoleRequest request)
     {
@@ -123,6 +128,16 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
             );
             return false;
         }
+    }
+
+    public async Task<List<string>> GetRoleClaims(string roleID)
+    {
+        var roleClaims = await _context
+            .RoleClaims.Where(role => role.RoleId == roleID)
+            .Select(x => x.ClaimValue)
+            .ToListAsync();
+
+        return roleClaims;
     }
 
     public override async Task<List<Role>> GetAllAsync(

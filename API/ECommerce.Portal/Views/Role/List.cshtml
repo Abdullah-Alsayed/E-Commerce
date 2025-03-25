@@ -33,6 +33,7 @@
                 <tr>
                     <th>@_Localizer[Constants.EntityKeys.NameAR]</th>
                     <th>@_Localizer[Constants.EntityKeys.NameEn]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Description]</th>
                     <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
                     <th>@_Localizer[Constants.LabelKeys.Permission]</th>
                     <th>@_Localizer[Constants.LabelKeys.Action]</th>
@@ -172,29 +173,25 @@
             { data: 'nameEn' },
             { data: 'description' },
             {
-                data: 'createdAt', render: function (data, type, row) {
+                data: 'createAt', render: function (data, type, row) {
                     return convertUTCToLocal(data);
                 },
             },
             {
-                data: null, // The column does not directly map to data; it's for the button
-                orderable: false, // Disable sorting for this column
+                data: 'roleType',
+                orderable: false,
+                searchable: false,
                 render: function (data, type, row) {
-                    // Check if the system name is "SuperAdmin"
-                    if (row.systemName == "@Constants.Roles.SuperAdmin") {
-                        return ''; // Return an empty string if it's SuperAdmin
-                    }
-
-                    // Otherwise, render the button
-                    return `
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" onclick="updatePermission('${row.roleId}')" data-bs-target="#UpdatePermission">
-                        <i class="tf-icons mdi mdi-cog-outline"></i>
-                    </button>
-                `;
-                },
-            },
-
+                    if (data == 2) return '';
+                    return `<button class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    onclick="updatePermission('${row.id}')"
+                    data-bs-target="#UpdatePermission">
+                    <i class="tf-icons mdi mdi-cog-outline"></i>
+                </button>`;
+                }
+            }
         ];
-        initializeDataTable('RoleList', 'Role', 'Table', 'role', tableColumns, '@_localizationManger.Language');
+        initializeDataTable('RoleList', 'Role', 'Table', tableColumns, '@_localizationManger.Language');
     </script>
 }

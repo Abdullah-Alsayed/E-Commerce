@@ -34,6 +34,7 @@ public class RoleController : Controller
             nameof(Role.Name),
             nameof(Role.NameEn),
             nameof(Role.Description),
+            nameof(Role.RoleType),
             nameof(Role.CreateAt),
         };
         string sortColumn = columns[request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1];
@@ -137,7 +138,7 @@ public class RoleController : Controller
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateRoleClaimsRequest request)
+    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateRoleClaimsRequest request) // Change FromForm to FromBody
     {
         try
         {
@@ -172,6 +173,23 @@ public class RoleController : Controller
         catch (Exception ex)
         {
             return new BaseResponse { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetClaims(string id)
+    {
+        try
+        {
+            var result = await _service.GetClaimsAsync(new BaseRequest { ID = Guid.Parse(id) });
+            if (result.IsSuccess)
+                return PartialView("_Claims", result.Result);
+            else
+                return BadRequest(new { IsSuccess = false, Message = result.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { IsSuccess = false, Message = ex.Message });
         }
     }
 }

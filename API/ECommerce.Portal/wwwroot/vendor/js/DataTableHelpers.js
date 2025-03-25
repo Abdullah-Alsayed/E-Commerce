@@ -42,7 +42,7 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
   }
 
   // Find the index of the 'createAt' column dynamically
-  let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
+    let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
   if (createAtIndex === -1) createAtIndex = 0; // Default to first column if not found
 
   $(`#${tableId}`).DataTable({
@@ -92,7 +92,7 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
           // Generate Add and Delete buttons
           let currentId = row[`id`];
           return `
-          <div class="d-flex">
+          <div class="d-flex justify-content-center">
               <button type="button" onclick=fetchData('${controler}','Get','${currentId}') class="btn btn-icon me-2 btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateFormModal">
                  <span class="mdi mdi-square-edit-outline"></span>
               </button>
