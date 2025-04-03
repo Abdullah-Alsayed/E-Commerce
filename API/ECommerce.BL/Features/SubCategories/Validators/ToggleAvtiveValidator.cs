@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Categories.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Categories.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotFound]}"

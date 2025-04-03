@@ -25,9 +25,7 @@ public class UpdateRoleValidator : AbstractValidator<UpdateRoleRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return roleManager
-                    .Roles.AsNoTracking()
-                    .Any(x => x.Id == req.ID.ToString() && !x.IsDeleted);
+                return roleManager.Roles.AsNoTracking().Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -51,9 +49,7 @@ public class UpdateRoleValidator : AbstractValidator<UpdateRoleRequest>
                 {
                     return !roleManager
                         .Roles.AsNoTracking()
-                        .Any(x =>
-                            x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID.ToString()
-                        );
+                        .Any(x => x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID);
                 }
             )
             .WithMessage(x =>

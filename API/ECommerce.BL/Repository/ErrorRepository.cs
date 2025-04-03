@@ -30,7 +30,8 @@ namespace ECommerce.BLL.Repository
                         StackTrace = ex.StackTrace,
                         Operation = action,
                         Entity = entity
-                    }
+                    },
+                    Guid.Empty
                 );
                 await _context.SaveChangesAsync();
             }

@@ -10,6 +10,7 @@ using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -22,22 +23,22 @@ public class AreaService : IAreaService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IStringLocalizer<AreaService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Constants.Languages.Ar;
 
     public AreaService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<AreaService> localizer,
-        IHttpContextAccessor httpContextAccessor
+        IUserContext userContext
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
 
         #region initilize mapper
         var config = new MapperConfiguration(cfg =>
@@ -51,16 +52,11 @@ public class AreaService : IAreaService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -129,18 +125,17 @@ public class AreaService : IAreaService
         try
         {
             var area = _mapper.Map<Area>(request);
-            area.CreateBy = _userId;
-            area = await _unitOfWork.Area.AddAsync(area);
+            area = await _unitOfWork.Area.AddAsync(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -186,15 +181,15 @@ public class AreaService : IAreaService
             area.ModifyBy = _userId;
             area.ModifyAt = DateTime.UtcNow;
             var result = _mapper.Map<AreaDto>(area);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -240,15 +235,15 @@ public class AreaService : IAreaService
             area.ModifyAt = DateTime.UtcNow;
             area.IsActive = !area.IsActive;
             var result = _mapper.Map<AreaDto>(area);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Toggle);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Toggle);
+            //modifyRows++;
+            //#endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Toggle);
-            modifyRows++;
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Toggle);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -294,16 +289,17 @@ public class AreaService : IAreaService
             area.DeletedAt = DateTime.UtcNow;
             area.IsDeleted = true;
             var result = _mapper.Map<AreaDto>(area);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -383,7 +379,8 @@ public class AreaService : IAreaService
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Area
-            }
+            },
+            _userId
         );
     }
 

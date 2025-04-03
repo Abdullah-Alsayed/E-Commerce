@@ -23,7 +23,7 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Vouchers.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Vouchers.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -45,7 +45,7 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
                 (req, name) =>
                 {
                     return !context.Vouchers.Any(x =>
-                        x.Name.ToLower() == req.Name.ToLower() && x.ID != req.ID
+                        x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID
                     );
                 }
             )

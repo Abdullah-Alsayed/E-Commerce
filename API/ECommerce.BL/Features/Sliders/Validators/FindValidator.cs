@@ -32,7 +32,7 @@ public class FindSliderValidator : AbstractValidator<FindSliderRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Sliders.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Sliders.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"

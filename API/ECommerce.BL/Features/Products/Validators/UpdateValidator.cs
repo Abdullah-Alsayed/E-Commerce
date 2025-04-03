@@ -26,7 +26,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Products.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Products.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -49,7 +49,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
                 (req, name) =>
                 {
                     return !context.Products.Any(x =>
-                        x.Title.ToLower() == req.Title.ToLower() && x.ID != req.ID
+                        x.Title.ToLower() == req.Title.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -86,7 +86,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
         RuleFor(req => req.BrandID)
             .Must(ID =>
             {
-                return context.Brands.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Brands.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -104,7 +104,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
             )
             .Must(ID =>
             {
-                return context.Units.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Units.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -121,7 +121,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
             )
             .Must(ID =>
             {
-                return context.Categories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Categories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -130,7 +130,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
         RuleFor(req => req.SubCategoryID)
             .Must(ID =>
             {
-                return context.SubCategories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.SubCategories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotExist]}"

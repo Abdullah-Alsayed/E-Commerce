@@ -15,6 +15,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
 
         public DeleteRoleValidator(
             RoleManager<Role> roleManager,
+            ApplicationDbContext context,
             IStringLocalizer<CreateRoleValidator> localizer
         )
         {
@@ -25,7 +26,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return roleManager.Roles.Any(x => x.Id == req.ID.ToString());
+                    return roleManager.Roles.Any(x => x.Id == req.ID);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -35,12 +36,20 @@ namespace ECommerce.BLL.Features.Roles.Validators
                 .Must(req =>
                 {
                     return roleManager.Roles.Any(x =>
-                        x.Id == req.ID.ToString()
-                        && x.RoleType != Core.Enums.RoleTypeEnum.SuberAdmin
+                        x.Id == req.ID && x.RoleType != Core.Enums.RoleTypeEnum.SuberAdmin
                     );
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.IsDefault]}"
+                );
+
+            RuleFor(req => req)
+                .Must(req =>
+                {
+                    return context.UserRoles.Any(ur => ur.RoleId == req.ID);
+                })
+                .WithMessage(x =>
+                    $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.HasUser]}"
                 );
         }
     }

@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Governorates.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Governorates.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Governorates.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.NotFound]}"

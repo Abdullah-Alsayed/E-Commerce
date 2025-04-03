@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Invoices.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Invoices.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Invoices.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Invoice]} {_localizer[Constants.MessageKeys.NotFound]}"

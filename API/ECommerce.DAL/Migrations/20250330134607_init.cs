@@ -12,26 +12,47 @@ namespace ECommerce.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsMaster = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Gander = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    MaxUseDiscount = table.Column<double>(type: "float", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Language = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Photo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,7 +78,7 @@ namespace ECommerce.DAL.Migrations
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -66,75 +87,32 @@ namespace ECommerce.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
-                    Module = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Operation = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Gander = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    MaxUseDiscount = table.Column<double>(type: "float", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoleType = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifyBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Language = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Photo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        name: "FK_AspNetRoles_AspNetUsers_CreateBy",
+                        column: x => x.CreateBy,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
@@ -144,7 +122,7 @@ namespace ECommerce.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
@@ -169,7 +147,7 @@ namespace ECommerce.DAL.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,34 +161,10 @@ namespace ECommerce.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -230,13 +184,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Brands",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -245,7 +199,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Brands", x => x.ID);
+                    table.PrimaryKey("PK_Brands", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Brands_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -257,13 +211,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -272,7 +226,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.ID);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Categories_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -284,13 +238,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Colors",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Value = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -299,7 +253,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Colors", x => x.ID);
+                    table.PrimaryKey("PK_Colors", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Colors_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -311,14 +265,14 @@ namespace ECommerce.DAL.Migrations
                 name: "ContactUs",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -327,7 +281,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactUs", x => x.ID);
+                    table.PrimaryKey("PK_ContactUs", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ContactUs_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -339,13 +293,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Expenses",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -354,7 +308,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Expenses", x => x.ID);
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Expenses_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -366,12 +320,12 @@ namespace ECommerce.DAL.Migrations
                 name: "Feedbacks",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -380,7 +334,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Feedbacks", x => x.ID);
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Feedbacks_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -392,13 +346,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Governorates",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Tax = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -407,7 +361,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Governorates", x => x.ID);
+                    table.PrimaryKey("PK_Governorates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Governorates_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -420,7 +374,7 @@ namespace ECommerce.DAL.Migrations
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Action = table.Column<int>(type: "int", nullable: false),
                     Entity = table.Column<int>(type: "int", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -439,7 +393,7 @@ namespace ECommerce.DAL.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     MessageAR = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -447,9 +401,9 @@ namespace ECommerce.DAL.Migrations
                     OperationType = table.Column<int>(type: "int", nullable: false),
                     Entity = table.Column<int>(type: "int", nullable: false),
                     CreateName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -458,7 +412,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.ID);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Notifications_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -470,7 +424,7 @@ namespace ECommerce.DAL.Migrations
                 name: "Settings",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Logo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
@@ -482,9 +436,9 @@ namespace ECommerce.DAL.Migrations
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     BookingMessage = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -493,7 +447,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Settings", x => x.ID);
+                    table.PrimaryKey("PK_Settings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Settings_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -505,12 +459,12 @@ namespace ECommerce.DAL.Migrations
                 name: "Sizes",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -519,7 +473,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sizes", x => x.ID);
+                    table.PrimaryKey("PK_Sizes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Sizes_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -531,14 +485,14 @@ namespace ECommerce.DAL.Migrations
                 name: "Sliders",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TitleAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TitleEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -547,7 +501,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sliders", x => x.ID);
+                    table.PrimaryKey("PK_Sliders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Sliders_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -559,13 +513,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Statuses",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -574,7 +528,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Statuses", x => x.ID);
+                    table.PrimaryKey("PK_Statuses", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Statuses_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -586,12 +540,12 @@ namespace ECommerce.DAL.Migrations
                 name: "Units",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -600,7 +554,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Units", x => x.ID);
+                    table.PrimaryKey("PK_Units", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Units_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -612,13 +566,13 @@ namespace ECommerce.DAL.Migrations
                 name: "Vendors",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -627,7 +581,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vendors", x => x.ID);
+                    table.PrimaryKey("PK_Vendors", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Vendors_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -639,12 +593,12 @@ namespace ECommerce.DAL.Migrations
                 name: "Vouchers",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -653,7 +607,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vouchers", x => x.ID);
+                    table.PrimaryKey("PK_Vouchers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Vouchers_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -662,17 +616,65 @@ namespace ECommerce.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
+                    Module = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Operation = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubCategories",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NameEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -681,7 +683,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubCategories", x => x.ID);
+                    table.PrimaryKey("PK_SubCategories", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SubCategories_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -691,20 +693,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_SubCategories_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Categories",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Areas",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GovernorateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -713,7 +715,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Areas", x => x.ID);
+                    table.PrimaryKey("PK_Areas", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Areas_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -723,22 +725,22 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Areas_Governorates_GovernorateID",
                         column: x => x.GovernorateID,
                         principalTable: "Governorates",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Section",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    SettingID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    SettingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -747,24 +749,24 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Section", x => x.ID);
+                    table.PrimaryKey("PK_Section", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Section_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Section_Settings_SettingID",
-                        column: x => x.SettingID,
+                        name: "FK_Section_Settings_SettingId",
+                        column: x => x.SettingId,
                         principalTable: "Settings",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BrandID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UnitID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubCategoryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -774,9 +776,9 @@ namespace ECommerce.DAL.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     DiscountLabel = table.Column<double>(type: "float", nullable: false),
                     ProductPhotos = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -785,7 +787,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.ID);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Products_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -795,29 +797,29 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Products_Brands_BrandID",
                         column: x => x.BrandID,
                         principalTable: "Brands",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Categories",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_SubCategories_SubCategoryID",
                         column: x => x.SubCategoryID,
                         principalTable: "SubCategories",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Units_UnitID",
                         column: x => x.UnitID,
                         principalTable: "Units",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AreaID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StatusID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GovernorateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -830,9 +832,9 @@ namespace ECommerce.DAL.Migrations
                     Discount = table.Column<double>(type: "float", nullable: false),
                     SubTotal = table.Column<double>(type: "float", nullable: false),
                     IsAccept = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -841,12 +843,12 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.ID);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Orders_Areas_AreaID",
                         column: x => x.AreaID,
                         principalTable: "Areas",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -856,31 +858,31 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Orders_Governorates_GovernorateID",
                         column: x => x.GovernorateID,
                         principalTable: "Governorates",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Statuses_StatusID",
                         column: x => x.StatusID,
                         principalTable: "Statuses",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Vouchers_VoucherID",
                         column: x => x.VoucherID,
                         principalTable: "Vouchers",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ColorID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SizeID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsNotified = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -889,7 +891,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.ID);
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Bookings_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -899,28 +901,28 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Bookings_Colors_ColorID",
                         column: x => x.ColorID,
                         principalTable: "Colors",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bookings_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bookings_Sizes_SizeID",
                         column: x => x.SizeID,
                         principalTable: "Sizes",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Favorites",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -929,7 +931,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Favorites", x => x.ID);
+                    table.PrimaryKey("PK_Favorites", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Favorites_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -939,7 +941,7 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Favorites_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -958,12 +960,12 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductColors_Colors_ColorID",
                         column: x => x.ColorID,
                         principalTable: "Colors",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProductColors_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -982,25 +984,25 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductSizes_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProductSizes_Sizes_SizeID",
                         column: x => x.SizeID,
                         principalTable: "Sizes",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Review = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Rate = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1009,7 +1011,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.ID);
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Reviews_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -1019,19 +1021,19 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Reviews_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ShoppingCarts",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1040,7 +1042,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCarts", x => x.ID);
+                    table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ShoppingCarts_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -1050,20 +1052,20 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ShoppingCarts_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VendorID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1072,7 +1074,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks", x => x.ID);
+                    table.PrimaryKey("PK_Stocks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Stocks_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -1082,24 +1084,24 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Stocks_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Stocks_Vendors_VendorID",
                         column: x => x.VendorID,
                         principalTable: "Vendors",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Invoices",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsReturn = table.Column<bool>(type: "bit", nullable: false),
-                    CreateBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ModifyBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    ModifyBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifyAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1108,7 +1110,7 @@ namespace ECommerce.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invoices", x => x.ID);
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Invoices_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
@@ -1118,7 +1120,7 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_Invoices_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1137,12 +1139,12 @@ namespace ECommerce.DAL.Migrations
                         name: "FK_ProductOrders_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProductOrders_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -1159,6 +1161,12 @@ namespace ECommerce.DAL.Migrations
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_CreateBy",
+                table: "AspNetRoles",
+                column: "CreateBy",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -1186,11 +1194,6 @@ namespace ECommerce.DAL.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -1380,9 +1383,9 @@ namespace ECommerce.DAL.Migrations
                 column: "CreateBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Section_SettingID",
+                name: "IX_Section_SettingId",
                 table: "Section",
-                column: "SettingID");
+                column: "SettingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Settings_CreateBy",
@@ -1528,6 +1531,9 @@ namespace ECommerce.DAL.Migrations
                 name: "TokenExpired");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Colors");
 
             migrationBuilder.DropTable(
@@ -1571,9 +1577,6 @@ namespace ECommerce.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
         }
     }
 }

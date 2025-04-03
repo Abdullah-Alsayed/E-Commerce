@@ -23,7 +23,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Units.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Units.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -45,7 +45,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
                 (req, name) =>
                 {
                     return !context.Units.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
                 (req, name) =>
                 {
                     return !context.Units.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ECommerce.BLL.Features.Roles.Requests;
 
 public class UpdateUserRoleRequest
 {
-    public string UserID { get; set; }
-    public List<string> RoleIDs { get; set; }
+    public Guid UserID { get; set; }
+    public List<Guid> RoleIDs { get; set; }
 }

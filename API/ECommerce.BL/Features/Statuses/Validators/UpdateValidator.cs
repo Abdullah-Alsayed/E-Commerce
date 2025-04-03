@@ -23,7 +23,7 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Statuses.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -71,7 +71,7 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
                 {
                     return !context.Statuses.Any(x =>
                         x.NameAR.ToLower() == req.NameAR.ToLower()
-                        && x.ID != req.ID
+                        && x.Id != req.ID
                         && x.IsActive
                         && !x.IsDeleted
                     );
@@ -98,7 +98,7 @@ public class UpdateStatusValidator : AbstractValidator<UpdateStatusRequest>
                 (req, name) =>
                 {
                     return !context.Statuses.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )

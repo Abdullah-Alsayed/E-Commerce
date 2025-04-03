@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using ECommerce.BLL.Features.Feedbacks.Requests;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -11,19 +12,19 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
 {
     public class CreateFeedbackValidator : AbstractValidator<CreateFeedbackRequest>
     {
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer _localizer;
 
         public CreateFeedbackValidator(
             ApplicationDbContext context,
-            IHttpContextAccessor httpContext,
+            IUserContext userContext,
             IStringLocalizer<CreateFeedbackValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
             RuleLevelCascadeMode = CascadeMode.Stop;
             _localizer = localizer;
-            _httpContext = httpContext;
+            _userContext = userContext;
 
             RuleFor(req => req.Comment)
                 .MaximumLength(100)
@@ -56,9 +57,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    var userId = _httpContext
-                        .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                        ?.Value;
+                    var userId = _userContext.UserId.Value;
 
                     return !context.Reviews.Any(x =>
                         x.CreateBy == userId && x.IsActive && !x.IsDeleted

@@ -13,9 +13,10 @@ using ECommerce.Core.PermissionsClaims;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
+using static ECommerce.Core.PermissionsClaims.Permissions;
+using Role = ECommerce.DAL.Entity.Role;
 
 namespace ECommerce.BLL.Features.Roles.Services
 {
@@ -23,20 +24,19 @@ namespace ECommerce.BLL.Features.Roles.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
         private readonly IStringLocalizer<RoleService> _localizer;
         private readonly IUserContext _userContext;
+
+        readonly Guid _userId;
 
         public RoleService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<RoleService> localizer,
-            IHttpContextAccessor httpContextAccessors,
             IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessors;
             _userContext = userContext;
 
             #region initilize mapper
@@ -49,13 +49,18 @@ namespace ECommerce.BLL.Features.Roles.Services
             });
             _mapper = new Mapper(config);
             #endregion initilize mapper
+
+            #region Get User Data From Token
+            _userId = _userContext.UserId.Value;
+
+            #endregion
         }
 
         public async Task<BaseResponse> FindAsync(FindRoleRequest request)
         {
             try
             {
-                var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID.ToString());
+                var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID);
                 var result = _mapper.Map<RoleDto>(Role);
                 return new BaseResponse<RoleDto>
                 {
@@ -122,7 +127,6 @@ namespace ECommerce.BLL.Features.Roles.Services
                 var role = _mapper.Map<Role>(request);
 
                 role = await _unitOfWork.Role.AddAsync(role, _userContext.UserId.Value);
-                role.CreateBy = _userContext.UserId.Value;
                 role.NormalizedName = request.Name.ToUpper();
 
                 var result = _mapper.Map<RoleDto>(role);
@@ -179,22 +183,21 @@ namespace ECommerce.BLL.Features.Roles.Services
             var modifyRows = 0;
             try
             {
-                var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID.ToString());
-                _mapper.Map(request, Role);
-                Role.ModifyBy = _userContext.UserId.Value;
-                Role.ModifyAt = DateTime.UtcNow;
-                Role.NormalizedName = request.Name.ToUpper();
-                _unitOfWork.Role.Update(Role);
-                var result = _mapper.Map<RoleDto>(Role);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                var role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID);
+                _mapper.Map(request, role);
+                role.NormalizedName = request.Name.ToUpper();
+                _unitOfWork.Role.Update(role, _userContext.UserId.Value);
+                var result = _mapper.Map<RoleDto>(role);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -239,11 +242,9 @@ namespace ECommerce.BLL.Features.Roles.Services
             var modifyRows = 0;
             try
             {
-                var Role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID.ToString());
-                Role.DeletedBy = _userContext.UserId.Value;
-                Role.DeletedAt = DateTime.UtcNow;
-                Role.IsDeleted = true;
-                var result = _mapper.Map<RoleDto>(Role);
+                var role = await _unitOfWork.Role.FirstAsync(x => x.Id == request.ID);
+                _unitOfWork.Role.Delete(role, _userContext.UserId.Value);
+                var result = _mapper.Map<RoleDto>(role);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Delete);
                 modifyRows++;
@@ -318,22 +319,23 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
         }
 
-        public async Task<BaseResponse> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request)
+        public async Task<BaseResponse> UpdateRoleClaimsAsync(UpdateClaimsRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;
             try
             {
                 modifyRows = await _unitOfWork.Role.UpdateRoleClaimsAsync(request);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.UpdateClaims);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.UpdateClaims);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.UpdateClaims);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.UpdateClaims);
+                //modifyRows++;
+                //#endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
@@ -377,15 +379,16 @@ namespace ECommerce.BLL.Features.Roles.Services
             try
             {
                 modifyRows = await _unitOfWork.Role.UpdateUserClaimsAsync(request);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.UpdateClaims);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.UpdateClaims);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.UpdateClaims);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.UpdateClaims);
+                //modifyRows++;
+                //#endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
@@ -526,18 +529,18 @@ namespace ECommerce.BLL.Features.Roles.Services
             }
         }
 
-        public async Task<BaseResponse<List<RoleClaimsDto>>> GetClaimsAsync(BaseRequest request)
+        public async Task<BaseResponse<List<AllClaimsDto>>> GetClaimsAsync(BaseRequest request)
         {
             try
             {
-                var roleClaims = await _unitOfWork.Role.GetRoleClaims(request.ID.ToString());
+                var roleClaims = await _unitOfWork.Role.GetRoleClaims(request.ID);
                 var allPermissions = Permissions.GetAllPermissions();
                 var claims = allPermissions
                     .GroupBy(x => x.Module)
-                    .Select(claims => new RoleClaimsDto
+                    .Select(claims => new AllClaimsDto
                     {
                         Key = claims.Key,
-                        RoleID = request.ID.ToString(),
+                        ID = request.ID.ToString(),
                         Claims = claims
                             .Select(claim => new ClaimDto
                             {
@@ -550,7 +553,7 @@ namespace ECommerce.BLL.Features.Roles.Services
                     })
                     .ToList();
 
-                return new BaseResponse<List<RoleClaimsDto>>
+                return new BaseResponse<List<AllClaimsDto>>
                 {
                     IsSuccess = true,
                     Message = _localizer[Constants.MessageKeys.Success],
@@ -565,7 +568,57 @@ namespace ECommerce.BLL.Features.Roles.Services
                     OperationTypeEnum.UpdateClaims,
                     EntitiesEnum.Role
                 );
-                return new BaseResponse<List<RoleClaimsDto>>
+                return new BaseResponse<List<AllClaimsDto>>
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse<List<AllClaimsDto>>> GetUserClaimsAsync(BaseRequest request)
+        {
+            try
+            {
+                var userId = await _unitOfWork.User.GetAsync(request.ID);
+                var userClaims = await _unitOfWork.Role.GetUserClaims(request.ID);
+                var roleClaims = await _unitOfWork.Role.GetRoleClaims(userId.RoleId);
+                var allClaims = userClaims.Union(roleClaims).Distinct().ToList();
+                var allPermissions = Permissions.GetAllPermissions();
+                var claims = allPermissions
+                    .GroupBy(x => x.Module)
+                    .Select(claims => new AllClaimsDto
+                    {
+                        Key = claims.Key,
+                        ID = request.ID.ToString(),
+                        Claims = claims
+                            .Select(claim => new ClaimDto
+                            {
+                                IsChecked = allClaims.Exists(x => x == claim.Claim),
+                                Claim = claim.Claim,
+                                Module = claim.Module,
+                                Operation = claim.Operation,
+                            })
+                            .ToList()
+                    })
+                    .ToList();
+
+                return new BaseResponse<List<AllClaimsDto>>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[Constants.MessageKeys.Success],
+                    Count = claims.Count,
+                    Result = claims
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.UpdateClaims,
+                    EntitiesEnum.Role
+                );
+                return new BaseResponse<List<AllClaimsDto>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -592,7 +645,8 @@ namespace ECommerce.BLL.Features.Roles.Services
                     UserID = _userContext.UserId.Value,
                     Action = action,
                     Entity = EntitiesEnum.Role
-                }
+                },
+                _userId
             );
 
         #endregion

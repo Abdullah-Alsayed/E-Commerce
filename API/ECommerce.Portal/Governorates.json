@@ -1,0 +1,138 @@
+[
+  {
+    "id": "1",
+    "NameAR": "القاهرة",
+    "NameEN": "Cairo"
+  },
+  {
+    "id": "2",
+    "NameAR": "الجيزة",
+    "NameEN": "Giza"
+  },
+  {
+    "id": "3",
+    "NameAR": "الأسكندرية",
+    "NameEN": "Alexandria"
+  },
+  {
+    "id": "4",
+    "NameAR": "الدقهلية",
+    "NameEN": "Dakahlia"
+  },
+  {
+    "id": "5",
+    "NameAR": "البحر الأحمر",
+    "NameEN": "Red Sea"
+  },
+  {
+    "id": "6",
+    "NameAR": "البحيرة",
+    "NameEN": "Beheira"
+  },
+  {
+    "id": "7",
+    "NameAR": "الفيوم",
+    "NameEN": "Fayoum"
+  },
+  {
+    "id": "8",
+    "NameAR": "الغربية",
+    "NameEN": "Gharbiya"
+  },
+  {
+    "id": "9",
+    "NameAR": "الإسماعلية",
+    "NameEN": "Ismailia"
+  },
+  {
+    "id": "10",
+    "NameAR": "المنوفية",
+    "NameEN": "Menofia"
+  },
+  {
+    "id": "11",
+    "NameAR": "المنيا",
+    "NameEN": "Minya"
+  },
+  {
+    "id": "12",
+    "NameAR": "القليوبية",
+    "NameEN": "Qaliubiya"
+  },
+  {
+    "id": "13",
+    "NameAR": "الوادي الجديد",
+    "NameEN": "New Valley"
+  },
+  {
+    "id": "14",
+    "NameAR": "السويس",
+    "NameEN": "Suez"
+  },
+  {
+    "id": "15",
+    "NameAR": "اسوان",
+    "NameEN": "Aswan"
+  },
+  {
+    "id": "16",
+    "NameAR": "اسيوط",
+    "NameEN": "Assiut"
+  },
+  {
+    "id": "17",
+    "NameAR": "بني سويف",
+    "NameEN": "Beni Suef"
+  },
+  {
+    "id": "18",
+    "NameAR": "بورسعيد",
+    "NameEN": "Port Said"
+  },
+  {
+    "id": "19",
+    "NameAR": "دمياط",
+    "NameEN": "Damietta"
+  },
+  {
+    "id": "20",
+    "NameAR": "الشرقية",
+    "NameEN": "Sharkia"
+  },
+  {
+    "id": "21",
+    "NameAR": "جنوب سيناء",
+    "NameEN": "South Sinai"
+  },
+  {
+    "id": "22",
+    "NameAR": "كفر الشيخ",
+    "NameEN": "Kafr Al sheikh"
+  },
+  {
+    "id": "23",
+    "NameAR": "مطروح",
+    "NameEN": "Matrouh"
+  },
+  {
+    "id": "24",
+    "NameAR": "الأقصر",
+    "NameEN": "Luxor"
+  },
+  {
+    "id": "25",
+    "NameAR": "قنا",
+    "NameEN": "Qena"
+  },
+  {
+    "id": "26",
+    "NameAR": "شمال سيناء",
+    "NameEN": "North Sinai"
+  },
+  {
+    "id": "27",
+    "NameAR": "سوهاج",
+    "NameEN": "Sohag"
+  }
+]
+

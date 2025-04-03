@@ -12,7 +12,7 @@ namespace ECommerce.BLL.Features.Users.Requests
 
         public string LastName { get; set; }
 
-        public string RoleId { get; set; }
+        public Guid RoleId { get; set; }
 
         public UserGanderEnum Gander { get; set; }
 

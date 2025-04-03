@@ -5,6 +5,7 @@ using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.Features.Roles.Services;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core;
 using ECommerce.Core.PermissionsClaims;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
@@ -43,8 +44,8 @@ public class RoleController : Controller
             {
                 IsDescending = isDescending,
                 SortBy = sortColumn,
-                PageSize = request?.Length ?? 0,
-                PageIndex = request != null ? (request.Start / request.Length) : 0,
+                PageSize = request?.Length ?? Constants.PageSize,
+                PageIndex = request?.PageIndex ?? Constants.PageIndex,
                 SearchFor = search,
             }
         );
@@ -72,25 +73,11 @@ public class RoleController : Controller
         }
     }
 
-    [HttpGet]
-    public async Task<BaseResponse> GetAllRole([FromQuery] GetAllRoleRequest request)
+    public async Task<BaseResponse> Get(string id)
     {
         try
         {
-            return await _service.GetAllAsync(request);
-        }
-        catch (Exception ex)
-        {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
-        }
-    }
-
-    [HttpGet]
-    public async Task<BaseResponse> GetSearchEntity()
-    {
-        try
-        {
-            return await _service.GetSearchEntityAsync();
+            return await _service.FindAsync(new FindRoleRequest { ID = Guid.Parse(id) });
         }
         catch (Exception ex)
         {
@@ -99,46 +86,86 @@ public class RoleController : Controller
     }
 
     [HttpPost]
-    public async Task<BaseResponse> CreateRole([FromForm] CreateRoleRequest request)
+    [Authorize(Policy = Permissions.Role.Create)]
+    public async Task<IActionResult> Create([FromForm] CreateRoleRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(
+                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+            );
+        }
+
         try
         {
-            return await _service.CreateAsync(request);
+            var result = await _service.CreateAsync(request);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRole([FromForm] UpdateRoleRequest request)
+    [Authorize(Policy = Permissions.Role.Update)]
+    public async Task<IActionResult> Update([FromForm] UpdateRoleRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(
+                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+            );
+        }
+
         try
         {
-            return await _service.UpdateAsync(request);
+            var result = await _service.UpdateAsync(request);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteRole(DeleteRoleRequest request)
+    [Authorize(Policy = Permissions.Role.Delete)]
+    public async Task<IActionResult> Delete(DeleteRoleRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(
+                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+            );
+        }
+
         try
         {
-            return await _service.DeleteAsync(request);
+            var result = await _service.DeleteAsync(request);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateRoleClaimsRequest request) // Change FromForm to FromBody
+    [Authorize(Policy = Permissions.Role.Permission)]
+    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateClaimsRequest request)
     {
         try
         {
@@ -151,37 +178,80 @@ public class RoleController : Controller
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateUserClaims([FromForm] UpdateUserClaimsRequest request)
+    [Authorize(Policy = Permissions.Role.Permission)]
+    public async Task<IActionResult> UpdateUserClaims([FromForm] UpdateUserClaimsRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(
+                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+            );
+        }
+
         try
         {
-            return await _service.UpdateUserClaimsAsync(request);
+            var result = await _service.UpdateUserClaimsAsync(request);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateUserRole(UpdateUserRoleRequest request)
+    public async Task<IActionResult> UpdateUserRole(UpdateUserRoleRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(
+                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+            );
+        }
+
         try
         {
-            return await _service.UpdateUserRoleAsync(request);
+            var result = await _service.UpdateUserRoleAsync(request);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetClaims(string id)
+    [Authorize(Policy = Permissions.Role.Permission)]
+    public async Task<IActionResult> GetRoleClaims(string id)
     {
         try
         {
             var result = await _service.GetClaimsAsync(new BaseRequest { ID = Guid.Parse(id) });
+            if (result.IsSuccess)
+                return PartialView("_Claims", result.Result);
+            else
+                return BadRequest(new { IsSuccess = false, Message = result.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { IsSuccess = false, Message = ex.Message });
+        }
+    }
+
+    [Authorize(Policy = Permissions.Role.Permission)]
+    public async Task<IActionResult> GetUserClaims(string id)
+    {
+        try
+        {
+            var result = await _service.GetUserClaimsAsync(new BaseRequest { ID = Guid.Parse(id) });
             if (result.IsSuccess)
                 return PartialView("_Claims", result.Result);
             else

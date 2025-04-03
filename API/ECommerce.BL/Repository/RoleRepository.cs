@@ -54,7 +54,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         try
         {
             var response = false;
-            var user = await _userManager.FindByIdAsync(request.UserID);
+            var user = await _userManager.FindByIdAsync(request.UserID.ToString());
             var roles = await _roleManager
                 .Roles.Where(x => request.RoleIDs.Contains(x.Id))
                 .ToListAsync();
@@ -88,7 +88,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
             var response = false;
             var resultNewRole = new IdentityResult();
             var resultRoleToDelete = new IdentityResult();
-            var user = await _userManager.FindByIdAsync(request.UserID);
+            var user = await _userManager.FindByIdAsync(request.UserID.ToString());
             var userRoles = await _userManager.GetRolesAsync(user);
             var roles = await _roleManager
                 .Roles.Where(x => request.RoleIDs.Contains(x.Id))
@@ -130,10 +130,20 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         }
     }
 
-    public async Task<List<string>> GetRoleClaims(string roleID)
+    public async Task<List<string>> GetRoleClaims(Guid roleID)
     {
         var roleClaims = await _context
             .RoleClaims.Where(role => role.RoleId == roleID)
+            .Select(x => x.ClaimValue)
+            .ToListAsync();
+
+        return roleClaims;
+    }
+
+    public async Task<List<string>> GetUserClaims(Guid userID)
+    {
+        var roleClaims = await _context
+            .UserClaims.Where(claim => claim.UserId == userID)
             .Select(x => x.ClaimValue)
             .ToListAsync();
 
@@ -177,7 +187,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         }
     }
 
-    public async Task<int> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request)
+    public async Task<int> UpdateRoleClaimsAsync(UpdateClaimsRequest request)
     {
         try
         {
@@ -185,7 +195,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
             string[] parts = new string[3];
             var requestClaims = request.Claims.Distinct().ToList();
             var roleClaims = await _context
-                .RoleClaims.Where(role => role.RoleId == request.RoleID)
+                .RoleClaims.Where(role => role.RoleId == request.ID)
                 .ToListAsync();
 
             // Find claims to delete
@@ -198,14 +208,14 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                 .Except(roleClaims.Select(rc => rc.ClaimValue))
                 .ToList();
 
-            if (claimsToDelete != null && claimsToDelete.Any())
+            if (claimsToDelete.Any())
                 foreach (var claim in claimsToDelete)
                 {
                     _context.RoleClaims.Remove(claim);
                     modifyRows++;
                 }
 
-            if (newClaimsToAdd != null && newClaimsToAdd.Any())
+            if (newClaimsToAdd.Any())
                 foreach (var claim in newClaimsToAdd)
                 {
                     parts = claim.Split('.');
@@ -214,9 +224,9 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                         {
                             ClaimType = Constants.Permission,
                             ClaimValue = claim,
-                            Module = parts[1],
-                            Operation = parts[2],
-                            RoleId = request.RoleID,
+                            Module = parts.Length > 1 ? parts[1] : null,
+                            Operation = parts.Length > 2 ? parts[2] : null,
+                            RoleId = request.ID,
                         }
                     );
                     modifyRows++;
@@ -247,43 +257,63 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
             var modifyRows = 0;
             string[] parts = new string[3];
             var requestClaims = request.Claims.Distinct().ToList();
+
+            // Fetch user claims
             var userClaims = await _context
-                .UserClaims.Where(role => role.UserId == request.UserID)
+                .UserClaims.Where(uc => uc.UserId == request.ID)
                 .ToListAsync();
 
-            // Find claims to delete
+            // Fetch roles assigned to the user
+            var userRoles = await _context
+                .UserRoles.Where(ur => ur.UserId == request.ID)
+                .Select(ur => ur.RoleId)
+                .ToListAsync();
+
+            // Fetch role claims
+            var roleClaims = await _context
+                .RoleClaims.Where(rc => userRoles.Contains(rc.RoleId))
+                .Select(rc => rc.ClaimValue)
+                .ToListAsync();
+
+            // Combine user and role claims (role claims should not be removed)
+            var allClaims = userClaims.Select(uc => uc.ClaimValue).ToList();
+            allClaims.AddRange(roleClaims);
+            allClaims = allClaims.Distinct().ToList(); // Ensure uniqueness
+
+            // Find claims to delete (only user-specific claims)
             var claimsToDelete = userClaims
-                .Where(rc => !requestClaims.Contains(rc.ClaimValue))
+                .Where(uc =>
+                    !requestClaims.Contains(uc.ClaimValue) && !roleClaims.Contains(uc.ClaimValue)
+                )
                 .ToList();
 
-            // Find new claims
-            var newClaimsToAdd = requestClaims
-                .Except(userClaims.Select(rc => rc.ClaimValue))
-                .ToList();
+            // Find new claims to add
+            var newClaimsToAdd = requestClaims.Except(allClaims).ToList();
 
-            if (claimsToDelete != null && claimsToDelete.Any())
-                foreach (var claim in claimsToDelete)
-                {
-                    _context.UserClaims.Remove(claim);
-                    modifyRows++;
-                }
+            if (claimsToDelete.Any())
+            {
+                _context.UserClaims.RemoveRange(claimsToDelete);
+                modifyRows += claimsToDelete.Count;
+            }
 
-            if (newClaimsToAdd != null && newClaimsToAdd.Any())
+            if (newClaimsToAdd.Any())
+            {
                 foreach (var claim in newClaimsToAdd)
                 {
                     parts = claim.Split('.');
-                    await _context.RoleClaims.AddAsync(
-                        new RoleClaims
+                    await _context.UserClaims.AddAsync(
+                        new UserClaims
                         {
                             ClaimType = Constants.Permission,
                             ClaimValue = claim,
-                            Module = parts[1],
-                            Operation = parts[2],
-                            RoleId = request.UserID,
+                            Module = parts.Length > 1 ? parts[1] : null,
+                            Operation = parts.Length > 2 ? parts[2] : null,
+                            UserId = request.ID,
                         }
                     );
                     modifyRows++;
                 }
+            }
 
             return modifyRows;
         }
@@ -299,9 +329,73 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                     Entity = DAL.Enums.EntitiesEnum.User
                 }
             );
-            return 1;
+
+            return -1; // Indicate an error
         }
     }
+
+    //public async Task<int> UpdateUserClaimsAsync(UpdateClaimsRequest request)
+    //{
+    //    try
+    //    {
+    //        var modifyRows = 0;
+    //        string[] parts = new string[3];
+    //        var requestClaims = request.Claims.Distinct().ToList();
+    //        var userClaims = await _context
+    //            .UserClaims.Where(role => role.UserId == request.ID)
+    //            .ToListAsync();
+
+    //        // Find claims to delete
+    //        var claimsToDelete = userClaims
+    //            .Where(rc => !requestClaims.Contains(rc.ClaimValue))
+    //            .ToList();
+
+    //        // Find new claims
+    //        var newClaimsToAdd = requestClaims
+    //            .Except(userClaims.Select(rc => rc.ClaimValue))
+    //            .ToList();
+
+    //        if (claimsToDelete.Any())
+    //            foreach (var claim in claimsToDelete)
+    //            {
+    //                _context.UserClaims.Remove(claim);
+    //                modifyRows++;
+    //            }
+
+    //        if (newClaimsToAdd.Any())
+    //            foreach (var claim in newClaimsToAdd)
+    //            {
+    //                parts = claim.Split('.');
+    //                await _context.UserClaims.AddAsync(
+    //                    new UserClaims
+    //                    {
+    //                        ClaimType = Constants.Permission,
+    //                        ClaimValue = claim,
+    //                        Module = parts[1],
+    //                        Operation = parts[2],
+    //                        UserId = request.ID,
+    //                    }
+    //                );
+    //                modifyRows++;
+    //            }
+
+    //        return modifyRows;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        await _context.ErrorLogs.AddAsync(
+    //            new ErrorLog
+    //            {
+    //                Source = ex.Source,
+    //                Message = ex.Message,
+    //                StackTrace = ex.StackTrace,
+    //                Operation = DAL.Enums.OperationTypeEnum.UpdateClaims,
+    //                Entity = DAL.Enums.EntitiesEnum.User
+    //            }
+    //        );
+    //        return 1;
+    //    }
+    //}
 
     private IQueryable<Q> OrderByDynamic<Q>(IQueryable<Q> query, string orderByColumn, bool isDesc)
     {

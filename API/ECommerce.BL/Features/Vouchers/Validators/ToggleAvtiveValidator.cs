@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Vouchers.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Vouchers.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.NotFound]}"

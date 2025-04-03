@@ -8,6 +8,7 @@ using ECommerce.BLL.Features.Reviews.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -20,22 +21,22 @@ public class ReviewService : IReviewService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IStringLocalizer<ReviewService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Constants.Languages.Ar;
 
     public ReviewService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<ReviewService> localizer,
-        IHttpContextAccessor httpContextAccessor
+        IUserContext userContext
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
 
         #region initilize mapper
         var config = new MapperConfiguration(cfg =>
@@ -49,16 +50,11 @@ public class ReviewService : IReviewService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -125,8 +121,7 @@ public class ReviewService : IReviewService
         try
         {
             var Review = _mapper.Map<ProductReview>(request);
-            Review.CreateBy = _userId;
-            Review = await _unitOfWork.Review.AddAsync(Review);
+            Review = await _unitOfWork.Review.AddAsync(Review, _userId);
             var result = _mapper.Map<ReviewDto>(Review);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -325,7 +320,8 @@ public class ReviewService : IReviewService
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Review
-            }
+            },
+            _userId
         );
     }
 

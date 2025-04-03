@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Bookings.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Bookings.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Bookings.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Booking]} {_localizer[Constants.MessageKeys.NotFound]}"

@@ -149,7 +149,7 @@ function submitFormData(formSelector, controler, action, table, e) {
   // Send data via AJAX
   $.ajax({
     url: `/${controler}/${action}`,
-    type: 'POST',
+    type: action =="Update" ? 'PUT' : 'POST',
     data: formData,
     processData: false, // Prevent jQuery from processing the data
     contentType: false, // Prevent jQuery from setting the content type
@@ -359,11 +359,14 @@ const getFilters = () => {
     const filters = {};
     $(`#filter-container .filter`).each(function () {
         const key = $(this).data('filter'); // Get the filter key from the data attribute
-        const value = $(this).val();       // Get the selected value
-        filters[key] = value;              // Add to the filters object
+        let value = $(this).val();         // Get the selected value
+
+        // Set default empty GUID if value is empty
+        filters[key] = value ? value : "00000000-0000-0000-0000-000000000000";
     });
     return filters;
 };
+
 
 function convertUTCToLocal(utcDate) {
     if (!utcDate) return '-'; // Handle null/empty values

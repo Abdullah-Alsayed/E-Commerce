@@ -26,7 +26,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Sliders.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Sliders.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Slider]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -48,7 +48,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
                 (req, name) =>
                 {
                     return !context.Sliders.Any(x =>
-                        x.TitleAR.ToLower() == req.TitleAR.ToLower() && x.ID != req.ID
+                        x.TitleAR.ToLower() == req.TitleAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -73,7 +73,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
                 (req, name) =>
                 {
                     return !context.Sliders.Any(x =>
-                        x.TitleEN.ToLower() == req.TitleEN.ToLower() && x.ID != req.ID
+                        x.TitleEN.ToLower() == req.TitleEN.ToLower() && x.Id != req.ID
                     );
                 }
             )

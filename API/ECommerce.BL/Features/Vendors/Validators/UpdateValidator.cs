@@ -23,7 +23,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Vendors.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Vendors.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -45,7 +45,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 (req, name) =>
                 {
                     return !context.Vendors.Any(x =>
-                        x.Name.ToLower() == req.Name.ToLower() && x.ID != req.ID
+                        x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 (req, name) =>
                 {
                     return !context.Vendors.Any(x =>
-                        x.Address.ToLower() == req.Address.ToLower() && x.ID != req.ID
+                        x.Address.ToLower() == req.Address.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -94,7 +94,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
             .Must(
                 (req, name) =>
                 {
-                    return !context.Vendors.Any(x => x.Phone == req.Phone && x.ID != req.ID);
+                    return !context.Vendors.Any(x => x.Phone == req.Phone && x.Id != req.ID);
                 }
             )
             .WithMessage(x =>

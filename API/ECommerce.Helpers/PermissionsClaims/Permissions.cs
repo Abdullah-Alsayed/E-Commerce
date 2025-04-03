@@ -255,6 +255,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Create = "Permissions.Role.Create";
             public const string Update = "Permissions.Role.Update";
             public const string Delete = "Permissions.Role.Delete";
+            public const string Permission = "Permissions.Role.Permission";
         }
     }
 }

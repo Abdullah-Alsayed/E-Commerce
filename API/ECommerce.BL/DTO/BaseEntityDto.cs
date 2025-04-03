@@ -4,7 +4,7 @@ namespace ECommerce.BLL.DTO
 {
     public record BaseEntityDto
     {
-        public Guid ID { get; set; }
+        public Guid Id { get; set; }
         public string CreateBy { get; set; }
         public string ModifyBy { get; set; }
         public string DeletedBy { get; set; }

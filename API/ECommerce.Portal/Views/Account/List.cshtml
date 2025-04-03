@@ -39,7 +39,7 @@
                             <option value="">@_Localizer["SelectRole"]</option>
                             @foreach (var item in Model)
                             {
-                               <option value="@item.ID">@item.Name</option>
+                               <option value="@item.Id">@item.Name</option>
                             }
                     </select>
                 </div>
@@ -53,13 +53,9 @@
         <table id="UserList" class="datatables-basic table table-hover table-responsive">
             <thead>
                 <tr>
-                    <th>@_Localizer[Constants.EntityKeys.FirstName]</th>
-                    <th>@_Localizer[Constants.EntityKeys.LastName]</th>
+                    <th>@_Localizer[Constants.EntityKeys.User]</th>
                     <th>@_Localizer[Constants.EntityKeys.Address]</th>
-                    <th>@_Localizer[Constants.EntityKeys.Email]</th>
-                    <th>@_Localizer[Constants.EntityKeys.PhoneNumber]</th>
                     <th>@_Localizer[Constants.EntityKeys.Gander]</th>
-                    <th>@_Localizer[Constants.EntityKeys.Photo]</th>
                     <th>@_Localizer[Constants.EntityKeys.Role]</th>
                     <th>@_Localizer[Constants.EntityKeys.LastLogin]</th>
                     <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
@@ -125,7 +121,7 @@
                         <div class="invalid-feedback">@_Localizer[Constants.MessageKeys.PasswordNotMatch]</div>
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
-                        <select class="form-control" id="@nameof(CreateUserRequest.Gander)" name="@nameof(CreateUserRequest.Gander)">
+                        <select class="form-control" id="@nameof(CreateUserRequest.Gander)" name="@nameof(CreateUserRequest.Gander)" required>
                             <option value="">@_Localizer[Constants.LabelKeys.SelectGender]</option>
                             @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
                             {
@@ -143,7 +139,7 @@
                             <option value="">@_Localizer[Constants.LabelKeys.SelectRole]</option>
                             @foreach (var item in Model)
                             {
-                                <option value="@item.ID">@item.Name</option>
+                                <option value="@item.Id">@item.Name</option>
                             }
                         </select>
                         <label for="@nameof(CreateUserRequest.RoleId)">@_Localizer[Constants.EntityKeys.Role]</label>
@@ -216,7 +212,7 @@
                         <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.PhoneNumber] @_Localizer[Constants.MessageKeys.IsRequired]</div>
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
-                        <select class="form-control" id="@nameof(UpdateUserRequest.Gander)" name="@nameof(UpdateUserRequest.Gander)">
+                        <select class="form-control" id="@nameof(UpdateUserRequest.Gander)" name="@nameof(UpdateUserRequest.Gander)" required>
                             <option value="">@_Localizer[Constants.LabelKeys.SelectGender]</option>
                             @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
                             {
@@ -231,7 +227,7 @@
                             <option value="">@_Localizer[Constants.LabelKeys.SelectRole]</option>
                             @foreach (var item in Model)
                             {
-                                <option value="@item.ID">@item.Name</option>
+                                <option value="@item.Id">@item.Name</option>
                             }
                         </select>
                         <label for="@nameof(UpdateUserRequest.RoleId)">@_Localizer[Constants.EntityKeys.Role]</label>
@@ -254,7 +250,6 @@
     </div>
 </div>
 
-
 <!-- Modal to Delete new record -->
 <div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -275,30 +270,68 @@
     </div>
 </div>
 
-@section VendorScripts {}
+<!-- Modal to Update permission -->
+<div class="modal fade" id="UpdatePermission" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[Constants.LabelKeys.Permission]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mb-4">
+                    <div class="card-body" id="UpdatePermissionBody">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" id="submitPermissionButton" class="btn btn-primary" onclick="submitPermissionForm('UpdateUserClaims')">@_Localizer["Update"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+    <!-- Custom -->
+    <script src="~/vendor/js/Role.js"></script>
+}
+
 
 @section PageScripts {
     <script>
         var tableColumns = [
-            { data: 'firstName' },
-            { data: 'lastName' },
+            {
+                data: 'firstName', 
+                render: function (data, type, row) {
+                    let img = "";
+                    if (row.photo) 
+                        img = `${row.photo}"`;
+                     else 
+                        img = `/Images/User/@Constants.DefaultPhotos.User`;
+                    
+                    return `
+                        <div class="d-flex justify-content-start align-items-center customer-name">
+                            <div class="avatar-wrapper me-3">
+                                <div class="avatar avatar-sm">
+                                    <img src="${img}" alt="Avatar" class="rounded-circle">
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="app-ecommerce-customer-details-overview.html" class="text-heading">
+                                    <span class="fw-medium text-truncate">${row.firstName} ${row.lastName ?? ""}</span>
+                                </a>
+                                <small class="text-nowrap">${row.email}</small>
+                                <small class="text-nowrap">${row.phoneNumber}</small>
+                            </div>
+                        </div>
+                `}
+            },
             { data: 'address' },
-            { data: 'email' },
-            { data: 'phoneNumber' },
             {
                 data: 'ganderName',
                 render: function (data, type, row) {
                     return data ? data : 'N/A';
-                }
-            },
-            {
-                data: 'photo',
-                render: function (data, type, row) {
-                    if (data) {
-                        return `<img src="${data}" alt="User Image" />`;
-                    } else {
-                        return `<img src="/Images/User/@Constants.DefaultPhotos.User" alt="Image" />`;
-                    }
                 }
             },
             { data: 'role.name' },
@@ -326,12 +359,37 @@
                     return convertUTCToLocal(data);
                 }
             },
+            {
+                data: 'role.name',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                <div class="dropdown">
+                    <button class="btn p-0" type="button" id="organicSessionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="organicSessionsDropdown">
+                        <a class="dropdown-item" onclick="fetchData('Account', 'Get', '${row.id}')" data-bs-toggle="modal" data-bs-target="#UpdateFormModal" href="javascript:void(0);">
+                              @_Localizer["Update"]
+                        </a>
+                        <a class="dropdown-item" onclick="setDeleteRecordId('${row.id}')" data-bs-toggle="modal" data-bs-target="#DeleteRecord" href="javascript:void(0);">
+                                @_Localizer["Delete"]
+                        </a>
+                         ${row.role.roleType != 2 ? `
+                         <a class="dropdown-item" data-bs-toggle="modal" onclick="updatePermission('${row.id}','GetUserClaims')" data-bs-target="#UpdatePermission" href="javascript:void(0);">
+                            @_Localizer["Permission"]
+                                </a>` : ''}
+                    </div>
+                </div>`;
+                }
+            }
         ];
 
-        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language');
+        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language',false);
 
           $('#RoleSelect').on('change', function () {
-        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language');
+        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language',false);
       });
 
         function updateIsActive(checkbox) {

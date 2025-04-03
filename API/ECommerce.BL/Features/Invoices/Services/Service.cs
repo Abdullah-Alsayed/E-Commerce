@@ -10,6 +10,7 @@ using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -22,22 +23,22 @@ public class InvoiceService : IInvoiceService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IStringLocalizer<InvoiceService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Languages.Ar;
 
     public InvoiceService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<InvoiceService> localizer,
-        IHttpContextAccessor httpContextAccessor
+        IUserContext userContext
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
 
         #region initilize mapper
         var config = new MapperConfiguration(cfg =>
@@ -50,16 +51,11 @@ public class InvoiceService : IInvoiceService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -92,7 +88,7 @@ public class InvoiceService : IInvoiceService
         try
         {
             request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
-                ? nameof(Invoice.ID)
+                ? nameof(Invoice.Id)
                 : request.SearchBy;
 
             var Invoices = await _unitOfWork.Invoice.GetAllAsync(request);
@@ -126,8 +122,7 @@ public class InvoiceService : IInvoiceService
         try
         {
             var Invoice = _mapper.Map<Invoice>(request);
-            Invoice.CreateBy = _userId;
-            Invoice = await _unitOfWork.Invoice.AddAsync(Invoice);
+            Invoice = await _unitOfWork.Invoice.AddAsync(Invoice, _userId);
             modifyRows += await RemoverProductFromStock(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             #region Send Notification
@@ -351,7 +346,8 @@ public class InvoiceService : IInvoiceService
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Invoice
-            }
+            },
+            _userId
         );
     }
 

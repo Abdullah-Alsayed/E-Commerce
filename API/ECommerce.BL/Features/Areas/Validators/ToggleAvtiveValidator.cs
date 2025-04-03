@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Features.Areas.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Areas.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Areas.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.NotFound]}"

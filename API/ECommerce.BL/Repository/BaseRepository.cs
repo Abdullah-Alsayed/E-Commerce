@@ -3,23 +3,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using ECommerce.BL.Repository;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
 using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Hosting;
+using ECommerce.DAL.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.BLL.Repository
 {
@@ -33,31 +27,45 @@ namespace ECommerce.BLL.Repository
             _context = context;
         }
 
-        public async Task<T> AddAsync(T entity, string userId = Constants.System)
+        public async Task<T> AddAsync(T entity, Guid userId)
         {
-            //if (entity is IAuditable auditableEntity)
-            //{
-            //    auditableEntity.CreatedOn = DateTime.UtcNow;
-            //    auditableEntity.CreatorId = userId;
-            //}
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.CreateAt = DateTime.UtcNow;
+                auditableEntity.CreateBy = userId;
+            }
 
             await _context.Set<T>().AddAsync(entity);
             return entity;
         }
 
-        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys)
+        public T Update(T entity, Guid userId)
         {
-            await _context.Set<T>().AddRangeAsync(Entitys);
-            return Entitys;
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.ModifyAt = DateTime.UtcNow;
+                auditableEntity.ModifyBy = userId;
+            }
+
+            _context.Set<T>().Update(entity);
+            return entity;
         }
 
-        public bool Delete(T Entity)
+        public T Delete(T entity, Guid userId)
         {
-            if (Entity == null)
-                return false;
-            else
-                _context.Set<T>().Remove(Entity);
-            return true;
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.DeletedAt = DateTime.UtcNow;
+                auditableEntity.DeletedBy = userId;
+            }
+
+            return entity;
+        }
+
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entitys)
+        {
+            await _context.Set<T>().AddRangeAsync(entitys);
+            return entitys;
         }
 
         public async Task<T> FindAsync(int ID)
@@ -70,12 +78,6 @@ namespace ECommerce.BLL.Repository
         {
             var Result = await _context.Set<T>().FindAsync(ID);
             return Result;
-        }
-
-        public T Update(T Entity)
-        {
-            _context.Set<T>().Update(Entity);
-            return Entity;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()

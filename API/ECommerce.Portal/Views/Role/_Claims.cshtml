@@ -1,70 +1,61 @@
 @using ECommerce.BLL.Features.Roles.Dtos
-@model IEnumerable<RoleClaimsDto>;
+@model IEnumerable<AllClaimsDto>;
 @inject IStringLocalizer<RoleController> _Localizer;
 @{
     var groupedItems = Model.OrderBy(x => x.Key).ToList();
 }
 @if (Model != null && Model.Any())
 {
-    @if (Model != null && Model.Any())
-    {
-       <form id="updatePermissionForm">
-            <div class="mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <input hidden name="RoleID" value="@Model?.FirstOrDefault()?.RoleID" />
-                        <!-- Navigation -->
-                        <div class="col-12 col-md-5 mx-auto card-separator">
-                            <div class="d-flex justify-content-between flex-column mb-3 mb-md-0 pe-md-3">
-                                <ul class="nav nav-align-left nav-pills flex-column">
-                                    @for (int i = 0; i < groupedItems.Count; i++)
-                                    {
-                                        var item = groupedItems[i];
-                                        <li class="nav-item">
-                                            <button type="button" class="nav-link @(i == 0 ? "active" : "")" data-bs-toggle="tab"
-                                                    data-bs-target="#@item.Key">
-                                                <i class="mdi mdi-cube-outline me-2"></i>
-                                                <span class="align-middle">@_Localizer[item.Key]</span>
-                                            </button>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
+    <form id="updatePermissionForm">
+        <div class="accordion accordion-popout mt-4" id="accordionPopout">
+            @for (int groupIndex = 0; groupIndex < groupedItems.Count; groupIndex++)
+            {
+                var group = groupedItems[groupIndex].Claims;
+                var groupKey = groupedItems[groupIndex].Key;
+                var isFirst = groupIndex == 0;
+                var collapseId = $"collapse{groupIndex}";
+                var headingId = $"heading{groupIndex}";
+                <input hidden name="ID" value="@Model?.FirstOrDefault()?.ID" />
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="@headingId">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input me-2 select-all-checkbox"
+                                   data-target="#@collapseId" onchange="toggleAllCheckboxes(event, this)" checked="@group.All(x=>x.IsChecked)">
+                            <button type="button" class="accordion-button @(isFirst ? "" : "collapsed")"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#@collapseId"
+                                    aria-expanded="@(isFirst.ToString().ToLower())"
+                                    aria-controls="@collapseId">
+                                @_Localizer[groupKey]
+                            </button>
                         </div>
-                        <!-- /Navigation -->
 
-                        <!-- Options -->
-                        <div class="col-12 col-md-7 pt-4 pt-md-0">
-                            <div class="tab-content p-0 pe-xl-0 ps-md-3">
-                                @for (int groupIndex = 0; groupIndex < groupedItems.Count; groupIndex++)
+                    </h2>
+                    <div id="@collapseId" class="accordion-collapse collapse @(isFirst ? "show" : "")"
+                         aria-labelledby="@headingId" data-bs-parent="#accordionPopout">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-around">
+                                @for (int itemIndex = 0; itemIndex < group.Count(); itemIndex++)
                                 {
-                                    var group = groupedItems[groupIndex].Claims;
-                                    <div class="tab-pane fade @(groupIndex == 0 ? "show active" : "")" id="@groupedItems[groupIndex].Key" role="tabpanel">
-                                        <h6 class="text-body">@_Localizer[@groupedItems[groupIndex].Key]</h6>
-                                        <div>
-                                            @for (int itemIndex = 0; itemIndex < group.Count(); itemIndex++)
-                                            {
-                                                var item = group.ElementAt(itemIndex);
-                                                <div class="form-check mb-3">
-                                                    <input class="form-check-input" type="checkbox" name="Claims"
-                                                           id="checkbox-@item.Claim" value="@item.Claim" checked="@item.IsChecked">
-                                                    <label class="form-check-label" for="checkbox-@item.Id">
-                                                        <span class="h6 d-block mb-1">@_Localizer[item.Operation]</span>
-                                                        <small class="text-muted">
-                                                            @_Localizer[$"Title{item.Operation}"]
-                                                        </small>
-                                                    </label>
-                                                </div>
-                                            }
-                                        </div>
+                                    var item = group.ElementAt(itemIndex);
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input claim-checkbox" type="checkbox" name="Claims"
+                                               id="checkbox-@item.Claim" value="@item.Claim"
+                                               data-group="@groupIndex"
+                                               checked="@(item.IsChecked ? "checked" : null)" />
+                                        <label class="form-check-label" for="checkbox-@item.Claim">
+                                            <span class="h6 d-block mb-1">@_Localizer[item.Operation]</span>
+                                            <small class="text-muted">
+                                                @_Localizer[$"Title{item.Operation}"]
+                                            </small>
+                                        </label>
                                     </div>
                                 }
                             </div>
                         </div>
-                        <!-- /Options -->
                     </div>
                 </div>
-            </div>
-        </form>
-    }
+            }
+        </div>
+    </form>
 }

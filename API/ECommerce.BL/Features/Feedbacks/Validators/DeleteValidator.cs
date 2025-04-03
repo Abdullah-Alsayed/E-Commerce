@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Feedbacks.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Feedbacks.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"

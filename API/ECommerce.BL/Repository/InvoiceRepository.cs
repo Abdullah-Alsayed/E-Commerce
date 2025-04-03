@@ -24,7 +24,7 @@ public class InvoiceRepository : BaseRepository<Invoice>, IInvoiceRepository
                 .Invoices.Include(x => x.Order)
                 .ThenInclude(x => x.ProductOrders)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.ID == request.ID);
+                .FirstOrDefaultAsync(x => x.Id == request.ID);
             return invoice;
         }
         catch (Exception exception)

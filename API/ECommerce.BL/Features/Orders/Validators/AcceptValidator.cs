@@ -33,7 +33,7 @@ public class AcceptValidator : AbstractValidator<AcceptOrderRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Orders.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Orders.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Order]} {_localizer[Constants.MessageKeys.NotFound]}"

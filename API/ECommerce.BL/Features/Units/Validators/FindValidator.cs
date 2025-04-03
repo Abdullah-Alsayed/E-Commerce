@@ -33,7 +33,7 @@ public class FindUnitValidator : AbstractValidator<FindUnitRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Units.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Units.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotFound]}"

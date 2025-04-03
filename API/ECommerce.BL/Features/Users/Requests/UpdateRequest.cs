@@ -1,4 +1,5 @@
-﻿using ECommerce.BLL.Request;
+﻿using System;
+using ECommerce.BLL.Request;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -10,7 +11,7 @@ namespace ECommerce.BLL.Features.Users.Requests
 
         public string LastName { get; set; }
 
-        public string RoleId { get; set; }
+        public Guid RoleId { get; set; }
 
         public UserGanderEnum Gander { get; set; }
 

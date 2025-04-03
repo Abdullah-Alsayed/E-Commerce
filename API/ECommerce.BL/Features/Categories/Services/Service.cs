@@ -8,6 +8,7 @@ using ECommerce.BLL.Features.Categories.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -21,24 +22,24 @@ namespace ECommerce.BLL.Features.Categories.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer<CategoryService> _localizer;
         private readonly IHostEnvironment _environment;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Constants.Languages.Ar;
 
         public CategoryService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<CategoryService> localizer,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IHostEnvironment environment
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
             _environment = environment;
 
             #region initilize mapper
@@ -53,17 +54,11 @@ namespace ECommerce.BLL.Features.Categories.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -140,23 +135,23 @@ namespace ECommerce.BLL.Features.Categories.Services
             try
             {
                 var Category = _mapper.Map<Category>(request);
-                Category.CreateBy = _userId;
-                Category = await _unitOfWork.Category.AddAsync(Category);
+                Category = await _unitOfWork.Category.AddAsync(Category, _userId);
                 Category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Categorys
                 );
                 var result = _mapper.Map<CategoryDto>(Category);
-                modifyRows++;
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //modifyRows++;
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
@@ -200,25 +195,25 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var Category = await _unitOfWork.Category.FindAsync(request.ID);
-                _mapper.Map(request, Category);
-                Category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
+                var category = await _unitOfWork.Category.FindAsync(request.ID);
+                _mapper.Map(request, category);
+                category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Categorys,
-                    Category.PhotoPath
+                    category.PhotoPath
                 );
-                Category.ModifyBy = _userId;
-                Category.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<CategoryDto>(Category);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                _unitOfWork.Category.Update(category, _userId);
+                var result = _mapper.Map<CategoryDto>(category);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -264,19 +259,17 @@ namespace ECommerce.BLL.Features.Categories.Services
             try
             {
                 var Category = await _unitOfWork.Category.FindAsync(request.ID);
-                Category.DeletedBy = _userId;
-                Category.DeletedAt = DateTime.UtcNow;
-                Category.IsDeleted = true;
                 var result = _mapper.Map<CategoryDto>(Category);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -326,15 +319,16 @@ namespace ECommerce.BLL.Features.Categories.Services
                 Category.ModifyAt = DateTime.UtcNow;
                 Category.IsActive = !Category.IsActive;
                 var result = _mapper.Map<CategoryDto>(Category);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Toggle);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Toggle);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -419,7 +413,8 @@ namespace ECommerce.BLL.Features.Categories.Services
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Category
-                }
+                },
+                _userId
             );
 
         #endregion

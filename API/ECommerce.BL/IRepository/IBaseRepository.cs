@@ -13,10 +13,10 @@ namespace ECommerce.BLL.IRepository
     public interface IBaseRepository<T>
         where T : class
     {
-        Task<T> AddAsync(T entity, string userId = Constants.System);
+        Task<T> AddAsync(T entity, Guid userId);
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys);
-        T Update(T Entity);
-        bool Delete(T Entity);
+        T Update(T Entity, Guid userId);
+        T Delete(T entity, Guid userId);
         Task<T> FindAsync(int ID);
         Task<T> FindAsync(Guid ID);
         Task<IEnumerable<T>> GetAllAsync();

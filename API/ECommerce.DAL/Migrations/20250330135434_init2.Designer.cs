@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250324192144_AddRoleType")]
-    partial class AddRoleType
+    [Migration("20250330135434_init2")]
+    partial class init2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,24 +27,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Area", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("GovernorateID")
                         .HasColumnType("uniqueidentifier");
@@ -58,9 +58,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .HasColumnType("nvarchar(max)");
@@ -68,7 +68,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("NameEN")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -79,7 +79,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Booking", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -89,17 +89,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -113,9 +113,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
@@ -123,7 +123,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid>("SizeID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("ColorID");
 
@@ -138,24 +138,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Brand", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -166,9 +166,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -184,7 +184,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -193,24 +193,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Category", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -221,9 +221,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -239,7 +239,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -248,24 +248,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -276,9 +276,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -293,7 +293,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -302,24 +302,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ContactUs", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -335,9 +335,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -354,7 +354,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -395,7 +395,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Expense", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -405,17 +405,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -426,9 +426,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhotoPath")
                         .HasMaxLength(255)
@@ -439,7 +439,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -448,24 +448,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Favorite", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -476,14 +476,14 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -494,7 +494,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Feedback", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -505,17 +505,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -526,14 +526,14 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -542,24 +542,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Governorate", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -570,9 +570,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -587,7 +587,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Tax")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -609,8 +609,8 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Entity")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
@@ -621,24 +621,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Invoice", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -652,14 +652,14 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -670,17 +670,17 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Notification", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreateName")
                         .HasColumnType("nvarchar(max)");
@@ -688,9 +688,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Entity")
                         .HasColumnType("int");
@@ -714,9 +714,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("OperationType")
                         .HasColumnType("int");
@@ -731,7 +731,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -740,7 +740,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Order", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -758,17 +758,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime2");
@@ -794,9 +794,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("StatusID")
                         .HasColumnType("uniqueidentifier");
@@ -810,7 +810,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid?>("VoucherID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("AreaID");
 
@@ -827,7 +827,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Product", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -840,17 +840,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -867,9 +867,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -888,7 +888,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid>("UnitID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("BrandID");
 
@@ -953,24 +953,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductReview", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -981,9 +981,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
@@ -996,7 +996,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1031,8 +1031,9 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -1041,26 +1042,29 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("ModifyAt")
+                    b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ModifyBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -1078,6 +1082,10 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreateBy")
+                        .IsUnique()
+                        .HasFilter("[CreateBy] IS NOT NULL");
+
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex")
@@ -1088,24 +1096,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1119,9 +1127,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -1129,24 +1137,24 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SettingID")
+                    b.Property<Guid?>("SettingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
-                    b.HasIndex("SettingID");
+                    b.HasIndex("SettingId");
 
                     b.ToTable("Section");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Setting", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -1161,17 +1169,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasMaxLength(100)
@@ -1202,9 +1210,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(100)
@@ -1222,7 +1230,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1231,24 +1239,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ShoppingCart", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1259,9 +1267,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
@@ -1269,7 +1277,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1280,24 +1288,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Size", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1308,9 +1316,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1320,7 +1328,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("NameEN")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1329,24 +1337,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Slider", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -1362,9 +1370,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
@@ -1379,7 +1387,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1388,24 +1396,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Status", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1416,9 +1424,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1433,7 +1441,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1442,24 +1450,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Stock", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1470,9 +1478,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
@@ -1483,7 +1491,7 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid>("VendorID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1496,7 +1504,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.SubCategory", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -1506,17 +1514,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1527,9 +1535,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1545,7 +1553,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryID");
 
@@ -1563,8 +1571,8 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
@@ -1573,24 +1581,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Unit", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1601,9 +1609,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1615,7 +1623,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1624,8 +1632,9 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -1645,14 +1654,14 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Discount")
                         .HasColumnType("float");
@@ -1701,8 +1710,8 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ModifyBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -1725,8 +1734,8 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -1748,14 +1757,12 @@ namespace ECommerce.DAL.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("RoleId");
-
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -1766,17 +1773,17 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1787,9 +1794,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1801,7 +1808,7 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
@@ -1810,24 +1817,24 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Voucher", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<Guid?>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
+                    b.Property<Guid>("DeletedBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1838,9 +1845,9 @@ namespace ECommerce.DAL.Migrations
                     b.Property<DateTime?>("ModifyAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<Guid>("ModifyBy")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1850,14 +1857,14 @@ namespace ECommerce.DAL.Migrations
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1876,9 +1883,8 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -1886,12 +1892,12 @@ namespace ECommerce.DAL.Migrations
 
                     b.ToTable("AspNetRoleClaims", (string)null);
 
-                    b.HasDiscriminator().HasValue("IdentityRoleClaim<string>");
+                    b.HasDiscriminator().HasValue("IdentityRoleClaim<Guid>");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1910,9 +1916,8 @@ namespace ECommerce.DAL.Migrations
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -1920,12 +1925,12 @@ namespace ECommerce.DAL.Migrations
 
                     b.ToTable("AspNetUserClaims", (string)null);
 
-                    b.HasDiscriminator().HasValue("IdentityUserClaim<string>");
+                    b.HasDiscriminator().HasValue("IdentityUserClaim<Guid>");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -1936,9 +1941,8 @@ namespace ECommerce.DAL.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -1947,13 +1951,13 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1962,10 +1966,10 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -1983,7 +1987,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.RoleClaims", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>");
 
                     b.Property<string>("Module")
                         .HasColumnType("nvarchar(max)");
@@ -1996,7 +2000,7 @@ namespace ECommerce.DAL.Migrations
 
             modelBuilder.Entity("ECommerce.DAL.Entity.UserClaims", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>");
 
                     b.Property<string>("Module")
                         .HasColumnType("nvarchar(max)");
@@ -2162,7 +2166,8 @@ namespace ECommerce.DAL.Migrations
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
                         .WithMany("Histories")
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -2356,6 +2361,16 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("Size");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithOne("Role")
+                        .HasForeignKey("ECommerce.DAL.Entity.Role", "CreateBy")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Section", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -2366,7 +2381,7 @@ namespace ECommerce.DAL.Migrations
 
                     b.HasOne("ECommerce.DAL.Entity.Setting", null)
                         .WithMany("Sections")
-                        .HasForeignKey("SettingID")
+                        .HasForeignKey("SettingId")
                         .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.Navigation("User");
@@ -2492,16 +2507,6 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.DAL.Entity.User", b =>
-                {
-                    b.HasOne("ECommerce.DAL.Entity.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("ECommerce.DAL.Entity.Vendor", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -2524,7 +2529,7 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.Role", null)
                         .WithMany()
@@ -2533,7 +2538,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
@@ -2542,7 +2547,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
@@ -2551,7 +2556,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.Role", null)
                         .WithMany()
@@ -2566,7 +2571,7 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", null)
                         .WithMany()
@@ -2680,6 +2685,8 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("PromoCodes");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Role");
 
                     b.Navigation("Settings");
 

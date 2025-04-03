@@ -43,9 +43,7 @@ public class ChangeUserPasswordValidator : AbstractValidator<ChangeUserPasswordR
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Users.Any(x =>
-                    x.Id == req.ID.ToString() && x.IsActive && !x.IsDeleted
-                );
+                return context.Users.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.NotFound]}"

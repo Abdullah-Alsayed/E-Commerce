@@ -28,7 +28,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Brands.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Brands.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -50,7 +50,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -75,7 +75,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )

@@ -66,7 +66,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.BrandID)
                 .Must(ID =>
                 {
-                    return context.Brands.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Brands.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -84,7 +84,7 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Units.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Units.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -101,7 +101,7 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Categories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Categories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -110,7 +110,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.SubCategoryID)
                 .Must(ID =>
                 {
-                    return context.SubCategories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.SubCategories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotExist]}"

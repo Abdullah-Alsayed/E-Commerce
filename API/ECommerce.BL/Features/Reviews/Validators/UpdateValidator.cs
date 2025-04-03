@@ -60,7 +60,7 @@ public class UpdateReviewValidator : AbstractValidator<UpdateReviewRequest>
             )
             .Must(ID =>
             {
-                return context.Reviews.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Reviews.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.NotExist]}"

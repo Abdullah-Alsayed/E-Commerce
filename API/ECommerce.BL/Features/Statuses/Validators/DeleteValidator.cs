@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Statuses.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -41,7 +41,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Statuses.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.IsComplete]} {_localizer[Constants.MessageKeys.CantDelete]}"

@@ -25,7 +25,7 @@ namespace ECommerce.BLL.Features.Brands.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Brands.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Brands.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotFound]}"

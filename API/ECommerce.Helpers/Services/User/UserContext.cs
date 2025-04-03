@@ -14,7 +14,7 @@ public class UserContext : IUserContext
     public UserContext(IHttpContextAccessor httpContextAccessor) =>
         _httpContextAccessor = httpContextAccessor;
 
-    public (bool Exist, string Value) UserId
+    public (bool Exist, Guid Value) UserId
     {
         get
         {
@@ -35,11 +35,13 @@ public class UserContext : IUserContext
                 {
                     userId = _httpContextAccessor.HttpContext.User.Identity.Name;
                 }
-                return !string.IsNullOrEmpty(userId) ? new(true, userId) : new(false, userId);
+                return !string.IsNullOrEmpty(userId)
+                    ? new(true, Guid.Parse(userId))
+                    : new(false, Guid.Empty);
             }
             else
             {
-                return (false, null);
+                return (false, Guid.Empty);
             }
         }
     }

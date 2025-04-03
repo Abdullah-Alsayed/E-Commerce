@@ -32,6 +32,10 @@ namespace ECommerce.BLL.Features.Users.Services
         private readonly IHttpContextAccessor _httpContext;
         private readonly IValidator<CreateUserRequest> _validator;
 
+        private readonly Guid _userId;
+        private readonly string _userName;
+        private readonly string _lang = Constants.Languages.Ar;
+
         public UserService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<UserService> localizer,
@@ -61,6 +65,14 @@ namespace ECommerce.BLL.Features.Users.Services
             });
             _mapper = new Mapper(config);
             #endregion initilize mapper
+
+            #region Get User Data From Token
+            _userId = _userContext.UserId.Value;
+
+            _userName = _userContext.UserName.Value;
+
+            _lang = _userContext.Language.Value;
+            #endregion
         }
 
         public async Task<BaseResponse> RegisterAsync(CreateUserRequest request)
@@ -69,13 +81,11 @@ namespace ECommerce.BLL.Features.Users.Services
             {
                 var user = _mapper.Map<User>(request);
                 user.Language = Constants.Languages.Ar;
-                user.CreateBy = string.IsNullOrEmpty(_userContext.UserId.Value)
-                    ? Constants.System
-                    : _userContext.UserId.Value;
-                if (string.IsNullOrEmpty(request.RoleId))
+                user.CreateBy = _userContext.UserId.Value;
+                if (request.RoleId == Guid.Empty)
                 {
                     var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
-                    user.RoleId = role?.Id ?? Guid.Empty.ToString();
+                    user.RoleId = role?.Id ?? Guid.Empty;
                 }
                 else
                     user.RoleId = request.RoleId;
@@ -112,19 +122,18 @@ namespace ECommerce.BLL.Features.Users.Services
             try
             {
                 var user = _mapper.Map<User>(request);
+                user.Id = Guid.NewGuid();
                 user.Email = request.Email.ToLower();
                 user.Language = Constants.Languages.Ar;
-                if (string.IsNullOrEmpty(request.RoleId))
+                if (request.RoleId == Guid.Empty)
                 {
                     var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
-                    user.RoleId = role?.Id ?? Guid.Empty.ToString();
+                    user.RoleId = role?.Id ?? Guid.Empty;
                 }
                 else
                     user.RoleId = request.RoleId;
 
-                user.CreateBy = string.IsNullOrEmpty(_userContext.UserId.Value)
-                    ? Constants.System
-                    : _userContext.UserId.Value;
+                user.CreateBy = _userContext.UserId.Value;
 
                 var result = await _unitOfWork.User.CreateUserAsync(
                     user,
@@ -132,12 +141,12 @@ namespace ECommerce.BLL.Features.Users.Services
                     _userContext.UserId.Value
                 );
 
-                if (result.IsSuccess && !string.IsNullOrEmpty(user.Id))
+                if (result.IsSuccess && user.Id != Guid.Empty)
                     await _unitOfWork.Role.AddUserToRoleAsync(
                         new Roles.Requests.AddUserToRoleRequest
                         {
                             UserID = user.Id,
-                            RoleIDs = new List<string> { user.RoleId }
+                            RoleIDs = new List<Guid> { user.RoleId }
                         }
                     );
                 if (result.IsSuccess)
@@ -190,17 +199,20 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var user = await _unitOfWork.User.FindUserByIDAsync(request.ID.ToString());
+                var user = await _unitOfWork.User.FindUserByIDAsync(request.ID);
+                var oldRoleId = user.RoleId;
                 _mapper.Map(request, user);
+
+                _unitOfWork.User.Update(user, _userContext.UserId.Value);
+
                 photo = await _unitOfWork.User.UploadPhotoAsync(
                     request.ProfilePicture,
                     Constants.PhotoFolder.User,
                     user.Photo
                 );
                 user.Photo = photo;
-                user.ModifyBy = _userContext.UserId.Value;
-                user.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<UserDto>(user);
+
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -214,6 +226,11 @@ namespace ECommerce.BLL.Features.Users.Services
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
+                    if (user.RoleId != request.RoleId)
+                    {
+                        await _unitOfWork.User.AddToRoleAsync(user, request.RoleId);
+                        await _unitOfWork.User.RemoveToRoleAsync(user, oldRoleId);
+                    }
                     await transaction.CommitAsync();
                     return new BaseResponse<UserDto>
                     {
@@ -251,11 +268,9 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var User = await _unitOfWork.User.DeleteAsync(request.ID.ToString(), request.Token);
-                User.DeletedBy = _userContext.UserId.Value;
-                User.DeletedAt = DateTime.UtcNow;
-                User.IsDeleted = true;
-                var result = _mapper.Map<UserDto>(User);
+                var user = await _unitOfWork.User.DeleteAsync(request.ID, request.Token);
+                _unitOfWork.User.Delete(user, _userContext.UserId.Value);
+                var result = _mapper.Map<UserDto>(user);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Delete);
                 modifyRows++;
@@ -309,7 +324,7 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var User = await _unitOfWork.User.FindUserByIDAsync(request.ID.ToString());
+                var User = await _unitOfWork.User.FindUserByIDAsync(request.ID);
                 User.IsActive = !User.IsActive;
                 var result = _mapper.Map<UserDto>(User);
                 modifyRows++;
@@ -403,7 +418,12 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             var result = _unitOfWork.User.IsAuthenticated(_httpContext.HttpContext.User);
             List<string> userInfo =
-                new() { _userContext.UserName.Value, _userContext.UserId.Value, result.ToString() };
+                new()
+                {
+                    _userContext.UserName.Value,
+                    _userContext.UserId.Value.ToString(),
+                    result.ToString()
+                };
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -644,7 +664,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
         }
 
-        public async Task<BaseResponse> GetAsync(string userId)
+        public async Task<BaseResponse> GetAsync(Guid userId)
         {
             try
             {
@@ -728,7 +748,8 @@ namespace ECommerce.BLL.Features.Users.Services
                     UserID = _userContext.UserId.Value,
                     Action = action,
                     Entity = EntitiesEnum.User
-                }
+                },
+                _userId
             );
 
         private static async Task UpdateLanguageOnCookie(

@@ -8,6 +8,7 @@ using ECommerce.BLL.Features.Expenses.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -21,24 +22,24 @@ public class ExpenseService : IExpenseService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IHostEnvironment _environment;
     private readonly IStringLocalizer<ExpenseService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Languages.Ar;
 
     public ExpenseService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<ExpenseService> localizer,
-        IHttpContextAccessor httpContextAccessor,
+        IUserContext userContext,
         IHostEnvironment environment
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
         _environment = environment;
 
         #region initilize mapper
@@ -53,16 +54,11 @@ public class ExpenseService : IExpenseService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -128,14 +124,14 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = _mapper.Map<Expense>(request);
-            Expense.CreateBy = _userId;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
+            var expense = _mapper.Map<Expense>(request);
+            expense.CreateBy = _userId;
+            expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
                 request.FormFile,
                 Constants.PhotoFolder.Expense
             );
-            Expense = await _unitOfWork.Expense.AddAsync(Expense);
-            var result = _mapper.Map<ExpenseDto>(Expense);
+            expense = await _unitOfWork.Expense.AddAsync(expense, _userId);
+            var result = _mapper.Map<ExpenseDto>(expense);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
             modifyRows++;
@@ -337,7 +333,8 @@ public class ExpenseService : IExpenseService
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Expense
-            }
+            },
+            _userId
         );
     }
 

@@ -2,6 +2,7 @@
 using System.Net.Http;
 using ECommerce.BLL.Features.Reviews.Requests;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -12,18 +13,18 @@ namespace ECommerce.BLL.Features.Reviews.Validators
 {
     public class CreateReviewValidator : AbstractValidator<CreateReviewRequest>
     {
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer _localizer;
 
         public CreateReviewValidator(
             ApplicationDbContext context,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IStringLocalizer<CreateReviewValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
             RuleLevelCascadeMode = CascadeMode.Stop;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             _localizer = localizer;
 
@@ -66,7 +67,7 @@ namespace ECommerce.BLL.Features.Reviews.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Products.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Products.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -75,9 +76,7 @@ namespace ECommerce.BLL.Features.Reviews.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    var userId = _httpContext
-                        .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                        ?.Value;
+                    var userId = _userContext.UserId.Value;
 
                     return !context.Reviews.Any(x =>
                         x.ProductID == req.ProductID

@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Orders.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Orders.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Order]} {_localizer[Constants.MessageKeys.NotFound]}"

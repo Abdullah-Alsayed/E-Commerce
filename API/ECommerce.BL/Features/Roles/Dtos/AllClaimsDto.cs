@@ -6,6 +6,8 @@ namespace ECommerce.BLL.Features.Roles.Dtos
 {
     public class AllClaimsDto
     {
+        public string ID { get; set; }
+
         public string Key { get; set; }
         public List<ClaimDto> Claims { get; set; }
     }

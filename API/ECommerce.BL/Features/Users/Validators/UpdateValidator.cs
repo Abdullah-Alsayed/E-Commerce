@@ -25,7 +25,7 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Users.Any(x => x.Id == req.ID.ToString() && !x.IsDeleted);
+                return context.Users.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -97,7 +97,7 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
             .Must(req =>
             {
                 var result = !context.Users.Any(x =>
-                    x.Id != req.ID.ToString()
+                    x.Id != req.ID
                     && (
                         x.Email.ToLower() == req.Email.ToLower() || x.PhoneNumber == req.PhoneNumber
                     )

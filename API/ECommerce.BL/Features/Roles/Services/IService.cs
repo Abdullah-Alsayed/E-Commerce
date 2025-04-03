@@ -15,10 +15,11 @@ namespace ECommerce.BLL.Features.Roles.Services
         Task<BaseResponse<BaseGridResponse<List<RoleDto>>>> GetAllAsync(GetAllRoleRequest request);
         Task<BaseResponse> UpdateAsync(UpdateRoleRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
-        Task<BaseResponse> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request);
+        Task<BaseResponse> UpdateRoleClaimsAsync(UpdateClaimsRequest request);
         Task<BaseResponse> UpdateUserClaimsAsync(UpdateUserClaimsRequest request);
         Task<BaseResponse> AddUserToRoleAsync(AddUserToRoleRequest request);
         Task<BaseResponse> UpdateUserRoleAsync(UpdateUserRoleRequest request);
-        Task<BaseResponse<List<RoleClaimsDto>>> GetClaimsAsync(BaseRequest request);
+        Task<BaseResponse<List<AllClaimsDto>>> GetClaimsAsync(BaseRequest request);
+        Task<BaseResponse<List<AllClaimsDto>>> GetUserClaimsAsync(BaseRequest request);
     }
 }

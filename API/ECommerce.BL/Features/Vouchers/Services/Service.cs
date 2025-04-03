@@ -10,6 +10,7 @@ using ECommerce.BLL.Features.Vouchers.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -23,22 +24,22 @@ public class VoucherService : IVoucherService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IStringLocalizer<VoucherService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Constants.Languages.Ar;
 
     public VoucherService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<VoucherService> localizer,
-        IHttpContextAccessor httpContextAccessor
+        IUserContext userContext
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
 
         #region initilize mapper
         var config = new MapperConfiguration(cfg =>
@@ -52,16 +53,11 @@ public class VoucherService : IVoucherService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -128,8 +124,7 @@ public class VoucherService : IVoucherService
         try
         {
             var voucher = _mapper.Map<Voucher>(request);
-            voucher.CreateBy = _userId;
-            voucher = await _unitOfWork.Voucher.AddAsync(voucher);
+            voucher = await _unitOfWork.Voucher.AddAsync(voucher, _userId);
             var result = _mapper.Map<VoucherDto>(voucher);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Create);
@@ -381,7 +376,8 @@ public class VoucherService : IVoucherService
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Voucher
-            }
+            },
+            _userId
         );
     }
 

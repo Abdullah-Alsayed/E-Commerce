@@ -5,6 +5,7 @@ using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core;
 using ECommerce.Core.PermissionsClaims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -92,11 +93,7 @@ namespace ECommerce.Portal.Controllers
             var columns = new List<string>
             {
                 nameof(UserDto.FirstName),
-                nameof(UserDto.LastName),
                 nameof(UserDto.Address),
-                nameof(UserDto.Email),
-                nameof(UserDto.Photo),
-                nameof(UserDto.PhoneNumber),
                 nameof(UserDto.Gander),
                 nameof(DAL.Entity.User.Role.Name),
                 nameof(UserDto.LastLogin),
@@ -111,11 +108,11 @@ namespace ECommerce.Portal.Controllers
                 {
                     IsDescending = isDescending,
                     SortBy = sortColumn,
-                    PageSize = request?.Length ?? 0,
-                    PageIndex = request != null ? (request.Start / request.Length) : 0,
+                    PageSize = request?.Length ?? Constants.PageSize,
+                    PageIndex = request?.PageIndex ?? Constants.PageIndex,
                     SearchFor = search,
                     StaffOnly = true,
-                    RoleId = request?.RoleId
+                    RoleId = request?.RoleId ?? Guid.Empty
                 }
             );
 
@@ -128,6 +125,95 @@ namespace ECommerce.Portal.Controllers
             };
 
             return Json(jsonResponse);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Permissions.Users.Create)]
+        public async Task<IActionResult> Create([FromForm] CreateUserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(
+                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+                );
+            }
+
+            try
+            {
+                var result = await _service.CreateAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new BaseResponse { IsSuccess = false, Message = ex.Message }
+                );
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Policy = Permissions.Users.Update)]
+        public async Task<IActionResult> Update([FromForm] UpdateUserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(
+                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+                );
+            }
+
+            try
+            {
+                var result = await _service.UpdateAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new BaseResponse { IsSuccess = false, Message = ex.Message }
+                );
+            }
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = Permissions.Users.Delete)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(
+                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
+                );
+            }
+
+            try
+            {
+                var result = await _service.DeleteAsync(
+                    new DeleteUserRequest { ID = Guid.Parse(id) }
+                );
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new BaseResponse { IsSuccess = false, Message = ex.Message }
+                );
+            }
         }
 
         [HttpPut]
@@ -210,64 +296,6 @@ namespace ECommerce.Portal.Controllers
             }
         }
 
-        [HttpPost]
-        [Authorize(Policy = Permissions.Users.Create)]
-        public async Task<IActionResult> Create([FromForm] CreateUserRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(
-                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-                );
-            }
-
-            try
-            {
-                var result = await _service.CreateAsync(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new BaseResponse { IsSuccess = false, Message = ex.Message }
-                );
-            }
-        }
-
-        [HttpPost]
-        [Authorize(Policy = Permissions.Users.Delete)]
-        public async Task<IActionResult> Update([FromForm] UpdateUserRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(
-                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-                );
-            }
-
-            try
-            {
-                var result = await _service.UpdateAsync(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new BaseResponse { IsSuccess = false, Message = ex.Message }
-                );
-            }
-        }
-
         [HttpGet]
         public async Task<BaseResponse> GetAll([FromQuery] GetAllUserRequest request)
         {
@@ -294,21 +322,7 @@ namespace ECommerce.Portal.Controllers
             }
         }
 
-        [HttpDelete]
-        [Authorize(Policy = Permissions.Users.Delete)]
-        public async Task<BaseResponse> Delete(string id)
-        {
-            try
-            {
-                return await _service.DeleteAsync(new DeleteUserRequest { ID = Guid.Parse(id) });
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        public async Task<BaseResponse> Get(string id)
+        public async Task<BaseResponse> Get(Guid id)
         {
             try
             {

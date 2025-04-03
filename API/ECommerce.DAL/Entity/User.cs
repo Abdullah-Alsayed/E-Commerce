@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ECommerce.Core;
 using ECommerce.DAL.Enums;
+using ECommerce.DAL.Interface;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.DAL.Entity
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<Guid>, IBaseEntity
     {
         public User()
         {
@@ -49,7 +51,7 @@ namespace ECommerce.DAL.Entity
         [Required]
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
-        public string CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         public DateTime? LastLogin { get; set; }
 
         public bool IsActive { get; set; } = true;
@@ -57,8 +59,9 @@ namespace ECommerce.DAL.Entity
 
         public DateTime? DeletedAt { get; set; }
         public DateTime? ModifyAt { get; set; }
-        public string? DeletedBy { get; set; }
-        public string? ModifyBy { get; set; }
+
+        public Guid ModifyBy { get; set; }
+        public Guid DeletedBy { get; set; }
 
         [StringLength(50)]
         public string Language { get; set; } = Constants.Languages.Ar;
@@ -66,9 +69,11 @@ namespace ECommerce.DAL.Entity
         [StringLength(255)]
         public string Photo { get; set; } = Constants.DefaultPhotos.User;
 
-        public string RoleId { get; set; }
+        [ForeignKey(nameof(Role))]
+        public Guid RoleId { get; set; }
 
         public virtual Role Role { get; set; }
+
         public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }

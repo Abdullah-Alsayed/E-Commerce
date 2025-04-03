@@ -26,7 +26,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.SubCategories.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.SubCategories.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -48,7 +48,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
                 (req, name) =>
                 {
                     return !context.Categories.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -73,7 +73,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
                 (req, name) =>
                 {
                     return !context.Categories.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -84,7 +84,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
             .Must(req =>
             {
                 return context.Categories.Any(x =>
-                    x.ID == req.CategoryID && x.IsActive && !x.IsDeleted
+                    x.Id == req.CategoryID && x.IsActive && !x.IsDeleted
                 );
             })
             .WithMessage(x =>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ECommerce.BLL.Request
 {
@@ -9,8 +10,13 @@ namespace ECommerce.BLL.Request
         public List<DataTableOrder> Order { get; set; }
         public int Start { get; set; }
         public int Length { get; set; }
+        public int PageIndex
+        {
+            get { return Start / Length; }
+        }
+
         public DataTableSearch Search { get; set; }
-        public string RoleId { get; set; }
+        public Guid? RoleId { get; set; } = Guid.Empty;
         public int BusinessSiteServiceId { get; set; }
         public int FacilityOptionId { get; set; }
         public int Type { get; set; }

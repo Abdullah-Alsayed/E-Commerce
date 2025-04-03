@@ -9,7 +9,8 @@ namespace ECommerce.Core
         public const string Permission= "Permission";
         public const string Issuer= "E-commerceApi";
         public const string HostName= "localhost:5001";
-
+        public const int PageSize = 25;
+        public const int PageIndex = 0;
         public static class Languages
         {
             public const string Arabic = "Arabic";
@@ -55,6 +56,7 @@ namespace ECommerce.Core
             public const string RestPassword= "Rest Password";
             public const string EmailIsConfirm= "EmailIsConfirm";
             public const string LoginFiled = "LoginFiled";
+            public const string HasUser = "HasUser";
         }
 
         public static class Message

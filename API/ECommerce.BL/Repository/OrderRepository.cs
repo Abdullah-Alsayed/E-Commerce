@@ -59,23 +59,23 @@ namespace ECommerce.BLL.Repository
             try
             {
                 var governorate = await _context.Governorates.FirstOrDefaultAsync(x =>
-                    x.ID == order.GovernorateID
+                    x.Id == order.GovernorateID
                 );
                 var productIds = products.Select(x => x.ProductID).ToList();
                 var productPrice = await _context
-                    .Products.Where(x => productIds.Contains(x.ID))
+                    .Products.Where(x => productIds.Contains(x.Id))
                     .Select(p => p.Price)
                     .SumAsync();
 
                 var voucherValue = order.VoucherID.HasValue
                     ? await _context
-                        .Vouchers.Where(x => x.ID == order.VoucherID.Value)
+                        .Vouchers.Where(x => x.Id == order.VoucherID.Value)
                         .Select(x => x.Value)
                         .FirstOrDefaultAsync()
                     : 0;
 
                 var orderId = Guid.NewGuid();
-                order.ID = orderId;
+                order.Id = orderId;
                 order.CreateAt = DateTime.UtcNow;
                 order.Count = products.Count;
                 order.Tax = governorate?.Tax ?? 0;

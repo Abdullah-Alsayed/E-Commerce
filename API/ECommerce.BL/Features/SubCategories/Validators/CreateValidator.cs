@@ -55,7 +55,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
                 .Must(req =>
                 {
                     return context.Categories.Any(x =>
-                        x.ID == req.CategoryID && x.IsActive && !x.IsDeleted
+                        x.Id == req.CategoryID && x.IsActive && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

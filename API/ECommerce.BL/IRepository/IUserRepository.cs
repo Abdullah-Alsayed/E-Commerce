@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Dtos;
@@ -13,22 +14,18 @@ namespace ECommerce.BLL.IRepository
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<BaseResponse> LoginAsync(LoginRequest request);
-        Task<BaseResponse<CreateUserDto>> CreateUserAsync(
-            User user,
-            string password,
-            string userId
-        );
+        Task<BaseResponse<CreateUserDto>> CreateUserAsync(User user, string password, Guid userId);
         Task<BaseResponse<CreateUserDto>> RegisterUserAsync(
             User user,
             string password,
-            string userId
+            Guid userId
         );
         Task<bool> SendConfirmEmailAsync(User user);
-        Task<BaseResponse> ConfirmEmailAsync(string userID, string toke);
+        Task<BaseResponse> ConfirmEmailAsync(Guid userID, string toke);
         Task ForgotPasswordAsync(object Entity);
         Task ResetPasswordAsync(string Code);
         Task UpdatePasswordAsync(string username, string password);
-        Task<User> FindUserByIDAsync(string UserID);
+        Task<User> FindUserByIDAsync(Guid UserID);
         Task<User> FindUserByNameAsync(string Name);
         Task<User> FindUserByEmailAsync(string Email);
         Task<bool> EmailExistAsync(string email);
@@ -42,14 +39,16 @@ namespace ECommerce.BLL.IRepository
         Task LoginAsync(User user, bool RememberMe);
         Task<BaseResponse> WebLoginAsync(LoginRequest request, HttpContext httpContext);
         Task LogOffAsync();
-        Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request, string userId);
-        Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request, string userId);
-        Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request, string userId);
-        Task<User> DeleteAsync(string ID, string token);
+        Task<BaseResponse> ChangePassword(ChangePasswordUserRequest request, Guid userId);
+        Task<BaseResponse> ForgotPassword(ForgotPasswordUserRequest request, Guid userId);
+        Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request, Guid userId);
+        Task<User> DeleteAsync(Guid id, string token);
         bool IsTokenExperts(StringValues token);
         Task<List<User>> GetAllAsync(GetAllUserRequest request);
-        Task<User> GetAsync(string userId);
+        Task<User> GetAsync(Guid userId);
         Task<BaseResponse> ChangeUserPassword(ChangeUserPasswordRequest request);
         Task SeedData();
+        Task<bool> AddToRoleAsync(User user, Guid roleId);
+        Task<bool> RemoveToRoleAsync(User user, Guid roleId);
     }
 }

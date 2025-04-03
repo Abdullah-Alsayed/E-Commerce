@@ -129,3 +129,9 @@ tbody img {
 tbody, thead th {
   text-align: center !important
 }
+
+.select-all-checkbox {
+    height: 18px !important; 
+    width: 18px !important;
+    margin: 0px 15px;
+}

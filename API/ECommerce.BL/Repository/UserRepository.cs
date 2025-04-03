@@ -58,9 +58,9 @@ namespace ECommerce.BLL.Repository
             _localizer = localizer;
         }
 
-        public async Task<User> FindUserByIDAsync(string UserID)
+        public async Task<User> FindUserByIDAsync(Guid UserID)
         {
-            return await _userManager.FindByIdAsync(UserID);
+            return await _userManager.FindByIdAsync(UserID.ToString());
         }
 
         public string GetUserID(ClaimsPrincipal user)
@@ -111,7 +111,7 @@ namespace ECommerce.BLL.Repository
             );
         }
 
-        public async Task<BaseResponse> ConfirmEmailAsync(string userID, string token)
+        public async Task<BaseResponse> ConfirmEmailAsync(Guid userID, string token)
         {
             var user = await GetUser(userID);
             if (user != null)
@@ -305,7 +305,7 @@ namespace ECommerce.BLL.Repository
         public async Task<BaseResponse<CreateUserDto>> CreateUserAsync(
             User user,
             string password,
-            string userId
+            Guid userId
         )
         {
             BaseResponse result = new();
@@ -320,7 +320,7 @@ namespace ECommerce.BLL.Repository
                     ? Constants.MessageKeys.Success
                     : string.Join(",", identityResult.Errors.Select(x => x.Description)),
                 Result =
-                    (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
+                    (identityResult.Succeeded && userId != Guid.Empty)
                         ? new CreateUserDto
                         {
                             Email = user.Email,
@@ -337,7 +337,7 @@ namespace ECommerce.BLL.Repository
         public async Task<BaseResponse<CreateUserDto>> RegisterUserAsync(
             User user,
             string password,
-            string userId
+            Guid userId
         )
         {
             BaseResponse result = new();
@@ -345,10 +345,10 @@ namespace ECommerce.BLL.Repository
             // Generate unique username
             user.UserName = await GenerateUniqueUsernameAsync(user.FirstName, user.LastName);
             IdentityResult identityResult = await _userManager.CreateAsync(user, password);
-            if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
+            if (identityResult.Succeeded && userId != Guid.Empty)
             {
-                if (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
-                    await _userManager.AddToRoleAsync(user, user.RoleId);
+                if (identityResult.Succeeded && userId != Guid.Empty)
+                    await _userManager.AddToRoleAsync(user, user.RoleId.ToString());
 
                 await LoginAsync(user, true);
                 token = await CreateJwtToken(user);
@@ -362,7 +362,7 @@ namespace ECommerce.BLL.Repository
                     ? Constants.MessageKeys.Success
                     : string.Join(",", identityResult.Errors.Select(x => x.Description)),
                 Result =
-                    (identityResult.Succeeded && !string.IsNullOrEmpty(userId))
+                    (identityResult.Succeeded && userId != Guid.Empty)
                         ? new CreateUserDto
                         {
                             Email = user.Email,
@@ -434,7 +434,7 @@ namespace ECommerce.BLL.Repository
 
         public async Task<BaseResponse> ChangePassword(
             ChangePasswordUserRequest request,
-            string userId
+            Guid userId
         )
         {
             try
@@ -526,7 +526,7 @@ namespace ECommerce.BLL.Repository
 
         public async Task<BaseResponse> ForgotPassword(
             ForgotPasswordUserRequest request,
-            string userId
+            Guid userId
         )
         {
             try
@@ -581,10 +581,7 @@ namespace ECommerce.BLL.Repository
             }
         }
 
-        public async Task<BaseResponse> ResetPassword(
-            ResetPasswordUserRequest request,
-            string userId
-        )
+        public async Task<BaseResponse> ResetPassword(ResetPasswordUserRequest request, Guid userId)
         {
             try
             {
@@ -619,14 +616,13 @@ namespace ECommerce.BLL.Repository
             }
         }
 
-        public async Task<User> DeleteAsync(string UserID, string token)
+        public async Task<User> DeleteAsync(Guid id, string token)
         {
             try
             {
-                var user = await GetUser(UserID);
-                //var result = _userManager.RemoveAuthenticationTokenAsync();
+                var user = await GetUser(id);
                 await _context.TokenExpired.AddAsync(
-                    new TokenExpired { Token = token, UserID = UserID }
+                    new TokenExpired { Token = token, UserID = id }
                 );
                 return user;
             }
@@ -687,7 +683,7 @@ namespace ECommerce.BLL.Repository
                     );
                 }
 
-                if (!string.IsNullOrEmpty(request.RoleId))
+                if (request.RoleId != Guid.Empty)
                     query = query.Where(x => x.RoleId == request.RoleId);
 
                 var total = await query.CountAsync();
@@ -716,7 +712,7 @@ namespace ECommerce.BLL.Repository
             }
         }
 
-        public async Task<User> GetAsync(string userId)
+        public async Task<User> GetAsync(Guid userId)
         {
             try
             {
@@ -783,11 +779,11 @@ namespace ECommerce.BLL.Repository
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(Constants.Claims.ID, user.Id),
+                new Claim(Constants.Claims.ID, user.Id.ToString()),
                 new Claim(Constants.Claims.Language, user.Language),
                 new Claim(Constants.Claims.UserName, user.UserName),
                 new Claim(Constants.Claims.FirstName, user.FirstName),
@@ -802,7 +798,7 @@ namespace ECommerce.BLL.Repository
             return claims;
         }
 
-        private async Task<User> GetUser(string userId)
+        private async Task<User> GetUser(Guid userId)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         }
@@ -851,7 +847,7 @@ namespace ECommerce.BLL.Repository
             var roles = await _userManager.GetRolesAsync(user);
             var roleName = string.Join(",", roles);
 
-            httpContext.Response.Cookies.Append(Constants.Claims.ID, user.Id);
+            httpContext.Response.Cookies.Append(Constants.Claims.ID, user.Id.ToString());
             httpContext.Response.Cookies.Append(Constants.Claims.Language, user.Language);
             httpContext.Response.Cookies.Append(Constants.Claims.UserName, user.UserName);
             httpContext.Response.Cookies.Append(Constants.Claims.FirstName, user.FirstName);
@@ -867,6 +863,26 @@ namespace ECommerce.BLL.Repository
         public async Task SeedData()
         {
             await DataSeeder.SeedData(_context, _roleManager, _userManager);
+        }
+
+        public async Task<bool> AddToRoleAsync(User user, Guid roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+            if (role == null)
+                return false;
+
+            var result = await _userManager.AddToRoleAsync(user, role.Name);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> RemoveToRoleAsync(User user, Guid roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+            if (role == null)
+                return false;
+
+            var result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+            return result.Succeeded;
         }
 
         #endregion

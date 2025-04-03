@@ -23,7 +23,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Colors.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Colors.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -45,7 +45,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
                 (req, name) =>
                 {
                     return !context.Colors.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
                 (req, name) =>
                 {
                     return !context.Colors.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -90,7 +90,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
             .Must(
                 (req, name) =>
                 {
-                    return !context.Colors.Any(x => x.Value == req.Value && x.ID != req.ID);
+                    return !context.Colors.Any(x => x.Value == req.Value && x.Id != req.ID);
                 }
             )
             .WithMessage(x =>

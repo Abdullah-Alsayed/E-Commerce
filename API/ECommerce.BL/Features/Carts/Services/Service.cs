@@ -9,9 +9,9 @@ using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -21,22 +21,22 @@ namespace ECommerce.BLL.Features.Carts.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer<CartService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public CartService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<CartService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
@@ -52,17 +52,11 @@ namespace ECommerce.BLL.Features.Carts.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -141,18 +135,18 @@ namespace ECommerce.BLL.Features.Carts.Services
             try
             {
                 var Cart = _mapper.Map<ShoppingCart>(request);
-                Cart.CreateBy = _userId;
-                Cart = await _unitOfWork.Cart.AddAsync(Cart);
+                Cart = await _unitOfWork.Cart.AddAsync(Cart, _userId);
                 var result = _mapper.Map<CartDto>(Cart);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -202,15 +196,16 @@ namespace ECommerce.BLL.Features.Carts.Services
                 Cart.ModifyBy = _userId;
                 Cart.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<CartDto>(Cart);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -266,15 +261,16 @@ namespace ECommerce.BLL.Features.Carts.Services
                     cart.IsDeleted = true;
                     modifyRows++;
                 }
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
@@ -378,7 +374,8 @@ namespace ECommerce.BLL.Features.Carts.Services
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Cart
-                }
+                },
+                _userId
             );
 
         #endregion

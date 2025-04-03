@@ -34,7 +34,7 @@ public class FindAreaValidator : AbstractValidator<FindAreaRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Areas.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Areas.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.NotFound]}"

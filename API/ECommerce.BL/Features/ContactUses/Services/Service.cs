@@ -10,6 +10,7 @@ using ECommerce.BLL.Features.ContactUses.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -23,24 +24,24 @@ namespace ECommerce.BLL.Features.ContactUses.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IHostEnvironment _environment;
         private readonly IStringLocalizer<ContactUsService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public ContactUsService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<ContactUsService> localizer,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IHostEnvironment environment
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
             _environment = environment;
 
             #region initilize mapper
@@ -54,17 +55,11 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -75,8 +70,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             try
             {
                 var ContactUs = _mapper.Map<ContactUs>(request);
-                ContactUs.CreateBy = _userId;
-                ContactUs = await _unitOfWork.ContactUs.AddAsync(ContactUs);
+                ContactUs = await _unitOfWork.ContactUs.AddAsync(ContactUs, _userId);
                 var result = _mapper.Map<ContactUsDto>(ContactUs);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -180,7 +174,8 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.ContactUs
-                }
+                },
+                _userId
             );
 
         #endregion

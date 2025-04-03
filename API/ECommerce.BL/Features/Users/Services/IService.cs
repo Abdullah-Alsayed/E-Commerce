@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
@@ -37,6 +38,6 @@ namespace ECommerce.BLL.Features.Users.Services
             HttpResponse response
         );
         Task SeedData();
-        Task<BaseResponse> GetAsync(string userId);
+        Task<BaseResponse> GetAsync(Guid userId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.Core;
@@ -11,9 +12,10 @@ namespace ECommerce.BLL.IRepository
     {
         Task<bool> AddUserToRoleAsync(AddUserToRoleRequest request);
         Task<bool> UpdateUserRoleAsync(UpdateUserRoleRequest request);
-        Task<int> UpdateRoleClaimsAsync(UpdateRoleClaimsRequest request);
+        Task<int> UpdateRoleClaimsAsync(UpdateClaimsRequest request);
         Task<int> UpdateUserClaimsAsync(UpdateUserClaimsRequest request);
-        Task<List<string>> GetRoleClaims(string roleID);
+        Task<List<string>> GetRoleClaims(Guid roleID);
+        Task<List<string>> GetUserClaims(Guid userID);
 
         Task<Role> FindByName(string name);
         Task<Role> FindById(string id);

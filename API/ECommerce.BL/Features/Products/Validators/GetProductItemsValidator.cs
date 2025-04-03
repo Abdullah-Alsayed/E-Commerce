@@ -31,7 +31,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Products.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                    return context.Products.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"

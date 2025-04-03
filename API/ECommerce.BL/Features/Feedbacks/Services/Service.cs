@@ -8,6 +8,7 @@ using ECommerce.BLL.Features.Feedbacks.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -20,22 +21,22 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer<FeedbackService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public FeedbackService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<FeedbackService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
@@ -49,17 +50,11 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -134,18 +129,18 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             try
             {
                 var Feedback = _mapper.Map<Feedback>(request);
-                Feedback.CreateBy = _userId;
-                Feedback = await _unitOfWork.Feedback.AddAsync(Feedback);
+                Feedback = await _unitOfWork.Feedback.AddAsync(Feedback, _userId);
                 var result = _mapper.Map<FeedbackDto>(Feedback);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -346,7 +341,8 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Feedback
-                }
+                },
+                _userId
             );
 
         #endregion

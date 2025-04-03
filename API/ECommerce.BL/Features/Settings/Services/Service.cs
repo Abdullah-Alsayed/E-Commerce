@@ -9,6 +9,7 @@ using ECommerce.BLL.Features.Statuses.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
@@ -22,24 +23,24 @@ namespace ECommerce.BLL.Features.Settings.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IHostEnvironment _environment;
         private readonly IStringLocalizer<SettingService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public SettingService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<SettingService> localizer,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IHostEnvironment environment
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
             _environment = environment;
 
             #region initilize mapper
@@ -53,17 +54,11 @@ namespace ECommerce.BLL.Features.Settings.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -176,7 +171,8 @@ namespace ECommerce.BLL.Features.Settings.Services
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Setting
-                }
+                },
+                _userId
             );
 
         #endregion
