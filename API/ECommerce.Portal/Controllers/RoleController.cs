@@ -8,6 +8,7 @@ using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.PermissionsClaims;
 using ECommerce.DAL.Entity;
+using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ public class RoleController : Controller
 
     public RoleController(IRoleService service) => _service = service;
 
+    #region CRUD
     [Authorize(Policy = Permissions.Role.View)]
     public IActionResult List() => View();
 
@@ -61,27 +63,33 @@ public class RoleController : Controller
     }
 
     [HttpGet]
-    public async Task<BaseResponse> FindRole([FromQuery] FindRoleRequest request)
+    public async Task<IActionResult> FindRole([FromQuery] FindRoleRequest request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
         try
         {
-            return await _service.FindAsync(request);
+            return Ok(await _service.FindAsync(request));
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
-    public async Task<BaseResponse> Get(string id)
+    public async Task<IActionResult> Get(string id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
         try
         {
-            return await _service.FindAsync(new FindRoleRequest { ID = Guid.Parse(id) });
+            return Ok(await _service.FindAsync(new FindRoleRequest { ID = Guid.Parse(id) }));
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
@@ -90,20 +98,11 @@ public class RoleController : Controller
     public async Task<IActionResult> Create([FromForm] CreateRoleRequest request)
     {
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(
-                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-            );
-        }
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
         try
         {
-            var result = await _service.CreateAsync(request);
-            return Ok(result);
+            return Ok(await _service.CreateAsync(request));
         }
         catch (Exception ex)
         {
@@ -116,20 +115,11 @@ public class RoleController : Controller
     public async Task<IActionResult> Update([FromForm] UpdateRoleRequest request)
     {
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(
-                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-            );
-        }
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
         try
         {
-            var result = await _service.UpdateAsync(request);
-            return Ok(result);
+            return Ok(await _service.UpdateAsync(request));
         }
         catch (Exception ex)
         {
@@ -142,15 +132,7 @@ public class RoleController : Controller
     public async Task<IActionResult> Delete(DeleteRoleRequest request)
     {
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(
-                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-            );
-        }
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
         try
         {
@@ -162,18 +144,22 @@ public class RoleController : Controller
             return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
+    #endregion
 
     [HttpPut]
     [Authorize(Policy = Permissions.Role.Permission)]
-    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateClaimsRequest request)
+    public async Task<IActionResult> UpdateRoleClaims([FromForm] UpdateClaimsRequest request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
         try
         {
-            return await _service.UpdateRoleClaimsAsync(request);
+            return Ok(await _service.UpdateRoleClaimsAsync(request));
         }
         catch (Exception ex)
         {
-            return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
@@ -182,20 +168,11 @@ public class RoleController : Controller
     public async Task<IActionResult> UpdateUserClaims([FromForm] UpdateUserClaimsRequest request)
     {
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(
-                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-            );
-        }
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
         try
         {
-            var result = await _service.UpdateUserClaimsAsync(request);
-            return Ok(result);
+            return Ok(await _service.UpdateUserClaimsAsync(request));
         }
         catch (Exception ex)
         {
@@ -207,20 +184,11 @@ public class RoleController : Controller
     public async Task<IActionResult> UpdateUserRole(UpdateUserRoleRequest request)
     {
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(
-                new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-            );
-        }
+            return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
         try
         {
-            var result = await _service.UpdateUserRoleAsync(request);
-            return Ok(result);
+            return Ok(await _service.UpdateUserRoleAsync(request));
         }
         catch (Exception ex)
         {

@@ -7,6 +7,7 @@ using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.PermissionsClaims;
+using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,65 +25,7 @@ namespace ECommerce.Portal.Controllers
             _roleService = roleService;
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<BaseResponse> Register(CreateUserRequest request)
-        {
-            try
-            {
-                return await _service.RegisterAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login(string returnUrl = "/")
-        {
-            if (!Url.IsLocalUrl(returnUrl))
-            {
-                returnUrl = "/";
-            }
-
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
-
-        [AllowAnonymous]
-        public async Task<IActionResult> SeedData()
-        {
-            await _service.SeedData();
-            return Json(new object { });
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<BaseResponse> Login(LoginRequest request)
-        {
-            try
-            {
-                var result = await _service.WebLoginAsync(request, HttpContext);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [AllowAnonymous]
-        public IActionResult AccessDenied() => View();
-
-        [Authorize(Policy = Permissions.Users.View)]
-        public async Task<IActionResult> List()
-        {
-            var response = await _roleService.GetAllAsync(new GetAllRoleRequest { });
-            return View(response.Result.Items);
-        }
-
+        #region CRUD
         [HttpPost]
         [Authorize(Policy = Permissions.Users.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
@@ -132,15 +75,7 @@ namespace ECommerce.Portal.Controllers
         public async Task<IActionResult> Create([FromForm] CreateUserRequest request)
         {
             if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(
-                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-                );
-            }
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
             try
             {
@@ -161,15 +96,7 @@ namespace ECommerce.Portal.Controllers
         public async Task<IActionResult> Update([FromForm] UpdateUserRequest request)
         {
             if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(
-                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-                );
-            }
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
             try
             {
@@ -190,15 +117,7 @@ namespace ECommerce.Portal.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(
-                    new BaseResponse { IsSuccess = false, Message = string.Join(",", errors) }
-                );
-            }
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
             try
             {
@@ -213,6 +132,133 @@ namespace ECommerce.Portal.Controllers
                     500,
                     new BaseResponse { IsSuccess = false, Message = ex.Message }
                 );
+            }
+        }
+
+        [HttpGet]
+        public async Task<BaseResponse> GetAll([FromQuery] GetAllUserRequest request)
+        {
+            try
+            {
+                return await _service.GetAllAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [HttpPut]
+        public async Task<BaseResponse> ToggleActive([FromBody] BaseRequest request)
+        {
+            try
+            {
+                return await _service.ToggleActive(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<BaseResponse> Get(Guid id)
+        {
+            try
+            {
+                return await _service.GetAsync(id);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<IActionResult> UpdateLanguage(string language, string path)
+        {
+            var response = await _service.UpdateLanguage(language, HttpContext, Response);
+            if (response.IsSuccess)
+                return Redirect(path);
+            else
+                return View();
+        }
+
+        [Authorize(Policy = Permissions.Users.View)]
+        public async Task<IActionResult> List()
+        {
+            var response = await _roleService.GetAllAsync(new GetAllRoleRequest { });
+            return View(response.Result.Items);
+        }
+        #endregion
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> SeedData()
+        {
+            await _service.SeedData();
+            return Json(new object { });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<BaseResponse> Register(CreateUserRequest request)
+        {
+            try
+            {
+                return await _service.RegisterAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Login(string returnUrl = "/")
+        {
+            if (!Url.IsLocalUrl(returnUrl))
+            {
+                returnUrl = "/";
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<BaseResponse> Login(LoginRequest request)
+        {
+            try
+            {
+                var result = await _service.WebLoginAsync(request, HttpContext);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Redirect("Login");
+        }
+
+        [AllowAnonymous]
+        public IActionResult AccessDenied() => View();
+
+        [HttpGet]
+        public async Task<BaseResponse> UserInfo()
+        {
+            try
+            {
+                return await _service.UserInfoAsync();
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -294,72 +340,6 @@ namespace ECommerce.Portal.Controllers
             {
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
-        }
-
-        [HttpGet]
-        public async Task<BaseResponse> GetAll([FromQuery] GetAllUserRequest request)
-        {
-            try
-            {
-                return await _service.GetAllAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpPut]
-        public async Task<BaseResponse> ToggleActive([FromBody] BaseRequest request)
-        {
-            try
-            {
-                return await _service.ToggleActive(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        public async Task<BaseResponse> Get(Guid id)
-        {
-            try
-            {
-                return await _service.GetAsync(id);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpGet]
-        public async Task<BaseResponse> UserInfo()
-        {
-            try
-            {
-                return await _service.UserInfoAsync();
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return Redirect("Login");
-        }
-
-        public async Task<IActionResult> UpdateLanguage(string language, string path)
-        {
-            var response = await _service.UpdateLanguage(language, HttpContext, Response);
-            if (response.IsSuccess)
-                return Redirect(path);
-            else
-                return View();
         }
     }
 }
