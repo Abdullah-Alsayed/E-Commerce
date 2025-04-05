@@ -1,10 +1,8 @@
 ﻿using System;
-using ECommerce.BLL.Interface;
-using ECommerce.DAL.Interface;
 
-namespace ECommerce.BLL.DTO
+namespace ECommerce.BLL.Interface
 {
-    public record BaseEntityDto : IBaseEntityDto
+    public interface IBaseEntityDto
     {
         public Guid Id { get; set; }
         public Guid CreateBy { get; set; }

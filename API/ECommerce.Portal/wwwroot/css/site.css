@@ -127,11 +127,18 @@ tbody img {
   border-radius: 5px;
 }
 tbody, thead th {
-  text-align: center !important
+    text-align: -webkit-center !important
 }
 
 .select-all-checkbox {
     height: 18px !important; 
     width: 18px !important;
     margin: 0px 15px;
+}
+.entityRender {
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    gap : 10px;
+    margin : 0em;
 }

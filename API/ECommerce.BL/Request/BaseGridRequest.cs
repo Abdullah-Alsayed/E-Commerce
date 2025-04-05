@@ -9,6 +9,7 @@ namespace ECommerce.BLL.Request
         public string SearchBy { get; set; } = string.Empty;
         public bool IsDescending { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
+        public bool? IsActive { get; set; }
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 50;
     }

@@ -4,8 +4,10 @@ using System.Linq;
 using ECommerce.BLL.Features.SubCategories.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Categories.Validators;
@@ -47,7 +49,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
             .Must(
                 (req, name) =>
                 {
-                    return !context.Categories.Any(x =>
+                    return !context.SubCategories.Any(x =>
                         x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
@@ -72,7 +74,7 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
             .Must(
                 (req, name) =>
                 {
-                    return !context.Categories.Any(x =>
+                    return !context.SubCategories.Any(x =>
                         x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
@@ -90,27 +92,27 @@ public class UpdateSubCategoryValidator : AbstractValidator<UpdateSubCategoryReq
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
             );
+
         RuleFor(req => req.FormFile)
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .Must(path =>
             {
-                var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                var extension = Path.GetExtension(path.FileName.ToLower());
-                if (string.IsNullOrEmpty(extension))
-                    return false;
-
-                extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                if (!allowedExtensions.Contains(extension))
-                    return false;
-
-                return true;
+                return FileHelper.ExtensionsCheck(path);
             })
-            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-            .Must(req =>
+            .Must(path =>
             {
-                return (req.Length / 1024) > 3000 ? false : true;
+                return FileHelper.SizeCheck(path);
             })
-            .When(x => x.FormFile != null)
-            .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+            .WithMessage(x =>
+                _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+            );
     }
 }

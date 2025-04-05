@@ -35,11 +35,11 @@
                 <div class="col-md-4 product_status">
                     <select class="form-select text-capitalize filter"
                             id="RoleSelect"
-                            data-filter="RoleId">
+                            data-filter="ItemId">
                             <option value="">@_Localizer["SelectRole"]</option>
                             @foreach (var item in Model)
                             {
-                               <option value="@item.Id">@item.Name</option>
+                                <option value="@item.Id">@(_localizationManger.Language == Constants.Languages.Ar ? item.Name:item.NameEn)</option>
                             }
                     </select>
                 </div>
@@ -343,15 +343,7 @@
             {
                 data: 'isActive',
                 render: function (data, type, row) {
-                    return `
-                            <label class="switch switch-primary">
-                                <input type="checkbox" class="switch-input" ${data ? 'checked' : ''} data-id="${row.id}" />
-                                <span class="switch-toggle-slider">
-                                    <span class="switch-on"></span>
-                                    <span class="switch-off"></span>
-                                </span>
-                            </label>
-                        `;
+                    return isActiveRender(data, row);
                 }
             },
             {
@@ -390,36 +382,6 @@
 
           $('#RoleSelect').on('change', function () {
         initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language',false);
-      });
-
-        function updateIsActive(checkbox) {
-            let userId = checkbox.dataset.id;
-            let isActive = checkbox.checked;
-
-            $.ajax({
-                url: '/Account/ToggleActive',
-                type: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: userId}),
-                success: function (response) {
-                    if (response.isSuccess) {
-                        toastSuccess("@_Localizer[Constants.MessageKeys.Success]");
-                    } else {
-                        toastError("@_Localizer[Constants.MessageKeys.Fail]");
-                        checkbox.checked = !isActive; 
-                    }
-                },
-                error: function (ex) {
-                    toastError("@_Localizer[Constants.MessageKeys.Fail]");
-                    console.log(ex);
-                    checkbox.checked = !isActive;
-                }
-            });
-        }
-
-        // Attach event listener
-        $(document).on('change', '.switch-input', function () {
-            updateIsActive(this);
-        });
+      });    
     </script>
 }

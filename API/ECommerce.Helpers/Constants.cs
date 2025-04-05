@@ -11,6 +11,9 @@ namespace ECommerce.Core
         public const string HostName= "localhost:5001";
         public const int PageSize = 25;
         public const int PageIndex = 0;
+        public const int FileSize = 3;
+        public const string Descending = "desc";
+        public const string Ascending = "Asc";
         public static class Languages
         {
             public const string Arabic = "Arabic";
@@ -142,6 +145,9 @@ namespace ECommerce.Core
             public const string Action = "Action";
             public const string SelectGender = "SelectGender";
             public const string Permission = "Permission";
+            public const string Statistics = "Statistics";
+            public const string UserManagement = "UserManagement";
+            public const string SelectCategory = "SelectCategory";
         }
 
         public static class Gender
@@ -180,6 +186,7 @@ namespace ECommerce.Core
         public static class DefaultPhotos
         {
             public const string User = "User.png";
+            public const string Default = "/Images/Default.png";
 
         }
 

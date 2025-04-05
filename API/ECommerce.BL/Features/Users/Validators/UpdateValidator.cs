@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ECommerce.BLL.Features.Users.Requests;
 using ECommerce.Core;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -108,6 +109,22 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.Exist]}"
+            );
+
+        RuleFor(req => req.ProfilePicture)
+            .Must(path =>
+            {
+                return FileHelper.ExtensionsCheck(path);
+            })
+            .When(x => x.ProfilePicture != null)
+            .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
+            .Must(path =>
+            {
+                return FileHelper.SizeCheck(path);
+            })
+            .When(x => x.ProfilePicture != null)
+            .WithMessage(x =>
+                _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
             );
     }
 }

@@ -328,19 +328,19 @@ namespace ECommerce.BLL.Features.Users.Services
                 User.IsActive = !User.IsActive;
                 var result = _mapper.Map<UserDto>(User);
                 modifyRows++;
-                #region Send Notification
-                await SendNotification(
-                    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
-                );
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(
+                //    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
+                //);
+                //modifyRows++;
+                //#endregion
 
-                #region Log
-                await LogHistory(
-                    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
-                );
-                modifyRows++;
-                #endregion
+                //#region Log
+                //await LogHistory(
+                //    User.IsActive ? OperationTypeEnum.Active : OperationTypeEnum.UnActive
+                //);
+                //modifyRows++;
+                //#endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {

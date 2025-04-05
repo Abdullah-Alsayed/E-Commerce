@@ -57,6 +57,19 @@ namespace ECommerce.BLL.Repository
             {
                 auditableEntity.DeletedAt = DateTime.UtcNow;
                 auditableEntity.DeletedBy = userId;
+                auditableEntity.IsDeleted = true;
+            }
+
+            return entity;
+        }
+
+        public T ToggleActive(T entity, Guid userId)
+        {
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.ModifyAt = DateTime.UtcNow;
+                auditableEntity.ModifyBy = userId;
+                auditableEntity.IsActive = !auditableEntity.IsActive;
             }
 
             return entity;
@@ -115,6 +128,31 @@ namespace ECommerce.BLL.Repository
             }
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync(
+            BaseGridRequest request,
+            Expression<Func<T, bool>> criteria,
+            IEnumerable<string> Includes = null
+        )
+        {
+            var result = new List<T>();
+            IQueryable<T> query = _context.Set<T>();
+            if (Includes != null)
+                foreach (var incluse in Includes)
+                    query = query.Include(incluse);
+
+            query = query.Where(criteria);
+
+            query = ApplyDynamicQuery(request, query);
+
+            var total = await query.CountAsync();
+            if (total > 0)
+            {
+                query = ApplyPagination(request, query);
+                result = await query.AsNoTracking().ToListAsync();
+            }
+            return result;
+        }
+
         public static IQueryable<T> ApplyPagination(BaseGridRequest request, IQueryable<T> query)
         {
             var skipedPages = request.PageSize * request.PageIndex;
@@ -123,7 +161,11 @@ namespace ECommerce.BLL.Repository
 
         public IQueryable<T> ApplyDynamicQuery(BaseGridRequest request, IQueryable<T> query)
         {
-            query = IsDeletedDynamic(query, request.IsDeleted);
+            query = FilterDynamic(query, request.IsDeleted, nameof(request.IsDeleted));
+
+            if (request.IsActive.HasValue)
+                query = FilterDynamic(query, request.IsActive.Value, nameof(request.IsActive));
+
             if (!string.IsNullOrEmpty(request.SortBy))
                 query = OrderByDynamic(query, request.SortBy, request.IsDescending);
             if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
@@ -437,13 +479,17 @@ namespace ECommerce.BLL.Repository
             return query.Where(predicate);
         }
 
-        public IQueryable<T> IsDeletedDynamic(IQueryable<T> query, bool propertyValue)
+        public IQueryable<T> FilterDynamic(
+            IQueryable<T> query,
+            bool propertyValue,
+            string propertyName
+        )
         {
             // Create a parameter expression
             ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
 
             // Create property access expression
-            MemberExpression property = Expression.PropertyOrField(parameter, "IsDeleted");
+            MemberExpression property = Expression.PropertyOrField(parameter, propertyName);
 
             // Create constant expression for dynamic value
             ConstantExpression value = Expression.Constant(propertyValue);

@@ -109,7 +109,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateUserClaims([FromForm] UpdateClaimsRequest request)
+    public async Task<BaseResponse> UpdateUserClaims([FromForm] UpdateUserClaimsRequest request)
     {
         try
         {

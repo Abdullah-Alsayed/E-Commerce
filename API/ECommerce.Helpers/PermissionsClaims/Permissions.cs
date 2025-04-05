@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Reflection;
 using System.Security.Claims;
 using ECommerce.DAL.Enums;
@@ -47,16 +48,6 @@ namespace ECommerce.Core.PermissionsClaims
 
             return allPermissions;
         }
-
-        public static List<ClaimDto> UserPermissions = new List<ClaimDto>
-        {
-            new ClaimDto
-            {
-                Claim = Product.View,
-                Module = EntitiesEnum.Product.ToString(),
-                Operation = OperationTypeEnum.View.ToString()
-            }
-        };
 
         public static class Products
         {
@@ -256,6 +247,11 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Update = "Permissions.Role.Update";
             public const string Delete = "Permissions.Role.Delete";
             public const string Permission = "Permissions.Role.Permission";
+        }
+
+        public static class Dashboard
+        {
+            public const string View = "Permissions.Dashboard.View";
         }
     }
 }

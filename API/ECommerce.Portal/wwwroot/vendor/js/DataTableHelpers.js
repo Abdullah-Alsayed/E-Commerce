@@ -1,5 +1,5 @@
-let arabic = "Arabic";
-let english = "English";
+let arabic = "ar-EG";
+let english = "en-US";
 
 //Form Validation
 const flatPickrEL = $(".flatpickr-validation");
@@ -11,7 +11,7 @@ if (flatPickrEL.length) {
 }
 
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
-var bsValidationForms = document.querySelectorAll(".needs-validation");
+let bsValidationForms = document.querySelectorAll(".needs-validation");
 
 // Loop over them and prevent submission
 Array.prototype.slice.call(bsValidationForms).forEach(function (form) {
@@ -35,8 +35,9 @@ Array.prototype.slice.call(bsValidationForms).forEach(function (form) {
 
 
 
-function initializeDataTable(tableId, controler, action, columnsConfig, language, withAction = true) {
+function initializeDataTable(tableId, controller, action, columnsConfig, language, withAction = true) {
 
+  const isArabic = language === arabic;
   if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
     $(`#${tableId}`).DataTable().destroy();
   }
@@ -45,20 +46,21 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
     let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
   if (createAtIndex === -1) createAtIndex = 0; // Default to first column if not found
 
+
   $(`#${tableId}`).DataTable({
     language: {
-      searchPlaceholder: language == arabic ? "ابحث عن اي شيئ..." : 'Search...', // Custom search placeholder
-      search: language == arabic ? "البحث" : 'Search', // Remove default search text
-      lengthMenu: language == arabic ? "_MENU_ عدد العرض" : "Show _MENU_ entries", // Entries per page label
+      searchPlaceholder: isArabic ? "ابحث عن اي شيئ..." : 'Search...', // Custom search placeholder
+      search: isArabic ? "البحث" : 'Search', // Remove default search text
+      lengthMenu: isArabic ? "_MENU_ عدد العرض" : "Show _MENU_ entries", // Entries per page label
       paginate: {
-        first: language == arabic ? "بداية" : "Start",
-        previous: language == arabic ? "السابق" : "Back",
-        next: language == arabic ? "التالي" : "Forward",
-        last: language == arabic ? "نهاية" : "End"
+          first: isArabic? "بداية" : "Start",
+          previous: isArabic ? "السابق" : "Back",
+          next: isArabic ? "التالي" : "Forward",
+          last: isArabic ? "نهاية" : "End"
       },
-      info: language == arabic ? "_START_ إلى _END_ من _TOTAL_ مدخلات" : "Showing _START_ to _END_ of _TOTAL_ entries", // Information about entries
-      infoEmpty: language == arabic ? "لا توجد مدخلات" : "No entries available", // When no entries exist
-      infoFiltered: language == arabic ? "(مصفاة من _MAX_ مدخلات)" : "(filtered from _MAX_ total entries)", // Filtered info
+          info: isArabic ? "_START_ إلى _END_ من _TOTAL_ مدخلات" : "Showing _START_ to _END_ of _TOTAL_ entries", // Information about entries
+          infoEmpty: isArabic ? "لا توجد مدخلات" : "No entries available", // When no entries exist
+          infoFiltered: isArabic ? "(مصفاة من _MAX_ مدخلات)" : "(filtered from _MAX_ total entries)", // Filtered info
     },
     processing: true,
     serverSide: true,
@@ -66,7 +68,7 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
       return: true
     },
     ajax: {
-      url: `/${controler}/${action}`,
+      url: `/${controller}/${action}`,
       type: 'POST',
       contentType: 'application/json',
         data: function (d) {
@@ -76,7 +78,7 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
             console.log(data);
             return data;
       },
-      error: function (xhr, status, error) {
+        error: function (xhr, status, error) {
         console.error('Error:', error);
         const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Failed to delete the record.';
         toastError(errorMessage); // Display error message from the response
@@ -92,14 +94,20 @@ function initializeDataTable(tableId, controler, action, columnsConfig, language
           // Generate Add and Delete buttons
           let currentId = row[`id`];
           return `
-          <div class="d-flex justify-content-center">
-              <button type="button" onclick=fetchData('${controler}','Get','${currentId}') class="btn btn-icon me-2 btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateFormModal">
-                 <span class="mdi mdi-square-edit-outline"></span>
-              </button>
-              <button type="button" onclick=setDeleteRecordId('${currentId}') class="btn btn-icon me-2 btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#DeleteRecord">
-                 <span class="mdi mdi-delete-forever"></span>
-              </button>
-            </div>`;
+                 <div class="dropdown">
+                    <button class="btn p-0" type="button" id="organicSessionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="organicSessionsDropdown">
+                        <a class="dropdown-item" onclick="fetchData('${controller}', 'Get', '${currentId}')" data-bs-toggle="modal" data-bs-target="#UpdateFormModal" href="javascript:void(0);">
+                            ${isArabic ? 'تعديل' : 'Update'}
+                        </a>
+                        <a class="dropdown-item" onclick="setDeleteRecordId('${currentId}')" data-bs-toggle="modal" data-bs-target="#DeleteRecord" href="javascript:void(0);">
+                            ${isArabic ? 'حذف' : 'Delete'}
+                        </a>
+                    </div>
+                </div>
+`               ;
         }
       }
     ] : [...columnsConfig],
@@ -292,7 +300,36 @@ function resetImagePreview(formName) {
   }
 }
 
-  
+function updateIsActive(checkbox, controller) {
+    let userId = checkbox.dataset.id;
+    let isActive = checkbox.checked;
+
+    $.ajax({
+        url: `/${controller}/ToggleActive`,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: userId }),
+        success: function (response) {
+            if (response.isSuccess) {
+                toastSuccess(response.message);
+            } else {
+                toastError(response.message);
+                checkbox.checked = !isActive;
+            }
+        },
+        error: function (ex) {
+            checkbox.checked = !isActive;
+            console.log(ex);
+            toastError(ex.responseJSON.message);
+        }
+    });
+}
+
+// Attach event listener
+$(document).on('change', '.switch-input', function () {
+    let controller = window.location.pathname.split('/')[1];
+    updateIsActive(this, controller);
+});
 
 //Helpers
 function setDeleteRecordId(recordId) {
@@ -382,4 +419,26 @@ function convertUTCToLocal(utcDate) {
     return localTime;
 }
 
+function isActiveRender(data, row) {
+    return `
+        <label class="switch switch-primary">
+            <input type="checkbox" class="switch-input" ${data ? 'checked' : ''} data-id="${row.id}" />
+            <span class="switch-toggle-slider">
+                <span class="switch-on"></span>
+                <span class="switch-off"></span>
+            </span>
+        </label>
+       `;
+}
 
+function entityRender(data) {
+    let img = data.photoPath ? data.photoPath : '/Images/Default.png' ; 
+    return `
+        <div class="text-truncate entityRender fw-normal">
+            <span class="avatar avatar-lg rounded-circle d-flex justify-content-center align-items-center">
+                <img src="${img}" alt="Avatar" class="rounded-circle">
+            </span>
+            ${data.name}
+        </div>
+    `;
+}

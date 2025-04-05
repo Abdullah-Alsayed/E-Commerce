@@ -1,12 +1,13 @@
 @inject IStringLocalizer<HomeController> _Localizer;
 @using ECommerce.Core.Helpers
 @using ECommerce.Core.PermissionsClaims
+@using ECommerce.DAL.Entity
 @using ECommerce.Portal.Controllers
 @using Microsoft.Extensions.Localization
 @{
     TempData.Keep();
     string? currentPage = ViewContext.HttpContext.Request.Path;
-    var roleId =1;
+    var roleId = 1;
     var permissions = new List<string>();
 }
 
@@ -35,12 +36,12 @@
 
   @* ! Starter Kit menu-items *@
   <ul class="menu-inner py-1">
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Dashboard.View))
         {
           <li class='menu-item@(currentPage == "/" || currentPage.StartsWith("Dashboard/Statistics") ? " active" : "")'>
                   <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
                       <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
-              <div data-i18n="@_Localizer["Statistics"]">@_Localizer["Statistics"]</div>
+              <div data-i18n="@_Localizer[Constants.LabelKeys.Statistics]">@_Localizer[Constants.LabelKeys.Statistics]</div>
             </a>
           </li>
         }
@@ -50,24 +51,50 @@
             <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/Account/List") ? " active open" : "")'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
-                    <div data-i18n="@_Localizer["Roles&PUsers"]">@_Localizer["Roles&Users"]</div>
+                    <div data-i18n="@_Localizer[Constants.LabelKeys.UserManagement]">@_Localizer[Constants.LabelKeys.UserManagement]</div>
                 </a>
                 <ul class="menu-sub">
                     @if (AuthHelper.CanAccess(permissions, Permissions.Users.View))
                     {
                         <li class='menu-item@(currentPage.StartsWith("/Account/List") ? " active" : "")'>
                             <a asp-controller="Account" asp-action="List" class="menu-link">
-                                <span class="menu-icon tf-icons mdi mdi-account-wrench m-1"></span>
-                                <div data-i18n="@_Localizer["Users"]">@_Localizer["Users"]</div>
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.User, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.User, "s")]</div>
                             </a>
                         </li>
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Role.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith("/Role/List") ? " active" : "")'>
-                            <a asp-controller="Role" asp-action="List" class="menu-link">
-                                <span class="menu-icon tf-icons mdi mdi-security m-1"></span>
-                                <div data-i18n="@_Localizer["Roles"]">@_Localizer["Roles"]</div>
+                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Role)}/List") ? " active" : "")'>
+                            <a asp-controller="@nameof(Role)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Role, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Role, "s")]</div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.Category.View) || AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        {
+            <li class='menu-item@(currentPage.StartsWith($"/{nameof(Category)}/List") || currentPage.StartsWith($"/{nameof(SubCategory)}/List") ? " active open" : "")'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer["CategoriesMangment"]">@_Localizer["CategoriesMangment"]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Category.View))
+                    {
+                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Category)}/List") ? " active" : "")'>
+                            <a asp-controller="@nameof(Category)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Category, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Category, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+                    {
+                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(SubCategory)}/List") ? " active" : "")'>
+                            <a asp-controller="@nameof(SubCategory)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.SubCategory, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.SubCategory, "s")]</div>
                             </a>
                         </li>
                     }

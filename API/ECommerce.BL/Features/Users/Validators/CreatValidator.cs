@@ -74,6 +74,22 @@ namespace ECommerce.BLL.Features.Users.Validators
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.Exist]}"
                 );
+
+            RuleFor(req => req.ProfilePicture)
+                .Must(path =>
+                {
+                    return FileHelper.ExtensionsCheck(path);
+                })
+                .When(x => x.ProfilePicture != null)
+                .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
+                .Must(path =>
+                {
+                    return FileHelper.SizeCheck(path);
+                })
+                .When(x => x.ProfilePicture != null)
+                .WithMessage(x =>
+                    _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+                );
         }
     }
 }

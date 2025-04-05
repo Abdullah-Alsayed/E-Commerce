@@ -97,7 +97,7 @@ namespace ECommerce.API.Controllers
         {
             try
             {
-                return await _service.ToggleAvtiveAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {
@@ -106,9 +106,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSubCategory(
-             DeleteSubCategoryRequest request
-        )
+        public async Task<BaseResponse> DeleteSubCategory(DeleteSubCategoryRequest request)
         {
             try
             {

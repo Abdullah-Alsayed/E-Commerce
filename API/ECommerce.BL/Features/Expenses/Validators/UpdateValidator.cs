@@ -4,6 +4,7 @@ using System.Linq;
 using ECommerce.BLL.Features.Expenses.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -63,24 +64,17 @@ public class UpdateExpenseValidator : AbstractValidator<UpdateExpenseRequest>
         RuleFor(req => req.FormFile)
             .Must(path =>
             {
-                var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                var extension = Path.GetExtension(path.FileName.ToLower());
-                if (string.IsNullOrEmpty(extension))
-                    return false;
-
-                extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                if (!allowedExtensions.Contains(extension))
-                    return false;
-
-                return true;
+                return FileHelper.ExtensionsCheck(path);
             })
             .When(rqe => rqe.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-            .Must(req =>
+            .Must(path =>
             {
-                return (req.Length / 1024) > 3000 ? false : true;
+                return FileHelper.SizeCheck(path);
             })
             .When(rqe => rqe.FormFile != null)
-            .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+            .WithMessage(x =>
+                _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+            );
     }
 }

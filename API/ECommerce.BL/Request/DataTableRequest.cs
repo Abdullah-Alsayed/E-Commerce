@@ -16,10 +16,9 @@ namespace ECommerce.BLL.Request
         }
 
         public DataTableSearch Search { get; set; }
-        public Guid? RoleId { get; set; } = Guid.Empty;
-        public int BusinessSiteServiceId { get; set; }
-        public int FacilityOptionId { get; set; }
-        public int Type { get; set; }
+
+        //Filter
+        public Guid? ItemId { get; set; } = Guid.Empty;
     }
 
     public class DataTableColumn

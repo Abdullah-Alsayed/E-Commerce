@@ -17,6 +17,8 @@ namespace ECommerce.BLL.IRepository
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys);
         T Update(T Entity, Guid userId);
         T Delete(T entity, Guid userId);
+        T ToggleActive(T entity, Guid userId);
+
         Task<T> FindAsync(int ID);
         Task<T> FindAsync(Guid ID);
         Task<IEnumerable<T>> GetAllAsync();
@@ -37,6 +39,11 @@ namespace ECommerce.BLL.IRepository
             string[] Includes = null,
             Expression<Func<T, object>> orderBy = null,
             string orderByDirection = Constants.OrderBY.Ascending
+        );
+        Task<IEnumerable<T>> GetAllAsync(
+            BaseGridRequest request,
+            Expression<Func<T, bool>> criteria,
+            IEnumerable<string> Includes = null
         );
         Task<T> GetItemAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
         Task<string> UploadPhotoAsync(IFormFile file, string folderName, string photoName = null);

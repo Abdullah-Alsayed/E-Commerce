@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
@@ -43,7 +44,17 @@ namespace ECommerce.BLL.Features.Roles.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Role, RoleDto>().ReverseMap();
+                cfg.CreateMap<Role, RoleDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _userContext.Language.Value == Constants.Languages.Ar
+                                    ? src.Name
+                                    : src.NameEn
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Role, CreateRoleRequest>().ReverseMap();
                 cfg.CreateMap<Role, UpdateRoleRequest>().ReverseMap();
             });

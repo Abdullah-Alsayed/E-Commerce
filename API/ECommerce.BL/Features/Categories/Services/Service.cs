@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Categories.Dtos;
@@ -11,7 +10,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -42,17 +40,6 @@ namespace ECommerce.BLL.Features.Categories.Services
             _userContext = userContext;
             _environment = environment;
 
-            #region initilize mapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AllowNullCollections = true;
-                cfg.CreateMap<Category, CategoryDto>().ReverseMap();
-                cfg.CreateMap<Category, CreateCategoryRequest>().ReverseMap();
-                cfg.CreateMap<Category, UpdateCategoryRequest>().ReverseMap();
-            });
-            _mapper = new Mapper(config);
-            #endregion initilize mapper
-
             #region Get User Data From Token
             _userId = _userContext.UserId.Value;
 
@@ -60,6 +47,25 @@ namespace ECommerce.BLL.Features.Categories.Services
 
             _lang = _userContext.Language.Value;
             #endregion
+
+            #region initilize mapper
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AllowNullCollections = true;
+                cfg.CreateMap<Category, CategoryDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
+                cfg.CreateMap<Category, CreateCategoryRequest>().ReverseMap();
+                cfg.CreateMap<Category, UpdateCategoryRequest>().ReverseMap();
+            });
+            _mapper = new Mapper(config);
+            #endregion initilize mapper
         }
 
         public async Task<BaseResponse> FindAsync(FindCategoryRequest request)
@@ -90,7 +96,9 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllCategoryRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<CategoryDto>>>> GetAllAsync(
+            GetAllCategoryRequest request
+        )
         {
             try
             {
@@ -100,8 +108,8 @@ namespace ECommerce.BLL.Features.Categories.Services
                         : nameof(Category.NameEN)
                     : request.SearchBy;
 
-                var Categorys = await _unitOfWork.Category.GetAllAsync(request);
-                var response = _mapper.Map<List<CategoryDto>>(Categorys);
+                var categorys = await _unitOfWork.Category.GetAllAsync(request);
+                var response = _mapper.Map<List<CategoryDto>>(categorys);
                 return new BaseResponse<BaseGridResponse<List<CategoryDto>>>
                 {
                     IsSuccess = true,
@@ -120,7 +128,7 @@ namespace ECommerce.BLL.Features.Categories.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Category
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<CategoryDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -134,13 +142,13 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var Category = _mapper.Map<Category>(request);
-                Category = await _unitOfWork.Category.AddAsync(Category, _userId);
-                Category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
+                var category = _mapper.Map<Category>(request);
+                category = await _unitOfWork.Category.AddAsync(category, _userId);
+                category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Categorys
                 );
-                var result = _mapper.Map<CategoryDto>(Category);
+                var result = _mapper.Map<CategoryDto>(category);
 
                 //modifyRows++;
                 //#region Send Notification
@@ -153,6 +161,7 @@ namespace ECommerce.BLL.Features.Categories.Services
                 //modifyRows++;
                 //#endregion
 
+                modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -258,8 +267,9 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var Category = await _unitOfWork.Category.FindAsync(request.ID);
-                var result = _mapper.Map<CategoryDto>(Category);
+                var category = await _unitOfWork.Category.FindAsync(request.ID);
+                var result = _mapper.Map<CategoryDto>(category);
+                _unitOfWork.Category.Delete(category, _userId);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Delete);
@@ -314,11 +324,10 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var Category = await _unitOfWork.Category.FindAsync(request.ID);
-                Category.ModifyBy = _userId;
-                Category.ModifyAt = DateTime.UtcNow;
-                Category.IsActive = !Category.IsActive;
-                var result = _mapper.Map<CategoryDto>(Category);
+                var category = await _unitOfWork.Category.FindAsync(request.ID);
+                _unitOfWork.Category.ToggleActive(category, _userId);
+
+                var result = _mapper.Map<CategoryDto>(category);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Toggle);

@@ -26,6 +26,13 @@ namespace ECommerce.Portal.Controllers
         }
 
         #region CRUD
+        [Authorize(Policy = Permissions.Users.View)]
+        public async Task<IActionResult> List()
+        {
+            var response = await _roleService.GetAllAsync(new GetAllRoleRequest { });
+            return View(response.Result.Items);
+        }
+
         [HttpPost]
         [Authorize(Policy = Permissions.Users.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
@@ -55,7 +62,7 @@ namespace ECommerce.Portal.Controllers
                     PageIndex = request?.PageIndex ?? Constants.PageIndex,
                     SearchFor = search,
                     StaffOnly = true,
-                    RoleId = request?.RoleId ?? Guid.Empty
+                    RoleId = request?.ItemId ?? Guid.Empty
                 }
             );
 
@@ -84,10 +91,7 @@ namespace ECommerce.Portal.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(
-                    500,
-                    new BaseResponse { IsSuccess = false, Message = ex.Message }
-                );
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
@@ -105,10 +109,7 @@ namespace ECommerce.Portal.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(
-                    500,
-                    new BaseResponse { IsSuccess = false, Message = ex.Message }
-                );
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
@@ -128,10 +129,7 @@ namespace ECommerce.Portal.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(
-                    500,
-                    new BaseResponse { IsSuccess = false, Message = ex.Message }
-                );
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
@@ -182,12 +180,6 @@ namespace ECommerce.Portal.Controllers
                 return View();
         }
 
-        [Authorize(Policy = Permissions.Users.View)]
-        public async Task<IActionResult> List()
-        {
-            var response = await _roleService.GetAllAsync(new GetAllRoleRequest { });
-            return View(response.Result.Items);
-        }
         #endregion
 
 

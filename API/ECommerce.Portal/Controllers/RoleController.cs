@@ -106,7 +106,7 @@ public class RoleController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
@@ -123,7 +123,7 @@ public class RoleController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
@@ -141,7 +141,7 @@ public class RoleController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
     #endregion
@@ -176,7 +176,7 @@ public class RoleController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 
@@ -192,7 +192,7 @@ public class RoleController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new BaseResponse { IsSuccess = false, Message = ex.Message });
+            return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
         }
     }
 

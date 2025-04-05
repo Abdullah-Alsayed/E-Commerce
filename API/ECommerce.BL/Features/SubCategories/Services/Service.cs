@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.SubCategories.Dtos;
 using ECommerce.BLL.Features.SubCategories.Requests;
 using ECommerce.BLL.IRepository;
@@ -47,6 +48,15 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             {
                 cfg.AllowNullCollections = true;
                 cfg.CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
+                cfg.CreateMap<Category, CategoryDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<SubCategory, CreateSubCategoryRequest>().ReverseMap();
                 cfg.CreateMap<SubCategory, UpdateSubCategoryRequest>().ReverseMap();
             });
@@ -90,7 +100,9 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllSubCategoryRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<SubCategoryDto>>>> GetAllAsync(
+            GetAllSubCategoryRequest request
+        )
         {
             try
             {
@@ -100,8 +112,19 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                         : nameof(SubCategory.NameEN)
                     : request.SearchBy;
 
-                var SubCategorys = await _unitOfWork.SubCategory.GetAllAsync(request);
-                var response = _mapper.Map<List<SubCategoryDto>>(SubCategorys);
+                var subCategorys =
+                    request.CategoryId.Value != Guid.Empty
+                        ? await _unitOfWork.SubCategory.GetAllAsync(
+                            request,
+                            x => x.CategoryID == request.CategoryId.Value,
+                            new List<string> { nameof(Category) }
+                        )
+                        : await _unitOfWork.SubCategory.GetAllAsync(
+                            request,
+                            new List<string> { nameof(Category) }
+                        );
+
+                var response = _mapper.Map<List<SubCategoryDto>>(subCategorys);
                 return new BaseResponse<BaseGridResponse<List<SubCategoryDto>>>
                 {
                     IsSuccess = true,
@@ -120,7 +143,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.SubCategory
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<SubCategoryDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -141,15 +164,16 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                     Constants.PhotoFolder.SubCategorys
                 );
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -201,18 +225,18 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                     Constants.PhotoFolder.SubCategorys,
                     SubCategory.PhotoPath
                 );
-                SubCategory.ModifyBy = _userId;
-                SubCategory.ModifyAt = DateTime.UtcNow;
+                _unitOfWork.SubCategory.Update(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -258,19 +282,18 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             try
             {
                 var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
-                SubCategory.DeletedBy = _userId;
-                SubCategory.DeletedAt = DateTime.UtcNow;
-                SubCategory.IsDeleted = true;
+                _unitOfWork.SubCategory.Delete(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -309,26 +332,25 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveSubCategoryRequest request)
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleAvtiveSubCategoryRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;
             try
             {
                 var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
-                SubCategory.ModifyBy = _userId;
-                SubCategory.ModifyAt = DateTime.UtcNow;
-                SubCategory.IsActive = !SubCategory.IsActive;
+                _unitOfWork.SubCategory.ToggleActive(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Toggle);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Toggle);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
