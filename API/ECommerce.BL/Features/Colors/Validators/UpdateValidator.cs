@@ -45,7 +45,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
                 (req, name) =>
                 {
                     return !context.Colors.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
                 (req, name) =>
                 {
                     return !context.Colors.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -81,20 +81,26 @@ public class UpdateColorValidator : AbstractValidator<UpdateColorRequest>
         RuleFor(req => req.Value)
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .Must(
                 (req, name) =>
                 {
-                    return !context.Colors.Any(x => x.Value == req.Value && x.Id != req.ID);
+                    return !context.Colors.Any(x =>
+                        x.Value.ToLower() == req.Value.ToLower() && x.Id != req.ID && !x.IsDeleted
+                    );
                 }
             )
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.Exist]}"
+            )
+            .Matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.ColorNotValid]}"
             );
     }
 }

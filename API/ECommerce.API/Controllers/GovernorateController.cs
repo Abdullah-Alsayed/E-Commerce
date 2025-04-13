@@ -83,13 +83,13 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> ToggleAvtiveGovernorate(
-        [FromForm] ToggleAvtiveGovernorateRequest request
+    public async Task<BaseResponse> ToggleActiveGovernorate(
+        [FromForm] ToggleActiveGovernorateRequest request
     )
     {
         try
         {
-            return await _service.ToggleAvtiveAsync(request);
+            return await _service.ToggleActiveAsync(request);
         }
         catch (Exception ex)
         {
@@ -98,7 +98,7 @@ public class GovernorateController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteGovernorate( DeleteGovernorateRequest request)
+    public async Task<BaseResponse> DeleteGovernorate(DeleteGovernorateRequest request)
     {
         try
         {

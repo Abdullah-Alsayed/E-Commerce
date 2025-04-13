@@ -22,10 +22,7 @@ namespace ECommerce.API.Controllers
         public CategoryController(ICategoryService service) => _service = service;
 
         [Authorize(Policy = Permissions.Category.View)]
-        public async Task<IActionResult> List()
-        {
-            return View();
-        }
+        public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
@@ -61,8 +58,8 @@ namespace ECommerce.API.Controllers
             var jsonResponse = new
             {
                 draw = request?.Draw ?? 0,
-                recordsTotal = response?.Count ?? 0,
-                recordsFiltered = response?.Count ?? 0,
+                recordsTotal = response?.Total ?? 0,
+                recordsFiltered = response?.Total ?? 0,
                 data = response?.Result.Items ?? new List<CategoryDto>()
             };
 

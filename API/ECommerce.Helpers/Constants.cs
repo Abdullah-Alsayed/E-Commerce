@@ -134,20 +134,19 @@ namespace ECommerce.Core
             public const string LastLogin = "LastLogin";
             public const string Age = "Age";
             public const string Gander = "Gander";
+            public const string Tag = "Tag";
         }
 
         public static class LabelKeys
         {
-            public const string SelectRole = "SelectRole";
+            public const string Select = "Select";
             public const string ClickToUploadImage = "ClickToUploadImage";
             public const string Close = "Close";
             public const string SaveChanges = "SaveChanges";
             public const string Action = "Action";
-            public const string SelectGender = "SelectGender";
             public const string Permission = "Permission";
             public const string Statistics = "Statistics";
             public const string UserManagement = "UserManagement";
-            public const string SelectCategory = "SelectCategory";
         }
 
         public static class Gender

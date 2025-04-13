@@ -22,7 +22,13 @@ namespace ECommerce.BLL.IRepository
         Task<T> FindAsync(int ID);
         Task<T> FindAsync(Guid ID);
         Task<IEnumerable<T>> GetAllAsync();
-        Task<List<T>> GetAllAsync(BaseGridRequest request, List<string> Includes = null);
+
+        //Task<List<T>> GetAllAsync(BaseGridRequest request, List<string> Includes = null);
+
+        Task<(List<T> list, int count)> GetAllAsync(
+            BaseGridRequest request,
+            List<string> Includes = null
+        );
 
         Task<IEnumerable<T>> GetAllAsync(string[] Includes = null);
         Task<IEnumerable<T>> GetAllAsync(
@@ -40,7 +46,7 @@ namespace ECommerce.BLL.IRepository
             Expression<Func<T, object>> orderBy = null,
             string orderByDirection = Constants.OrderBY.Ascending
         );
-        Task<IEnumerable<T>> GetAllAsync(
+        Task<(IEnumerable<T> list, int count)> GetAllAsync(
             BaseGridRequest request,
             Expression<Func<T, bool>> criteria,
             IEnumerable<string> Includes = null

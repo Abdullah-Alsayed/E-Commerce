@@ -94,16 +94,17 @@ public class ExpenseService : IExpenseService
                 ? nameof(Expense.Reference)
                 : request.SearchBy;
 
-            var Expenses = await _unitOfWork.Expense.GetAllAsync(request);
-            var response = _mapper.Map<List<ExpenseDto>>(Expenses);
+            var result = await _unitOfWork.Expense.GetAllAsync(request);
+            var response = _mapper.Map<List<ExpenseDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<ExpenseDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<ExpenseDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }

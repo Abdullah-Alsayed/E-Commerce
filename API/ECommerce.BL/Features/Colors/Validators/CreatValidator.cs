@@ -51,11 +51,26 @@ namespace ECommerce.BLL.Features.Colors.Validators
             RuleFor(req => req.Value)
                 .NotNull()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 )
                 .NotEmpty()
                 .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                )
+                .Must(
+                    (req, name) =>
+                    {
+                        return !context.Colors.Any(x =>
+                            x.Value.ToLower() == req.Value.ToLower() && !x.IsDeleted
+                        );
+                    }
+                )
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.Exist]}"
+                )
+                .Matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.ColorNotValid]}"
                 );
 
             RuleFor(req => req)

@@ -20,7 +20,7 @@ namespace ECommerce.BLL.Repository
         public OrderRepository(ApplicationDbContext context)
             : base(context) => _context = context;
 
-        public override async Task<List<Order>> GetAllAsync(
+        public override async Task<(List<Order> list, int count)> GetAllAsync(
             BaseGridRequest request,
             List<string> Includes = null
         )
@@ -45,11 +45,11 @@ namespace ECommerce.BLL.Repository
                     query = ApplyPagination(request, query);
                     result = await query.AsNoTracking().ToListAsync();
                 }
-                return result;
+                return (result, total);
             }
             catch (Exception)
             {
-                return new List<Order>();
+                return (new List<Order>(), 0);
             }
         }
 

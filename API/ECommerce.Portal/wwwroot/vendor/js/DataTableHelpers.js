@@ -331,6 +331,7 @@ $(document).on('change', '.switch-input', function () {
     updateIsActive(this, controller);
 });
 
+
 //Helpers
 function setDeleteRecordId(recordId) {
   $(`#deleteRecordId`).val(recordId);
@@ -405,6 +406,7 @@ const getFilters = () => {
 };
 
 
+// Table Render
 function convertUTCToLocal(utcDate) {
     if (!utcDate) return '-'; // Handle null/empty values
 
@@ -440,5 +442,12 @@ function entityRender(data) {
             </span>
             ${data.name}
         </div>
+    `;
+}
+
+function photoRender(data) {
+    return `<div class="avatar avatar-lg">
+               <img src="${data}" alt="Avatar" class="rounded-circle">
+           </div>
     `;
 }

@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Areas.Dtos;
 using ECommerce.BLL.Features.Areas.Requests;
-using ECommerce.BLL.Features.Invoices.Dtos;
-using ECommerce.BLL.Features.Invoices.Requests;
+using ECommerce.BLL.Features.Categories.Dtos;
+using ECommerce.BLL.Features.Governorates.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -44,6 +42,15 @@ public class AreaService : IAreaService
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AllowNullCollections = true;
+            cfg.CreateMap<Governorate, GovernorateDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    opt =>
+                        opt.MapFrom(src =>
+                            _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                        )
+                )
+                .ReverseMap();
             cfg.CreateMap<Area, AreaDto>().ReverseMap();
             cfg.CreateMap<Area, CreateAreaRequest>().ReverseMap();
             cfg.CreateMap<Area, UpdateAreaRequest>().ReverseMap();
@@ -84,7 +91,9 @@ public class AreaService : IAreaService
         }
     }
 
-    public async Task<BaseResponse> GetAllAsync(GetAllAreaRequest request)
+    public async Task<BaseResponse<BaseGridResponse<List<AreaDto>>>> GetAllAsync(
+        GetAllAreaRequest request
+    )
     {
         try
         {
@@ -94,23 +103,35 @@ public class AreaService : IAreaService
                     : nameof(Area.NameEN)
                 : request.SearchBy;
 
-            var areas = await _unitOfWork.Area.GetAllAsync(request);
-            var response = _mapper.Map<List<AreaDto>>(areas);
+            var result =
+                request.GovernorateID.Value != Guid.Empty
+                    ? await _unitOfWork.Area.GetAllAsync(
+                        request,
+                        x => x.GovernorateID == request.GovernorateID.Value,
+                        new List<string> { nameof(Governorate) }
+                    )
+                    : await _unitOfWork.Area.GetAllAsync(
+                        request,
+                        new List<string> { nameof(Governorate) }
+                    );
+
+            var response = _mapper.Map<List<AreaDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<AreaDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<AreaDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }
         catch (Exception ex)
         {
             await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Area);
-            return new BaseResponse
+            return new BaseResponse<BaseGridResponse<List<AreaDto>>>
             {
                 IsSuccess = false,
                 Message = _localizer[MessageKeys.Fail].ToString()
@@ -127,6 +148,7 @@ public class AreaService : IAreaService
             var area = _mapper.Map<Area>(request);
             area = await _unitOfWork.Area.AddAsync(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
+
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Create);
             //modifyRows++;
@@ -181,6 +203,7 @@ public class AreaService : IAreaService
             area.ModifyBy = _userId;
             area.ModifyAt = DateTime.UtcNow;
             var result = _mapper.Map<AreaDto>(area);
+
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Update);
             //modifyRows++;
@@ -224,7 +247,7 @@ public class AreaService : IAreaService
         }
     }
 
-    public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveAreaRequest request)
+    public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveAreaRequest request)
     {
         using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
         var modifyRows = 0;
@@ -235,6 +258,7 @@ public class AreaService : IAreaService
             area.ModifyAt = DateTime.UtcNow;
             area.IsActive = !area.IsActive;
             var result = _mapper.Map<AreaDto>(area);
+
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Toggle);
             //modifyRows++;

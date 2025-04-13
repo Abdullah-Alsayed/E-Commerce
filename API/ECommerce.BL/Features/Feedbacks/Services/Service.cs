@@ -94,16 +94,17 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
                     ? nameof(Feedback.Comment)
                     : request.SearchBy;
 
-                var Feedbacks = await _unitOfWork.Feedback.GetAllAsync(request);
-                var response = _mapper.Map<List<FeedbackDto>>(Feedbacks);
+                var result = await _unitOfWork.Feedback.GetAllAsync(request);
+                var response = _mapper.Map<List<FeedbackDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<FeedbackDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<FeedbackDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

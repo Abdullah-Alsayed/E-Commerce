@@ -11,7 +11,7 @@ namespace ECommerce.BLL.Features.Vouchers.Services
         Task<BaseResponse> DeleteAsync(DeleteVoucherRequest request);
         Task<BaseResponse> FindAsync(FindVoucherRequest request);
         Task<BaseResponse> GetAllAsync(GetAllVoucherRequest request);
-        Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveVoucherRequest request);
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveVoucherRequest request);
         Task<BaseResponse> UpdateAsync(UpdateVoucherRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }

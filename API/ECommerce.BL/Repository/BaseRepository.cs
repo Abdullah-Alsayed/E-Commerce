@@ -98,7 +98,7 @@ namespace ECommerce.BLL.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public virtual async Task<List<T>> GetAllAsync(
+        public virtual async Task<(List<T> list, int count)> GetAllAsync(
             BaseGridRequest request,
             List<string> Includes = null
         )
@@ -120,37 +120,44 @@ namespace ECommerce.BLL.Repository
                     result = await query.AsNoTracking().ToListAsync();
                 }
 
-                return result;
+                return (result, total);
             }
             catch (Exception ex)
             {
-                return new List<T>();
+                return (new List<T>(), 0);
             }
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(
+        public async Task<(IEnumerable<T> list, int count)> GetAllAsync(
             BaseGridRequest request,
             Expression<Func<T, bool>> criteria,
             IEnumerable<string> Includes = null
         )
         {
-            var result = new List<T>();
-            IQueryable<T> query = _context.Set<T>();
-            if (Includes != null)
-                foreach (var incluse in Includes)
-                    query = query.Include(incluse);
-
-            query = query.Where(criteria);
-
-            query = ApplyDynamicQuery(request, query);
-
-            var total = await query.CountAsync();
-            if (total > 0)
+            try
             {
-                query = ApplyPagination(request, query);
-                result = await query.AsNoTracking().ToListAsync();
+                var result = new List<T>();
+                IQueryable<T> query = _context.Set<T>();
+                if (Includes != null)
+                    foreach (var incluse in Includes)
+                        query = query.Include(incluse);
+
+                query = query.Where(criteria);
+
+                query = ApplyDynamicQuery(request, query);
+
+                var total = await query.CountAsync();
+                if (total > 0)
+                {
+                    query = ApplyPagination(request, query);
+                    result = await query.AsNoTracking().ToListAsync();
+                }
+                return (result, total);
             }
-            return result;
+            catch (Exception ex)
+            {
+                return (new List<T>(), 0);
+            }
         }
 
         public static IQueryable<T> ApplyPagination(BaseGridRequest request, IQueryable<T> query)

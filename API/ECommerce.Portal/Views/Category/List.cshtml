@@ -151,29 +151,6 @@
     </div>
 </div>
 
-
-<!-- Modal to Update permission -->
-<div class="modal fade" id="UpdatePermission" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" Category="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[Constants.LabelKeys.Permission]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card mb-4">
-                    <div class="card-body" id="UpdatePermissionBody">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
-                <button type="submit" id="submitPermissionButton" class="btn btn-primary" onclick="submitPermissionForm('UpdateCategoryClaims')">@_Localizer["Update"]</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section VendorScripts {
 }
 
@@ -183,10 +160,8 @@
             { data: 'nameAR' },
             { data: 'nameEN' },
             {
-                data: 'photoPath', render: function (date, type, row) {
-                    return `<div class="avatar avatar-lg">
-                              <img src="${date}" alt="Avatar" class="rounded-circle">
-                            </div>`;
+                data: 'photoPath', render: function (data, type, row) {
+                    return photoRender(data);
                 }
             },
             {

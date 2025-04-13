@@ -91,16 +91,17 @@ public class InvoiceService : IInvoiceService
                 ? nameof(Invoice.Id)
                 : request.SearchBy;
 
-            var Invoices = await _unitOfWork.Invoice.GetAllAsync(request);
-            var response = _mapper.Map<List<InvoiceDto>>(Invoices);
+            var result = await _unitOfWork.Invoice.GetAllAsync(request);
+            var response = _mapper.Map<List<InvoiceDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<InvoiceDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<InvoiceDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }

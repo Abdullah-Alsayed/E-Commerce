@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Governorates.Dtos;
 using ECommerce.BLL.Features.Governorates.Requests;
 using ECommerce.BLL.IRepository;
@@ -42,7 +43,15 @@ public class GovernorateService : IGovernorateService
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AllowNullCollections = true;
-            cfg.CreateMap<Governorate, GovernorateDto>().ReverseMap();
+            cfg.CreateMap<Governorate, GovernorateDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    opt =>
+                        opt.MapFrom(src =>
+                            _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                        )
+                )
+                .ReverseMap();
             cfg.CreateMap<Governorate, CreateGovernorateRequest>().ReverseMap();
             cfg.CreateMap<Governorate, UpdateGovernorateRequest>().ReverseMap();
         });
@@ -86,7 +95,9 @@ public class GovernorateService : IGovernorateService
         }
     }
 
-    public async Task<BaseResponse> GetAllAsync(GetAllGovernorateRequest request)
+    public async Task<BaseResponse<BaseGridResponse<List<GovernorateDto>>>> GetAllAsync(
+        GetAllGovernorateRequest request
+    )
     {
         try
         {
@@ -96,16 +107,17 @@ public class GovernorateService : IGovernorateService
                     : nameof(Governorate.NameEN)
                 : request.SearchBy;
 
-            var governorates = await _unitOfWork.Governorate.GetAllAsync(request);
-            var response = _mapper.Map<List<GovernorateDto>>(governorates);
+            var result = await _unitOfWork.Governorate.GetAllAsync(request);
+            var response = _mapper.Map<List<GovernorateDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<GovernorateDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<GovernorateDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }
@@ -116,7 +128,7 @@ public class GovernorateService : IGovernorateService
                 OperationTypeEnum.GetAll,
                 EntitiesEnum.Governorate
             );
-            return new BaseResponse
+            return new BaseResponse<BaseGridResponse<List<GovernorateDto>>>
             {
                 IsSuccess = false,
                 Message = _localizer[MessageKeys.Fail].ToString()
@@ -133,15 +145,16 @@ public class GovernorateService : IGovernorateService
             var governorate = _mapper.Map<Governorate>(request);
             governorate = await _unitOfWork.Governorate.AddAsync(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -191,15 +204,16 @@ public class GovernorateService : IGovernorateService
             governorate.ModifyBy = _userId;
             governorate.ModifyAt = DateTime.UtcNow;
             var result = _mapper.Map<GovernorateDto>(governorate);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -238,7 +252,7 @@ public class GovernorateService : IGovernorateService
         }
     }
 
-    public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveGovernorateRequest request)
+    public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveGovernorateRequest request)
     {
         using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
         var modifyRows = 0;
@@ -249,15 +263,16 @@ public class GovernorateService : IGovernorateService
             governorate.ModifyAt = DateTime.UtcNow;
             governorate.IsActive = !governorate.IsActive;
             var result = _mapper.Map<GovernorateDto>(governorate);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Toggle);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Toggle);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Toggle);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Toggle);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -307,15 +322,16 @@ public class GovernorateService : IGovernorateService
             governorate.DeletedAt = DateTime.UtcNow;
             governorate.IsDeleted = true;
             var result = _mapper.Map<GovernorateDto>(governorate);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))

@@ -6,6 +6,7 @@ using AutoMapper;
 using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Carts.Dtos;
 using ECommerce.BLL.Features.Carts.Requests;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Colors.Requests;
 using ECommerce.BLL.Features.Feedbacks.Dtos;
@@ -93,7 +94,9 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllColorRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<ColorDto>>>> GetAllAsync(
+            GetAllColorRequest request
+        )
         {
             try
             {
@@ -103,16 +106,17 @@ namespace ECommerce.BLL.Features.Colors.Services
                         : nameof(Color.NameEN)
                     : request.SearchBy;
 
-                var colors = await _unitOfWork.Color.GetAllAsync(request);
-                var response = _mapper.Map<List<ColorDto>>(colors);
+                var result = await _unitOfWork.Color.GetAllAsync(request);
+                var response = _mapper.Map<List<ColorDto>>(result);
                 return new BaseResponse<BaseGridResponse<List<ColorDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<ColorDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -123,7 +127,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Color
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<ColorDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -199,15 +203,16 @@ namespace ECommerce.BLL.Features.Colors.Services
                 color.ModifyBy = _userId;
                 color.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<ColorDto>(color);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -257,15 +262,16 @@ namespace ECommerce.BLL.Features.Colors.Services
                 color.DeletedAt = DateTime.UtcNow;
                 color.IsDeleted = true;
                 var result = _mapper.Map<ColorDto>(color);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -295,6 +301,64 @@ namespace ECommerce.BLL.Features.Colors.Services
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Color
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveColorRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var color = await _unitOfWork.Color.FindAsync(request.ID);
+                _unitOfWork.Color.ToggleActive(color, _userId);
+
+                var result = _mapper.Map<ColorDto>(color);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<ColorDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
                 );
                 return new BaseResponse
                 {

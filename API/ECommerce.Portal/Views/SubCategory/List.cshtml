@@ -39,7 +39,7 @@
                     <select class="form-select text-capitalize filter"
                             id="CategorySelect"
                             data-filter="ItemId">
-                            <option value="">@_Localizer["SelectCategory"]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Category]</option>
                             @foreach (var item in Model)
                             {
                                <option value="@item.Id">@item.Name</option>
@@ -92,7 +92,7 @@
 
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" name="@nameof(CreateSubCategoryRequest.CategoryID)" id="@nameof(CreateSubCategoryRequest.CategoryID)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectCategory]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Category]</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@item.Name</option>
@@ -154,7 +154,7 @@
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" name="@nameof(UpdateSubCategoryRequest.CategoryID)" id="@nameof(UpdateSubCategoryRequest.CategoryID)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectCategory]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Category]</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@item.Name</option>
@@ -200,29 +200,6 @@
     </div>
 </div>
 
-
-<!-- Modal to Update permission -->
-<div class="modal fade" id="UpdatePermission" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" SubCategory="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[Constants.LabelKeys.Permission]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card mb-4">
-                    <div class="card-body" id="UpdatePermissionBody">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
-                <button type="submit" id="submitPermissionButton" class="btn btn-primary" onclick="submitPermissionForm('UpdateSubCategoryClaims')">@_Localizer["Update"]</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section VendorScripts {
 }
 
@@ -232,10 +209,8 @@
             { data: 'nameAR' },
             { data: 'nameEN' },
             {
-                data: 'photoPath', render: function (date, type, row) {
-                    return `<div class="avatar avatar-lg">
-                               <img src="${date}" alt="Avatar" class="rounded-circle">
-                            </div>`;
+                data: 'photoPath', render: function (data, type, row) {
+                    return photoRender(data);
                 }
             },
             {

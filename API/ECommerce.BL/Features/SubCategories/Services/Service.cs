@@ -112,7 +112,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                         : nameof(SubCategory.NameEN)
                     : request.SearchBy;
 
-                var subCategorys =
+                var result =
                     request.CategoryId.Value != Guid.Empty
                         ? await _unitOfWork.SubCategory.GetAllAsync(
                             request,
@@ -124,15 +124,16 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                             new List<string> { nameof(Category) }
                         );
 
-                var response = _mapper.Map<List<SubCategoryDto>>(subCategorys);
+                var response = _mapper.Map<List<SubCategoryDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SubCategoryDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<SubCategoryDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -332,7 +333,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleActiveAsync(ToggleAvtiveSubCategoryRequest request)
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveSubCategoryRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;

@@ -3,5 +3,5 @@ using ECommerce.BLL.Request;
 
 namespace ECommerce.BLL.Features.Brands.Requests
 {
-    public record ToggleAvtiveBrandRequest : BaseRequest { }
+    public record ToggleActiveBrandRequest : BaseRequest { }
 }

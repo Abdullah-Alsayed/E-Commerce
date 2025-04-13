@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.BLL.Features.Tags.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace ECommerce.BLL.Features.Units.Validators
+namespace ECommerce.BLL.Features.Tags.Validators
 {
     public class DeleteUnitValidator : AbstractValidator<DeleteUnitRequest>
     {

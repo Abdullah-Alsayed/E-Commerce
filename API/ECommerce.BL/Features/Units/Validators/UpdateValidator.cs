@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.BLL.Features.Tags.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace ECommerce.BLL.Features.Units.Validators;
+namespace ECommerce.BLL.Features.Tags.Validators;
 
 public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
 {
@@ -45,7 +45,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
                 (req, name) =>
                 {
                     return !context.Units.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateUnitValidator : AbstractValidator<UpdateUnitRequest>
                 (req, name) =>
                 {
                     return !context.Units.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )

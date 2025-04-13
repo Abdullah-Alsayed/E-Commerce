@@ -21,7 +21,7 @@ using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.Stocks.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
-using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Tags.Services;
 using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
@@ -58,6 +58,7 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             //****************** Features ******************************
+            services.AddScoped<ITagService, TagService>();
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUnitService, UnitService>();

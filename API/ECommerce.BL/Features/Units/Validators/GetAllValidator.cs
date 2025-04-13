@@ -1,9 +1,9 @@
-﻿using ECommerce.BLL.Features.Units.Requests;
+﻿using ECommerce.BLL.Features.Tags.Requests;
 using ECommerce.BLL.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace ECommerce.BLL.Features.Units.Validators;
+namespace ECommerce.BLL.Features.Tags.Validators;
 
 public class GetAllUnitValidator : AbstractValidator<GetAllUnitRequest>
 {

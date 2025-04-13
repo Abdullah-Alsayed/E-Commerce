@@ -1,0 +1,158 @@
+﻿@using ECommerce.BLL.Features.Tags.Dtos
+@using ECommerce.BLL.Features.Tags.Requests
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Unit List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+    <link rel="stylesheet" href="~/vendor/libs/pickr/pickr-themes.css" />
+    <link rel="stylesheet" href="~/vendor/libs/pickr/pickr-classic.css" />
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["UnitsList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Unit)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="UnitList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.NameAR]</th>
+                    <th>@_Localizer[Constants.EntityKeys.NameEn]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Unit="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Unit)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateUnitRequest.NameAR)" id="@nameof(CreateUnitRequest.NameAR)" placeholder="@_Localizer[Constants.EntityKeys.NameAR]" required />
+                        <label for="@nameof(CreateUnitRequest.NameAR)">@_Localizer[Constants.EntityKeys.NameAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateUnitRequest.NameEN)" id="@nameof(CreateUnitRequest.NameEN)" placeholder="@_Localizer[Constants.EntityKeys.NameEn]" required />
+                        <label for="@nameof(CreateUnitRequest.NameEN)">@_Localizer[Constants.EntityKeys.NameEn]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameEn] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#CreateForm', 'Unit', 'Create', 'UnitList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Unit="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.Unit)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" Unit="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateUnitRequest.NameAR)" id="@nameof(UpdateUnitRequest.NameAR)" placeholder="@_Localizer[Constants.EntityKeys.NameAR]" required />
+                        <label for="@nameof(UpdateUnitRequest.NameAR)">@_Localizer[Constants.EntityKeys.NameAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateUnitRequest.NameEN)" id="@nameof(UpdateUnitRequest.NameEN)" placeholder="@_Localizer[Constants.EntityKeys.NameEn]" required />
+                        <label for="@nameof(UpdateUnitRequest.NameEN)">@_Localizer[Constants.EntityKeys.NameEn]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameEn] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Unit', 'Update', 'UnitList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Unit="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Unit)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Unit','Delete','UnitList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'nameAR' },
+            { data: 'nameEN' },        
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('UnitList', 'Unit', 'Table', tableColumns, '@_localizationManger.Language');
+    </script>
+}

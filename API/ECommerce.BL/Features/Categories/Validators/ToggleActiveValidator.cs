@@ -7,13 +7,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Categories.Validators
 {
-    public class ToggleAvtiveCategoryValidator : AbstractValidator<ToggleActiveCategoryRequest>
+    public class ToggleActiveCategoryValidator : AbstractValidator<ToggleActiveCategoryRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveCategoryValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveCategoryValidator> _localizer;
 
-        public ToggleAvtiveCategoryValidator(
+        public ToggleActiveCategoryValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveCategoryValidator> localizer
+            IStringLocalizer<ToggleActiveCategoryValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;

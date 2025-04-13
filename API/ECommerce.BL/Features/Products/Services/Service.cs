@@ -131,16 +131,17 @@ namespace ECommerce.BLL.Features.Products.Services
                     ? nameof(Product.Title)
                     : request.SearchBy;
 
-                var Products = await _unitOfWork.Product.GetAllAsync(request);
-                var response = _mapper.Map<List<ProductDto>>(Products);
+                var result = await _unitOfWork.Product.GetAllAsync(request);
+                var response = _mapper.Map<List<ProductDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ProductDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<ProductDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -340,7 +341,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleActivesAsync(ToggleAvtiveProductRequest request)
+        public async Task<BaseResponse> ToggleActivesAsync(ToggleActiveProductRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;

@@ -97,16 +97,17 @@ namespace ECommerce.BLL.Features.Statuses.Services
                         : nameof(Status.NameEN)
                     : request.SearchBy;
 
-                var Statuss = await _unitOfWork.Status.GetAllAsync(request);
-                var response = _mapper.Map<List<StatusDto>>(Statuss);
+                var result = await _unitOfWork.Status.GetAllAsync(request);
+                var response = _mapper.Map<List<StatusDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<StatusDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<StatusDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

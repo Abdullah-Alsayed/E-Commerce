@@ -93,16 +93,17 @@ public class VoucherService : IVoucherService
                 ? nameof(Voucher.Name)
                 : request.SearchBy;
 
-            var vouchers = await _unitOfWork.Voucher.GetAllAsync(request);
-            var response = _mapper.Map<List<VoucherDto>>(vouchers);
+            var result = await _unitOfWork.Voucher.GetAllAsync(request);
+            var response = _mapper.Map<List<VoucherDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<VoucherDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<VoucherDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }
@@ -223,7 +224,7 @@ public class VoucherService : IVoucherService
         }
     }
 
-    public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveVoucherRequest request)
+    public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveVoucherRequest request)
     {
         using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
         var modifyRows = 0;

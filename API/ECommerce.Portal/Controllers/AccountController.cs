@@ -69,8 +69,8 @@ namespace ECommerce.Portal.Controllers
             var jsonResponse = new
             {
                 draw = request?.Draw ?? 0,
-                recordsTotal = response?.Count ?? 0,
-                recordsFiltered = response?.Count ?? 0,
+                recordsTotal = response?.Total ?? 0,
+                recordsFiltered = response?.Total ?? 0,
                 data = response?.Result.Items ?? new List<UserDto>()
             };
 

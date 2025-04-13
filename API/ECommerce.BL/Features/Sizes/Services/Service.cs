@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Sizes.Dtos;
 using ECommerce.BLL.Features.Sizes.Requests;
 using ECommerce.BLL.IRepository;
@@ -11,7 +11,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -82,7 +81,9 @@ namespace ECommerce.BLL.Features.Sizes.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllSizeRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<SizeDto>>>> GetAllAsync(
+            GetAllSizeRequest request
+        )
         {
             try
             {
@@ -92,16 +93,17 @@ namespace ECommerce.BLL.Features.Sizes.Services
                         : nameof(Size.NameEN)
                     : request.SearchBy;
 
-                var Sizes = await _unitOfWork.Size.GetAllAsync(request);
-                var response = _mapper.Map<List<SizeDto>>(Sizes);
+                var result = await _unitOfWork.Size.GetAllAsync(request);
+                var response = _mapper.Map<List<SizeDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SizeDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<SizeDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -112,7 +114,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Size
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<SizeDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -129,15 +131,16 @@ namespace ECommerce.BLL.Features.Sizes.Services
                 var Size = _mapper.Map<Size>(request);
                 Size = await _unitOfWork.Size.AddAsync(Size, _userId);
                 var result = _mapper.Map<SizeDto>(Size);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -187,15 +190,16 @@ namespace ECommerce.BLL.Features.Sizes.Services
                 Size.ModifyBy = _userId;
                 Size.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<SizeDto>(Size);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -245,15 +249,16 @@ namespace ECommerce.BLL.Features.Sizes.Services
                 Size.DeletedAt = DateTime.UtcNow;
                 Size.IsDeleted = true;
                 var result = _mapper.Map<SizeDto>(Size);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -283,6 +288,64 @@ namespace ECommerce.BLL.Features.Sizes.Services
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Size
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveSizeRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var size = await _unitOfWork.Size.FindAsync(request.ID);
+                _unitOfWork.Size.ToggleActive(size, _userId);
+
+                var result = _mapper.Map<SizeDto>(size);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<SizeDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
                 );
                 return new BaseResponse
                 {

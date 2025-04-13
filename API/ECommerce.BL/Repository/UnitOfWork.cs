@@ -78,6 +78,7 @@ namespace ECommerce.BL.Repository
             Brand = new BaseRepository<Brand>(_context);
             Unit = new BaseRepository<Unit>(_context);
             Area = new BaseRepository<Area>(_context);
+            Tag = new BaseRepository<Tag>(_context);
             Booking = new BaseRepository<Booking>(_context);
             Context = _context;
         }
@@ -91,6 +92,7 @@ namespace ECommerce.BL.Repository
         public INotificationRepository Notification { get; private set; }
         public IStockRepository Stock { get; private set; }
         public IBaseRepository<Size> Size { get; private set; }
+        public IBaseRepository<Tag> Tag { get; private set; }
         public IErrorRepository ErrorLog { get; private set; }
         public IBaseRepository<History> History { get; private set; }
         public IInvoiceRepository Invoice { get; private set; }

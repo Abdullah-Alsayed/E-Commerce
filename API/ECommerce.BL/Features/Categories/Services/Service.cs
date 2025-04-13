@@ -108,16 +108,17 @@ namespace ECommerce.BLL.Features.Categories.Services
                         : nameof(Category.NameEN)
                     : request.SearchBy;
 
-                var categorys = await _unitOfWork.Category.GetAllAsync(request);
-                var response = _mapper.Map<List<CategoryDto>>(categorys);
+                var result = await _unitOfWork.Category.GetAllAsync(request);
+                var response = _mapper.Map<List<CategoryDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<CategoryDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<CategoryDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

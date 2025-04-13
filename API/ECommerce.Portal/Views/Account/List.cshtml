@@ -36,7 +36,7 @@
                     <select class="form-select text-capitalize filter"
                             id="RoleSelect"
                             data-filter="ItemId">
-                            <option value="">@_Localizer["SelectRole"]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@(_localizationManger.Language == Constants.Languages.Ar ? item.Name:item.NameEn)</option>
@@ -122,7 +122,7 @@
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" id="@nameof(CreateUserRequest.Gander)" name="@nameof(CreateUserRequest.Gander)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectGender]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Gander]</option>
                             @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
                             {
                                 <option value="@((int)gender)">
@@ -136,7 +136,7 @@
 
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" name="@nameof(CreateUserRequest.RoleId)" id="@nameof(CreateUserRequest.RoleId)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectRole]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@item.Name</option>
@@ -213,7 +213,7 @@
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" id="@nameof(UpdateUserRequest.Gander)" name="@nameof(UpdateUserRequest.Gander)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectGender]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Gander]</option>
                             @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
                             {
                                 <option value="@((int)gender)"> @_Localizer[$"{gender}"] </option>
@@ -224,7 +224,7 @@
                     </div>
                     <div class="form-floating form-floating-outline mb-3 px-1">
                         <select class="form-control" name="@nameof(UpdateUserRequest.RoleId)" id="@nameof(UpdateUserRequest.RoleId)" required>
-                            <option value="">@_Localizer[Constants.LabelKeys.SelectRole]</option>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@item.Name</option>

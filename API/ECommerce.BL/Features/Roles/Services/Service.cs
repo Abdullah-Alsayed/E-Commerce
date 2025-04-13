@@ -101,16 +101,17 @@ namespace ECommerce.BLL.Features.Roles.Services
                     ? nameof(Role.Name)
                     : request.SearchBy;
 
-                var roles = await _unitOfWork.Role.GetAllAsync(request);
-                var response = _mapper.Map<List<RoleDto>>(roles);
+                var result = await _unitOfWork.Role.GetAllAsync(request);
+                var response = _mapper.Map<List<RoleDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<RoleDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<RoleDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -568,7 +569,7 @@ namespace ECommerce.BLL.Features.Roles.Services
                 {
                     IsSuccess = true,
                     Message = _localizer[Constants.MessageKeys.Success],
-                    Count = claims.Count,
+                    Total = claims.Count,
                     Result = claims
                 };
             }
@@ -618,7 +619,7 @@ namespace ECommerce.BLL.Features.Roles.Services
                 {
                     IsSuccess = true,
                     Message = _localizer[Constants.MessageKeys.Success],
-                    Count = claims.Count,
+                    Total = claims.Count,
                     Result = claims
                 };
             }

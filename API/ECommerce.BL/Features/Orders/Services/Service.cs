@@ -102,16 +102,17 @@ namespace ECommerce.BLL.Features.Orders.Services
                     ? nameof(Order.Address)
                     : request.SearchBy;
 
-                var Orders = await _unitOfWork.Order.GetAllAsync(request);
-                var response = _mapper.Map<List<OrderDto>>(Orders);
+                var result = await _unitOfWork.Order.GetAllAsync(request);
+                var response = _mapper.Map<List<OrderDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<OrderDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<OrderDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

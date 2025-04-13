@@ -11,7 +11,7 @@ namespace ECommerce.BLL.Features.Products.Services
         Task<BaseResponse> FindAsync(FindProductRequest request);
         Task<BaseResponse> GetAllAsync(GetAllProductRequest request);
         Task<BaseResponse> UpdateAsync(UpdateProductRequest request);
-        Task<BaseResponse> ToggleActivesAsync(ToggleAvtiveProductRequest request);
+        Task<BaseResponse> ToggleActivesAsync(ToggleActiveProductRequest request);
         Task<BaseResponse> GetProductItems(GetProductItemsRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }

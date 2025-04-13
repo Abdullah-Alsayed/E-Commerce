@@ -49,7 +49,7 @@ public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryRequest>
                 (req, name) =>
                 {
                     return !context.Categories.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -74,7 +74,7 @@ public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryRequest>
                 (req, name) =>
                 {
                     return !context.Categories.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -95,11 +95,13 @@ public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryRequest>
             {
                 return FileHelper.ExtensionsCheck(path);
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
             .Must(path =>
             {
                 return FileHelper.SizeCheck(path);
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x =>
                 _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
             );

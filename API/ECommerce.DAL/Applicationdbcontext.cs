@@ -14,6 +14,7 @@ namespace ECommerce.DAL
         public DbSet<Area> Areas { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<ContactUs> ContactUs { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }

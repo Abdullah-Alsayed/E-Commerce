@@ -51,7 +51,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -76,7 +76,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -93,6 +93,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
+            .When(x => x.FormFile != null)
             .Must(path =>
             {
                 return FileHelper.ExtensionsCheck(path);
@@ -102,6 +103,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
             {
                 return FileHelper.SizeCheck(path);
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x =>
                 _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
             );

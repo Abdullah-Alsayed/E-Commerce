@@ -91,8 +91,8 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveSubCategory(
-            ToggleAvtiveSubCategoryRequest request
+        public async Task<BaseResponse> ToggleActiveSubCategory(
+            ToggleActiveSubCategoryRequest request
         )
         {
             try

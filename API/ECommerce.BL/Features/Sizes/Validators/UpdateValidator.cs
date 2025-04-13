@@ -45,7 +45,7 @@ public class UpdateSizeValidator : AbstractValidator<UpdateSizeRequest>
                 (req, name) =>
                 {
                     return !context.Sizes.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -70,7 +70,7 @@ public class UpdateSizeValidator : AbstractValidator<UpdateSizeRequest>
                 (req, name) =>
                 {
                     return !context.Sizes.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )

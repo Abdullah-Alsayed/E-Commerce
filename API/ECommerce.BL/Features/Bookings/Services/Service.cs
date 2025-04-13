@@ -90,16 +90,17 @@ public class BookingService : IBookingService
                 ? nameof(Booking.Id)
                 : request.SearchBy;
 
-            var Bookings = await _unitOfWork.Booking.GetAllAsync(request);
-            var response = _mapper.Map<List<BookingDto>>(Bookings);
+            var result = await _unitOfWork.Booking.GetAllAsync(request);
+            var response = _mapper.Map<List<BookingDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<BookingDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<BookingDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }

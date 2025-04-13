@@ -7,14 +7,14 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Governorates.Validators
 {
-    public class ToggleAvtiveGovernorateValidator
-        : AbstractValidator<ToggleAvtiveGovernorateRequest>
+    public class ToggleActiveGovernorateValidator
+        : AbstractValidator<ToggleActiveGovernorateRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveGovernorateValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveGovernorateValidator> _localizer;
 
-        public ToggleAvtiveGovernorateValidator(
+        public ToggleActiveGovernorateValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveGovernorateValidator> localizer
+            IStringLocalizer<ToggleActiveGovernorateValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;

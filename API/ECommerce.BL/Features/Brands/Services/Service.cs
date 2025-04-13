@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
-using ECommerce.BLL.Features.Products.Dtos;
-using ECommerce.BLL.Features.Products.Requests;
-using ECommerce.BLL.Features.Sliders.Dtos;
-using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -87,7 +80,9 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllBrandRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<BrandDto>>>> GetAllAsync(
+            GetAllBrandRequest request
+        )
         {
             try
             {
@@ -97,16 +92,18 @@ namespace ECommerce.BLL.Features.Brands.Services
                         : nameof(Brand.NameEN)
                     : request.SearchBy;
 
-                var brands = await _unitOfWork.Brand.GetAllAsync(request);
-                var response = _mapper.Map<List<BrandDto>>(brands);
+                var result = await _unitOfWork.Brand.GetAllAsync(request);
+                var response = _mapper.Map<List<BrandDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<BrandDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
+
                     Result = new BaseGridResponse<List<BrandDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
@@ -117,7 +114,11 @@ namespace ECommerce.BLL.Features.Brands.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Brand
                 );
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return new BaseResponse<BaseGridResponse<List<BrandDto>>>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
             }
         }
 
@@ -293,7 +294,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
         }
 
-        public async Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveBrandRequest request)
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveBrandRequest request)
         {
             using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
             var modifyRows = 0;

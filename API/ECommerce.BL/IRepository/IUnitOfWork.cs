@@ -23,6 +23,7 @@ namespace ECommerce.BLL.IRepository
         IBaseRepository<ShoppingCart> Cart { get; }
         IOrderRepository Order { get; }
         IBaseRepository<Size> Size { get; }
+        IBaseRepository<Tag> Tag { get; }
         IBaseRepository<Category> Category { get; }
         IErrorRepository ErrorLog { get; }
         IBaseRepository<Setting> Setting { get; }

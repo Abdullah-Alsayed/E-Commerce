@@ -100,16 +100,17 @@ namespace ECommerce.BLL.Features.Sliders.Services
                         : nameof(Slider.TitleEN)
                     : request.SearchBy;
 
-                var Sliders = await _unitOfWork.Slider.GetAllAsync(request);
-                var response = _mapper.Map<List<SliderDto>>(Sliders);
+                var result = await _unitOfWork.Slider.GetAllAsync(request);
+                var response = _mapper.Map<List<SliderDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SliderDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<SliderDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

@@ -8,13 +8,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Areas.Validators
 {
-    public class ToggleAvtiveAreaValidator : AbstractValidator<ToggleAvtiveAreaRequest>
+    public class ToggleActiveAreaValidator : AbstractValidator<ToggleActiveAreaRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveAreaValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveAreaValidator> _localizer;
 
-        public ToggleAvtiveAreaValidator(
+        public ToggleActiveAreaValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveAreaValidator> localizer
+            IStringLocalizer<ToggleActiveAreaValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;

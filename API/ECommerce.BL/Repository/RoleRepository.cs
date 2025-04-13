@@ -150,7 +150,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
         return roleClaims;
     }
 
-    public override async Task<List<Role>> GetAllAsync(
+    public override async Task<(List<Role> list, int count)> GetAllAsync(
         BaseGridRequest request,
         List<string> Includes = null
     )
@@ -168,7 +168,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                 result = await query.AsNoTracking().ToListAsync();
             }
 
-            return result;
+            return (result, total);
         }
         catch (Exception ex)
         {
@@ -183,7 +183,7 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
                 }
             );
             await _context.SaveChangesAsync();
-            return new List<Role>();
+            return (new List<Role>(), 0);
         }
     }
 

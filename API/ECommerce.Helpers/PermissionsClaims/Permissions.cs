@@ -249,6 +249,14 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Permission = "Permissions.Role.Permission";
         }
 
+        public static class Tag
+        {
+            public const string View = "Permissions.Tag.View";
+            public const string Create = "Permissions.Tag.Create";
+            public const string Update = "Permissions.Tag.Update";
+            public const string Delete = "Permissions.Tag.Delete";
+        }
+
         public static class Dashboard
         {
             public const string View = "Permissions.Dashboard.View";

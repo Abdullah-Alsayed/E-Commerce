@@ -15,7 +15,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             GetAllSubCategoryRequest request
         );
         Task<BaseResponse> UpdateAsync(UpdateSubCategoryRequest request);
-        Task<BaseResponse> ToggleActiveAsync(ToggleAvtiveSubCategoryRequest request);
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveSubCategoryRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }
 }

@@ -7,13 +7,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Vouchers.Validators
 {
-    public class ToggleAvtiveVoucherValidator : AbstractValidator<ToggleAvtiveVoucherRequest>
+    public class ToggleActiveVoucherValidator : AbstractValidator<ToggleActiveVoucherRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveVoucherValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveVoucherValidator> _localizer;
 
-        public ToggleAvtiveVoucherValidator(
+        public ToggleActiveVoucherValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveVoucherValidator> localizer
+            IStringLocalizer<ToggleActiveVoucherValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;

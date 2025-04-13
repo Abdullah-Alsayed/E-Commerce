@@ -68,16 +68,17 @@ namespace ECommerce.BLL.Features.Carts.Services
                     ? nameof(ShoppingCart.ProductID)
                     : request.SearchBy;
 
-                var Carts = await _unitOfWork.Cart.GetAllAsync(request);
-                var response = _mapper.Map<List<CartDto>>(Carts);
+                var result = await _unitOfWork.Cart.GetAllAsync(request);
+                var response = _mapper.Map<List<CartDto>>(result);
                 return new BaseResponse<BaseGridResponse<List<CartDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<CartDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

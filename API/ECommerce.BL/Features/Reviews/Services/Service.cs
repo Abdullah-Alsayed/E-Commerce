@@ -90,16 +90,17 @@ public class ReviewService : IReviewService
                 ? nameof(ProductReview.Review)
                 : request.SearchBy;
 
-            var Reviews = await _unitOfWork.Review.GetAllAsync(request);
-            var response = _mapper.Map<List<ReviewDto>>(Reviews);
+            var result = await _unitOfWork.Review.GetAllAsync(request);
+            var response = _mapper.Map<List<ReviewDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<ReviewDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<ReviewDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }

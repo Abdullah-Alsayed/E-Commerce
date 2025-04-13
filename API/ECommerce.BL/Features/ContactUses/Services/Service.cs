@@ -127,16 +127,17 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                     ? nameof(ContactUs.Name)
                     : request.SearchBy;
 
-                var contactUs = await _unitOfWork.ContactUs.GetAllAsync(request);
-                var response = _mapper.Map<List<ContactUsDto>>(contactUs);
+                var result = await _unitOfWork.ContactUs.GetAllAsync(request);
+                var response = _mapper.Map<List<ContactUsDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ContactUsDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<ContactUsDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }

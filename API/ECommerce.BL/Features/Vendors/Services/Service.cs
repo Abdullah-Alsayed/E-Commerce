@@ -94,16 +94,18 @@ namespace ECommerce.BLL.Features.Vendors.Services
                     ? nameof(Vendor.Name)
                     : request.SearchBy;
 
-                var Vendors = await _unitOfWork.Vendor.GetAllAsync(request);
-                var response = _mapper.Map<List<VendorDto>>(Vendors);
+                var result = await _unitOfWork.Vendor.GetAllAsync(request);
+                var response = _mapper.Map<List<VendorDto>>(result.list);
+
                 return new BaseResponse<BaseGridResponse<List<VendorDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<VendorDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
