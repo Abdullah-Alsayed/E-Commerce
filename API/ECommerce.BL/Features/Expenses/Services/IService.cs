@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Expenses.Dtos;
 using ECommerce.BLL.Features.Expenses.Requests;
 using ECommerce.BLL.Response;
 
@@ -9,7 +11,9 @@ namespace ECommerce.BLL.Features.Expenses.Services
         Task<BaseResponse> CreateAsync(CreateExpenseRequest request);
         Task<BaseResponse> DeleteAsync(DeleteExpenseRequest request);
         Task<BaseResponse> FindAsync(FindExpenseRequest request);
-        Task<BaseResponse> GetAllAsync(GetAllExpenseRequest request);
+        Task<BaseResponse<BaseGridResponse<List<ExpenseDto>>>> GetAllAsync(
+            GetAllExpenseRequest request
+        );
         Task<BaseResponse> UpdateAsync(UpdateExpenseRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }

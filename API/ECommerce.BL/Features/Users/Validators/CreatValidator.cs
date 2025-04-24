@@ -53,10 +53,7 @@ namespace ECommerce.BLL.Features.Users.Validators
                 )
                 .Must(req =>
                 {
-                    var result = Regex.IsMatch(
-                        req,
-                        @"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"
-                    );
+                    var result = Regex.IsMatch(req, Constants.Regex.PhoneNumber);
                     return result;
                 })
                 .WithMessage(x =>

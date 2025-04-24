@@ -1,0 +1,181 @@
+﻿@using ECommerce.BLL.Features.Vouchers.Dtos
+@using ECommerce.BLL.Features.Vouchers.Requests
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Voucher List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["VouchersList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Voucher)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="VoucherList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.Name]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Value]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Max]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Used]</th>
+                    <th>@_Localizer[Constants.EntityKeys.ExpirationDate]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Voucher="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Voucher)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateVoucherRequest.Name)" id="@nameof(CreateVoucherRequest.Name)" placeholder="@_Localizer[Constants.EntityKeys.Name]" required />
+                        <label for="@nameof(CreateVoucherRequest.Name)">@_Localizer[Constants.EntityKeys.Name]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Name] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="number" class="form-control" name="@nameof(CreateVoucherRequest.Value)" id="@nameof(CreateVoucherRequest.Value)" placeholder="@_Localizer[Constants.EntityKeys.Value]" min="1" required />
+                        <label for="@nameof(CreateVoucherRequest.Value)">@_Localizer[Constants.EntityKeys.Value]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Value] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="number" value="0" class="form-control" name="@nameof(CreateVoucherRequest.Max)" id="@nameof(CreateVoucherRequest.Max)" placeholder="@_Localizer[Constants.EntityKeys.Max]" min="0"  />
+                        <label for="@nameof(CreateVoucherRequest.Max)">@_Localizer[Constants.EntityKeys.Max]</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="date" class="form-control" name="@nameof(CreateVoucherRequest.ExpirationDate)" id="@nameof(CreateVoucherRequest.ExpirationDate)" placeholder="@_Localizer[Constants.EntityKeys.ExpirationDate]" />
+                        <label for="@nameof(CreateVoucherRequest.ExpirationDate)">@_Localizer[Constants.EntityKeys.ExpirationDate]</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#CreateForm', 'Voucher', 'Create', 'VoucherList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Voucher="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.Voucher)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" Voucher="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateVoucherRequest.Name)" id="@nameof(UpdateVoucherRequest.Name)" placeholder="@_Localizer[Constants.EntityKeys.Name]" required />
+                        <label for="@nameof(UpdateVoucherRequest.Name)">@_Localizer[Constants.EntityKeys.Name]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Name] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="number" class="form-control" name="@nameof(UpdateVoucherRequest.Value)" id="@nameof(UpdateVoucherRequest.Value)" placeholder="@_Localizer[Constants.EntityKeys.Value]" min="1" required />
+                        <label for="@nameof(UpdateVoucherRequest.Value)">@_Localizer[Constants.EntityKeys.Value]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Value] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="number" class="form-control" name="@nameof(UpdateVoucherRequest.Max)" id="@nameof(UpdateVoucherRequest.Max)" placeholder="@_Localizer[Constants.EntityKeys.Max]" min="0" />
+                        <label for="@nameof(UpdateVoucherRequest.Max)">@_Localizer[Constants.EntityKeys.Max]</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="date" class="form-control" name="@nameof(UpdateVoucherRequest.ExpirationDate)" id="@nameof(UpdateVoucherRequest.ExpirationDate)" placeholder="@_Localizer[Constants.EntityKeys.ExpirationDate]" />
+                        <label for="@nameof(UpdateVoucherRequest.ExpirationDate)">@_Localizer[Constants.EntityKeys.ExpirationDate]</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Voucher', 'Update', 'VoucherList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Voucher="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Voucher)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Voucher','Delete','VoucherList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'name' },
+            { data: 'value' },
+            { data: 'max' },
+            { data: 'used' },
+            {
+                data: 'expirationDate', render: function (data, type, row) {
+                    return dateOnlyRender(data);
+                }
+            },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('VoucherList', 'Voucher', 'Table', tableColumns, '@_localizationManger.Language');
+    </script>
+}

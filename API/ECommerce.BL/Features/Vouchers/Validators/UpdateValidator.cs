@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ECommerce.BLL.Features.Vouchers.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
@@ -45,7 +46,7 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
                 (req, name) =>
                 {
                     return !context.Vouchers.Any(x =>
-                        x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID
+                        x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -66,5 +67,27 @@ public class UpdateVoucherValidator : AbstractValidator<UpdateVoucherRequest>
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, int.MaxValue].ToString())
             .GreaterThanOrEqualTo(0)
             .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 0].ToString());
+
+        RuleFor(req => req.Max)
+            .LessThan(int.MaxValue)
+            .When(x => x.Max.HasValue)
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Max]} {_localizer[Constants.MessageKeys.MinNumber, int.MaxValue]}"
+            )
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.Max.HasValue)
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Max]} {_localizer[Constants.MessageKeys.MinNumber, 0]}"
+            );
+
+        RuleFor(req => req)
+            .Must(req =>
+            {
+                return req.ExpirationDate.Value.Date > DateTime.UtcNow.Date;
+            })
+            .When(x => x.ExpirationDate.HasValue)
+            .WithMessage(x =>
+                $" {_localizer[Constants.EntityKeys.ExpirationDate]} {_localizer[Constants.MessageKeys.InPast]}"
+            );
     }
 }

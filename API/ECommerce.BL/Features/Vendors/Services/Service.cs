@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Vendors.Dtos;
@@ -11,7 +10,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -86,7 +84,9 @@ namespace ECommerce.BLL.Features.Vendors.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllVendorRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<VendorDto>>>> GetAllAsync(
+            GetAllVendorRequest request
+        )
         {
             try
             {
@@ -116,7 +116,7 @@ namespace ECommerce.BLL.Features.Vendors.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Vendor
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<VendorDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -133,15 +133,16 @@ namespace ECommerce.BLL.Features.Vendors.Services
                 var Vendor = _mapper.Map<Vendor>(request);
                 Vendor = await _unitOfWork.Vendor.AddAsync(Vendor, _userId);
                 var result = _mapper.Map<VendorDto>(Vendor);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -188,18 +189,18 @@ namespace ECommerce.BLL.Features.Vendors.Services
             {
                 var Vendor = await _unitOfWork.Vendor.FindAsync(request.ID);
                 _mapper.Map(request, Vendor);
-                Vendor.ModifyBy = _userId;
-                Vendor.ModifyAt = DateTime.UtcNow;
+                _unitOfWork.Vendor.Update(Vendor, _userId);
                 var result = _mapper.Map<VendorDto>(Vendor);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -245,19 +246,18 @@ namespace ECommerce.BLL.Features.Vendors.Services
             try
             {
                 var Vendor = await _unitOfWork.Vendor.FindAsync(request.ID);
-                Vendor.DeletedBy = _userId;
-                Vendor.DeletedAt = DateTime.UtcNow;
-                Vendor.IsDeleted = true;
+                _unitOfWork.Vendor.Delete(Vendor, _userId);
                 var result = _mapper.Map<VendorDto>(Vendor);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -287,6 +287,63 @@ namespace ECommerce.BLL.Features.Vendors.Services
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Vendor
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveVendorRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Vendor = await _unitOfWork.Vendor.FindAsync(request.ID);
+                _unitOfWork.Vendor.ToggleActive(Vendor, _userId);
+                var result = _mapper.Map<VendorDto>(Vendor);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<VendorDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
                 );
                 return new BaseResponse
                 {

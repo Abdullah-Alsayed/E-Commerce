@@ -236,7 +236,7 @@ function fetchData(controller, action, id) {
           let input = $('#UpdateForm').find(`[name="${pascalCaseKey}"]`);
           if (input.length) {
 
-            // If the input is a select element, handle it differently
+            // If the input is a select element, handle it differently-
             if (input.is('select')) {
               HandelOptionCase(response, key, input);
             }
@@ -450,4 +450,8 @@ function photoRender(data) {
                <img src="${data}" alt="Avatar" class="rounded-circle">
            </div>
     `;
+}
+
+function dateOnlyRender(data) {
+    return data;
 }

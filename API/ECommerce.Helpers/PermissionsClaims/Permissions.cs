@@ -257,9 +257,11 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Tag.Delete";
         }
 
-        public static class Dashboard
+        public static class Views
         {
-            public const string View = "Permissions.Dashboard.View";
+            public const string Dashboard = "Permissions.Dashboard.View";
+            public const string History = "Permissions.History.View";
+            public const string Booking = "Permissions.Booking.View";
         }
     }
 }

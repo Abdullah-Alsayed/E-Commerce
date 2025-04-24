@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Azure;
-using ECommerce.BLL.Features.Expenses.Requests;
+﻿using System;
+using System.Linq;
 using ECommerce.BLL.Features.Vouchers.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
@@ -61,6 +60,28 @@ namespace ECommerce.BLL.Features.Vouchers.Validators
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.Exist]}"
+                );
+
+            RuleFor(req => req.Max)
+                .LessThan(int.MaxValue)
+                .When(x => x.Max.HasValue)
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Max]} {_localizer[Constants.MessageKeys.MinNumber, int.MaxValue]}"
+                )
+                .GreaterThanOrEqualTo(0)
+                .When(x => x.Max.HasValue)
+                .WithMessage(x =>
+                    $"{_localizer[Constants.EntityKeys.Max]} {_localizer[Constants.MessageKeys.MinNumber, 0]}"
+                );
+
+            RuleFor(req => req)
+                .Must(req =>
+                {
+                    return req.ExpirationDate.Value.Date > DateTime.UtcNow.Date;
+                })
+                .When(x => x.ExpirationDate.HasValue)
+                .WithMessage(x =>
+                    $" {_localizer[Constants.EntityKeys.ExpirationDate]} {_localizer[Constants.MessageKeys.InPast]}"
                 );
         }
     }

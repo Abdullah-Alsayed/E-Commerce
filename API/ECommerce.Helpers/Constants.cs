@@ -60,6 +60,7 @@ namespace ECommerce.Core
             public const string EmailIsConfirm= "EmailIsConfirm";
             public const string LoginFiled = "LoginFiled";
             public const string HasUser = "HasUser";
+            public const string InPast = "InPast";
         }
 
         public static class Message
@@ -135,6 +136,13 @@ namespace ECommerce.Core
             public const string Age = "Age";
             public const string Gander = "Gander";
             public const string Tag = "Tag";
+            public const string ExpirationDate = "ExpirationDate";
+            public const string Used = "Used";
+            public const string Max = "Max";
+            public const string Setting = "Setting";
+            public const string ContactUs = "ContactUs";
+            public const string Favorite = "Favorite";
+            public const string History = "History";
         }
 
         public static class LabelKeys
@@ -147,6 +155,10 @@ namespace ECommerce.Core
             public const string Permission = "Permission";
             public const string Statistics = "Statistics";
             public const string UserManagement = "UserManagement";
+            public const string ProductManagement = "ProductManagement";
+            public const string Reviews = "Reviews";
+            public const string Calender = "Calender";
+            public const string Kanban = "Kanban";
         }
 
         public static class Gender
@@ -212,7 +224,7 @@ namespace ECommerce.Core
         public static class Regex
         {
             public const string Color = "^#?([a-f0-9]{6}|[a-f0-9]{3})$";
-            public const string PhoneNumber = "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
+            public const string PhoneNumber = @"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$";
         }
 
         public static class Claims

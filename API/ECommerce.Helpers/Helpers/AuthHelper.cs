@@ -95,5 +95,15 @@ namespace ECommerce.Core.Helpers
             //  return permissions.Contains(action);
             return true;
         }
+
+        public static string OpenMenuItem(List<string> paths, string currentPath)
+        {
+            var flag = false;
+            foreach (var path in paths)
+                if (currentPath.StartsWith(path))
+                    flag = true;
+
+            return flag ? "active open" : "";
+        }
     }
 }

@@ -7,8 +7,42 @@
 @{
     TempData.Keep();
     string? currentPage = ViewContext.HttpContext.Request.Path;
-    var roleId = 1;
     var permissions = new List<string>();
+    var hasMangment = AuthHelper.CanAccess(permissions, Permissions.Category.View)
+        || AuthHelper.CanAccess(permissions, Permissions.SubCategory.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Brand.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Color.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Unit.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Size.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Tag.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Governorate.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Status.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Area.View);
+
+    var activeManger = AuthHelper.OpenMenuItem(new List<string>
+    {
+        $"/{nameof(Area)}",
+        $"/{nameof(Governorate)}",
+        $"/{nameof(Tag)}",
+        $"/{nameof(Size)}",
+        $"/{nameof(Unit)}",
+        $"/{nameof(Color)}",
+        $"/{nameof(Brand)}",
+        $"/{nameof(SubCategory)}",
+        $"/{nameof(Status)}",
+        $"/{nameof(Category)}",
+    },currentPage);
+
+    var hasFinancials= AuthHelper.CanAccess(permissions, Permissions.Voucher.View)
+       || AuthHelper.CanAccess(permissions, Permissions.Expense.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Invoice.View);
+
+    var activeFinancials = AuthHelper.OpenMenuItem(new List<string>
+    {
+        $"/{nameof(Voucher)}",
+        $"/{nameof(Expense)}",
+        $"/{nameof(Invoice)}"
+    }, currentPage);
 }
 
 <!-- Menu -->
@@ -36,9 +70,9 @@
 
   @* ! Starter Kit menu-items *@
   <ul class="menu-inner py-1">
-        @if (AuthHelper.CanAccess(permissions, Permissions.Dashboard.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Views.Dashboard))
         {
-          <li class='menu-item@(currentPage == "/" || currentPage.StartsWith("Dashboard/Statistics") ? " active" : "")'>
+            <li class='menu-item @(currentPage == "/" ? "active open":"") @(AuthHelper.OpenMenuItem(new List<string> {"/Dashboard/Statistics"},currentPage))'>
                   <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
                       <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
               <div data-i18n="@_Localizer[Constants.LabelKeys.Statistics]">@_Localizer[Constants.LabelKeys.Statistics]</div>
@@ -48,7 +82,7 @@
 
         @if (AuthHelper.CanAccess(permissions, Permissions.Users.View) || AuthHelper.CanAccess(permissions, Permissions.Role.View))
         {
-            <li class='menu-item@(currentPage.StartsWith("/Role/List") || currentPage.StartsWith("/Account/List") ? " active open" : "")'>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{ "/Role","/Account"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
                     <div data-i18n="@_Localizer[Constants.LabelKeys.UserManagement]">@_Localizer[Constants.LabelKeys.UserManagement]</div>
@@ -56,7 +90,7 @@
                 <ul class="menu-sub">
                     @if (AuthHelper.CanAccess(permissions, Permissions.Users.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith("/Account/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{"/Account"},currentPage))'>
                             <a asp-controller="Account" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.User, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.User, "s")]</div>
                             </a>
@@ -64,7 +98,7 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Role.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Role)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{ "/Role"},currentPage))'>
                             <a asp-controller="@nameof(Role)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Role, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Role, "s")]</div>
                             </a>
@@ -74,17 +108,9 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Category.View)
-        || AuthHelper.CanAccess(permissions, Permissions.SubCategory.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Brand.View) 
-        || AuthHelper.CanAccess(permissions, Permissions.Color.View) 
-        || AuthHelper.CanAccess(permissions, Permissions.Unit.View) 
-        || AuthHelper.CanAccess(permissions, Permissions.Size.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Tag.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Governorate.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Area.View))
+        @if (hasMangment)
         {
-            <li class='menu-item@(currentPage.StartsWith($"/{nameof(Category)}/List") || currentPage.StartsWith($"/{nameof(SubCategory)}/List") ? " active open" : "")'>
+            <li class='menu-item @(activeManger)'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
                     <div data-i18n="@_Localizer["Management"]">@_Localizer["Management"]</div>
@@ -92,7 +118,7 @@
                 <ul class="menu-sub">
                     @if (AuthHelper.CanAccess(permissions, Permissions.Category.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Category)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Category)}"},currentPage))'>
                             <a asp-controller="@nameof(Category)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Category, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Category, "s")] </div>
                             </a>
@@ -100,7 +126,7 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(SubCategory)}/List") ? " active" : "")'>
+                        <li class='menu-item@(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(SubCategory)}"},currentPage))'>
                             <a asp-controller="@nameof(SubCategory)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.SubCategory, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.SubCategory, "s")]</div>
                             </a>
@@ -108,7 +134,7 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Brand.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Brand)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Brand)}"},currentPage))'>
                             <a asp-controller="@nameof(Brand)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Brand, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Brand, "s")]</div>
                             </a>
@@ -116,7 +142,7 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Color.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Color)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Color)}"},currentPage))'>
                             <a asp-controller="@nameof(Color)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Color, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Color, "s")]</div>
                             </a>
@@ -124,14 +150,14 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Unit.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Unit)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Unit)}"},currentPage))'>
                             <a asp-controller="@nameof(Unit)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Unit, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Unit, "s")]</div>
                             </a>
                         </li>
                     } @if (AuthHelper.CanAccess(permissions, Permissions.Size.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Size)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Size)}"},currentPage))'>
                             <a asp-controller="@nameof(Size)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Size, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Size, "s")]</div>
                             </a>
@@ -139,16 +165,24 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Tag.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Tag)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Tag)}"},currentPage))'>
                             <a asp-controller="@nameof(Tag)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Tag, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Tag, "s")]</div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Status.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Status)}"},currentPage))'>
+                            <a asp-controller="@nameof(Status)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[Constants.EntityKeys.Status]">@_Localizer[Constants.EntityKeys.Status] </div>
                             </a>
                         </li>
                     }
 
                      @if (AuthHelper.CanAccess(permissions, Permissions.Governorate.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Governorate)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Governorate)}"},currentPage))'>
                             <a asp-controller="@nameof(Governorate)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Governorate, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Governorate, "s")]</div>
                             </a>
@@ -157,7 +191,7 @@
 
                     @if (AuthHelper.CanAccess(permissions, Permissions.Area.View))
                     {
-                        <li class='menu-item@(currentPage.StartsWith($"/{nameof(Area)}/List") ? " active" : "")'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Area)}"},currentPage))'>
                             <a asp-controller="@nameof(Area)" asp-action="List" class="menu-link">
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Area, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Area, "s")]</div>
                             </a>
@@ -166,107 +200,212 @@
                 </ul>
             </li>
         }
-@* 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
         {
-          <li class='menu-item@(currentPage.StartsWith("/Booking/Calendar") ? " active" : "")'>
-              <a asp-controller="Booking" asp-action="Calendar" class="menu-link">
-                  <i class="menu-icon tf-icons mdi mdi-calendar-blank-outline"></i>
-                  <div data-i18n="Calendar">@_Localizer["Calendar"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer[Constants.LabelKeys.ProductManagement]">@_Localizer[Constants.LabelKeys.ProductManagement]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
+                            <a asp-controller="@nameof(Product)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Product, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Product, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
+                            <a asp-controller="@nameof(Favorite)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Favorite, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Favorite, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Cart.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(ShoppingCart)}"},currentPage))'>
+                            <a asp-controller="@nameof(ShoppingCart)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Cart, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Cart, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Views.Booking))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Booking)}"},currentPage))'>
+                            <a asp-controller="@nameof(Booking)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Booking, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Booking, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
         {
-            <li class='menu-item@(currentPage.StartsWith("/BusinessSiteService/List") ? " active" : "")'>
-              <a asp-controller="BusinessSiteService" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-beach m-1"></span>
-                  <div data-i18n="@_Localizer["Services"]">@_Localizer["Services"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer["OrderManagement"]">@_Localizer["OrderManagement"]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
+                            <a asp-controller="@nameof(Order)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Order, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Order, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
+                            <a asp-controller="@nameof(Order)" asp-action="Calender" class="menu-link">
+                                <div data-i18n="@_Localizer[Constants.LabelKeys.Calender]">@_Localizer[Constants.LabelKeys.Calender] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
+                            <a asp-controller="@nameof(Order)" asp-action="Kanban" class="menu-link">
+                                <div data-i18n="@_Localizer[Constants.LabelKeys.Kanban]">@_Localizer[Constants.LabelKeys.Kanban] </div>
+                            </a>
+                        </li>
+                    }                   
+                </ul>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Vendor.View))
         {
-          <li class='menu-item@(currentPage.StartsWith("/BusinessSiteFeature/List") ? " active" : "")'>
-              <a asp-controller="BusinessSiteFeature" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-waves-arrow-up m-1"></span>
-                  <div data-i18n="@_Localizer["ServiceFeature"]">@_Localizer["ServiceFeature"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Vendor)}"},currentPage))'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer["StockManagement"]">@_Localizer["StockManagement"]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Stock.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Stock)}"},currentPage))'>
+                            <a asp-controller="@nameof(Stock)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[Constants.EntityKeys.Stock]">@_Localizer[Constants.EntityKeys.Stock] </div>
+                            </a>
+                        </li>
+                    }
+
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Category.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Vendor)}"},currentPage))'>
+                            <a asp-controller="@nameof(Vendor)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Vendor, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Vendor, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (hasFinancials)
         {
-          <li class='menu-item@(currentPage.StartsWith("/BusinessSiteRule/List") ? " active" : "")'>
-              <a asp-controller="BusinessSiteRule" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-file-sign m-1"></span>
-                  <div data-i18n="@_Localizer["BusinessSiteRule"]">@_Localizer["BusinessSiteRule"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Voucher)}",$"/{nameof(Expense)}"},currentPage))'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer["FinancialsManagement"]">@_Localizer["FinancialsManagement"]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Invoice.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Invoice)}"},currentPage))'>
+                            <a asp-controller="@nameof(Invoice)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Invoice, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Invoice, "s")]</div>
+                            </a>
+                        </li>
+                    }
+
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Expense.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Expense)}"},currentPage))'>
+                            <a asp-controller="@nameof(Expense)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Expense, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Expense, "s")] </div>
+                            </a>
+                        </li>
+                    }
+
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Voucher.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Voucher)}"},currentPage))'>
+                            <a asp-controller="@nameof(Voucher)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Voucher, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Voucher, "s")]</div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+
+        @if (AuthHelper.CanAccess(permissions, Permissions.Feedback.View))
         {
-            <li class='menu-item@(currentPage.StartsWith("/BusinessSiteServiceFacility/List") ? " active" : "")'>
-              <a asp-controller="BusinessSiteServiceFacility" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-sail-boat m-1"></span>
-                  <div data-i18n="@_Localizer["BusinessSiteServiceFacility"]">@_Localizer["BusinessSiteServiceFacility"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Feedback)}"},currentPage))'>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
+                    <div data-i18n="@_Localizer[Constants.LabelKeys.Reviews]">@_Localizer[Constants.LabelKeys.Reviews]</div>
+                </a>
+                <ul class="menu-sub">
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Feedback)}"},currentPage))'>
+                            <a asp-controller="@nameof(Feedback)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Feedback, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Feedback, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Review.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(ProductReview)}"},currentPage))'>
+                            <a asp-controller="@nameof(ProductReview)" asp-action="List" class="menu-link">
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Review, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Review, "s")] </div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.ContactUs.View))
         {
-          <li class='menu-item@(currentPage.StartsWith("/FacilityOption/List") ? " active" : "")'>
-              <a asp-controller="FacilityOption" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-select-place m-1"></span>
-                  <div data-i18n="@_Localizer["FacilityOption"]">@_Localizer["FacilityOption"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(ContactUs)}"},currentPage))'>
+                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
+                    <div data-i18n="@_Localizer[Constants.EntityKeys.ContactUs]">@_Localizer[Constants.EntityKeys.ContactUs]</div>
+                </a>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Views.History))
         {
-            <li class='menu-item@(currentPage.StartsWith("/FacilityOptionType/List") ? " active" : "")'>
-              <a asp-controller="FacilityOptionType" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-select-place m-1"></span>
-                  <div data-i18n="@_Localizer["FacilityOptionType"]">@_Localizer["FacilityOptionType"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(History)}"},currentPage))'>
+                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
+                    <div data-i18n="@_Localizer[Constants.EntityKeys.History]">@_Localizer[Constants.EntityKeys.History]</div>
+                </a>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Setting.View))
         {
-            <li class='menu-item@(currentPage.StartsWith("/FacilitySlots/List") ? " active" : "")'>
-              <a asp-controller="FacilitySlots" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-slot-machine m-1"></span>
-                  <div data-i18n="@_Localizer["FacilitySlots"]">@_Localizer["FacilitySlots"]</div>
-              </a>
-          </li>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(Setting)}"},currentPage))'>
+                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
+                    <div data-i18n="@_Localizer[Constants.EntityKeys.Setting]">@_Localizer[Constants.EntityKeys.Setting]</div>
+                </a>
+            </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
-        {
-          <li class='menu-item@(currentPage.StartsWith("/Booking/List") ? " active" : "")'>
-              <a asp-controller="Booking" asp-action="List" class="menu-link">
-                  <span class="menu-icon tf-icons mdi mdi-ticket-account m-1"></span>
-                  <div data-i18n="@_Localizer["Booking"]">@_Localizer["Booking"]</div>
-              </a>
-          </li>
-        }
-       
-
-        @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
-        {
-          <li class='menu-item@(currentPage.StartsWith("/Invoice/List") ? " active" : "")'>
-              <a asp-controller="Invoice" asp-action="List" class="menu-link">
-                  <span class="mdi mdi-account-wrench m-1"></span>
-                  <div data-i18n="@_Localizer["Invoices"]">@_Localizer["Invoices"]</div>
-              </a>
-          </li>
-        } *@
       </ul>
 </aside>
 <!-- / Menu -->

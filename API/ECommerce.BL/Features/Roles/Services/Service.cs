@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Roles.Requests;
 using ECommerce.BLL.IRepository;
@@ -16,7 +15,7 @@ using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
-using static ECommerce.Core.PermissionsClaims.Permissions;
+using History = ECommerce.DAL.Entity.History;
 using Role = ECommerce.DAL.Entity.Role;
 
 namespace ECommerce.BLL.Features.Roles.Services

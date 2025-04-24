@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Expenses.Dtos;
@@ -11,10 +10,10 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
+using Expense = ECommerce.DAL.Entity.Expense;
 
 namespace ECommerce.BLL.Features.Expenses.Services;
 
@@ -86,7 +85,9 @@ public class ExpenseService : IExpenseService
         }
     }
 
-    public async Task<BaseResponse> GetAllAsync(GetAllExpenseRequest request)
+    public async Task<BaseResponse<BaseGridResponse<List<ExpenseDto>>>> GetAllAsync(
+        GetAllExpenseRequest request
+    )
     {
         try
         {
@@ -111,7 +112,7 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Expense);
-            return new BaseResponse
+            return new BaseResponse<BaseGridResponse<List<ExpenseDto>>>
             {
                 IsSuccess = false,
                 Message = _localizer[MessageKeys.Fail].ToString()
@@ -133,15 +134,16 @@ public class ExpenseService : IExpenseService
             );
             expense = await _unitOfWork.Expense.AddAsync(expense, _userId);
             var result = _mapper.Map<ExpenseDto>(expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -182,25 +184,25 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
-            _mapper.Map(request, Expense);
-            Expense.ModifyBy = _userId;
-            Expense.ModifyAt = DateTime.UtcNow;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
+            var expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            _mapper.Map(request, expense);
+            _unitOfWork.Expense.Update(expense, _userId);
+            expense.PhotoPath = await _unitOfWork.Expense.UploadPhotoAsync(
                 request.FormFile,
                 Constants.PhotoFolder.Expense,
-                Expense.PhotoPath
+                expense.PhotoPath
             );
-            var result = _mapper.Map<ExpenseDto>(Expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            var result = _mapper.Map<ExpenseDto>(expense);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -241,20 +243,20 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
-            Expense.DeletedBy = _userId;
-            Expense.DeletedAt = DateTime.UtcNow;
-            Expense.IsDeleted = true;
-            var result = _mapper.Map<ExpenseDto>(Expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            _unitOfWork.Expense.Delete(expense, _userId);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var result = _mapper.Map<ExpenseDto>(expense);
+
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))

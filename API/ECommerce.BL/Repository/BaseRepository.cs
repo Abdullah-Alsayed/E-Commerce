@@ -268,7 +268,7 @@ namespace ECommerce.BLL.Repository
             string photoName = null
         )
         {
-            string fullPath = string.Empty;
+            string fullPath = Constants.DefaultPhotos.Default;
             try
             {
                 if (file != null)
@@ -322,7 +322,7 @@ namespace ECommerce.BLL.Repository
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return "/Images/default.png"; // Return default image on error
+                return Constants.DefaultPhotos.Default; // Return default image on error
             }
         }
 
