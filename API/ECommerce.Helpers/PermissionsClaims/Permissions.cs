@@ -155,8 +155,6 @@ namespace ECommerce.Core.PermissionsClaims
         {
             public const string View = "Permissions.ContactUs.View";
             public const string Create = "Permissions.ContactUs.Create";
-            public const string Update = "Permissions.ContactUs.Update";
-            public const string Reply = "Permissions.ContactUs.Reply";
             public const string Delete = "Permissions.ContactUs.Delete";
         }
 
@@ -187,8 +185,6 @@ namespace ECommerce.Core.PermissionsClaims
         public static class Feedback
         {
             public const string View = "Permissions.Feedback.View";
-            public const string Create = "Permissions.Feedback.Create";
-            public const string Update = "Permissions.Feedback.Update";
             public const string Delete = "Permissions.Feedback.Delete";
         }
 

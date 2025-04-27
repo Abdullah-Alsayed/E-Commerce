@@ -192,11 +192,10 @@ namespace ECommerce.BLL.Features.Carts.Services
             var modifyRows = 0;
             try
             {
-                var Cart = await _unitOfWork.Cart.FindAsync(request.ID);
-                _mapper.Map(request, Cart);
-                Cart.ModifyBy = _userId;
-                Cart.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<CartDto>(Cart);
+                var cart = await _unitOfWork.Cart.FindAsync(request.ID);
+                _mapper.Map(request, cart);
+                _unitOfWork.Cart.Update(cart, _userId);
+                var result = _mapper.Map<CartDto>(cart);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Update);
@@ -257,9 +256,7 @@ namespace ECommerce.BLL.Features.Carts.Services
                 );
                 foreach (var cart in carts)
                 {
-                    cart.DeletedBy = _userId;
-                    cart.DeletedAt = DateTime.UtcNow;
-                    cart.IsDeleted = true;
+                    _unitOfWork.Cart.Delete(cart, _userId);
                     modifyRows++;
                 }
 

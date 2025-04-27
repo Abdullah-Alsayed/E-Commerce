@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Stocks.Dtos;
@@ -13,7 +12,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -187,11 +185,10 @@ namespace ECommerce.BLL.Features.Stocks.Services
             var modifyRows = 0;
             try
             {
-                var Stock = await _unitOfWork.Stock.FindAsync(request.ID);
-                _mapper.Map(request, Stock);
-                Stock.ModifyBy = _userId;
-                Stock.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<StockDto>(Stock);
+                var stock = await _unitOfWork.Stock.FindAsync(request.ID);
+                _mapper.Map(request, stock);
+                _unitOfWork.Stock.Update(stock, _userId);
+                var result = _mapper.Map<StockDto>(stock);
                 modifyRows = await _unitOfWork.Stock.ReturnItemAsync(request);
 
                 #region Send Notification

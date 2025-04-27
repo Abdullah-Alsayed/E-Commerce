@@ -14,6 +14,7 @@ using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
+using static ECommerce.Core.PermissionsClaims.Permissions;
 
 namespace ECommerce.BLL.Features.Reviews.Services;
 
@@ -173,11 +174,10 @@ public class ReviewService : IReviewService
         var modifyRows = 0;
         try
         {
-            var Review = await _unitOfWork.Review.FindAsync(request.ID);
-            _mapper.Map(request, Review);
-            Review.ModifyBy = _userId;
-            Review.ModifyAt = DateTime.UtcNow;
-            var result = _mapper.Map<ReviewDto>(Review);
+            var review = await _unitOfWork.Review.FindAsync(request.ID);
+            _mapper.Map(request, review);
+            _unitOfWork.Review.Update(review, _userId);
+            var result = _mapper.Map<ReviewDto>(review);
             #region Send Notification
             await SendNotification(OperationTypeEnum.Update);
             modifyRows++;
@@ -227,21 +227,20 @@ public class ReviewService : IReviewService
         var modifyRows = 0;
         try
         {
-            var Review = await _unitOfWork.Review.FindAsync(request.ID);
-            Review.DeletedBy = _userId;
-            Review.DeletedAt = DateTime.UtcNow;
-            Review.IsDeleted = true;
-            var result = _mapper.Map<ReviewDto>(Review);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var review = await _unitOfWork.Review.FindAsync(request.ID);
+            _unitOfWork.Review.Delete(review, _userId);
+            var result = _mapper.Map<ReviewDto>(review);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))

@@ -200,8 +200,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             {
                 var color = await _unitOfWork.Color.FindAsync(request.ID);
                 _mapper.Map(request, color);
-                color.ModifyBy = _userId;
-                color.ModifyAt = DateTime.UtcNow;
+                _unitOfWork.Color.Update(color, _userId);
                 var result = _mapper.Map<ColorDto>(color);
 
                 //#region Send Notification
@@ -258,9 +257,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             try
             {
                 var color = await _unitOfWork.Color.FindAsync(request.ID);
-                color.DeletedBy = _userId;
-                color.DeletedAt = DateTime.UtcNow;
-                color.IsDeleted = true;
+                _unitOfWork.Color.Delete(color, _userId);
                 var result = _mapper.Map<ColorDto>(color);
 
                 //#region Send Notification

@@ -304,28 +304,8 @@
             {
                 data: 'firstName', 
                 render: function (data, type, row) {
-                    let img = "";
-                    if (row.photo) 
-                        img = `${row.photo}"`;
-                     else 
-                        img = `/Images/User/@Constants.DefaultPhotos.User`;
-                    
-                    return `
-                        <div class="d-flex justify-content-start align-items-center customer-name">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar avatar-sm">
-                                    <img src="${img}" alt="Avatar" class="rounded-circle">
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column">
-                                <a href="app-ecommerce-customer-details-overview.html" class="text-heading">
-                                    <span class="fw-medium text-truncate">${row.firstName} ${row.lastName ?? ""}</span>
-                                </a>
-                                <small class="text-nowrap">${row.email}</small>
-                                <small class="text-nowrap">${row.phoneNumber}</small>
-                            </div>
-                        </div>
-                `}
+                    return userRender(row);
+                }
             },
             { data: 'address' },
             {

@@ -226,16 +226,15 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var Product = await _unitOfWork.Product.FindAsync(request.ID);
-                _mapper.Map(request, Product);
-                Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
+                var product = await _unitOfWork.Product.FindAsync(request.ID);
+                _mapper.Map(request, product);
+                product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
                     request.FormFiles,
                     PhotoFolder.Products,
-                    Product.ProductPhotos
+                    product.ProductPhotos
                 );
-                Product.ModifyBy = _userId;
-                Product.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<ProductDto>(Product);
+                _unitOfWork.Product.Update(product, _userId);
+                var result = _mapper.Map<ProductDto>(product);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -289,20 +288,19 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var Product = await _unitOfWork.Product.FindAsync(request.ID);
-                Product.DeletedBy = _userId;
-                Product.DeletedAt = DateTime.UtcNow;
-                Product.IsDeleted = true;
-                var result = _mapper.Map<ProductDto>(Product);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                var product = await _unitOfWork.Product.FindAsync(request.ID);
+                _unitOfWork.Product.Delete(product, _userId);
+                var result = _mapper.Map<ProductDto>(product);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -347,11 +345,10 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var Product = await _unitOfWork.Product.FindAsync(request.ID);
-                Product.ModifyBy = _userId;
-                Product.ModifyAt = DateTime.UtcNow;
-                Product.IsActive = !Product.IsActive;
-                var result = _mapper.Map<ProductDto>(Product);
+                var product = await _unitOfWork.Product.FindAsync(request.ID);
+                _unitOfWork.Product.Update(product, _userId);
+                product.IsActive = !product.IsActive;
+                var result = _mapper.Map<ProductDto>(product);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Toggle);
                 modifyRows++;

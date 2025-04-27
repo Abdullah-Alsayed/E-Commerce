@@ -379,7 +379,7 @@
         @if (AuthHelper.CanAccess(permissions, Permissions.ContactUs.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(ContactUs)}"},currentPage))'>
-                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                <a asp-controller="ContactUs" asp-action="List" class="menu-link">
                     <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
                     <div data-i18n="@_Localizer[Constants.EntityKeys.ContactUs]">@_Localizer[Constants.EntityKeys.ContactUs]</div>
                 </a>

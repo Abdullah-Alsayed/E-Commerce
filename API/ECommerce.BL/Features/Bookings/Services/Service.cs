@@ -14,6 +14,7 @@ using ECommerce.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
+using static ECommerce.Core.PermissionsClaims.Permissions;
 
 namespace ECommerce.BLL.Features.Bookings.Services;
 
@@ -174,11 +175,10 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var Booking = await _unitOfWork.Booking.FindAsync(request.ID);
-            _mapper.Map(request, Booking);
-            Booking.ModifyBy = _userId;
-            Booking.ModifyAt = DateTime.UtcNow;
-            var result = _mapper.Map<BookingDto>(Booking);
+            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            _mapper.Map(request, booking);
+            _unitOfWork.Booking.Update(booking, _userId);
+            var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Update);
@@ -229,11 +229,10 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var Booking = await _unitOfWork.Booking.FindAsync(request.ID);
-            Booking.ModifyBy = _userId;
-            Booking.ModifyAt = DateTime.UtcNow;
-            Booking.IsNotified = true;
-            var result = _mapper.Map<BookingDto>(Booking);
+            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            booking.IsNotified = true;
+            _unitOfWork.Booking.Update(booking, _userId);
+            var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Notify);
@@ -284,11 +283,9 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var Booking = await _unitOfWork.Booking.FindAsync(request.ID);
-            Booking.DeletedBy = _userId;
-            Booking.DeletedAt = DateTime.UtcNow;
-            Booking.IsDeleted = true;
-            var result = _mapper.Map<BookingDto>(Booking);
+            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            _unitOfWork.Booking.Delete(booking, _userId);
+            var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
             //await SendNotification(OperationTypeEnum.Delete);

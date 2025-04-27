@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Sliders.Dtos;
@@ -11,7 +10,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -195,16 +193,15 @@ namespace ECommerce.BLL.Features.Sliders.Services
             var modifyRows = 0;
             try
             {
-                var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
-                _mapper.Map(request, Slider);
-                Slider.PhotoPath = await _unitOfWork.Slider.UploadPhotoAsync(
+                var slider = await _unitOfWork.Slider.FindAsync(request.ID);
+                _mapper.Map(request, slider);
+                slider.PhotoPath = await _unitOfWork.Slider.UploadPhotoAsync(
                     request.FormFile,
                     PhotoFolder.Slider,
-                    Slider.PhotoPath
+                    slider.PhotoPath
                 );
-                Slider.ModifyBy = _userId;
-                Slider.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<SliderDto>(Slider);
+                _unitOfWork.Slider.Update(slider, _userId);
+                var result = _mapper.Map<SliderDto>(slider);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -258,20 +255,19 @@ namespace ECommerce.BLL.Features.Sliders.Services
             var modifyRows = 0;
             try
             {
-                var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
-                Slider.DeletedBy = _userId;
-                Slider.DeletedAt = DateTime.UtcNow;
-                Slider.IsDeleted = true;
-                var result = _mapper.Map<SliderDto>(Slider);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                var slider = await _unitOfWork.Slider.FindAsync(request.ID);
+                _unitOfWork.Slider.Delete(slider, _userId);
+                var result = _mapper.Map<SliderDto>(slider);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))

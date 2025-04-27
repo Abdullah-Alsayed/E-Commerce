@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Settings.Dtos;
 using ECommerce.BLL.Features.Settings.Requests;
-using ECommerce.BLL.Features.Statuses.Dtos;
-using ECommerce.BLL.Features.Statuses.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -96,15 +92,14 @@ namespace ECommerce.BLL.Features.Settings.Services
             var modifyRows = 0;
             try
             {
-                var Setting = await _unitOfWork.Setting.FirstAsync();
-                _mapper.Map(request, Setting);
-                Setting.ModifyBy = _userId;
-                Setting.ModifyAt = DateTime.UtcNow;
-                Setting.Logo = await _unitOfWork.Setting.UploadPhotoAsync(
+                var setting = await _unitOfWork.Setting.FirstAsync();
+                _mapper.Map(request, setting);
+                _unitOfWork.Setting.Update(setting, _userId);
+                setting.Logo = await _unitOfWork.Setting.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Main
                 );
-                var result = _mapper.Map<SettingDto>(Setting);
+                var result = _mapper.Map<SettingDto>(setting);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;

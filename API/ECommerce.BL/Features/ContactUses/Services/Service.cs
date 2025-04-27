@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.Features.Colors.Dtos;
-using ECommerce.BLL.Features.Colors.Requests;
 using ECommerce.BLL.Features.ContactUses.Dtos;
 using ECommerce.BLL.Features.ContactUses.Requests;
+using ECommerce.BLL.Features.ContactUss.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -69,18 +66,21 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             var modifyRows = 0;
             try
             {
-                var ContactUs = _mapper.Map<ContactUs>(request);
-                ContactUs = await _unitOfWork.ContactUs.AddAsync(ContactUs, _userId);
-                var result = _mapper.Map<ContactUsDto>(ContactUs);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                var contactUs = _mapper.Map<ContactUs>(request);
+                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                _userId = user?.Id ?? Guid.Empty;
+                contactUs = await _unitOfWork.ContactUs.AddAsync(contactUs, _userId);
+                var result = _mapper.Map<ContactUsDto>(contactUs);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -119,7 +119,9 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllContactUsRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<ContactUsDto>>>> GetAllAsync(
+            GetAllContactUsRequest request
+        )
         {
             try
             {
@@ -146,6 +148,93 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                 await _unitOfWork.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
+                    EntitiesEnum.ContactUs
+                );
+                return new BaseResponse<BaseGridResponse<List<ContactUsDto>>>
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> DeleteAsync(DeleteContactUsRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var contactUs = await _unitOfWork.ContactUs.FindAsync(request.ID);
+                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                _userId = user?.Id ?? Guid.Empty;
+                _unitOfWork.ContactUs.Delete(contactUs, _userId);
+                var result = _mapper.Map<ContactUsDto>(contactUs);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<ContactUsDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.ContactUs
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> FindAsync(FindContactUsRequest request)
+        {
+            try
+            {
+                var ContactUs = await _unitOfWork.ContactUs.FindAsync(request.ID);
+                var result = _mapper.Map<ContactUsDto>(ContactUs);
+                return new BaseResponse<ContactUsDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
                     EntitiesEnum.ContactUs
                 );
                 return new BaseResponse

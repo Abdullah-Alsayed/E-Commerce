@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Sizes.Dtos;
 using ECommerce.BLL.Features.Sizes.Requests;
 using ECommerce.BLL.IRepository;
@@ -185,11 +184,10 @@ namespace ECommerce.BLL.Features.Sizes.Services
             var modifyRows = 0;
             try
             {
-                var Size = await _unitOfWork.Size.FindAsync(request.ID);
-                _mapper.Map(request, Size);
-                Size.ModifyBy = _userId;
-                Size.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<SizeDto>(Size);
+                var size = await _unitOfWork.Size.FindAsync(request.ID);
+                _mapper.Map(request, size);
+                _unitOfWork.Size.Update(size, _userId);
+                var result = _mapper.Map<SizeDto>(size);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Update);
@@ -244,11 +242,9 @@ namespace ECommerce.BLL.Features.Sizes.Services
             var modifyRows = 0;
             try
             {
-                var Size = await _unitOfWork.Size.FindAsync(request.ID);
-                Size.DeletedBy = _userId;
-                Size.DeletedAt = DateTime.UtcNow;
-                Size.IsDeleted = true;
-                var result = _mapper.Map<SizeDto>(Size);
+                var size = await _unitOfWork.Size.FindAsync(request.ID);
+                _unitOfWork.Size.Delete(size, _userId);
+                var result = _mapper.Map<SizeDto>(size);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Delete);

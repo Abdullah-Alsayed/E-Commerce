@@ -200,8 +200,7 @@ public class AreaService : IAreaService
         {
             var area = await _unitOfWork.Area.FindAsync(request.ID);
             _mapper.Map(request, area);
-            area.ModifyBy = _userId;
-            area.ModifyAt = DateTime.UtcNow;
+            _unitOfWork.Area.Update(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -254,9 +253,7 @@ public class AreaService : IAreaService
         try
         {
             var area = await _unitOfWork.Area.FindAsync(request.ID);
-            area.ModifyBy = _userId;
-            area.ModifyAt = DateTime.UtcNow;
-            area.IsActive = !area.IsActive;
+            _unitOfWork.Area.ToggleActive(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -309,9 +306,7 @@ public class AreaService : IAreaService
         try
         {
             var area = await _unitOfWork.Area.FindAsync(request.ID);
-            area.DeletedBy = _userId;
-            area.DeletedAt = DateTime.UtcNow;
-            area.IsDeleted = true;
+            _unitOfWork.Area.Delete(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification

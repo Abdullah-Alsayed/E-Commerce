@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Feedbacks.Dtos;
 using ECommerce.BLL.Features.Feedbacks.Requests;
+using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -42,6 +41,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
+                cfg.CreateMap<User, UserDto>().ReverseMap();
                 cfg.CreateMap<Feedback, FeedbackDto>().ReverseMap();
                 cfg.CreateMap<Feedback, CreateFeedbackRequest>().ReverseMap();
                 cfg.CreateMap<Feedback, UpdateFeedbackRequest>().ReverseMap();
@@ -86,7 +86,9 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllFeedbackRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<FeedbackDto>>>> GetAllAsync(
+            GetAllFeedbackRequest request
+        )
         {
             try
             {
@@ -94,7 +96,10 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
                     ? nameof(Feedback.Comment)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Feedback.GetAllAsync(request);
+                var result = await _unitOfWork.Feedback.GetAllAsync(
+                    request,
+                    new List<string> { nameof(User) }
+                );
                 var response = _mapper.Map<List<FeedbackDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<FeedbackDto>>>
                 {
@@ -115,7 +120,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Feedback
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<FeedbackDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -129,9 +134,11 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var modifyRows = 0;
             try
             {
-                var Feedback = _mapper.Map<Feedback>(request);
-                Feedback = await _unitOfWork.Feedback.AddAsync(Feedback, _userId);
-                var result = _mapper.Map<FeedbackDto>(Feedback);
+                var feedback = _mapper.Map<Feedback>(request);
+                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                _userId = user?.Id ?? Guid.Empty;
+                feedback = await _unitOfWork.Feedback.AddAsync(feedback, _userId);
+                var result = _mapper.Map<FeedbackDto>(feedback);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Create);
@@ -186,11 +193,10 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var modifyRows = 0;
             try
             {
-                var Feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
-                _mapper.Map(request, Feedback);
-                Feedback.ModifyBy = _userId;
-                Feedback.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<FeedbackDto>(Feedback);
+                var feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
+                _mapper.Map(request, feedback);
+                _unitOfWork.Feedback.Update(feedback, _userId);
+                var result = _mapper.Map<FeedbackDto>(feedback);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
                 modifyRows++;
@@ -244,20 +250,19 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var modifyRows = 0;
             try
             {
-                var Feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
-                Feedback.DeletedBy = _userId;
-                Feedback.DeletedAt = DateTime.UtcNow;
-                Feedback.IsDeleted = true;
-                var result = _mapper.Map<FeedbackDto>(Feedback);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                var feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
+                _unitOfWork.Feedback.Delete(feedback, _userId);
+                var result = _mapper.Map<FeedbackDto>(feedback);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))

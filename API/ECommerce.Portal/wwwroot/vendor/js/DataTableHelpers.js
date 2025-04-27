@@ -451,7 +451,43 @@ function photoRender(data) {
            </div>
     `;
 }
+function userRender(data) {
+    if (data != null)
+    {
+        let img = "";
+        if (data.photo)
+            img = `${data.photo}"`;
+        else
+            img = `/Images/User/@Constants.DefaultPhotos.User`;
 
+        return `
+            <div class="d-flex justify-content-center align-items-center customer-name">
+                <div class="avatar-wrapper me-3">
+                    <div class="avatar avatar-sm">
+                        <img src="${img}" alt="Avatar" class="rounded-circle">
+                    </div>
+                </div>
+                <div class="d-flex flex-column">
+                    <a href="app-ecommerce-customer-details-overview.html" class="text-heading">
+                        <span class="fw-medium text-truncate">${data.firstName} ${data.lastName ?? ""}</span>
+                    </a>
+                    <small class="text-nowrap">${data.email}</small>
+                    <small class="text-nowrap">${data.phoneNumber}</small>
+                </div>
+            </div>
+    `
+    } else {
+        return "-";
+    }
+}
+
+function ratingRender(data) {
+    let stars = '';
+    for (let i = 0; i < data; i++) {
+        stars += '<i class="mdi mdi-star gold-bg"></i>';
+    }
+    return stars;
+}
 function dateOnlyRender(data) {
     return data;
 }

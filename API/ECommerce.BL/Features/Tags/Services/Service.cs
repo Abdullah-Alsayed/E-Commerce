@@ -176,11 +176,10 @@ namespace ECommerce.BLL.Features.Tags.Services
             var modifyRows = 0;
             try
             {
-                var Tag = await _unitOfWork.Tag.FindAsync(request.ID);
-                _mapper.Map(request, Tag);
-                Tag.ModifyBy = _userId;
-                Tag.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<TagDto>(Tag);
+                var tag = await _unitOfWork.Tag.FindAsync(request.ID);
+                _mapper.Map(request, tag);
+                _unitOfWork.Tag.Update(tag, _userId);
+                var result = _mapper.Map<TagDto>(tag);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Update);
@@ -231,11 +230,9 @@ namespace ECommerce.BLL.Features.Tags.Services
             var modifyRows = 0;
             try
             {
-                var Tag = await _unitOfWork.Tag.FindAsync(request.ID);
-                Tag.DeletedBy = _userId;
-                Tag.DeletedAt = DateTime.UtcNow;
-                Tag.IsDeleted = true;
-                var result = _mapper.Map<TagDto>(Tag);
+                var tag = await _unitOfWork.Tag.FindAsync(request.ID);
+                _unitOfWork.Tag.Delete(tag, _userId);
+                var result = _mapper.Map<TagDto>(tag);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Delete);

@@ -192,8 +192,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                     Constants.PhotoFolder.Brands,
                     brand.PhotoPath
                 );
-                brand.ModifyBy = _userId;
-                brand.ModifyAt = DateTime.UtcNow;
+                _unitOfWork.Brand.Update(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification
@@ -246,9 +245,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             try
             {
                 var brand = await _unitOfWork.Brand.FindAsync(request.ID);
-                brand.DeletedBy = _userId;
-                brand.DeletedAt = DateTime.UtcNow;
-                brand.IsDeleted = true;
+                _unitOfWork.Brand.Delete(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification
@@ -301,9 +298,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             try
             {
                 var brand = await _unitOfWork.Brand.FindAsync(request.ID);
-                brand.ModifyBy = _userId;
-                brand.ModifyAt = DateTime.UtcNow;
-                brand.IsActive = !brand.IsActive;
+                _unitOfWork.Brand.ToggleActive(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification

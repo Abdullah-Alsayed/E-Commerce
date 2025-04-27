@@ -42,9 +42,9 @@ namespace ECommerce.BLL.Features.Feedbacks.Validators
 
             RuleFor(req => req.Rating)
                 .GreaterThanOrEqualTo(1)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 1].ToString())
+                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 1].ToString())
                 .LessThanOrEqualTo(5)
-                .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
+                .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 5].ToString())
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Rating]} {_localizer[Constants.MessageKeys.IsRequired]}"

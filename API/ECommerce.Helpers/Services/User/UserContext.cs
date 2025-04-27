@@ -18,29 +18,35 @@ public class UserContext : IUserContext
     {
         get
         {
-            if (
-                _httpContextAccessor is not { HttpContext: null }
-                && _httpContextAccessor.HttpContext is not { User: null }
-                && _httpContextAccessor.HttpContext.User is not { Identity: null }
-                && _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated
-            )
+            try
             {
-                var userId = _httpContextAccessor
-                    .HttpContext.User.Claims.FirstOrDefault(x =>
-                        x.Type == ClaimTypes.NameIdentifier
-                    )
-                    ?.Value;
-
-                if (string.IsNullOrEmpty(userId))
+                if (
+                    _httpContextAccessor is not { HttpContext: null }
+                    && _httpContextAccessor.HttpContext is not { User: null }
+                    && _httpContextAccessor.HttpContext.User is not { Identity: null }
+                    && _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated
+                )
                 {
-                    userId = _httpContextAccessor.HttpContext.User.Identity.Name;
+                    var userId = _httpContextAccessor
+                        .HttpContext.User.Claims.FirstOrDefault(x =>
+                            x.Type == ClaimTypes.NameIdentifier
+                        )
+                        ?.Value;
+
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        userId = _httpContextAccessor.HttpContext.User.Identity.Name;
+                    }
+                    return !string.IsNullOrEmpty(userId)
+                        ? new(true, Guid.Parse(userId))
+                        : new(false, Guid.Empty);
                 }
-                return !string.IsNullOrEmpty(userId)
-                    ? new(true, Guid.Parse(userId))
-                    : new(false, Guid.Empty);
+                else
+                    return (false, Guid.Empty);
             }
-            else
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return (false, Guid.Empty);
             }
         }

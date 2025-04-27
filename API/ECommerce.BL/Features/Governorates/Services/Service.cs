@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Governorates.Dtos;
 using ECommerce.BLL.Features.Governorates.Requests;
 using ECommerce.BLL.IRepository;
@@ -12,7 +10,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -201,8 +198,7 @@ public class GovernorateService : IGovernorateService
         {
             var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
             _mapper.Map(request, governorate);
-            governorate.ModifyBy = _userId;
-            governorate.ModifyAt = DateTime.UtcNow;
+            _unitOfWork.Governorate.Update(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -259,9 +255,7 @@ public class GovernorateService : IGovernorateService
         try
         {
             var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
-            governorate.ModifyBy = _userId;
-            governorate.ModifyAt = DateTime.UtcNow;
-            governorate.IsActive = !governorate.IsActive;
+            _unitOfWork.Governorate.Update(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -318,9 +312,7 @@ public class GovernorateService : IGovernorateService
         try
         {
             var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
-            governorate.DeletedBy = _userId;
-            governorate.DeletedAt = DateTime.UtcNow;
-            governorate.IsDeleted = true;
+            _unitOfWork.Governorate.Delete(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification

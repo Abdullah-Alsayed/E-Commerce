@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Statuses.Dtos;
 using ECommerce.BLL.Features.Statuses.Requests;
 using ECommerce.BLL.IRepository;
@@ -12,7 +11,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -200,8 +198,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
                 var status = await _unitOfWork.Status.FindAsync(request.ID);
                 modifyRows = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
                 _mapper.Map(request, status);
-                status.ModifyBy = _userId;
-                status.ModifyAt = DateTime.UtcNow;
+                _unitOfWork.Status.Update(status, _userId);
                 var result = _mapper.Map<StatusDto>(status);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
@@ -257,19 +254,18 @@ namespace ECommerce.BLL.Features.Statuses.Services
             try
             {
                 var Status = await _unitOfWork.Status.FindAsync(request.ID);
-                Status.DeletedBy = _userId;
-                Status.DeletedAt = DateTime.UtcNow;
-                Status.IsDeleted = true;
+                _unitOfWork.Status.Delete(Status, _userId);
                 var result = _mapper.Map<StatusDto>(Status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))

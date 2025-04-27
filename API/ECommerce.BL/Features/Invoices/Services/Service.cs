@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Invoices.Dtos;
-using ECommerce.BLL.Features.Invoices.Dtos;
 using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.IRepository;
@@ -13,7 +12,6 @@ using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -175,21 +173,20 @@ public class InvoiceService : IInvoiceService
         var modifyRows = 0;
         try
         {
-            var Invoice = await _unitOfWork.Invoice.FindAsync(request.ID);
-            Invoice.DeletedBy = _userId;
-            Invoice.DeletedAt = DateTime.UtcNow;
-            Invoice.IsDeleted = true;
-            var result = _mapper.Map<InvoiceDto>(Invoice);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var invoice = await _unitOfWork.Invoice.FindAsync(request.ID);
+            _unitOfWork.Invoice.Delete(invoice, _userId);
+            var result = _mapper.Map<InvoiceDto>(invoice);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
-            #endregion
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -231,9 +228,8 @@ public class InvoiceService : IInvoiceService
         try
         {
             var Invoice = await _unitOfWork.Invoice.GetInvoiceProductsAsync(request);
-            Invoice.ModifyBy = _userId;
-            Invoice.ModifyAt = DateTime.UtcNow;
             Invoice.IsReturn = true;
+            _unitOfWork.Invoice.Update(Invoice, _userId);
             modifyRows += await ReturnProductToStock(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             #region Send Notification

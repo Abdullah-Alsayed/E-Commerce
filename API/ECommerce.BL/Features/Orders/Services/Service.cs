@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Areas.Dtos;
 using ECommerce.BLL.Features.Governorates.Dtos;
-using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Statuses.Dtos;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.IRepository;
-using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -194,20 +190,19 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var Order = await _unitOfWork.Order.FindAsync(request.ID);
-                Order.DeletedBy = _userId;
-                Order.DeletedAt = DateTime.UtcNow;
-                Order.IsDeleted = true;
-                var result = _mapper.Map<OrderDto>(Order);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                var order = await _unitOfWork.Order.FindAsync(request.ID);
+                _unitOfWork.Order.Delete(order, _userId);
+                var result = _mapper.Map<OrderDto>(order);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -252,11 +247,10 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var Order = await _unitOfWork.Order.FindAsync(request.ID);
-                Order.ModifyBy = _userId;
-                Order.ModifyAt = DateTime.UtcNow;
-                Order.IsAccept = true;
-                var result = _mapper.Map<OrderDto>(Order);
+                var order = await _unitOfWork.Order.FindAsync(request.ID);
+                _unitOfWork.Order.Update(order, _userId);
+                order.IsAccept = true;
+                var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Accept);
                 modifyRows++;
@@ -310,11 +304,10 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var Order = await _unitOfWork.Order.FindAsync(request.ID);
-                Order.ModifyBy = _userId;
-                Order.ModifyAt = DateTime.UtcNow;
-                Order.StatusID = request.StatusID;
-                var result = _mapper.Map<OrderDto>(Order);
+                var order = await _unitOfWork.Order.FindAsync(request.ID);
+                _unitOfWork.Order.Update(order, _userId);
+                order.StatusID = request.StatusID;
+                var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.UpdateStatus);
                 modifyRows++;
