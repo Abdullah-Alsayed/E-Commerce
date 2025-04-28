@@ -58,7 +58,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             #endregion
         }
 
-        public async Task<BaseResponse> GetAsync()
+        public async Task<BaseResponse<SettingDto>> GetAsync()
         {
             try
             {
@@ -78,7 +78,7 @@ namespace ECommerce.BLL.Features.Settings.Services
                     OperationTypeEnum.View,
                     EntitiesEnum.Setting
                 );
-                return new BaseResponse
+                return new BaseResponse<SettingDto>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()

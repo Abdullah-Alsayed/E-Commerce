@@ -71,7 +71,7 @@ namespace ECommerce.BL.Repository
             Category = new BaseRepository<Category>(_context);
             Expense = new BaseRepository<Expense>(_context);
             Setting = new BaseRepository<Setting>(_context);
-            Status = new BaseRepository<Status>(_context);
+            Status = new StatusRepository(_context);
             Review = new BaseRepository<ProductReview>(_context);
             Cart = new BaseRepository<ShoppingCart>(_context);
             Color = new BaseRepository<Color>(_context);
@@ -103,7 +103,7 @@ namespace ECommerce.BL.Repository
         public IBaseRepository<Setting> Setting { get; private set; }
         public IBaseRepository<ShoppingCart> Cart { get; private set; }
         public IBaseRepository<ProductReview> Review { get; private set; }
-        public IBaseRepository<Status> Status { get; private set; }
+        public IStatusRepository Status { get; private set; }
         public IBaseRepository<Color> Color { get; private set; }
         public IBaseRepository<Brand> Brand { get; private set; }
         public IProductRepository Product { get; private set; }

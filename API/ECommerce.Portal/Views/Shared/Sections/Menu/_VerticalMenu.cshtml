@@ -399,7 +399,7 @@
         @if (AuthHelper.CanAccess(permissions, Permissions.Setting.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(Setting)}"},currentPage))'>
-                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                <a asp-controller="Setting" asp-action="View" class="menu-link">
                     <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
                     <div data-i18n="@_Localizer[Constants.EntityKeys.Setting]">@_Localizer[Constants.EntityKeys.Setting]</div>
                 </a>

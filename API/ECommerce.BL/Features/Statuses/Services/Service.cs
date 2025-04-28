@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Statuses.Dtos;
@@ -85,7 +84,9 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllStatusRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<StatusDto>>>> GetAllAsync(
+            GetAllStatusRequest request
+        )
         {
             try
             {
@@ -116,7 +117,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Status
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<StatusDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -130,25 +131,20 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var allStatus = await _unitOfWork.Status.GetAllAsync(
-                    stat => stat.IsActive && !stat.IsDeleted,
-                    null
-                );
                 var status = _mapper.Map<Status>(request);
-                status.Order = GetCurentOrder(allStatus.OrderBy(x => x.Order).ToList());
-                await _unitOfWork.Status.AddAsync(status, _userId);
+                modifyRows += await _unitOfWork.Status.AddAsync(status, _userId);
                 var result = _mapper.Map<StatusDto>(status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
-                modifyRows++;
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -191,26 +187,21 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var allStatus = await _unitOfWork.Status.GetAllAsync(
-                    stat => stat.IsActive && !stat.IsDeleted,
-                    null
-                );
                 var status = await _unitOfWork.Status.FindAsync(request.ID);
-                modifyRows = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
+                modifyRows = await _unitOfWork.Status.UpdateAsync(status, request.Order, _userId);
                 _mapper.Map(request, status);
-                _unitOfWork.Status.Update(status, _userId);
                 var result = _mapper.Map<StatusDto>(status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
-                modifyRows++;
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -254,7 +245,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             try
             {
                 var Status = await _unitOfWork.Status.FindAsync(request.ID);
-                _unitOfWork.Status.Delete(Status, _userId);
+                modifyRows = await _unitOfWork.Status.DeleteAsync(Status, _userId);
                 var result = _mapper.Map<StatusDto>(Status);
 
                 //#region Send Notification
@@ -267,7 +258,6 @@ namespace ECommerce.BLL.Features.Statuses.Services
                 //modifyRows++;
                 //#endregion
 
-                modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -304,6 +294,59 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
         }
 
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveStatusRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Status = await _unitOfWork.Status.FindAsync(request.ID);
+                _unitOfWork.Status.ToggleActive(Status, _userId);
+                var result = _mapper.Map<StatusDto>(Status);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<StatusDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Status
+                );
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+
         public async Task<BaseResponse> GetSearchEntityAsync()
         {
             try
@@ -332,40 +375,6 @@ namespace ECommerce.BLL.Features.Statuses.Services
         }
 
         #region helpers
-        private int SwapOrder(
-            int neworder,
-            int oldOrder,
-            int modifyRows,
-            IEnumerable<Status> allStatus
-        )
-        {
-            if (oldOrder != neworder)
-            {
-                var oldStatus = allStatus.FirstOrDefault(stat => stat.Order == neworder);
-                if (oldStatus != null)
-                {
-                    oldStatus.Order = oldOrder;
-                    modifyRows++;
-                }
-            }
-
-            return modifyRows;
-        }
-
-        private int GetCurentOrder(List<Status> allStatus)
-        {
-            var order = allStatus.Count;
-            for (int i = 0; i < allStatus.Count(); i++)
-            {
-                if (allStatus[i].Order != (i + 1))
-                {
-                    order = (i + 1);
-                    break;
-                }
-            }
-            return order;
-        }
-
         private async Task SendNotification(OperationTypeEnum action) =>
             _ = await _unitOfWork.Notification.AddNotificationAsync(
                 new Notification

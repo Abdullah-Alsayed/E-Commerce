@@ -93,7 +93,16 @@ namespace ECommerce.Core
                     {
                         NameAR = "مكتمل",
                         NameEN = "Complete",
-                        Order = 10,
+                        Order = 1,
+                        CreateBy = systemUser,
+                    }
+                );
+                await context.Statuses.AddAsync(
+                    new Status
+                    {
+                        NameAR = "ملغي",
+                        NameEN = "Cancel",
+                        Order = 2,
                         CreateBy = systemUser,
                     }
                 );

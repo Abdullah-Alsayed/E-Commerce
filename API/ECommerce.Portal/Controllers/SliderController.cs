@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using ECommerce.BLL.Features.Sliders.Requests;
+﻿using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Response;
 using Microsoft.AspNetCore.Authorization;

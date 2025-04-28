@@ -61,6 +61,7 @@ namespace ECommerce.Core
             public const string LoginFiled = "LoginFiled";
             public const string HasUser = "HasUser";
             public const string InPast = "InPast";
+            public const string HasOrders = "HasOrders";
         }
 
         public static class Message
