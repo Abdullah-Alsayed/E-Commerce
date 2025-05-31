@@ -144,6 +144,11 @@ namespace ECommerce.Core
             public const string ContactUs = "ContactUs";
             public const string Favorite = "Favorite";
             public const string History = "History";
+            public const string Facebook = "Facebook";
+            public const string BookingMessage = "BookingMessage";
+            public const string Youtube = "Youtube";
+            public const string Instagram = "Instagram";
+            public const string TikTok = "TikTok";
         }
 
         public static class LabelKeys
@@ -160,6 +165,12 @@ namespace ECommerce.Core
             public const string Reviews = "Reviews";
             public const string Calender = "Calender";
             public const string Kanban = "Kanban";
+            public const string Setting = "Setting";
+            public const string Information = "Information";
+            public const string SettingsConfiguration = "SettingsConfiguration";
+            public const string BasicInformation = "BasicInformation";
+            public const string ContactInformation = "ContactInformation";
+            public const string SocialMediaLinks = "SocialMediaLinks";
         }
 
         public static class Gender

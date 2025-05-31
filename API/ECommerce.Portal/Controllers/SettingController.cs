@@ -32,7 +32,7 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = Permissions.Setting.Update)]
-        public async Task<BaseResponse> UpdateSetting([FromForm] UpdateSettingRequest request)
+        public async Task<BaseResponse> Update([FromForm] UpdateSettingRequest request)
         {
             try
             {

@@ -107,7 +107,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                     : request.SearchBy;
 
                 var result = await _unitOfWork.Color.GetAllAsync(request);
-                var response = _mapper.Map<List<ColorDto>>(result);
+                var response = _mapper.Map<List<ColorDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ColorDto>>>
                 {
                     IsSuccess = true,

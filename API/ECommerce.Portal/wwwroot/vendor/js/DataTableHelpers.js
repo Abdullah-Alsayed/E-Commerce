@@ -163,14 +163,19 @@ function submitFormData(formSelector, controler, action, table, e) {
     contentType: false, // Prevent jQuery from setting the content type
     success: function (response) {
       if (response.isSuccess) {
-        toastSuccess(response.message);
-        $(formSelector)[0].reset(); // Reset the form
-        $(`${formSelector}Modal`).modal('hide'); // Hide the modal after success
-        resetImagePreview(formSelector) // Reset the Photo
-        $(`#${table}`).DataTable().ajax.reload(); // Reload DataTable
-      } else {
-        toastError(response.message,5000);
+          toastSuccess(response.message);
+
+          if (action =="Create") {
+            $(formSelector)[0].reset(); // Reset the form
+            $(`${formSelector}Modal`).modal('hide'); // Hide the modal after success
+            resetImagePreview(formSelector) // Reset the Photo
+          }
+          if ($.fn.DataTable.isDataTable(`#${table}`)) 
+            $(`#${table}`).DataTable().ajax.reload();
       }
+      else 
+       toastError(response.message,5000);
+      
     },
     error: function (xhr, status, error) {
       console.error('Error:', error);

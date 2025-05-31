@@ -94,21 +94,23 @@ namespace ECommerce.BLL.Features.Settings.Services
             {
                 var setting = await _unitOfWork.Setting.FirstAsync();
                 _mapper.Map(request, setting);
-                _unitOfWork.Setting.Update(setting, _userId);
                 setting.Logo = await _unitOfWork.Setting.UploadPhotoAsync(
                     request.FormFile,
-                    Constants.PhotoFolder.Main
+                    Constants.PhotoFolder.Main,
+                    setting.Logo
                 );
+                _unitOfWork.Setting.Update(setting, _userId);
                 var result = _mapper.Map<SettingDto>(setting);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))

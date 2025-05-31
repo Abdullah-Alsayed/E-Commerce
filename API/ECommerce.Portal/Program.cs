@@ -82,6 +82,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 builder.Services.AddScoped<ILocalizationManger, LocalizationManger>();
 
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

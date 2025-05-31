@@ -175,8 +175,10 @@ namespace ECommerce.BLL.Repository
 
             if (!string.IsNullOrEmpty(request.SortBy))
                 query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+
             if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
                 query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+
             return query;
         }
 
@@ -300,21 +302,28 @@ namespace ECommerce.BLL.Repository
                 }
 
                 // Delete old photo if provided
-                if (!string.IsNullOrEmpty(photoName) && file != null)
+                if (
+                    !string.IsNullOrEmpty(photoName)
+                    && photoName != Constants.DefaultPhotos.Default
+                    && file != null
+                )
                 {
                     var oldFilePath = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot",
                         photoName.TrimStart('/')
                     );
+
                     if (System.IO.File.Exists(oldFilePath))
-                    {
                         System.IO.File.Delete(oldFilePath);
-                    }
                 }
 
                 // If no new file is uploaded but old photo exists, return the old photo
-                if (!string.IsNullOrEmpty(photoName) && file == null)
+                if (
+                    !string.IsNullOrEmpty(photoName)
+                    && photoName != Constants.DefaultPhotos.Default
+                    && file == null
+                )
                     return photoName;
 
                 return fullPath;
