@@ -1,8 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using ECommerce.BLL.Features.Invoices.Dtos;
 using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.Features.Invoices.Services;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.Core.PermissionsClaims;
+using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,21 +18,56 @@ namespace ECommerce.API.Controllers
 
         public InvoiceController(IInvoiceService service) => _service = service;
 
-        [HttpGet]
-        public async Task<BaseResponse> FindInvoice([FromQuery] FindInvoiceRequest request)
+        [Authorize(Policy = Permissions.Invoice.View)]
+        public IActionResult List() => View();
+
+        #region CRUD
+        [HttpPost]
+        [Authorize(Policy = Permissions.Invoice.View)]
+        public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
-            try
+            var search = request?.Search?.Value;
+            var dir = request?.Order?.FirstOrDefault()?.Dir ?? Constants.Descending;
+            bool isDescending = (dir == Constants.Descending);
+            var columns = new List<string>
             {
-                return await _service.FindAsync(request);
-            }
-            catch (Exception ex)
+                nameof(InvoiceDto.OrderID),
+                nameof(InvoiceDto.Order.Total),
+                nameof(InvoiceDto.Order.Count),
+                nameof(InvoiceDto.Order.Discount),
+                nameof(InvoiceDto.Order.Tax),
+                nameof(InvoiceDto.Order.IsOffLine),
+                nameof(InvoiceDto.IsReturn),
+                nameof(InvoiceDto.CreateAt),
+            };
+            string sortColumn = columns[
+                request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1
+            ];
+
+            var response = await _service.GetAllAsync(
+                new GetAllInvoiceRequest
+                {
+                    IsDescending = isDescending,
+                    SortBy = sortColumn,
+                    PageSize = request?.Length ?? Constants.PageSize,
+                    PageIndex = request?.PageIndex ?? Constants.PageIndex,
+                    SearchFor = search,
+                }
+            );
+
+            var jsonResponse = new
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+                draw = request?.Draw ?? 0,
+                recordsTotal = response?.Total ?? 0,
+                recordsFiltered = response?.Total ?? 0,
+                data = response?.Result.Items ?? new List<InvoiceDto>()
+            };
+
+            return Json(jsonResponse);
         }
 
         [HttpGet]
-        public async Task<BaseResponse> GetAllInvoice([FromQuery] GetAllInvoiceRequest request)
+        public async Task<BaseResponse> GetAll([FromQuery] GetAllInvoiceRequest request)
         {
             try
             {
@@ -41,12 +79,11 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<BaseResponse> GetSearchEntity()
+        public async Task<BaseResponse> Get(Guid id)
         {
             try
             {
-                return await _service.GetSearchEntityAsync();
+                return await _service.FindAsync(new FindInvoiceRequest { ID = id });
             }
             catch (Exception ex)
             {
@@ -54,43 +91,6 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<BaseResponse> CreateInvoice([FromForm] CreateInvoiceRequest request)
-        {
-            try
-            {
-                return await _service.CreateAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpPut]
-        public async Task<BaseResponse> ReturnInvoice([FromForm] ReturnInvoiceRequest request)
-        {
-            try
-            {
-                return await _service.ReturnAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpDelete]
-        public async Task<BaseResponse> DeleteInvoice(DeleteInvoiceRequest request)
-        {
-            try
-            {
-                return await _service.DeleteAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
+        #endregion
     }
 }

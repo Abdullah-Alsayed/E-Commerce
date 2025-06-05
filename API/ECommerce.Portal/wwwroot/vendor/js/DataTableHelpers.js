@@ -501,6 +501,7 @@ function photoRender(data) {
            </div>
     `;
 }
+
 function userRender(data) {
     if (data != null)
     {
@@ -521,8 +522,8 @@ function userRender(data) {
                     <a href="app-ecommerce-customer-details-overview.html" class="text-heading">
                         <span class="fw-medium text-truncate">${data.firstName} ${data.lastName ?? ""}</span>
                     </a>
-                    <small class="text-nowrap">${data.email}</small>
-                    <small class="text-nowrap">${data.phoneNumber}</small>
+                    <small class="text-nowrap">${data.email?? ""}</small>
+                    <small class="text-nowrap">${data.phoneNumber?? ""}</small>
                 </div>
             </div>
     `

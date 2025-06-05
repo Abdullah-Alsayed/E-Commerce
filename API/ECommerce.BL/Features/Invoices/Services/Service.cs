@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Invoices.Dtos;
 using ECommerce.BLL.Features.Invoices.Requests;
+using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
@@ -43,6 +44,7 @@ public class InvoiceService : IInvoiceService
         {
             cfg.AllowNullCollections = true;
             cfg.CreateMap<Invoice, InvoiceDto>().ReverseMap();
+            cfg.CreateMap<Order, OrderDto>().ReverseMap();
             cfg.CreateMap<Invoice, CreateInvoiceRequest>().ReverseMap();
         });
         _mapper = new Mapper(config);
@@ -81,7 +83,9 @@ public class InvoiceService : IInvoiceService
         }
     }
 
-    public async Task<BaseResponse> GetAllAsync(GetAllInvoiceRequest request)
+    public async Task<BaseResponse<BaseGridResponse<List<InvoiceDto>>>> GetAllAsync(
+        GetAllInvoiceRequest request
+    )
     {
         try
         {
@@ -89,7 +93,10 @@ public class InvoiceService : IInvoiceService
                 ? nameof(Invoice.Id)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Invoice.GetAllAsync(request);
+            var result = await _unitOfWork.Invoice.GetAllAsync(
+                request,
+                new List<string> { nameof(Order) }
+            );
             var response = _mapper.Map<List<InvoiceDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<InvoiceDto>>>
             {
@@ -106,7 +113,7 @@ public class InvoiceService : IInvoiceService
         catch (Exception ex)
         {
             await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Invoice);
-            return new BaseResponse
+            return new BaseResponse<BaseGridResponse<List<InvoiceDto>>>
             {
                 IsSuccess = false,
                 Message = _localizer[MessageKeys.Fail].ToString()

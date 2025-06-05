@@ -1,5 +1,4 @@
-﻿
-using System.IO;
+﻿using System.IO;
 
 namespace ECommerce.Core
 {
@@ -151,6 +150,11 @@ namespace ECommerce.Core
             public const string TikTok = "TikTok";
             public const string Action = "Action";
             public const string Entity = "Entity";
+            public const string Total = "Total";
+            public const string Count = "Count";
+            public const string Discount = "Discount";
+            public const string IsOffLine = "IsOffLine";
+            public const string IsReturn = "IsReturn";
         }
 
         public static class LabelKeys
@@ -173,6 +177,18 @@ namespace ECommerce.Core
             public const string BasicInformation = "BasicInformation";
             public const string ContactInformation = "ContactInformation";
             public const string SocialMediaLinks = "SocialMediaLinks";
+            public const string ProductAndOrders = "ProductAndOrders";
+            public const string CatalogManagement = "CatalogManagement";
+            public const string OrderProcessing = "OrderProcessing";
+            public const string InventoryAndVendors = "InventoryAndVendors";
+            public const string FinancialOperations = "FinancialOperations";
+            public const string CustomerFeedback = "CustomerFeedback";
+            public const string SystemSettings = "SystemSettings";
+            public const string CompanyInfo = "CompanyInfo";
+            public const string BannerManagement = "BannerManagement";
+            public const string CustomerSupport = "CustomerSupport";
+            public const string ActivityLog = "ActivityLog";
+            public const string MasterDataManagement = "MasterDataManagement";
         }
 
         public static class Gender

@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Stocks.Dtos;
 using ECommerce.BLL.Features.Stocks.Requests;
+using ECommerce.BLL.Features.Vendors.Dtos;
 using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
@@ -43,6 +45,8 @@ namespace ECommerce.BLL.Features.Stocks.Services
             {
                 cfg.AllowNullCollections = true;
                 cfg.CreateMap<Stock, StockDto>().ReverseMap();
+                cfg.CreateMap<Product, ProductDto>().ReverseMap();
+                cfg.CreateMap<Vendor, VendorDto>().ReverseMap();
                 cfg.CreateMap<Stock, CreateStockRequest>().ReverseMap();
                 cfg.CreateMap<Stock, ReturnStockRequest>().ReverseMap();
             });
@@ -85,7 +89,9 @@ namespace ECommerce.BLL.Features.Stocks.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllStockRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<StockDto>>>> GetAllAsync(
+            GetAllStockRequest request
+        )
         {
             try
             {
@@ -114,7 +120,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Stock
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<StockDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()

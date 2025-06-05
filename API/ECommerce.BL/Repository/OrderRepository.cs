@@ -79,7 +79,7 @@ namespace ECommerce.BLL.Repository
                 order.CreateAt = DateTime.UtcNow;
                 order.Count = products.Count;
                 order.Tax = governorate?.Tax ?? 0;
-                order.SubTotal = (productPrice + order.Tax) - (voucherValue + order.Discount);
+                order.Total = (productPrice + order.Tax) - (voucherValue + order.Discount);
                 await _context.Orders.AddAsync(order);
                 modifyRows++;
                 if (products.Any())

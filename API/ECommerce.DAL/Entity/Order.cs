@@ -36,7 +36,7 @@ namespace ECommerce.DAL.Entity
         public double Discount { get; set; }
 
         [Required, Range(1, double.MaxValue)]
-        public double SubTotal { get; set; }
+        public double Total { get; set; }
 
         public bool IsAccept { get; set; } = false;
 
