@@ -105,6 +105,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
             .WithMessage(x =>
                 $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
+            .When(x => x.FormFile != null)
             .Must(path =>
             {
                 return FileHelper.ExtensionsCheck(path);
@@ -114,6 +115,7 @@ public class UpdateSliderValidator : AbstractValidator<UpdateSliderRequest>
             {
                 return FileHelper.SizeCheck(path);
             })
+            .When(x => x.FormFile != null)
             .WithMessage(x =>
                 _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
             );

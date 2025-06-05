@@ -259,5 +259,10 @@ namespace ECommerce.Core.PermissionsClaims
             public const string History = "Permissions.History.View";
             public const string Booking = "Permissions.Booking.View";
         }
+
+        public static class Histories
+        {
+            public const string View = "Permissions.History.View";
+        }
     }
 }

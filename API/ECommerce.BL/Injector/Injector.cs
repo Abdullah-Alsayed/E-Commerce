@@ -10,6 +10,7 @@ using ECommerce.BLL.Features.Errors.Services;
 using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Histories.Services;
 using ECommerce.BLL.Features.Invoices.Services;
 using ECommerce.BLL.Features.Orders.Services;
 using ECommerce.BLL.Features.Products.Services;
@@ -82,6 +83,7 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IContactUsService, ContactUsService>();

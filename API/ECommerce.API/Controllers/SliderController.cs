@@ -31,7 +31,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet]
-        public async Task<BaseResponse> GetAllSlider([FromQuery] GetAllSliderRequest request)
+        public async Task<BaseResponse> GetAllSlider(GetAllSliderRequest request)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSlider( DeleteSliderRequest request)
+        public async Task<BaseResponse> DeleteSlider(DeleteSliderRequest request)
         {
             try
             {

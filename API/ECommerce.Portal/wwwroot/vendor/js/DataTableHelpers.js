@@ -248,6 +248,11 @@ function fetchData(controller, action, id) {
             else if (input.is('img')) {
               HandelImgeCase(response, pascalCaseKey, key);
             }
+            else if (input.attr('type') === 'date' ||
+                     input.attr('type') === 'datetime-local')
+            {
+              HandelDateCase(response, pascalCaseKey, key);
+            }
             else {
               input.val(response.result[key]);
             }
@@ -379,6 +384,30 @@ function HandelImgeCase(response, pascalCaseKey, key) {
   }
 }
 
+function HandelDateCase(response, pascalKey, key) {
+    const input = $('#UpdateForm').find(`[name="${pascalKey}"]`);
+    const inputType = input.attr('type');
+    const rawValue = response.result[key];
+
+    if (!rawValue) return;
+
+    // Ensure date is a valid Date object
+    const date = new Date(convertUTCToLocal(rawValue));
+    if (isNaN(date.getTime())) return; // Invalid date, skip
+
+    let formatted = '';
+
+    if (inputType === 'date') {
+        formatted = date.toISOString().split('T')[0];
+    } else if (inputType === 'datetime-local') {
+        formatted = date.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    }
+
+    input.val(formatted);
+}
+
+
+
 // Private method to validate image file
 function validateImageFile(file) {
   // Validate the file type (e.g., only allow images)
@@ -424,6 +453,22 @@ function convertUTCToLocal(utcDate) {
     let localTime = date.toLocaleString(undefined, { timeZone: userTimeZone });
 
     return localTime;
+}
+function convertUTCToLocalDateOnly(utcDate) {
+    if (!utcDate) return '-'; // Handle null/empty values
+
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Ensure UTC format
+    const date = new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z');
+
+    // Return date in M/D/YYYY format
+    return date.toLocaleDateString('en-US', {
+        timeZone: userTimeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    });
 }
 
 function isActiveRender(data, row) {
@@ -492,7 +537,4 @@ function ratingRender(data) {
         stars += '<i class="mdi mdi-star gold-bg"></i>';
     }
     return stars;
-}
-function dateOnlyRender(data) {
-    return data;
 }

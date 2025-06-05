@@ -377,7 +377,7 @@
 
         @if (AuthHelper.CanAccess(permissions, Permissions.Setting.View))
         {
-            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Setting)}"},currentPage))'>
+            <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Setting)}",$"/{nameof(Slider)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons mdi mdi-cog-outline'></i>
                     <div data-i18n="@_Localizer[Constants.LabelKeys.Setting]">@_Localizer[Constants.LabelKeys.Setting]</div>
@@ -391,7 +391,7 @@
                     </li>
 
                     <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(Slider)}"},currentPage))'>
-                        <a asp-controller="Slider" asp-action="View" class="menu-link">
+                        <a asp-controller="Slider" asp-action="List" class="menu-link">
                             <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
                             <div data-i18n="@_Localizer[Constants.EntityKeys.Slider]">@_Localizer[Constants.EntityKeys.Slider]</div>
                         </a>
@@ -413,7 +413,7 @@
         @if (AuthHelper.CanAccess(permissions, Permissions.Views.History))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(History)}"},currentPage))'>
-                <a asp-controller="Dashboard" asp-action="Statistics" class="menu-link">
+                <a asp-controller="History" asp-action="List" class="menu-link">
                     <i class="menu-icon tf-icons mdi mdi-chart-pie"></i>
                     <div data-i18n="@_Localizer[Constants.EntityKeys.History]">@_Localizer[Constants.EntityKeys.History]</div>
                 </a>

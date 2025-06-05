@@ -88,27 +88,23 @@ namespace ECommerce.BLL.Features.Sliders.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllSliderRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<SliderDto>>>> GetAllAsync(
+            GetAllSliderRequest request
+        )
         {
             try
             {
-                request.SearchBy = string.IsNullOrEmpty(request.SearchBy)
-                    ? _lang == Languages.Ar
-                        ? nameof(Slider.TitleAR)
-                        : nameof(Slider.TitleEN)
-                    : request.SearchBy;
-
                 var result = await _unitOfWork.Slider.GetAllAsync(request);
                 var response = _mapper.Map<List<SliderDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SliderDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
-                    Total = response != null ? result.count : 0,
+                    Total = result.count,
                     Result = new BaseGridResponse<List<SliderDto>>
                     {
                         Items = response,
-                        Total = response != null ? result.count : 0,
+                        Total = result.count,
                     }
                 };
             }
@@ -119,7 +115,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Slider
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<SliderDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -140,15 +136,16 @@ namespace ECommerce.BLL.Features.Sliders.Services
                     PhotoFolder.Slider
                 );
                 var result = _mapper.Map<SliderDto>(Slider);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -202,15 +199,16 @@ namespace ECommerce.BLL.Features.Sliders.Services
                 );
                 _unitOfWork.Slider.Update(slider, _userId);
                 var result = _mapper.Map<SliderDto>(slider);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -303,6 +301,59 @@ namespace ECommerce.BLL.Features.Sliders.Services
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
                 };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveSliderRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
+                _unitOfWork.Slider.ToggleActive(Slider, _userId);
+                var result = _mapper.Map<SliderDto>(Slider);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<SliderDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Slider
+                );
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 

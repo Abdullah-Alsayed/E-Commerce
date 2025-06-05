@@ -66,6 +66,6 @@ namespace ECommerce.BLL.IRepository
         List<string> SearchEntity();
         Task<T> FirstAsync();
         Task<T> FirstAsync(Expression<Func<T, bool>> Criteria);
-        Task<T> FirstAsync(Expression<Func<T, bool>> Criteria, string[] Includes = null);
+        Task<T> FirstAsync(Expression<Func<T, bool>> Criteria, List<string> Includes = null);
     }
 }

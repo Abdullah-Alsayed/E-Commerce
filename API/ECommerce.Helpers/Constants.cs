@@ -149,6 +149,8 @@ namespace ECommerce.Core
             public const string Youtube = "Youtube";
             public const string Instagram = "Instagram";
             public const string TikTok = "TikTok";
+            public const string Action = "Action";
+            public const string Entity = "Entity";
         }
 
         public static class LabelKeys

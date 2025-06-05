@@ -161,7 +161,7 @@
             { data: 'used' },
             {
                 data: 'expirationDate', render: function (data, type, row) {
-                    return dateOnlyRender(data);
+                    return convertUTCToLocalDateOnly(data);
                 }
             },
             {

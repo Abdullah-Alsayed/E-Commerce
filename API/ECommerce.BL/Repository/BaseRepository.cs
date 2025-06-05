@@ -546,7 +546,7 @@ namespace ECommerce.BLL.Repository
 
         public async Task<T> FirstAsync(
             Expression<Func<T, bool>> Criteria,
-            string[] Includes = null
+            List<string> Includes = null
         )
         {
             IQueryable<T> Query = _context.Set<T>();
