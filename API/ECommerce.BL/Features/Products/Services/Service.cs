@@ -7,8 +7,8 @@ using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Sizes.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -70,7 +70,7 @@ namespace ECommerce.BLL.Features.Products.Services
         {
             try
             {
-                var Product = await _unitOfWork.Product.FindAsync(request.ID);
+                var Product = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
                 var result = _mapper.Map<ProductDto>(Product);
                 return new BaseResponse<ProductDto>
                 {
@@ -81,7 +81,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Product
@@ -98,7 +98,9 @@ namespace ECommerce.BLL.Features.Products.Services
         {
             try
             {
-                var Product = await _unitOfWork.Product.GetProductItemAsync(request.ID);
+                var Product = await _unitOfWork.ProductModule.Product.GetProductItemAsync(
+                    request.ID
+                );
                 var productDto = _mapper.Map<ProductDto>(Product);
                 var result = GetProductItemsDto(Product);
                 return new BaseResponse<ProductItemDto>
@@ -110,7 +112,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Product
@@ -131,7 +133,7 @@ namespace ECommerce.BLL.Features.Products.Services
                     ? nameof(Product.Title)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Product.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Product.GetAllAsync(request);
                 var response = _mapper.Map<List<ProductDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ProductDto>>>
                 {
@@ -147,7 +149,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Product
@@ -167,8 +169,8 @@ namespace ECommerce.BLL.Features.Products.Services
             try
             {
                 var Product = _mapper.Map<Product>(request);
-                Product = await _unitOfWork.Product.AddAsync(Product, _userId);
-                Product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
+                Product = await _unitOfWork.ProductModule.Product.AddAsync(Product, _userId);
+                Product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
                     request.FormFiles,
                     PhotoFolder.Products
                 );
@@ -207,7 +209,7 @@ namespace ECommerce.BLL.Features.Products.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Product
@@ -226,14 +228,14 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var product = await _unitOfWork.Product.FindAsync(request.ID);
+                var product = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
                 _mapper.Map(request, product);
-                product.ProductPhotos = await _unitOfWork.Product.UploadPhotos(
+                product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
                     request.FormFiles,
                     PhotoFolder.Products,
                     product.ProductPhotos
                 );
-                _unitOfWork.Product.Update(product, _userId);
+                _unitOfWork.ProductModule.Product.Update(product, _userId);
                 var result = _mapper.Map<ProductDto>(product);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
@@ -269,7 +271,7 @@ namespace ECommerce.BLL.Features.Products.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Product
@@ -288,8 +290,8 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var product = await _unitOfWork.Product.FindAsync(request.ID);
-                _unitOfWork.Product.Delete(product, _userId);
+                var product = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Product.Delete(product, _userId);
                 var result = _mapper.Map<ProductDto>(product);
 
                 //#region Send Notification
@@ -326,7 +328,7 @@ namespace ECommerce.BLL.Features.Products.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Product
@@ -345,8 +347,8 @@ namespace ECommerce.BLL.Features.Products.Services
             var modifyRows = 0;
             try
             {
-                var product = await _unitOfWork.Product.FindAsync(request.ID);
-                _unitOfWork.Product.Update(product, _userId);
+                var product = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Product.Update(product, _userId);
                 product.IsActive = !product.IsActive;
                 var result = _mapper.Map<ProductDto>(product);
                 #region Send Notification
@@ -383,7 +385,7 @@ namespace ECommerce.BLL.Features.Products.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Product
@@ -400,7 +402,7 @@ namespace ECommerce.BLL.Features.Products.Services
         {
             try
             {
-                var result = _unitOfWork.Product.SearchEntity();
+                var result = _unitOfWork.ProductModule.Product.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -410,7 +412,7 @@ namespace ECommerce.BLL.Features.Products.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Product
@@ -425,7 +427,7 @@ namespace ECommerce.BLL.Features.Products.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -436,7 +438,7 @@ namespace ECommerce.BLL.Features.Products.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

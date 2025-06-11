@@ -7,8 +7,8 @@ using ECommerce.BLL.Features.Invoices.Dtos;
 using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.Features.Orders.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -63,7 +63,7 @@ public class InvoiceService : IInvoiceService
     {
         try
         {
-            var Invoice = await _unitOfWork.Invoice.FindAsync(request.ID);
+            var Invoice = await _unitOfWork.OrderModule.Invoice.FindAsync(request.ID);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             return new BaseResponse<InvoiceDto>
             {
@@ -74,7 +74,11 @@ public class InvoiceService : IInvoiceService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -93,7 +97,7 @@ public class InvoiceService : IInvoiceService
                 ? nameof(Invoice.Id)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Invoice.GetAllAsync(
+            var result = await _unitOfWork.OrderModule.Invoice.GetAllAsync(
                 request,
                 new List<string> { nameof(Order) }
             );
@@ -112,7 +116,11 @@ public class InvoiceService : IInvoiceService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse<BaseGridResponse<List<InvoiceDto>>>
             {
                 IsSuccess = false,
@@ -128,7 +136,7 @@ public class InvoiceService : IInvoiceService
         try
         {
             var Invoice = _mapper.Map<Invoice>(request);
-            Invoice = await _unitOfWork.Invoice.AddAsync(Invoice, _userId);
+            Invoice = await _unitOfWork.OrderModule.Invoice.AddAsync(Invoice, _userId);
             modifyRows += await RemoverProductFromStock(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
             #region Send Notification
@@ -165,7 +173,11 @@ public class InvoiceService : IInvoiceService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -180,8 +192,8 @@ public class InvoiceService : IInvoiceService
         var modifyRows = 0;
         try
         {
-            var invoice = await _unitOfWork.Invoice.FindAsync(request.ID);
-            _unitOfWork.Invoice.Delete(invoice, _userId);
+            var invoice = await _unitOfWork.OrderModule.Invoice.FindAsync(request.ID);
+            _unitOfWork.OrderModule.Invoice.Delete(invoice, _userId);
             var result = _mapper.Map<InvoiceDto>(invoice);
 
             //#region Send Notification
@@ -219,7 +231,11 @@ public class InvoiceService : IInvoiceService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -234,20 +250,11 @@ public class InvoiceService : IInvoiceService
         var modifyRows = 0;
         try
         {
-            var Invoice = await _unitOfWork.Invoice.GetInvoiceProductsAsync(request);
+            var Invoice = await _unitOfWork.OrderModule.Invoice.GetInvoiceProductsAsync(request);
             Invoice.IsReturn = true;
-            _unitOfWork.Invoice.Update(Invoice, _userId);
+            _unitOfWork.OrderModule.Invoice.Update(Invoice, _userId);
             modifyRows += await ReturnProductToStock(Invoice);
             var result = _mapper.Map<InvoiceDto>(Invoice);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Return);
-            modifyRows++;
-            #endregion
-
-            #region Log
-            await LogHistory(OperationTypeEnum.Return);
-            modifyRows++;
-            #endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -273,7 +280,11 @@ public class InvoiceService : IInvoiceService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Return, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Return,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -286,7 +297,7 @@ public class InvoiceService : IInvoiceService
     {
         try
         {
-            var result = _unitOfWork.Invoice.SearchEntity();
+            var result = _unitOfWork.OrderModule.Invoice.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -296,7 +307,11 @@ public class InvoiceService : IInvoiceService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Invoice);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Invoice
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -309,13 +324,13 @@ public class InvoiceService : IInvoiceService
     private async Task<int> ReturnProductToStock(Invoice invoice)
     {
         var products = GetProductOrders(invoice);
-        return await _unitOfWork.Stock.ReturnProductToStock(products);
+        return await _unitOfWork.StockModule.Stock.ReturnProductToStock(products);
     }
 
     private async Task<int> RemoverProductFromStock(Invoice invoice)
     {
         var products = GetProductOrders(invoice);
-        return await _unitOfWork.Stock.RemoveProductFromStock(products);
+        return await _unitOfWork.StockModule.Stock.RemoveProductFromStock(products);
     }
 
     private List<ProductsOrderRequest> GetProductOrders(Invoice invoice)
@@ -331,7 +346,7 @@ public class InvoiceService : IInvoiceService
 
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -344,7 +359,7 @@ public class InvoiceService : IInvoiceService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

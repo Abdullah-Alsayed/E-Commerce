@@ -4,7 +4,7 @@ using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Stocks.Requests;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IStockRepository : IBaseRepository<Stock>
     {

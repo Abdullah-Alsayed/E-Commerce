@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Stocks.Dtos;
 using ECommerce.BLL.Features.Stocks.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Repository
         public async Task<int> AddStockAsync(Stock stock, CreateStockRequest request)
         {
             var modifyRows = 0;
-            _context.Stocks.Add(stock);
+            await _context.Stocks.AddAsync(stock);
             modifyRows++;
             modifyRows += await AddSizeItemAsync(request.Size, request.ProductID);
             modifyRows += await AddColorItemAsync(request.Color, request.ProductID);

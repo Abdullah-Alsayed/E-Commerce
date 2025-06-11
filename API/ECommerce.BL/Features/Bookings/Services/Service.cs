@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Bookings.Dtos;
 using ECommerce.BLL.Features.Bookings.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -63,7 +63,7 @@ public class BookingService : IBookingService
     {
         try
         {
-            var Booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            var Booking = await _unitOfWork.ProductModule.Booking.FindAsync(request.ID);
             var result = _mapper.Map<BookingDto>(Booking);
             return new BaseResponse<BookingDto>
             {
@@ -74,7 +74,11 @@ public class BookingService : IBookingService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -91,7 +95,7 @@ public class BookingService : IBookingService
                 ? nameof(Booking.Id)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Booking.GetAllAsync(request);
+            var result = await _unitOfWork.ProductModule.Booking.GetAllAsync(request);
             var response = _mapper.Map<List<BookingDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<BookingDto>>>
             {
@@ -107,7 +111,11 @@ public class BookingService : IBookingService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -123,7 +131,7 @@ public class BookingService : IBookingService
         try
         {
             var Booking = _mapper.Map<Booking>(request);
-            Booking = await _unitOfWork.Booking.AddAsync(Booking, _userId);
+            Booking = await _unitOfWork.ProductModule.Booking.AddAsync(Booking, _userId);
             var result = _mapper.Map<BookingDto>(Booking);
 
             //#region Send Notification
@@ -160,7 +168,11 @@ public class BookingService : IBookingService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -175,9 +187,9 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            var booking = await _unitOfWork.ProductModule.Booking.FindAsync(request.ID);
             _mapper.Map(request, booking);
-            _unitOfWork.Booking.Update(booking, _userId);
+            _unitOfWork.ProductModule.Booking.Update(booking, _userId);
             var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
@@ -214,7 +226,11 @@ public class BookingService : IBookingService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -229,9 +245,9 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
+            var booking = await _unitOfWork.ProductModule.Booking.FindAsync(request.ID);
             booking.IsNotified = true;
-            _unitOfWork.Booking.Update(booking, _userId);
+            _unitOfWork.ProductModule.Booking.Update(booking, _userId);
             var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
@@ -268,7 +284,11 @@ public class BookingService : IBookingService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Toggle, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Toggle,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -283,8 +303,8 @@ public class BookingService : IBookingService
         var modifyRows = 0;
         try
         {
-            var booking = await _unitOfWork.Booking.FindAsync(request.ID);
-            _unitOfWork.Booking.Delete(booking, _userId);
+            var booking = await _unitOfWork.ProductModule.Booking.FindAsync(request.ID);
+            _unitOfWork.ProductModule.Booking.Delete(booking, _userId);
             var result = _mapper.Map<BookingDto>(booking);
 
             //#region Send Notification
@@ -322,7 +342,11 @@ public class BookingService : IBookingService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -335,7 +359,7 @@ public class BookingService : IBookingService
     {
         try
         {
-            var result = _unitOfWork.Booking.SearchEntity();
+            var result = _unitOfWork.ProductModule.Booking.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -345,7 +369,11 @@ public class BookingService : IBookingService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Booking);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Booking
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -357,7 +385,7 @@ public class BookingService : IBookingService
     #region helpers
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -370,7 +398,7 @@ public class BookingService : IBookingService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Sizes.Dtos;
 using ECommerce.BLL.Features.Sizes.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -60,7 +60,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
         {
             try
             {
-                var Size = await _unitOfWork.Size.FindAsync(request.ID);
+                var Size = await _unitOfWork.ProductModule.Size.FindAsync(request.ID);
                 var result = _mapper.Map<SizeDto>(Size);
                 return new BaseResponse<SizeDto>
                 {
@@ -71,7 +71,11 @@ namespace ECommerce.BLL.Features.Sizes.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Size);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Size
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -92,7 +96,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
                         : nameof(Size.NameEN)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Size.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Size.GetAllAsync(request);
                 var response = _mapper.Map<List<SizeDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SizeDto>>>
                 {
@@ -108,7 +112,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Size
@@ -128,7 +132,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             try
             {
                 var Size = _mapper.Map<Size>(request);
-                Size = await _unitOfWork.Size.AddAsync(Size, _userId);
+                Size = await _unitOfWork.ProductModule.Size.AddAsync(Size, _userId);
                 var result = _mapper.Map<SizeDto>(Size);
 
                 //#region Send Notification
@@ -165,7 +169,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Size
@@ -184,9 +188,9 @@ namespace ECommerce.BLL.Features.Sizes.Services
             var modifyRows = 0;
             try
             {
-                var size = await _unitOfWork.Size.FindAsync(request.ID);
+                var size = await _unitOfWork.ProductModule.Size.FindAsync(request.ID);
                 _mapper.Map(request, size);
-                _unitOfWork.Size.Update(size, _userId);
+                _unitOfWork.ProductModule.Size.Update(size, _userId);
                 var result = _mapper.Map<SizeDto>(size);
 
                 //#region Send Notification
@@ -223,7 +227,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Size
@@ -242,8 +246,8 @@ namespace ECommerce.BLL.Features.Sizes.Services
             var modifyRows = 0;
             try
             {
-                var size = await _unitOfWork.Size.FindAsync(request.ID);
-                _unitOfWork.Size.Delete(size, _userId);
+                var size = await _unitOfWork.ProductModule.Size.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Size.Delete(size, _userId);
                 var result = _mapper.Map<SizeDto>(size);
 
                 //#region Send Notification
@@ -280,7 +284,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Size
@@ -299,8 +303,8 @@ namespace ECommerce.BLL.Features.Sizes.Services
             var modifyRows = 0;
             try
             {
-                var size = await _unitOfWork.Size.FindAsync(request.ID);
-                _unitOfWork.Size.ToggleActive(size, _userId);
+                var size = await _unitOfWork.ProductModule.Size.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Size.ToggleActive(size, _userId);
 
                 var result = _mapper.Map<SizeDto>(size);
 
@@ -338,7 +342,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Category
@@ -355,7 +359,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
         {
             try
             {
-                var result = _unitOfWork.Size.SearchEntity();
+                var result = _unitOfWork.ProductModule.Size.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -365,7 +369,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Size
@@ -380,7 +384,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -391,7 +395,7 @@ namespace ECommerce.BLL.Features.Sizes.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

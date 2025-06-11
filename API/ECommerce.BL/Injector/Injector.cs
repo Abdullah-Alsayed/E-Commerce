@@ -1,5 +1,4 @@
-﻿using ECommerce.BL.Repository;
-using ECommerce.BLL.Features.Areas.Services;
+﻿using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Features.Bookings.Services;
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Features.Carts.Services;
@@ -27,7 +26,7 @@ using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core.Services.MailServices;
 using ECommerce.Core.Services.User;
 using ECommerce.Core.Services.WhatsappServices;
@@ -50,7 +49,7 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IWhatsappServices, WhatsappServices>();
 
             //****************** Services ******************************
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             //****************** UserContext ******************************
             services.AddScoped<IUserContext, UserContext>();

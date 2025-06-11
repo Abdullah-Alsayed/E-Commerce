@@ -8,8 +8,8 @@ using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Stocks.Dtos;
 using ECommerce.BLL.Features.Stocks.Requests;
 using ECommerce.BLL.Features.Vendors.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -66,7 +66,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
         {
             try
             {
-                var Stock = await _unitOfWork.Stock.FirstAsync(
+                var Stock = await _unitOfWork.StockModule.Stock.FirstAsync(
                     x => x.Id == request.ID,
                     [nameof(Product)]
                 );
@@ -80,7 +80,11 @@ namespace ECommerce.BLL.Features.Stocks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Stock);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Stock
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -99,7 +103,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
                     ? nameof(Stock.ProductID)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Stock.GetAllAsync(request);
+                var result = await _unitOfWork.StockModule.Stock.GetAllAsync(request);
                 var response = _mapper.Map<List<StockDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<StockDto>>>
                 {
@@ -115,7 +119,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Stock
@@ -136,18 +140,9 @@ namespace ECommerce.BLL.Features.Stocks.Services
             {
                 var Stock = _mapper.Map<Stock>(request);
                 Stock.CreateBy = _userId;
-                modifyRows += await _unitOfWork.Stock.AddStockAsync(Stock, request);
+                modifyRows += await _unitOfWork.StockModule.Stock.AddStockAsync(Stock, request);
 
                 var result = _mapper.Map<StockDto>(Stock);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
-
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
@@ -172,7 +167,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Stock
@@ -191,11 +186,11 @@ namespace ECommerce.BLL.Features.Stocks.Services
             var modifyRows = 0;
             try
             {
-                var stock = await _unitOfWork.Stock.FindAsync(request.ID);
+                var stock = await _unitOfWork.StockModule.Stock.FindAsync(request.ID);
                 _mapper.Map(request, stock);
-                _unitOfWork.Stock.Update(stock, _userId);
+                _unitOfWork.StockModule.Stock.Update(stock, _userId);
                 var result = _mapper.Map<StockDto>(stock);
-                modifyRows = await _unitOfWork.Stock.ReturnItemAsync(request);
+                modifyRows = await _unitOfWork.StockModule.Stock.ReturnItemAsync(request);
 
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
@@ -231,7 +226,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Stock
@@ -248,7 +243,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
         {
             try
             {
-                var result = _unitOfWork.Stock.SearchEntity();
+                var result = _unitOfWork.StockModule.Stock.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -258,7 +253,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Stock
@@ -273,7 +268,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -284,7 +279,7 @@ namespace ECommerce.BLL.Features.Stocks.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

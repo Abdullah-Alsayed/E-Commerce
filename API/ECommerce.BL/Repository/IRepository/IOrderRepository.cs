@@ -8,7 +8,7 @@ using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IOrderRepository : IBaseRepository<Order>
     {

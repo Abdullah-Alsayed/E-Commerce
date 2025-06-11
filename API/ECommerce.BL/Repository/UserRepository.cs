@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
 using ECommerce.Core.Helpers;

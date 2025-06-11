@@ -5,8 +5,8 @@ using AutoMapper;
 using ECommerce.BLL.Features.Feedbacks.Dtos;
 using ECommerce.BLL.Features.Feedbacks.Requests;
 using ECommerce.BLL.Features.Users.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -62,7 +62,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
         {
             try
             {
-                var Feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
+                var Feedback = await _unitOfWork.ContentModule.Feedback.FindAsync(request.ID);
                 var result = _mapper.Map<FeedbackDto>(Feedback);
                 return new BaseResponse<FeedbackDto>
                 {
@@ -73,7 +73,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Feedback
@@ -96,7 +96,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
                     ? nameof(Feedback.Comment)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Feedback.GetAllAsync(
+                var result = await _unitOfWork.ContentModule.Feedback.GetAllAsync(
                     request,
                     new List<string> { nameof(User) }
                 );
@@ -115,7 +115,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Feedback
@@ -135,9 +135,9 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             try
             {
                 var feedback = _mapper.Map<Feedback>(request);
-                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                var user = await _unitOfWork.UserModule.User.FindUserByNameAsync(Constants.System);
                 _userId = user?.Id ?? Guid.Empty;
-                feedback = await _unitOfWork.Feedback.AddAsync(feedback, _userId);
+                feedback = await _unitOfWork.ContentModule.Feedback.AddAsync(feedback, _userId);
                 var result = _mapper.Map<FeedbackDto>(feedback);
 
                 //#region Send Notification
@@ -174,7 +174,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Feedback
@@ -193,9 +193,9 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var modifyRows = 0;
             try
             {
-                var feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
+                var feedback = await _unitOfWork.ContentModule.Feedback.FindAsync(request.ID);
                 _mapper.Map(request, feedback);
-                _unitOfWork.Feedback.Update(feedback, _userId);
+                _unitOfWork.ContentModule.Feedback.Update(feedback, _userId);
                 var result = _mapper.Map<FeedbackDto>(feedback);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Update);
@@ -231,7 +231,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Feedback
@@ -250,8 +250,8 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             var modifyRows = 0;
             try
             {
-                var feedback = await _unitOfWork.Feedback.FindAsync(request.ID);
-                _unitOfWork.Feedback.Delete(feedback, _userId);
+                var feedback = await _unitOfWork.ContentModule.Feedback.FindAsync(request.ID);
+                _unitOfWork.ContentModule.Feedback.Delete(feedback, _userId);
                 var result = _mapper.Map<FeedbackDto>(feedback);
 
                 //#region Send Notification
@@ -288,7 +288,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Feedback
@@ -305,7 +305,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
         {
             try
             {
-                var result = _unitOfWork.Feedback.SearchEntity();
+                var result = _unitOfWork.ContentModule.Feedback.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -315,7 +315,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Feedback
@@ -330,7 +330,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -341,7 +341,7 @@ namespace ECommerce.BLL.Features.Feedbacks.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

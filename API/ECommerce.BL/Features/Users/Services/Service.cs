@@ -6,9 +6,9 @@ using AutoMapper;
 using ECommerce.BLL.Features.Roles.Dtos;
 using ECommerce.BLL.Features.Users.Dtos;
 using ECommerce.BLL.Features.Users.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.AvatarService;
 using ECommerce.Core.Services.User;
@@ -84,13 +84,13 @@ namespace ECommerce.BLL.Features.Users.Services
                 user.CreateBy = _userContext.UserId.Value;
                 if (request.RoleId == Guid.Empty)
                 {
-                    var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
+                    var role = await _unitOfWork.UserModule.Role.FindByName(Constants.Roles.Client);
                     user.RoleId = role?.Id ?? Guid.Empty;
                 }
                 else
                     user.RoleId = request.RoleId;
 
-                var result = await _unitOfWork.User.RegisterUserAsync(
+                var result = await _unitOfWork.UserModule.User.RegisterUserAsync(
                     user,
                     request.Password,
                     _userContext.UserId.Value
@@ -104,7 +104,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Register,
                     EntitiesEnum.User
@@ -127,7 +127,7 @@ namespace ECommerce.BLL.Features.Users.Services
                 user.Language = Constants.Languages.Ar;
                 if (request.RoleId == Guid.Empty)
                 {
-                    var role = await _unitOfWork.Role.FindByName(Constants.Roles.Client);
+                    var role = await _unitOfWork.UserModule.Role.FindByName(Constants.Roles.Client);
                     user.RoleId = role?.Id ?? Guid.Empty;
                 }
                 else
@@ -135,14 +135,14 @@ namespace ECommerce.BLL.Features.Users.Services
 
                 user.CreateBy = _userContext.UserId.Value;
 
-                var result = await _unitOfWork.User.CreateUserAsync(
+                var result = await _unitOfWork.UserModule.User.CreateUserAsync(
                     user,
                     request.Password,
                     _userContext.UserId.Value
                 );
 
                 if (result.IsSuccess && user.Id != Guid.Empty)
-                    await _unitOfWork.Role.AddUserToRoleAsync(
+                    await _unitOfWork.UserModule.Role.AddUserToRoleAsync(
                         new Roles.Requests.AddUserToRoleRequest
                         {
                             UserID = user.Id,
@@ -152,7 +152,7 @@ namespace ECommerce.BLL.Features.Users.Services
                 if (result.IsSuccess)
                 {
                     if (request.ProfilePicture != null)
-                        user.Photo = await _unitOfWork.User.UploadPhotoAsync(
+                        user.Photo = await _unitOfWork.UserModule.User.UploadPhotoAsync(
                             request.ProfilePicture,
                             Constants.PhotoFolder.User
                         );
@@ -161,7 +161,7 @@ namespace ECommerce.BLL.Features.Users.Services
                         var file = await AvatarService.GetAvatarAsFormFileAsync(
                             $"{request.FirstName} {request.LastName}"
                         );
-                        var url = await _unitOfWork.User.UploadPhotoAsync(
+                        var url = await _unitOfWork.UserModule.User.UploadPhotoAsync(
                             file,
                             Constants.PhotoFolder.User
                         );
@@ -179,7 +179,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Register,
                     EntitiesEnum.User
@@ -199,13 +199,13 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var user = await _unitOfWork.User.FindUserByIDAsync(request.ID);
+                var user = await _unitOfWork.UserModule.User.FindUserByIDAsync(request.ID);
                 var oldRoleId = user.RoleId;
                 _mapper.Map(request, user);
 
-                _unitOfWork.User.Update(user, _userContext.UserId.Value);
+                _unitOfWork.UserModule.User.Update(user, _userContext.UserId.Value);
 
-                photo = await _unitOfWork.User.UploadPhotoAsync(
+                photo = await _unitOfWork.UserModule.User.UploadPhotoAsync(
                     request.ProfilePicture,
                     Constants.PhotoFolder.User,
                     user.Photo
@@ -228,8 +228,8 @@ namespace ECommerce.BLL.Features.Users.Services
                 {
                     if (user.RoleId != request.RoleId)
                     {
-                        await _unitOfWork.User.AddToRoleAsync(user, request.RoleId);
-                        await _unitOfWork.User.RemoveToRoleAsync(user, oldRoleId);
+                        await _unitOfWork.UserModule.User.AddToRoleAsync(user, request.RoleId);
+                        await _unitOfWork.UserModule.User.RemoveToRoleAsync(user, oldRoleId);
                     }
                     await transaction.CommitAsync();
                     return new BaseResponse<UserDto>
@@ -252,8 +252,8 @@ namespace ECommerce.BLL.Features.Users.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.User.DeleteFile(photo);
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.UserModule.User.DeleteFile(photo);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.User
@@ -268,8 +268,8 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var user = await _unitOfWork.User.DeleteAsync(request.ID, request.Token);
-                _unitOfWork.User.Delete(user, _userContext.UserId.Value);
+                var user = await _unitOfWork.UserModule.User.DeleteAsync(request.ID, request.Token);
+                _unitOfWork.UserModule.User.Delete(user, _userContext.UserId.Value);
                 var result = _mapper.Map<UserDto>(user);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Delete);
@@ -305,7 +305,7 @@ namespace ECommerce.BLL.Features.Users.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.User
@@ -324,7 +324,7 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var User = await _unitOfWork.User.FindUserByIDAsync(request.ID);
+                var User = await _unitOfWork.UserModule.User.FindUserByIDAsync(request.ID);
                 User.IsActive = !User.IsActive;
                 var result = _mapper.Map<UserDto>(User);
                 modifyRows++;
@@ -365,7 +365,7 @@ namespace ECommerce.BLL.Features.Users.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.User
@@ -382,12 +382,16 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.LoginAsync(request);
+                var result = await _unitOfWork.UserModule.User.LoginAsync(request);
                 return result;
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Login, EntitiesEnum.User);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Login,
+                    EntitiesEnum.User
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -400,12 +404,16 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.WebLoginAsync(request, httpContext);
+                var result = await _unitOfWork.UserModule.User.WebLoginAsync(request, httpContext);
                 return result;
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Login, EntitiesEnum.User);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Login,
+                    EntitiesEnum.User
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -416,7 +424,7 @@ namespace ECommerce.BLL.Features.Users.Services
 
         public async Task<BaseResponse> UserInfoAsync()
         {
-            var result = _unitOfWork.User.IsAuthenticated(_httpContext.HttpContext.User);
+            var result = _unitOfWork.UserModule.User.IsAuthenticated(_httpContext.HttpContext.User);
             List<string> userInfo =
                 new()
                 {
@@ -436,7 +444,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                await _unitOfWork.User.LogOffAsync();
+                await _unitOfWork.UserModule.User.LogOffAsync();
                 return new BaseResponse
                 {
                     IsSuccess = true,
@@ -445,7 +453,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.LogOff,
                     EntitiesEnum.User
@@ -462,7 +470,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ChangePassword(
+                var result = await _unitOfWork.UserModule.User.ChangePassword(
                     request,
                     _userContext.UserId.Value
                 );
@@ -474,7 +482,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ChangePassword,
                     EntitiesEnum.User
@@ -491,7 +499,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ChangeUserPassword(request);
+                var result = await _unitOfWork.UserModule.User.ChangeUserPassword(request);
                 return new BaseResponse
                 {
                     IsSuccess = result.IsSuccess,
@@ -500,7 +508,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ChangeUserPassword,
                     EntitiesEnum.User
@@ -517,7 +525,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ForgotPassword(
+                var result = await _unitOfWork.UserModule.User.ForgotPassword(
                     request,
                     _userContext.UserId.Value
                 );
@@ -525,7 +533,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ForgotPassword,
                     EntitiesEnum.User
@@ -542,7 +550,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ResetPassword(
+                var result = await _unitOfWork.UserModule.User.ResetPassword(
                     request,
                     _userContext.UserId.Value
                 );
@@ -550,7 +558,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ResetPassword,
                     EntitiesEnum.User
@@ -567,12 +575,15 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var result = await _unitOfWork.User.ConfirmEmailAsync(request.ID, request.Token);
+                var result = await _unitOfWork.UserModule.User.ConfirmEmailAsync(
+                    request.ID,
+                    request.Token
+                );
                 return new BaseResponse { IsSuccess = result.IsSuccess, Message = result.Message };
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.ResetPassword,
                     EntitiesEnum.User
@@ -589,11 +600,13 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var user = await _unitOfWork.User.FindUserByIDAsync(_userContext.UserId.Value);
-                var isConfirm = await _unitOfWork.User.IsConfirmedAsync(user);
+                var user = await _unitOfWork.UserModule.User.FindUserByIDAsync(
+                    _userContext.UserId.Value
+                );
+                var isConfirm = await _unitOfWork.UserModule.User.IsConfirmedAsync(user);
                 if (!isConfirm)
                 {
-                    var result = await _unitOfWork.User.SendConfirmEmailAsync(user);
+                    var result = await _unitOfWork.UserModule.User.SendConfirmEmailAsync(user);
                     return new BaseResponse
                     {
                         IsSuccess = result,
@@ -613,7 +626,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.SendConfirmEmail,
                     EntitiesEnum.User
@@ -636,7 +649,7 @@ namespace ECommerce.BLL.Features.Users.Services
                     ? nameof(User.CreateAt)
                     : request.SearchBy;
 
-                var users = await _unitOfWork.User.GetAllAsync(request);
+                var users = await _unitOfWork.UserModule.User.GetAllAsync(request);
                 var response = _mapper.Map<List<UserDto>>(users);
                 return new BaseResponse<BaseGridResponse<List<UserDto>>>
                 {
@@ -651,7 +664,7 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.User
@@ -668,7 +681,7 @@ namespace ECommerce.BLL.Features.Users.Services
         {
             try
             {
-                var user = await _unitOfWork.User.GetAsync(userId);
+                var user = await _unitOfWork.UserModule.User.GetAsync(userId);
                 var response = _mapper.Map<UserDto>(user);
                 return new BaseResponse<UserDto>
                 {
@@ -679,7 +692,11 @@ namespace ECommerce.BLL.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Get, EntitiesEnum.User);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Get,
+                    EntitiesEnum.User
+                );
                 return new BaseResponse<BaseGridResponse<List<UserDto>>>
                 {
                     IsSuccess = false,
@@ -698,7 +715,9 @@ namespace ECommerce.BLL.Features.Users.Services
             var modifyRows = 0;
             try
             {
-                var user = await _unitOfWork.User.FindUserByIDAsync(_userContext.UserId.Value);
+                var user = await _unitOfWork.UserModule.User.FindUserByIDAsync(
+                    _userContext.UserId.Value
+                );
                 user.Language = language;
                 var result = _mapper.Map<UserDto>(user);
                 modifyRows++;
@@ -716,7 +735,7 @@ namespace ECommerce.BLL.Features.Users.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.UpdateLanguage,
                     EntitiesEnum.User
@@ -731,7 +750,7 @@ namespace ECommerce.BLL.Features.Users.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userContext.UserId.Value,
@@ -742,7 +761,7 @@ namespace ECommerce.BLL.Features.Users.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userContext.UserId.Value,
@@ -786,7 +805,7 @@ namespace ECommerce.BLL.Features.Users.Services
 
         public async Task SeedData()
         {
-            await _unitOfWork.User.SeedData();
+            await _unitOfWork.UserModule.User.SeedData();
         }
 
         #endregion

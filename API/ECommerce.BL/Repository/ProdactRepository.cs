@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.EntityFrameworkCore;

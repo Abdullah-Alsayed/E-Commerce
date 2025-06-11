@@ -6,8 +6,8 @@ using AutoMapper;
 using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.SubCategories.Dtos;
 using ECommerce.BLL.Features.SubCategories.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -76,7 +76,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
         {
             try
             {
-                var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
+                var SubCategory = await _unitOfWork.ProductModule.SubCategory.FindAsync(request.ID);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
                 return new BaseResponse<SubCategoryDto>
                 {
@@ -87,7 +87,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.SubCategory
@@ -114,12 +114,12 @@ namespace ECommerce.BLL.Features.SubCategories.Services
 
                 var result =
                     request.CategoryId.Value != Guid.Empty
-                        ? await _unitOfWork.SubCategory.GetAllAsync(
+                        ? await _unitOfWork.ProductModule.SubCategory.GetAllAsync(
                             request,
                             x => x.CategoryID == request.CategoryId.Value,
                             new List<string> { nameof(Category) }
                         )
-                        : await _unitOfWork.SubCategory.GetAllAsync(
+                        : await _unitOfWork.ProductModule.SubCategory.GetAllAsync(
                             request,
                             new List<string> { nameof(Category) }
                         );
@@ -139,7 +139,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.SubCategory
@@ -159,11 +159,15 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             try
             {
                 var SubCategory = _mapper.Map<SubCategory>(request);
-                SubCategory = await _unitOfWork.SubCategory.AddAsync(SubCategory, _userId);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhotoAsync(
-                    request.FormFile,
-                    Constants.PhotoFolder.SubCategorys
+                SubCategory = await _unitOfWork.ProductModule.SubCategory.AddAsync(
+                    SubCategory,
+                    _userId
                 );
+                SubCategory.PhotoPath =
+                    await _unitOfWork.ProductModule.SubCategory.UploadPhotoAsync(
+                        request.FormFile,
+                        Constants.PhotoFolder.SubCategorys
+                    );
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
 
                 //#region Send Notification
@@ -200,7 +204,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.SubCategory
@@ -219,14 +223,15 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             var modifyRows = 0;
             try
             {
-                var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
+                var SubCategory = await _unitOfWork.ProductModule.SubCategory.FindAsync(request.ID);
                 _mapper.Map(request, SubCategory);
-                SubCategory.PhotoPath = await _unitOfWork.SubCategory.UploadPhotoAsync(
-                    request.FormFile,
-                    Constants.PhotoFolder.SubCategorys,
-                    SubCategory.PhotoPath
-                );
-                _unitOfWork.SubCategory.Update(SubCategory, _userId);
+                SubCategory.PhotoPath =
+                    await _unitOfWork.ProductModule.SubCategory.UploadPhotoAsync(
+                        request.FormFile,
+                        Constants.PhotoFolder.SubCategorys,
+                        SubCategory.PhotoPath
+                    );
+                _unitOfWork.ProductModule.SubCategory.Update(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
 
                 //#region Send Notification
@@ -263,7 +268,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.SubCategory
@@ -282,8 +287,8 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             var modifyRows = 0;
             try
             {
-                var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
-                _unitOfWork.SubCategory.Delete(SubCategory, _userId);
+                var SubCategory = await _unitOfWork.ProductModule.SubCategory.FindAsync(request.ID);
+                _unitOfWork.ProductModule.SubCategory.Delete(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
 
                 //#region Send Notification
@@ -320,7 +325,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.SubCategory
@@ -339,8 +344,8 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             var modifyRows = 0;
             try
             {
-                var SubCategory = await _unitOfWork.SubCategory.FindAsync(request.ID);
-                _unitOfWork.SubCategory.ToggleActive(SubCategory, _userId);
+                var SubCategory = await _unitOfWork.ProductModule.SubCategory.FindAsync(request.ID);
+                _unitOfWork.ProductModule.SubCategory.ToggleActive(SubCategory, _userId);
                 var result = _mapper.Map<SubCategoryDto>(SubCategory);
 
                 //#region Send Notification
@@ -377,7 +382,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.SubCategory
@@ -394,7 +399,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
         {
             try
             {
-                var result = _unitOfWork.SubCategory.SearchEntity();
+                var result = _unitOfWork.ProductModule.SubCategory.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -404,7 +409,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.SubCategory
@@ -419,7 +424,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -430,7 +435,7 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

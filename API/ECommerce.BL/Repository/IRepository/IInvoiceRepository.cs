@@ -2,7 +2,7 @@
 using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IInvoiceRepository : IBaseRepository<Invoice>
     {

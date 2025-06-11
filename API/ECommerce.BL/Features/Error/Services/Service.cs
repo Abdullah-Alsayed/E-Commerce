@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Error.Dto;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -60,13 +60,13 @@ public class ErrorService : IErrorService
         {
             var errors =
                 Entity != 0
-                    ? await _unitOfWork.ErrorLog.GetAllAsync(
+                    ? await _unitOfWork.ContentModule.ErrorLog.GetAllAsync(
                         x => x.Entity == Entity,
                         null,
                         y => y.Date,
                         Constants.OrderBY.Descending
                     )
-                    : await _unitOfWork.ErrorLog.GetAllAsync(
+                    : await _unitOfWork.ContentModule.ErrorLog.GetAllAsync(
                         null,
                         y => y.Date,
                         Constants.OrderBY.Descending
@@ -104,7 +104,11 @@ public class ErrorService : IErrorService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Errors);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Errors
+            );
             return new BaseResponse
             {
                 IsSuccess = false,

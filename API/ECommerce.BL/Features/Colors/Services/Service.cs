@@ -17,8 +17,8 @@ using ECommerce.BLL.Features.Sizes.Dtos;
 using ECommerce.BLL.Features.Sizes.Requests;
 using ECommerce.BLL.Features.Vendors.Dtos;
 using ECommerce.BLL.Features.Vendors.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -74,7 +74,7 @@ namespace ECommerce.BLL.Features.Colors.Services
         {
             try
             {
-                var color = await _unitOfWork.Color.FindAsync(request.ID);
+                var color = await _unitOfWork.ProductModule.Color.FindAsync(request.ID);
                 var result = _mapper.Map<ColorDto>(color);
                 return new BaseResponse<ColorDto>
                 {
@@ -85,7 +85,11 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Color);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Color
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -106,7 +110,7 @@ namespace ECommerce.BLL.Features.Colors.Services
                         : nameof(Color.NameEN)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Color.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Color.GetAllAsync(request);
                 var response = _mapper.Map<List<ColorDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ColorDto>>>
                 {
@@ -122,7 +126,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Color
@@ -142,7 +146,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             try
             {
                 var color = _mapper.Map<Color>(request);
-                color = await _unitOfWork.Color.AddAsync(color, _userId);
+                color = await _unitOfWork.ProductModule.Color.AddAsync(color, _userId);
                 var result = _mapper.Map<ColorDto>(color);
 
                 //#region Send Notification
@@ -179,7 +183,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Color
@@ -198,9 +202,9 @@ namespace ECommerce.BLL.Features.Colors.Services
             var modifyRows = 0;
             try
             {
-                var color = await _unitOfWork.Color.FindAsync(request.ID);
+                var color = await _unitOfWork.ProductModule.Color.FindAsync(request.ID);
                 _mapper.Map(request, color);
-                _unitOfWork.Color.Update(color, _userId);
+                _unitOfWork.ProductModule.Color.Update(color, _userId);
                 var result = _mapper.Map<ColorDto>(color);
 
                 //#region Send Notification
@@ -237,7 +241,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Color
@@ -256,8 +260,8 @@ namespace ECommerce.BLL.Features.Colors.Services
             var modifyRows = 0;
             try
             {
-                var color = await _unitOfWork.Color.FindAsync(request.ID);
-                _unitOfWork.Color.Delete(color, _userId);
+                var color = await _unitOfWork.ProductModule.Color.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Color.Delete(color, _userId);
                 var result = _mapper.Map<ColorDto>(color);
 
                 //#region Send Notification
@@ -294,7 +298,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Color
@@ -313,8 +317,8 @@ namespace ECommerce.BLL.Features.Colors.Services
             var modifyRows = 0;
             try
             {
-                var color = await _unitOfWork.Color.FindAsync(request.ID);
-                _unitOfWork.Color.ToggleActive(color, _userId);
+                var color = await _unitOfWork.ProductModule.Color.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Color.ToggleActive(color, _userId);
 
                 var result = _mapper.Map<ColorDto>(color);
 
@@ -352,7 +356,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Category
@@ -369,7 +373,7 @@ namespace ECommerce.BLL.Features.Colors.Services
         {
             try
             {
-                var result = _unitOfWork.Color.SearchEntity();
+                var result = _unitOfWork.ProductModule.Color.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -379,7 +383,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Color
@@ -394,7 +398,7 @@ namespace ECommerce.BLL.Features.Colors.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -405,7 +409,7 @@ namespace ECommerce.BLL.Features.Colors.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Stocks.Dtos;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.EntityFrameworkCore;

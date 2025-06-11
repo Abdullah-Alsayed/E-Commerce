@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Categories.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -72,7 +72,7 @@ namespace ECommerce.BLL.Features.Categories.Services
         {
             try
             {
-                var Category = await _unitOfWork.Category.FindAsync(request.ID);
+                var Category = await _unitOfWork.ProductModule.Category.FindAsync(request.ID);
                 var result = _mapper.Map<CategoryDto>(Category);
                 return new BaseResponse<CategoryDto>
                 {
@@ -83,7 +83,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Category
@@ -108,7 +108,7 @@ namespace ECommerce.BLL.Features.Categories.Services
                         : nameof(Category.NameEN)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Category.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Category.GetAllAsync(request);
                 var response = _mapper.Map<List<CategoryDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<CategoryDto>>>
                 {
@@ -124,7 +124,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Category
@@ -144,8 +144,8 @@ namespace ECommerce.BLL.Features.Categories.Services
             try
             {
                 var category = _mapper.Map<Category>(request);
-                category = await _unitOfWork.Category.AddAsync(category, _userId);
-                category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
+                category = await _unitOfWork.ProductModule.Category.AddAsync(category, _userId);
+                category.PhotoPath = await _unitOfWork.ProductModule.Category.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Categorys
                 );
@@ -186,7 +186,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Category
@@ -205,14 +205,14 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var category = await _unitOfWork.Category.FindAsync(request.ID);
+                var category = await _unitOfWork.ProductModule.Category.FindAsync(request.ID);
                 _mapper.Map(request, category);
-                category.PhotoPath = await _unitOfWork.Category.UploadPhotoAsync(
+                category.PhotoPath = await _unitOfWork.ProductModule.Category.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Categorys,
                     category.PhotoPath
                 );
-                _unitOfWork.Category.Update(category, _userId);
+                _unitOfWork.ProductModule.Category.Update(category, _userId);
                 var result = _mapper.Map<CategoryDto>(category);
 
                 //#region Send Notification
@@ -249,7 +249,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Category
@@ -268,9 +268,9 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var category = await _unitOfWork.Category.FindAsync(request.ID);
+                var category = await _unitOfWork.ProductModule.Category.FindAsync(request.ID);
                 var result = _mapper.Map<CategoryDto>(category);
-                _unitOfWork.Category.Delete(category, _userId);
+                _unitOfWork.ProductModule.Category.Delete(category, _userId);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Delete);
@@ -306,7 +306,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Category
@@ -325,8 +325,8 @@ namespace ECommerce.BLL.Features.Categories.Services
             var modifyRows = 0;
             try
             {
-                var category = await _unitOfWork.Category.FindAsync(request.ID);
-                _unitOfWork.Category.ToggleActive(category, _userId);
+                var category = await _unitOfWork.ProductModule.Category.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Category.ToggleActive(category, _userId);
 
                 var result = _mapper.Map<CategoryDto>(category);
 
@@ -364,7 +364,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Category
@@ -381,7 +381,7 @@ namespace ECommerce.BLL.Features.Categories.Services
         {
             try
             {
-                var result = _unitOfWork.Category.SearchEntity();
+                var result = _unitOfWork.ProductModule.Category.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -391,7 +391,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Category
@@ -406,7 +406,7 @@ namespace ECommerce.BLL.Features.Categories.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -417,7 +417,7 @@ namespace ECommerce.BLL.Features.Categories.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

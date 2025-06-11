@@ -9,8 +9,8 @@ using ECommerce.BLL.Features.Orders.Requests;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Statuses.Dtos;
 using ECommerce.BLL.Features.Users.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -70,7 +70,7 @@ namespace ECommerce.BLL.Features.Orders.Services
         {
             try
             {
-                var Order = await _unitOfWork.Order.FindAsync(request.ID);
+                var Order = await _unitOfWork.OrderModule.Order.FindAsync(request.ID);
                 var result = _mapper.Map<OrderDto>(Order);
                 return new BaseResponse<OrderDto>
                 {
@@ -81,7 +81,11 @@ namespace ECommerce.BLL.Features.Orders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Order);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Order
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -98,7 +102,7 @@ namespace ECommerce.BLL.Features.Orders.Services
                     ? nameof(Order.Address)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Order.GetAllAsync(request);
+                var result = await _unitOfWork.OrderModule.Order.GetAllAsync(request);
                 var response = _mapper.Map<List<OrderDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<OrderDto>>>
                 {
@@ -114,7 +118,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Order
@@ -135,7 +139,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             {
                 var order = _mapper.Map<Order>(request);
                 order.CreateBy = _userId;
-                modifyRows += await _unitOfWork.Order.AddAsync(order, request.Products);
+                modifyRows += await _unitOfWork.OrderModule.Order.AddAsync(order, request.Products);
                 var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
                 await SendNotification(OperationTypeEnum.Create);
@@ -171,7 +175,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Order
@@ -190,8 +194,8 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var order = await _unitOfWork.Order.FindAsync(request.ID);
-                _unitOfWork.Order.Delete(order, _userId);
+                var order = await _unitOfWork.OrderModule.Order.FindAsync(request.ID);
+                _unitOfWork.OrderModule.Order.Delete(order, _userId);
                 var result = _mapper.Map<OrderDto>(order);
 
                 //#region Send Notification
@@ -228,7 +232,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Order
@@ -247,8 +251,8 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var order = await _unitOfWork.Order.FindAsync(request.ID);
-                _unitOfWork.Order.Update(order, _userId);
+                var order = await _unitOfWork.OrderModule.Order.FindAsync(request.ID);
+                _unitOfWork.OrderModule.Order.Update(order, _userId);
                 order.IsAccept = true;
                 var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
@@ -285,7 +289,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Accept,
                     EntitiesEnum.Order
@@ -304,8 +308,8 @@ namespace ECommerce.BLL.Features.Orders.Services
             var modifyRows = 0;
             try
             {
-                var order = await _unitOfWork.Order.FindAsync(request.ID);
-                _unitOfWork.Order.Update(order, _userId);
+                var order = await _unitOfWork.OrderModule.Order.FindAsync(request.ID);
+                _unitOfWork.OrderModule.Order.Update(order, _userId);
                 order.StatusID = request.StatusID;
                 var result = _mapper.Map<OrderDto>(order);
                 #region Send Notification
@@ -342,7 +346,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.UpdateStatus,
                     EntitiesEnum.Order
@@ -359,7 +363,7 @@ namespace ECommerce.BLL.Features.Orders.Services
         {
             try
             {
-                var result = _unitOfWork.Order.SearchEntity();
+                var result = _unitOfWork.OrderModule.Order.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -369,7 +373,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Order
@@ -384,7 +388,7 @@ namespace ECommerce.BLL.Features.Orders.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -395,7 +399,7 @@ namespace ECommerce.BLL.Features.Orders.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

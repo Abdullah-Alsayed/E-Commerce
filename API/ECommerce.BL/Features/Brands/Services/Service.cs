@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -64,7 +64,7 @@ namespace ECommerce.BLL.Features.Brands.Services
         {
             try
             {
-                var brand = await _unitOfWork.Brand.FindAsync(request.ID);
+                var brand = await _unitOfWork.ProductModule.Brand.FindAsync(request.ID);
                 var result = _mapper.Map<BrandDto>(brand);
                 return new BaseResponse<BrandDto>
                 {
@@ -75,7 +75,11 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Brand);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Brand
+                );
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
@@ -92,7 +96,7 @@ namespace ECommerce.BLL.Features.Brands.Services
                         : nameof(Brand.NameEN)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Brand.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Brand.GetAllAsync(request);
                 var response = _mapper.Map<List<BrandDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<BrandDto>>>
                 {
@@ -109,7 +113,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Brand
@@ -129,8 +133,8 @@ namespace ECommerce.BLL.Features.Brands.Services
             try
             {
                 var brand = _mapper.Map<Brand>(request);
-                brand = await _unitOfWork.Brand.AddAsync(brand, _userId);
-                brand.PhotoPath = await _unitOfWork.Brand.UploadPhotoAsync(
+                brand = await _unitOfWork.ProductModule.Brand.AddAsync(brand, _userId);
+                brand.PhotoPath = await _unitOfWork.ProductModule.Brand.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Brands
                 );
@@ -170,7 +174,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Brand
@@ -185,14 +189,14 @@ namespace ECommerce.BLL.Features.Brands.Services
             var modifyRows = 0;
             try
             {
-                var brand = await _unitOfWork.Brand.FindAsync(request.ID);
+                var brand = await _unitOfWork.ProductModule.Brand.FindAsync(request.ID);
                 _mapper.Map(request, brand);
-                brand.PhotoPath = await _unitOfWork.Brand.UploadPhotoAsync(
+                brand.PhotoPath = await _unitOfWork.ProductModule.Brand.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Brands,
                     brand.PhotoPath
                 );
-                _unitOfWork.Brand.Update(brand, _userId);
+                _unitOfWork.ProductModule.Brand.Update(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification
@@ -229,7 +233,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Brand
@@ -244,8 +248,8 @@ namespace ECommerce.BLL.Features.Brands.Services
             var modifyRows = 0;
             try
             {
-                var brand = await _unitOfWork.Brand.FindAsync(request.ID);
-                _unitOfWork.Brand.Delete(brand, _userId);
+                var brand = await _unitOfWork.ProductModule.Brand.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Brand.Delete(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification
@@ -282,7 +286,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Brand
@@ -297,8 +301,8 @@ namespace ECommerce.BLL.Features.Brands.Services
             var modifyRows = 0;
             try
             {
-                var brand = await _unitOfWork.Brand.FindAsync(request.ID);
-                _unitOfWork.Brand.ToggleActive(brand, _userId);
+                var brand = await _unitOfWork.ProductModule.Brand.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Brand.ToggleActive(brand, _userId);
                 var result = _mapper.Map<BrandDto>(brand);
 
                 //#region Send Notification
@@ -335,7 +339,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Brand
@@ -348,7 +352,7 @@ namespace ECommerce.BLL.Features.Brands.Services
         {
             try
             {
-                var result = _unitOfWork.Brand.SearchEntity();
+                var result = _unitOfWork.ProductModule.Brand.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -358,7 +362,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Brand
@@ -373,7 +377,7 @@ namespace ECommerce.BLL.Features.Brands.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -384,7 +388,7 @@ namespace ECommerce.BLL.Features.Brands.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

@@ -3,7 +3,7 @@ using ECommerce.BLL.Features.Governorates.Requests;
 using ECommerce.BLL.Response;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository;
+namespace ECommerce.BLL.Repository.IRepository;
 
 public interface IGovernorateRepository : IBaseRepository<Governorate>
 {

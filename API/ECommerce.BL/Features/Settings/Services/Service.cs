@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Settings.Dtos;
 using ECommerce.BLL.Features.Settings.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -62,7 +62,7 @@ namespace ECommerce.BLL.Features.Settings.Services
         {
             try
             {
-                var Setting = await _unitOfWork.Setting.FirstAsync();
+                var Setting = await _unitOfWork.SettingModule.Setting.FirstAsync();
                 var result = _mapper.Map<SettingDto>(Setting);
                 return new BaseResponse<SettingDto>
                 {
@@ -73,7 +73,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Setting
@@ -92,14 +92,14 @@ namespace ECommerce.BLL.Features.Settings.Services
             var modifyRows = 0;
             try
             {
-                var setting = await _unitOfWork.Setting.FirstAsync();
+                var setting = await _unitOfWork.SettingModule.Setting.FirstAsync();
                 _mapper.Map(request, setting);
-                setting.Logo = await _unitOfWork.Setting.UploadPhotoAsync(
+                setting.Logo = await _unitOfWork.SettingModule.Setting.UploadPhotoAsync(
                     request.FormFile,
                     Constants.PhotoFolder.Main,
                     setting.Logo
                 );
-                _unitOfWork.Setting.Update(setting, _userId);
+                _unitOfWork.SettingModule.Setting.Update(setting, _userId);
                 var result = _mapper.Map<SettingDto>(setting);
 
                 //#region Send Notification
@@ -136,7 +136,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Setting
@@ -151,7 +151,7 @@ namespace ECommerce.BLL.Features.Settings.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -162,7 +162,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

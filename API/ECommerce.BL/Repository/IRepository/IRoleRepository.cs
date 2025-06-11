@@ -6,7 +6,7 @@ using ECommerce.Core;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IRoleRepository : IBaseRepository<Role>
     {

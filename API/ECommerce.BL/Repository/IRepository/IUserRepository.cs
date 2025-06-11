@@ -9,7 +9,7 @@ using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IUserRepository : IBaseRepository<User>
     {

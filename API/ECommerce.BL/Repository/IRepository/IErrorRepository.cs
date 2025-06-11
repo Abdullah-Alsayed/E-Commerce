@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IErrorRepository : IBaseRepository<ErrorLog>
     {

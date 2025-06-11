@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Reviews.Dtos;
 using ECommerce.BLL.Features.Reviews.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -61,7 +61,7 @@ public class ReviewService : IReviewService
     {
         try
         {
-            var Review = await _unitOfWork.Review.FindAsync(request.ID);
+            var Review = await _unitOfWork.ProductModule.Review.FindAsync(request.ID);
             var result = _mapper.Map<ReviewDto>(Review);
             return new BaseResponse<ReviewDto>
             {
@@ -72,7 +72,11 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -89,7 +93,7 @@ public class ReviewService : IReviewService
                 ? nameof(ProductReview.Review)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Review.GetAllAsync(request);
+            var result = await _unitOfWork.ProductModule.Review.GetAllAsync(request);
             var response = _mapper.Map<List<ReviewDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<ReviewDto>>>
             {
@@ -105,7 +109,11 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -121,17 +129,18 @@ public class ReviewService : IReviewService
         try
         {
             var Review = _mapper.Map<ProductReview>(request);
-            Review = await _unitOfWork.Review.AddAsync(Review, _userId);
+            Review = await _unitOfWork.ProductModule.Review.AddAsync(Review, _userId);
             var result = _mapper.Map<ReviewDto>(Review);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -157,7 +166,11 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -172,19 +185,20 @@ public class ReviewService : IReviewService
         var modifyRows = 0;
         try
         {
-            var review = await _unitOfWork.Review.FindAsync(request.ID);
+            var review = await _unitOfWork.ProductModule.Review.FindAsync(request.ID);
             _mapper.Map(request, review);
-            _unitOfWork.Review.Update(review, _userId);
+            _unitOfWork.ProductModule.Review.Update(review, _userId);
             var result = _mapper.Map<ReviewDto>(review);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -210,7 +224,11 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -225,8 +243,8 @@ public class ReviewService : IReviewService
         var modifyRows = 0;
         try
         {
-            var review = await _unitOfWork.Review.FindAsync(request.ID);
-            _unitOfWork.Review.Delete(review, _userId);
+            var review = await _unitOfWork.ProductModule.Review.FindAsync(request.ID);
+            _unitOfWork.ProductModule.Review.Delete(review, _userId);
             var result = _mapper.Map<ReviewDto>(review);
 
             //#region Send Notification
@@ -264,7 +282,11 @@ public class ReviewService : IReviewService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -277,7 +299,7 @@ public class ReviewService : IReviewService
     {
         try
         {
-            var result = _unitOfWork.Review.SearchEntity();
+            var result = _unitOfWork.ProductModule.Review.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -287,7 +309,11 @@ public class ReviewService : IReviewService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Review);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Review
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -299,7 +325,7 @@ public class ReviewService : IReviewService
     #region helpers
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -312,7 +338,7 @@ public class ReviewService : IReviewService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

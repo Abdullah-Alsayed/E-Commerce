@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ECommerce.BLL.Features.Stocks.Dtos;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IProductSizeRepository : IBaseRepository<ProductSize>
     {

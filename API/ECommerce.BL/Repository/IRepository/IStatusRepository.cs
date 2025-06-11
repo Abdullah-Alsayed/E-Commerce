@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface IStatusRepository : IBaseRepository<Status>
     {

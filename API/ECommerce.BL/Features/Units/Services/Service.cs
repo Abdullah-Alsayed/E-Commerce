@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Tags.Dtos;
 using ECommerce.BLL.Features.Tags.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -60,7 +60,7 @@ namespace ECommerce.BLL.Features.Tags.Services
         {
             try
             {
-                var Unit = await _unitOfWork.Unit.FindAsync(request.ID);
+                var Unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
                 var result = _mapper.Map<TagDto>(Unit);
                 return new BaseResponse<TagDto>
                 {
@@ -71,7 +71,11 @@ namespace ECommerce.BLL.Features.Tags.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Unit);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Unit
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -92,7 +96,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                         : nameof(Unit.NameEN)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Unit.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Unit.GetAllAsync(request);
                 var response = _mapper.Map<List<TagDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<TagDto>>>
                 {
@@ -108,7 +112,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Unit
@@ -128,7 +132,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             try
             {
                 var Unit = _mapper.Map<Unit>(request);
-                Unit = await _unitOfWork.Unit.AddAsync(Unit, _userId);
+                Unit = await _unitOfWork.ProductModule.Unit.AddAsync(Unit, _userId);
                 var result = _mapper.Map<TagDto>(Unit);
 
                 //#region Send Notification
@@ -165,7 +169,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Unit
@@ -184,9 +188,9 @@ namespace ECommerce.BLL.Features.Tags.Services
             var modifyRows = 0;
             try
             {
-                var unit = await _unitOfWork.Unit.FindAsync(request.ID);
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
                 _mapper.Map(request, unit);
-                _unitOfWork.Unit.Update(unit, _userId);
+                _unitOfWork.ProductModule.Unit.Update(unit, _userId);
                 var result = _mapper.Map<TagDto>(unit);
 
                 //#region Send Notification
@@ -223,7 +227,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Unit
@@ -242,8 +246,8 @@ namespace ECommerce.BLL.Features.Tags.Services
             var modifyRows = 0;
             try
             {
-                var unit = await _unitOfWork.Unit.FindAsync(request.ID);
-                _unitOfWork.Unit.Delete(unit, _userId);
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Unit.Delete(unit, _userId);
                 var result = _mapper.Map<TagDto>(unit);
 
                 //#region Send Notification
@@ -280,7 +284,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Unit
@@ -299,8 +303,8 @@ namespace ECommerce.BLL.Features.Tags.Services
             var modifyRows = 0;
             try
             {
-                var unit = await _unitOfWork.Unit.FindAsync(request.ID);
-                _unitOfWork.Unit.ToggleActive(unit, _userId);
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Unit.ToggleActive(unit, _userId);
 
                 var result = _mapper.Map<TagDto>(unit);
 
@@ -338,7 +342,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Category
@@ -355,7 +359,7 @@ namespace ECommerce.BLL.Features.Tags.Services
         {
             try
             {
-                var result = _unitOfWork.Unit.SearchEntity();
+                var result = _unitOfWork.ProductModule.Unit.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -365,7 +369,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Unit
@@ -380,7 +384,7 @@ namespace ECommerce.BLL.Features.Tags.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -391,7 +395,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

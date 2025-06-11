@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Vouchers.Dtos;
 using ECommerce.BLL.Features.Vouchers.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -60,7 +60,7 @@ public class VoucherService : IVoucherService
     {
         try
         {
-            var voucher = await _unitOfWork.Voucher.FindAsync(request.ID);
+            var voucher = await _unitOfWork.OrderModule.Voucher.FindAsync(request.ID);
             var result = _mapper.Map<VoucherDto>(voucher);
             return new BaseResponse<VoucherDto>
             {
@@ -71,7 +71,11 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -90,7 +94,7 @@ public class VoucherService : IVoucherService
                 ? nameof(Voucher.Name)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Voucher.GetAllAsync(request);
+            var result = await _unitOfWork.OrderModule.Voucher.GetAllAsync(request);
             var response = _mapper.Map<List<VoucherDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<VoucherDto>>>
             {
@@ -106,7 +110,11 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse<BaseGridResponse<List<VoucherDto>>>
             {
                 IsSuccess = false,
@@ -122,7 +130,7 @@ public class VoucherService : IVoucherService
         try
         {
             var voucher = _mapper.Map<Voucher>(request);
-            voucher = await _unitOfWork.Voucher.AddAsync(voucher, _userId);
+            voucher = await _unitOfWork.OrderModule.Voucher.AddAsync(voucher, _userId);
             var result = _mapper.Map<VoucherDto>(voucher);
 
             //#region Send Notification
@@ -159,7 +167,11 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -174,9 +186,9 @@ public class VoucherService : IVoucherService
         var modifyRows = 0;
         try
         {
-            var voucher = await _unitOfWork.Voucher.FindAsync(request.ID);
+            var voucher = await _unitOfWork.OrderModule.Voucher.FindAsync(request.ID);
             _mapper.Map(request, voucher);
-            _unitOfWork.Voucher.Update(voucher, _userId);
+            _unitOfWork.OrderModule.Voucher.Update(voucher, _userId);
             var result = _mapper.Map<VoucherDto>(voucher);
 
             //#region Send Notification
@@ -213,7 +225,11 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -228,8 +244,8 @@ public class VoucherService : IVoucherService
         var modifyRows = 0;
         try
         {
-            var voucher = await _unitOfWork.Voucher.FindAsync(request.ID);
-            _unitOfWork.Voucher.ToggleActive(voucher, _userId);
+            var voucher = await _unitOfWork.OrderModule.Voucher.FindAsync(request.ID);
+            _unitOfWork.OrderModule.Voucher.ToggleActive(voucher, _userId);
             var result = _mapper.Map<VoucherDto>(voucher);
 
             //#region Send Notification
@@ -266,7 +282,11 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Toggle, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Toggle,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -281,8 +301,8 @@ public class VoucherService : IVoucherService
         var modifyRows = 0;
         try
         {
-            var voucher = await _unitOfWork.Voucher.FindAsync(request.ID);
-            _unitOfWork.Voucher.Delete(voucher, _userId);
+            var voucher = await _unitOfWork.OrderModule.Voucher.FindAsync(request.ID);
+            _unitOfWork.OrderModule.Voucher.Delete(voucher, _userId);
             var result = _mapper.Map<VoucherDto>(voucher);
 
             //#region Send Notification
@@ -319,7 +339,11 @@ public class VoucherService : IVoucherService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -332,7 +356,7 @@ public class VoucherService : IVoucherService
     {
         try
         {
-            var result = _unitOfWork.Voucher.SearchEntity();
+            var result = _unitOfWork.OrderModule.Voucher.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -342,7 +366,11 @@ public class VoucherService : IVoucherService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Voucher);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Voucher
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -354,7 +382,7 @@ public class VoucherService : IVoucherService
     #region helpers
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -367,7 +395,7 @@ public class VoucherService : IVoucherService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

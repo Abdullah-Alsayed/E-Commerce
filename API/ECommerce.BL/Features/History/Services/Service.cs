@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Histories.Dtos;
 using ECommerce.BLL.Features.Histories.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -49,7 +49,7 @@ namespace ECommerce.BLL.Features.Histories.Services
         {
             try
             {
-                var result = await _unitOfWork.History.GetAllAsync(
+                var result = await _unitOfWork.ContentModule.History.GetAllAsync(
                     request,
                     new List<string> { nameof(User) }
                 );

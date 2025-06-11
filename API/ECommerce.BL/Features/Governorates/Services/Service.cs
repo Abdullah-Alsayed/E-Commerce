@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Governorates.Dtos;
 using ECommerce.BLL.Features.Governorates.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -68,7 +68,7 @@ public class GovernorateService : IGovernorateService
     {
         try
         {
-            var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
+            var governorate = await _unitOfWork.LocationModule.Governorate.FindAsync(request.ID);
             var result = _mapper.Map<GovernorateDto>(governorate);
             return new BaseResponse<GovernorateDto>
             {
@@ -79,7 +79,7 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.View,
                 EntitiesEnum.Governorate
@@ -104,7 +104,7 @@ public class GovernorateService : IGovernorateService
                     : nameof(Governorate.NameEN)
                 : request.SearchBy;
 
-            var result = await _unitOfWork.Governorate.GetAllAsync(request);
+            var result = await _unitOfWork.LocationModule.Governorate.GetAllAsync(request);
             var response = _mapper.Map<List<GovernorateDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<GovernorateDto>>>
             {
@@ -120,7 +120,7 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.GetAll,
                 EntitiesEnum.Governorate
@@ -140,7 +140,10 @@ public class GovernorateService : IGovernorateService
         try
         {
             var governorate = _mapper.Map<Governorate>(request);
-            governorate = await _unitOfWork.Governorate.AddAsync(governorate, _userId);
+            governorate = await _unitOfWork.LocationModule.Governorate.AddAsync(
+                governorate,
+                _userId
+            );
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -177,7 +180,7 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.Create,
                 EntitiesEnum.Governorate
@@ -196,9 +199,9 @@ public class GovernorateService : IGovernorateService
         var modifyRows = 0;
         try
         {
-            var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
+            var governorate = await _unitOfWork.LocationModule.Governorate.FindAsync(request.ID);
             _mapper.Map(request, governorate);
-            _unitOfWork.Governorate.Update(governorate, _userId);
+            _unitOfWork.LocationModule.Governorate.Update(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -235,7 +238,7 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.Update,
                 EntitiesEnum.Governorate
@@ -254,8 +257,8 @@ public class GovernorateService : IGovernorateService
         var modifyRows = 0;
         try
         {
-            var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
-            _unitOfWork.Governorate.Update(governorate, _userId);
+            var governorate = await _unitOfWork.LocationModule.Governorate.FindAsync(request.ID);
+            _unitOfWork.LocationModule.Governorate.Update(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -292,7 +295,7 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.Toggle,
                 EntitiesEnum.Governorate
@@ -311,8 +314,8 @@ public class GovernorateService : IGovernorateService
         var modifyRows = 0;
         try
         {
-            var governorate = await _unitOfWork.Governorate.FindAsync(request.ID);
-            _unitOfWork.Governorate.Delete(governorate, _userId);
+            var governorate = await _unitOfWork.LocationModule.Governorate.FindAsync(request.ID);
+            _unitOfWork.LocationModule.Governorate.Delete(governorate, _userId);
             var result = _mapper.Map<GovernorateDto>(governorate);
 
             //#region Send Notification
@@ -349,7 +352,7 @@ public class GovernorateService : IGovernorateService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.Delete,
                 EntitiesEnum.Governorate
@@ -366,7 +369,7 @@ public class GovernorateService : IGovernorateService
     {
         try
         {
-            var result = _unitOfWork.Governorate.SearchEntity();
+            var result = _unitOfWork.LocationModule.Governorate.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -376,7 +379,7 @@ public class GovernorateService : IGovernorateService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                 ex,
                 OperationTypeEnum.Search,
                 EntitiesEnum.Governorate
@@ -391,7 +394,7 @@ public class GovernorateService : IGovernorateService
 
     #region helpers
     private async Task SendNotification(OperationTypeEnum action) =>
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -402,7 +405,7 @@ public class GovernorateService : IGovernorateService
         );
 
     private async Task LogHistory(OperationTypeEnum action) =>
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

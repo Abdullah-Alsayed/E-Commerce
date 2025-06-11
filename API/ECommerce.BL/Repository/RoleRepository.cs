@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Roles.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
 using ECommerce.DAL;

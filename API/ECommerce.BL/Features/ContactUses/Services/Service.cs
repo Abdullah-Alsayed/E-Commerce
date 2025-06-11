@@ -5,8 +5,8 @@ using AutoMapper;
 using ECommerce.BLL.Features.ContactUses.Dtos;
 using ECommerce.BLL.Features.ContactUses.Requests;
 using ECommerce.BLL.Features.ContactUss.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -67,9 +67,9 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             try
             {
                 var contactUs = _mapper.Map<ContactUs>(request);
-                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                var user = await _unitOfWork.UserModule.User.FindUserByNameAsync(Constants.System);
                 _userId = user?.Id ?? Guid.Empty;
-                contactUs = await _unitOfWork.ContactUs.AddAsync(contactUs, _userId);
+                contactUs = await _unitOfWork.ContentModule.ContactUs.AddAsync(contactUs, _userId);
                 var result = _mapper.Map<ContactUsDto>(contactUs);
 
                 //#region Send Notification
@@ -106,7 +106,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.ContactUs
@@ -129,7 +129,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                     ? nameof(ContactUs.Name)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.ContactUs.GetAllAsync(request);
+                var result = await _unitOfWork.ContentModule.ContactUs.GetAllAsync(request);
                 var response = _mapper.Map<List<ContactUsDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ContactUsDto>>>
                 {
@@ -145,7 +145,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.ContactUs
@@ -164,10 +164,10 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             var modifyRows = 0;
             try
             {
-                var contactUs = await _unitOfWork.ContactUs.FindAsync(request.ID);
-                var user = await _unitOfWork.User.FindUserByNameAsync(Constants.System);
+                var contactUs = await _unitOfWork.ContentModule.ContactUs.FindAsync(request.ID);
+                var user = await _unitOfWork.UserModule.User.FindUserByNameAsync(Constants.System);
                 _userId = user?.Id ?? Guid.Empty;
-                _unitOfWork.ContactUs.Delete(contactUs, _userId);
+                _unitOfWork.ContentModule.ContactUs.Delete(contactUs, _userId);
                 var result = _mapper.Map<ContactUsDto>(contactUs);
 
                 //#region Send Notification
@@ -204,7 +204,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.ContactUs
@@ -221,7 +221,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
         {
             try
             {
-                var ContactUs = await _unitOfWork.ContactUs.FindAsync(request.ID);
+                var ContactUs = await _unitOfWork.ContentModule.ContactUs.FindAsync(request.ID);
                 var result = _mapper.Map<ContactUsDto>(ContactUs);
                 return new BaseResponse<ContactUsDto>
                 {
@@ -232,7 +232,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.ContactUs
@@ -247,7 +247,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -258,7 +258,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

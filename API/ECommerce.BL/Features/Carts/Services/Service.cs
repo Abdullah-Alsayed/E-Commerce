@@ -6,8 +6,8 @@ using AutoMapper;
 using ECommerce.BLL.Features.Carts.Dtos;
 using ECommerce.BLL.Features.Carts.Requests;
 using ECommerce.BLL.Features.Products.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -68,7 +68,7 @@ namespace ECommerce.BLL.Features.Carts.Services
                     ? nameof(ShoppingCart.ProductID)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.Cart.GetAllAsync(request);
+                var result = await _unitOfWork.OrderModule.Cart.GetAllAsync(request);
                 var response = _mapper.Map<List<CartDto>>(result);
                 return new BaseResponse<BaseGridResponse<List<CartDto>>>
                 {
@@ -84,7 +84,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Cart
@@ -116,7 +116,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Cart
@@ -136,7 +136,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             try
             {
                 var Cart = _mapper.Map<ShoppingCart>(request);
-                Cart = await _unitOfWork.Cart.AddAsync(Cart, _userId);
+                Cart = await _unitOfWork.OrderModule.Cart.AddAsync(Cart, _userId);
                 var result = _mapper.Map<CartDto>(Cart);
 
                 //#region Send Notification
@@ -173,7 +173,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Cart
@@ -192,9 +192,9 @@ namespace ECommerce.BLL.Features.Carts.Services
             var modifyRows = 0;
             try
             {
-                var cart = await _unitOfWork.Cart.FindAsync(request.ID);
+                var cart = await _unitOfWork.OrderModule.Cart.FindAsync(request.ID);
                 _mapper.Map(request, cart);
-                _unitOfWork.Cart.Update(cart, _userId);
+                _unitOfWork.OrderModule.Cart.Update(cart, _userId);
                 var result = _mapper.Map<CartDto>(cart);
 
                 //#region Send Notification
@@ -231,7 +231,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Cart
@@ -250,13 +250,13 @@ namespace ECommerce.BLL.Features.Carts.Services
             var modifyRows = 0;
             try
             {
-                var carts = await _unitOfWork.Cart.GetAllAsync(
+                var carts = await _unitOfWork.OrderModule.Cart.GetAllAsync(
                     cart => cart.ProductID == request.ID && cart.CreateBy == _userId,
                     null
                 );
                 foreach (var cart in carts)
                 {
-                    _unitOfWork.Cart.Delete(cart, _userId);
+                    _unitOfWork.OrderModule.Cart.Delete(cart, _userId);
                     modifyRows++;
                 }
 
@@ -292,7 +292,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Cart
@@ -309,7 +309,7 @@ namespace ECommerce.BLL.Features.Carts.Services
         {
             try
             {
-                var result = _unitOfWork.Cart.SearchEntity();
+                var result = _unitOfWork.OrderModule.Cart.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -319,7 +319,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Cart
@@ -335,7 +335,7 @@ namespace ECommerce.BLL.Features.Carts.Services
         #region helpers
         private async Task<IEnumerable<ShoppingCart>> GetChart()
         {
-            var carts = await _unitOfWork.Cart.GetAllAsync(
+            var carts = await _unitOfWork.OrderModule.Cart.GetAllAsync(
                 cart => cart.CreateBy == _userId,
                 [nameof(Product)],
                 chat => chat.CreateAt
@@ -355,7 +355,7 @@ namespace ECommerce.BLL.Features.Carts.Services
         }
 
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -366,7 +366,7 @@ namespace ECommerce.BLL.Features.Carts.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

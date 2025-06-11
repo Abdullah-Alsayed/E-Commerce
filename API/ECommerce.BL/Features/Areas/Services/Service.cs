@@ -6,8 +6,8 @@ using ECommerce.BLL.Features.Areas.Dtos;
 using ECommerce.BLL.Features.Areas.Requests;
 using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Governorates.Dtos;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -71,7 +71,7 @@ public class AreaService : IAreaService
     {
         try
         {
-            var area = await _unitOfWork.Area.FindAsync(request.ID);
+            var area = await _unitOfWork.LocationModule.Area.FindAsync(request.ID);
             var result = _mapper.Map<AreaDto>(area);
             return new BaseResponse<AreaDto>
             {
@@ -82,7 +82,11 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -105,12 +109,12 @@ public class AreaService : IAreaService
 
             var result =
                 request.GovernorateID.Value != Guid.Empty
-                    ? await _unitOfWork.Area.GetAllAsync(
+                    ? await _unitOfWork.LocationModule.Area.GetAllAsync(
                         request,
                         x => x.GovernorateID == request.GovernorateID.Value,
                         new List<string> { nameof(Governorate) }
                     )
-                    : await _unitOfWork.Area.GetAllAsync(
+                    : await _unitOfWork.LocationModule.Area.GetAllAsync(
                         request,
                         new List<string> { nameof(Governorate) }
                     );
@@ -130,7 +134,11 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Area
+            );
             return new BaseResponse<BaseGridResponse<List<AreaDto>>>
             {
                 IsSuccess = false,
@@ -146,7 +154,7 @@ public class AreaService : IAreaService
         try
         {
             var area = _mapper.Map<Area>(request);
-            area = await _unitOfWork.Area.AddAsync(area, _userId);
+            area = await _unitOfWork.LocationModule.Area.AddAsync(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -183,7 +191,11 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -198,9 +210,9 @@ public class AreaService : IAreaService
         var modifyRows = 0;
         try
         {
-            var area = await _unitOfWork.Area.FindAsync(request.ID);
+            var area = await _unitOfWork.LocationModule.Area.FindAsync(request.ID);
             _mapper.Map(request, area);
-            _unitOfWork.Area.Update(area, _userId);
+            _unitOfWork.LocationModule.Area.Update(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -237,7 +249,11 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -252,8 +268,8 @@ public class AreaService : IAreaService
         var modifyRows = 0;
         try
         {
-            var area = await _unitOfWork.Area.FindAsync(request.ID);
-            _unitOfWork.Area.ToggleActive(area, _userId);
+            var area = await _unitOfWork.LocationModule.Area.FindAsync(request.ID);
+            _unitOfWork.LocationModule.Area.ToggleActive(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -290,7 +306,11 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Toggle, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Toggle,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -305,8 +325,8 @@ public class AreaService : IAreaService
         var modifyRows = 0;
         try
         {
-            var area = await _unitOfWork.Area.FindAsync(request.ID);
-            _unitOfWork.Area.Delete(area, _userId);
+            var area = await _unitOfWork.LocationModule.Area.FindAsync(request.ID);
+            _unitOfWork.LocationModule.Area.Delete(area, _userId);
             var result = _mapper.Map<AreaDto>(area);
 
             //#region Send Notification
@@ -344,7 +364,11 @@ public class AreaService : IAreaService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -357,7 +381,7 @@ public class AreaService : IAreaService
     {
         try
         {
-            var result = _unitOfWork.Area.SearchEntity();
+            var result = _unitOfWork.LocationModule.Area.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -367,7 +391,11 @@ public class AreaService : IAreaService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Area);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Area
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -379,7 +407,7 @@ public class AreaService : IAreaService
     #region helpers
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -392,7 +420,7 @@ public class AreaService : IAreaService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,

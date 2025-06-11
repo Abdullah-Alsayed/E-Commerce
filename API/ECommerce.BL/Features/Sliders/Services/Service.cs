@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Sliders.Dtos;
 using ECommerce.BLL.Features.Sliders.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
 using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
@@ -64,7 +64,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
         {
             try
             {
-                var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
+                var Slider = await _unitOfWork.SettingModule.Slider.FindAsync(request.ID);
                 var result = _mapper.Map<SliderDto>(Slider);
                 return new BaseResponse<SliderDto>
                 {
@@ -75,7 +75,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Slider
@@ -94,7 +94,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
         {
             try
             {
-                var result = await _unitOfWork.Slider.GetAllAsync(request);
+                var result = await _unitOfWork.SettingModule.Slider.GetAllAsync(request);
                 var response = _mapper.Map<List<SliderDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<SliderDto>>>
                 {
@@ -110,7 +110,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Slider
@@ -130,8 +130,8 @@ namespace ECommerce.BLL.Features.Sliders.Services
             try
             {
                 var Slider = _mapper.Map<Slider>(request);
-                Slider = await _unitOfWork.Slider.AddAsync(Slider, _userId);
-                Slider.PhotoPath = await _unitOfWork.Slider.UploadPhotoAsync(
+                Slider = await _unitOfWork.SettingModule.Slider.AddAsync(Slider, _userId);
+                Slider.PhotoPath = await _unitOfWork.SettingModule.Slider.UploadPhotoAsync(
                     request.FormFile,
                     PhotoFolder.Slider
                 );
@@ -171,7 +171,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Slider
@@ -190,14 +190,14 @@ namespace ECommerce.BLL.Features.Sliders.Services
             var modifyRows = 0;
             try
             {
-                var slider = await _unitOfWork.Slider.FindAsync(request.ID);
+                var slider = await _unitOfWork.SettingModule.Slider.FindAsync(request.ID);
                 _mapper.Map(request, slider);
-                slider.PhotoPath = await _unitOfWork.Slider.UploadPhotoAsync(
+                slider.PhotoPath = await _unitOfWork.SettingModule.Slider.UploadPhotoAsync(
                     request.FormFile,
                     PhotoFolder.Slider,
                     slider.PhotoPath
                 );
-                _unitOfWork.Slider.Update(slider, _userId);
+                _unitOfWork.SettingModule.Slider.Update(slider, _userId);
                 var result = _mapper.Map<SliderDto>(slider);
 
                 //#region Send Notification
@@ -234,7 +234,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Slider
@@ -253,8 +253,8 @@ namespace ECommerce.BLL.Features.Sliders.Services
             var modifyRows = 0;
             try
             {
-                var slider = await _unitOfWork.Slider.FindAsync(request.ID);
-                _unitOfWork.Slider.Delete(slider, _userId);
+                var slider = await _unitOfWork.SettingModule.Slider.FindAsync(request.ID);
+                _unitOfWork.SettingModule.Slider.Delete(slider, _userId);
                 var result = _mapper.Map<SliderDto>(slider);
 
                 //#region Send Notification
@@ -291,7 +291,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Slider
@@ -310,8 +310,8 @@ namespace ECommerce.BLL.Features.Sliders.Services
             var modifyRows = 0;
             try
             {
-                var Slider = await _unitOfWork.Slider.FindAsync(request.ID);
-                _unitOfWork.Slider.ToggleActive(Slider, _userId);
+                var Slider = await _unitOfWork.SettingModule.Slider.FindAsync(request.ID);
+                _unitOfWork.SettingModule.Slider.ToggleActive(Slider, _userId);
                 var result = _mapper.Map<SliderDto>(Slider);
 
                 //#region Send Notification
@@ -348,7 +348,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Toggle,
                     EntitiesEnum.Slider
@@ -361,7 +361,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
         {
             try
             {
-                var result = _unitOfWork.Slider.SearchEntity();
+                var result = _unitOfWork.SettingModule.Slider.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -371,7 +371,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Slider
@@ -386,7 +386,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -397,7 +397,7 @@ namespace ECommerce.BLL.Features.Sliders.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,

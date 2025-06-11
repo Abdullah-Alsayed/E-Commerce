@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ECommerce.DAL.Entity;
 
-namespace ECommerce.BLL.IRepository
+namespace ECommerce.BLL.Repository.IRepository
 {
     public interface INotificationRepository : IBaseRepository<Notification>
     {
