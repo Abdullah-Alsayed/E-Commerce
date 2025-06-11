@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Features.Invoices.Validators
                 .Must(req =>
                 {
                     return context.Orders.Any(x =>
-                        x.ID == req.OrderID && x.IsActive && !x.IsDeleted
+                        x.Id == req.OrderID && x.IsActive && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

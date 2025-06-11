@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +28,7 @@ namespace ECommerce.BLL.Repository
                 .Include(x => x.ProductSizes)
                 .ThenInclude(x => x.Size)
                 .AsNoTracking()
-                .FirstAsync(x => x.ID == iD);
+                .FirstAsync(x => x.Id == iD);
 
             return product;
         }

@@ -1,0 +1,367 @@
+﻿@using ECommerce.BLL.Features.Roles.Dtos
+@using ECommerce.BLL.Features.Users.Dtos
+@using ECommerce.BLL.Features.Users.Requests
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "User List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+@model IEnumerable<RoleDto>;
+
+@section VendorStyles {}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["UsersList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.User)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="filter-container" id="filter-container">
+    <div class="card-header mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-4">@_Localizer["Filter"]</h5>
+            <div class="d-flex justify-content-start align-items-center row gap-5 gx-6 gap-md-0">
+                <div class="col-md-4 product_status">
+                    <select class="form-select text-capitalize filter"
+                            id="RoleSelect"
+                            data-filter="ItemId">
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@(_localizationManger.Language == Constants.Languages.Ar ? item.Name:item.NameEn)</option>
+                            }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="UserList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.User]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Address]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Gander]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Role]</th>
+                    <th>@_Localizer[Constants.EntityKeys.LastLogin]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.User)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body row">
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input type="text" class="form-control" name="@nameof(CreateUserRequest.FirstName)" id="@nameof(CreateUserRequest.FirstName)" placeholder="@_Localizer[Constants.EntityKeys.FirstName]" required />
+                        <label for="@nameof(CreateUserRequest.FirstName)">@_Localizer[Constants.EntityKeys.FirstName]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.FirstName] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input type="text" class="form-control" id="@nameof(CreateUserRequest.LastName)" name="@nameof(CreateUserRequest.LastName)" placeholder="@_Localizer[Constants.EntityKeys.LastName]" required />
+                        <label for="@nameof(CreateUserRequest.LastName)">@_Localizer[Constants.EntityKeys.LastName]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.LastName] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <input type="email" class="form-control" id="@nameof(CreateUserRequest.Email)" name="@nameof(CreateUserRequest.Email)" placeholder="@_Localizer[Constants.EntityKeys.Email]" required />
+                        <label for="@nameof(CreateUserRequest.Email)">@_Localizer[Constants.EntityKeys.Email]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Email] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <input class="form-control" id="@nameof(CreateUserRequest.PhoneNumber)" name="@nameof(CreateUserRequest.PhoneNumber)" placeholder="@_Localizer[Constants.EntityKeys.PhoneNumber]" required />
+                        <label for="@nameof(CreateUserRequest.PhoneNumber)">@_Localizer[Constants.EntityKeys.PhoneNumber]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.PhoneNumber] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <input class="form-control" id="@nameof(CreateUserRequest.Address)" name="@nameof(CreateUserRequest.Address)" placeholder="@_Localizer[Constants.EntityKeys.Address]" required />
+                        <label for="@nameof(CreateUserRequest.Address)">@_Localizer[Constants.EntityKeys.Address]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Address] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input type="password" class="form-control" id="@nameof(CreateUserRequest.Password)" name="@nameof(CreateUserRequest.Password)" placeholder="@_Localizer[Constants.EntityKeys.Password]" required />
+                        <label for="@nameof(CreateUserRequest.Password)">@_Localizer[Constants.EntityKeys.Password]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Password] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input onkeyup="confirmNewPasswordValidation('@_Localizer[Constants.MessageKeys.PasswordNotMatch]', 'CreateForm', event)"
+                               type="password" class="form-control" id="@nameof(CreateUserRequest.ComparePassword)" name="@nameof(CreateUserRequest.ComparePassword)"
+                               placeholder="@_Localizer[Constants.EntityKeys.ConfirmPassword]" required />
+                        <label for="@nameof(CreateUserRequest.ComparePassword)">@_Localizer[Constants.EntityKeys.ConfirmPassword]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.MessageKeys.PasswordNotMatch]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" id="@nameof(CreateUserRequest.Gander)" name="@nameof(CreateUserRequest.Gander)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Gander]</option>
+                            @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
+                            {
+                                <option value="@((int)gender)">
+                                    @_Localizer[$"{gender}"]
+                                </option>
+                            }
+                        </select>
+                        <label for="@nameof(CreateUserRequest.Gander)">@_Localizer[Constants.EntityKeys.Gander]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Gander] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" name="@nameof(CreateUserRequest.RoleId)" id="@nameof(CreateUserRequest.RoleId)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <label for="@nameof(CreateUserRequest.RoleId)">@_Localizer[Constants.EntityKeys.Role]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Role] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mb-3 px-1">
+                        <label for="CreateFileInput" class="custum-file-upload">
+                            <div id="Img-MainBox">
+                                <div class="icon">
+                                    <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-User="evenodd" clip-User="evenodd" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" fill=""></path> </g></svg>
+                                </div>
+                                <div class="text">
+                                    <span>@_Localizer[Constants.LabelKeys.ClickToUploadImage]</span>
+                                </div>
+                            </div>
+                            <img id="ImageUrl" name="@nameof(UserDto.Photo)" class="img-fluid" />
+                            <input id="CreateFileInput" type="file" accept="image/*" name="@nameof(CreateUserRequest.ProfilePicture)" onchange="updateImagePreview('CreateForm',event)">
+                        </label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" onclick="createUser('@_Localizer[Constants.MessageKeys.PasswordNotMatch]',event)" class="btn btn-primary">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.User)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" role="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body row">
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input type="text" class="form-control" name="@nameof(UpdateUserRequest.FirstName)" id="@nameof(UpdateUserRequest.FirstName)" placeholder="@_Localizer[Constants.EntityKeys.FirstName]" required />
+                        <label for="@nameof(UpdateUserRequest.FirstName)">@_Localizer[Constants.EntityKeys.FirstName]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.FirstName] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1 col-12 col-md-6">
+                        <input type="text" class="form-control" id="@nameof(UpdateUserRequest.LastName)" name="@nameof(UpdateUserRequest.LastName)" placeholder="@_Localizer[Constants.EntityKeys.LastName]" />
+                        <label for="@nameof(UpdateUserRequest.LastName)">@_Localizer[Constants.EntityKeys.LastName]</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <textarea class="form-control" id="@nameof(UpdateUserRequest.Email)" name="@nameof(UpdateUserRequest.Email)" placeholder="@_Localizer[Constants.EntityKeys.Email]"></textarea>
+                        <label for="@nameof(UpdateUserRequest.Email)">@_Localizer[Constants.EntityKeys.Email]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Email] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <input class="form-control" id="@nameof(UpdateUserRequest.Address)" name="@nameof(UpdateUserRequest.Address)" placeholder="@_Localizer[Constants.EntityKeys.Address]" required />
+                        <label for="@nameof(UpdateUserRequest.Address)">@_Localizer[Constants.EntityKeys.Address]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Address] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <textarea class="form-control" id="@nameof(UpdateUserRequest.PhoneNumber)" name="@nameof(UpdateUserRequest.PhoneNumber)" placeholder="@_Localizer[Constants.EntityKeys.PhoneNumber]"></textarea>
+                        <label for="@nameof(UpdateUserRequest.PhoneNumber)">@_Localizer[Constants.EntityKeys.PhoneNumber]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.PhoneNumber] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" id="@nameof(UpdateUserRequest.Gander)" name="@nameof(UpdateUserRequest.Gander)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Gander]</option>
+                            @foreach (var gender in Enum.GetValues(typeof(UserGanderEnum)))
+                            {
+                                <option value="@((int)gender)"> @_Localizer[$"{gender}"] </option>
+                            }
+                        </select>
+                        <label for="@nameof(UpdateUserRequest.Gander)">@_Localizer[Constants.EntityKeys.Gander]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Gander] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" name="@nameof(UpdateUserRequest.RoleId)" id="@nameof(UpdateUserRequest.RoleId)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Role]</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <label for="@nameof(UpdateUserRequest.RoleId)">@_Localizer[Constants.EntityKeys.Role]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Role] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="d-flex justify-content-center mb-3 px-1">
+                        <label for="UpdateFileInput" class="custum-file-upload">
+                            <img id="@nameof(UserDto.Photo)" name="@nameof(UserDto.Photo)" class="img-fluid" />
+                            <input id="UpdateFileInput" type="file" accept="image/*" name="@nameof(UpdateUserRequest.ProfilePicture)" onchange="updateImagePreview('UpdateForm',event)">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Account', 'Update', 'UserList',event)">@_Localizer[Constants.LabelKeys.SaveChanges]</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.User)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Account','Delete','UserList')">@_Localizer[nameof(OperationTypeEnum.Delete)]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update permission -->
+<div class="modal fade" id="UpdatePermission" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[Constants.LabelKeys.Permission]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mb-4">
+                    <div class="card-body" id="UpdatePermissionBody">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" id="submitPermissionButton" class="btn btn-primary" onclick="submitPermissionForm('UpdateUserClaims')">@_Localizer["Update"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+    <!-- Custom -->
+    <script src="~/vendor/js/Role.js"></script>
+}
+
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            {
+                data: 'firstName', 
+                render: function (data, type, row) {
+                    return userRender(row);
+                }
+            },
+            { data: 'address' },
+            {
+                data: 'ganderName',
+                render: function (data, type, row) {
+                    return data ? data : 'N/A';
+                }
+            },
+            { data: 'role.name' },
+            {
+                data: 'lastLogin', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+            {
+                data: 'role.name',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                <div class="dropdown">
+                    <button class="btn p-0" type="button" id="organicSessionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="organicSessionsDropdown">
+                        <a class="dropdown-item" onclick="fetchData('Account', 'Get', '${row.id}')" data-bs-toggle="modal" data-bs-target="#UpdateFormModal" href="javascript:void(0);">
+                              @_Localizer["Update"]
+                        </a>
+                        <a class="dropdown-item" onclick="setDeleteRecordId('${row.id}')" data-bs-toggle="modal" data-bs-target="#DeleteRecord" href="javascript:void(0);">
+                                @_Localizer["Delete"]
+                        </a>
+                         ${row.role.roleType != 2 ? `
+                         <a class="dropdown-item" data-bs-toggle="modal" onclick="updatePermission('${row.id}','GetUserClaims')" data-bs-target="#UpdatePermission" href="javascript:void(0);">
+                            @_Localizer["Permission"]
+                                </a>` : ''}
+                    </div>
+                </div>`;
+                }
+            }
+        ];
+
+        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language',false);
+
+          $('#RoleSelect').on('change', function () {
+        initializeDataTable('UserList', 'Account', 'Table', tableColumns, '@_localizationManger.Language',false);
+      });    
+    </script>
+}

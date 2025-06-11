@@ -1,0 +1,68 @@
+﻿@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "History List";
+}
+@inject IStringLocalizer<HistoryController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["HistoryList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="HistoryList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.User]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Action]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Entity]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+@section VendorScripts {
+}
+
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            {
+                data: 'userName'
+            },
+            {
+                data: 'action', 
+                render: function (data, type, row) {
+                    return `@_Localizer["${data}"]`;
+                }
+            },
+            { 
+                data: 'entity',
+                render: function (data, type, row) {
+                    return `@_Localizer["${data}"]`;
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('HistoryList', 'History', 'Table', tableColumns, '@_localizationManger.Language', false);
+    </script>
+}

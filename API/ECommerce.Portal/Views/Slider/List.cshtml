@@ -1,0 +1,193 @@
+@using ECommerce.BLL.Features.Sliders.Requests
+@using ECommerce.BLL.Features.Sliders.Dtos
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Slider List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["SliderList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Slider)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="SliderList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.TitleAR]</th>
+                    <th>@_Localizer[Constants.EntityKeys.TitleEN]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Description]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Photo]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Slider="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Slider)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateSliderRequest.TitleAR)" id="@nameof(CreateSliderRequest.TitleAR)" placeholder="@_Localizer[Constants.EntityKeys.TitleAR]" required />
+                        <label for="@nameof(CreateSliderRequest.TitleAR)">@_Localizer[Constants.EntityKeys.TitleAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.TitleAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateSliderRequest.TitleEN)" id="@nameof(CreateSliderRequest.TitleEN)" placeholder="@_Localizer[Constants.EntityKeys.TitleEN]" required />
+                        <label for="@nameof(CreateSliderRequest.TitleEN)">@_Localizer[Constants.EntityKeys.TitleEN]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.TitleEN] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateSliderRequest.Description)" id="@nameof(CreateSliderRequest.Description)" placeholder="@_Localizer[Constants.EntityKeys.Description]" required />
+                        <label for="@nameof(CreateSliderRequest.Description)">@_Localizer[Constants.EntityKeys.Description]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Description] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="d-flex justify-content-center mb-3 px-1">
+                        <label for="CreateFileInput" class="custum-file-upload">
+                            <div id="Img-MainBox">
+                                <div class="icon">
+                                    <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-User="evenodd" clip-User="evenodd" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" fill=""></path> </g></svg>
+                                </div>
+                                <div class="text">
+                                    <span>@_Localizer[Constants.LabelKeys.ClickToUploadImage]</span>
+                                </div>
+                            </div>
+                            <img id="ImageUrl" name="@nameof(SliderDto.PhotoPath)" class="img-fluid" />
+                            <input id="CreateFileInput" type="file" accept="image/*" name="@nameof(CreateSliderRequest.FormFile)" onchange="updateImagePreview('CreateForm',event)">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#CreateForm', 'Slider', 'Create', 'SliderList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Slider="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.Slider)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" Slider="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateSliderRequest.TitleAR)" id="@nameof(UpdateSliderRequest.TitleAR)" placeholder="@_Localizer[Constants.EntityKeys.TitleAR]" required />
+                        <label for="@nameof(UpdateSliderRequest.TitleAR)">@_Localizer[Constants.EntityKeys.TitleAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.TitleAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateSliderRequest.TitleEN)" id="@nameof(UpdateSliderRequest.TitleEN)" placeholder="@_Localizer[Constants.EntityKeys.TitleEN]" required />
+                        <label for="@nameof(UpdateSliderRequest.TitleEN)">@_Localizer[Constants.EntityKeys.TitleEN]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.TitleEN] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateSliderRequest.Description)" id="@nameof(UpdateSliderRequest.Description)" placeholder="@_Localizer[Constants.EntityKeys.Description]" required />
+                        <label for="@nameof(UpdateSliderRequest.Description)">@_Localizer[Constants.EntityKeys.Description]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Description] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="d-flex justify-content-center mb-3 px-1">
+                        <label for="UpdateFileInput" class="custum-file-upload">
+                            <img id="@nameof(SliderDto.PhotoPath)" name="@nameof(SliderDto.PhotoPath)" class="img-fluid" />
+                            <input id="UpdateFileInput" type="file" accept="image/*" name="@nameof(UpdateSliderRequest.FormFile)" onchange="updateImagePreview('UpdateForm',event)">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Slider', 'Update', 'SliderList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Slider="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Slider)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Slider','Delete','SliderList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'titleAR' },
+            { data: 'titleEN' },
+            { data: 'description' },
+            {
+                data: 'photoPath', render: function (data, type, row) {
+                    return photoRender(data);
+                }
+            },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('SliderList', 'Slider', 'Table', tableColumns, '@_localizationManger.Language');
+    </script>
+}

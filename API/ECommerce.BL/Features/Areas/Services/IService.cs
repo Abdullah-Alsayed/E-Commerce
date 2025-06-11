@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Areas.Dtos;
 using ECommerce.BLL.Features.Areas.Requests;
-using ECommerce.BLL.Features.Invoices.Requests;
 using ECommerce.BLL.Response;
 
 namespace ECommerce.BLL.Features.Areas.Services
@@ -10,9 +11,9 @@ namespace ECommerce.BLL.Features.Areas.Services
         Task<BaseResponse> CreateAsync(CreateAreaRequest request);
         Task<BaseResponse> DeleteAsync(DeleteAreaRequest request);
         Task<BaseResponse> FindAsync(FindAreaRequest request);
-        Task<BaseResponse> GetAllAsync(GetAllAreaRequest request);
+        Task<BaseResponse<BaseGridResponse<List<AreaDto>>>> GetAllAsync(GetAllAreaRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
-        Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveAreaRequest request);
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveAreaRequest request);
         Task<BaseResponse> UpdateAsync(UpdateAreaRequest request);
     }
 }

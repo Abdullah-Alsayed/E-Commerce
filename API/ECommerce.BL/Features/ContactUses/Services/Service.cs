@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.Features.Colors.Dtos;
-using ECommerce.BLL.Features.Colors.Requests;
 using ECommerce.BLL.Features.ContactUses.Dtos;
 using ECommerce.BLL.Features.ContactUses.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Features.ContactUss.Requests;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -23,24 +21,24 @@ namespace ECommerce.BLL.Features.ContactUses.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IHostEnvironment _environment;
         private readonly IStringLocalizer<ContactUsService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public ContactUsService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<ContactUsService> localizer,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IHostEnvironment environment
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
             _environment = environment;
 
             #region initilize mapper
@@ -54,17 +52,11 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -74,19 +66,21 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             var modifyRows = 0;
             try
             {
-                var ContactUs = _mapper.Map<ContactUs>(request);
-                ContactUs.CreateBy = _userId;
-                ContactUs = await _unitOfWork.ContactUs.AddAsync(ContactUs);
-                var result = _mapper.Map<ContactUsDto>(ContactUs);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                var contactUs = _mapper.Map<ContactUs>(request);
+                var user = await _unitOfWork.UserModule.User.FindUserByNameAsync(Constants.System);
+                _userId = user?.Id ?? Guid.Empty;
+                contactUs = await _unitOfWork.ContentModule.ContactUs.AddAsync(contactUs, _userId);
+                var result = _mapper.Map<ContactUsDto>(contactUs);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -112,7 +106,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.ContactUs
@@ -125,7 +119,9 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllContactUsRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<ContactUsDto>>>> GetAllAsync(
+            GetAllContactUsRequest request
+        )
         {
             try
             {
@@ -133,24 +129,112 @@ namespace ECommerce.BLL.Features.ContactUses.Services
                     ? nameof(ContactUs.Name)
                     : request.SearchBy;
 
-                var contactUs = await _unitOfWork.ContactUs.GetAllAsync(request);
-                var response = _mapper.Map<List<ContactUsDto>>(contactUs);
+                var result = await _unitOfWork.ContentModule.ContactUs.GetAllAsync(request);
+                var response = _mapper.Map<List<ContactUsDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ContactUsDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<ContactUsDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
+                    EntitiesEnum.ContactUs
+                );
+                return new BaseResponse<BaseGridResponse<List<ContactUsDto>>>
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> DeleteAsync(DeleteContactUsRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var contactUs = await _unitOfWork.ContentModule.ContactUs.FindAsync(request.ID);
+                var user = await _unitOfWork.UserModule.User.FindUserByNameAsync(Constants.System);
+                _userId = user?.Id ?? Guid.Empty;
+                _unitOfWork.ContentModule.ContactUs.Delete(contactUs, _userId);
+                var result = _mapper.Map<ContactUsDto>(contactUs);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<ContactUsDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.ContactUs
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> FindAsync(FindContactUsRequest request)
+        {
+            try
+            {
+                var ContactUs = await _unitOfWork.ContentModule.ContactUs.FindAsync(request.ID);
+                var result = _mapper.Map<ContactUsDto>(ContactUs);
+                return new BaseResponse<ContactUsDto>
+                {
+                    IsSuccess = true,
+                    Message = _localizer[MessageKeys.Success].ToString(),
+                    Result = result
+                };
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
                     EntitiesEnum.ContactUs
                 );
                 return new BaseResponse
@@ -163,7 +247,7 @@ namespace ECommerce.BLL.Features.ContactUses.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -174,13 +258,14 @@ namespace ECommerce.BLL.Features.ContactUses.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.ContactUs
-                }
+                },
+                _userId
             );
 
         #endregion

@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Features.Users.Validators
             RuleLevelCascadeMode = CascadeMode.Stop;
             _localizer = localizer;
 
-            RuleFor(req => req.UserID)
+            RuleFor(req => req.ID)
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -51,7 +51,7 @@ namespace ECommerce.BLL.Features.Users.Validators
                 .Must(req =>
                 {
                     var claimsUser = context
-                        .UserClaims.Where(User => User.UserId == req.UserID)
+                        .UserClaims.Where(User => User.UserId == req.ID)
                         .Select(x => x.ClaimValue)
                         .ToList();
                     var requestClaims = req.Claims.Distinct().ToList();

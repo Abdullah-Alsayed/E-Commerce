@@ -3,45 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using ECommerce.BL.Repository;
 using ECommerce.BLL.DTO;
-using ECommerce.BLL.Features.Areas.Services;
-using ECommerce.BLL.Features.Bookings.Services;
-using ECommerce.BLL.Features.Brands.Services;
-using ECommerce.BLL.Features.Carts.Services;
-using ECommerce.BLL.Features.Categories.Services;
-using ECommerce.BLL.Features.Colors.Services;
-using ECommerce.BLL.Features.ContactUses.Services;
-using ECommerce.BLL.Features.Errors.Services;
-using ECommerce.BLL.Features.Expenses.Services;
-using ECommerce.BLL.Features.Feedbacks.Services;
-using ECommerce.BLL.Features.Governorates.Services;
-using ECommerce.BLL.Features.Invoices.Services;
-using ECommerce.BLL.Features.Orders.Services;
-using ECommerce.BLL.Features.Products.Services;
-using ECommerce.BLL.Features.Reviews.Services;
-using ECommerce.BLL.Features.Roles.Services;
-using ECommerce.BLL.Features.Settings.Services;
-using ECommerce.BLL.Features.Sizes.Services;
-using ECommerce.BLL.Features.Sliders.Services;
-using ECommerce.BLL.Features.Statuses.Services;
-using ECommerce.BLL.Features.Stocks.Services;
-using ECommerce.BLL.Features.SubCategories.Services;
-using ECommerce.BLL.Features.Units.Services;
 using ECommerce.BLL.Features.Users.Filter;
-using ECommerce.BLL.Features.Users.Services;
-using ECommerce.BLL.Features.Vendors.Services;
-using ECommerce.BLL.Features.Vouchers.Services;
 using ECommerce.BLL.Injector;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Middleware;
-using ECommerce.BLL.Repository;
 using ECommerce.BLL.Validators;
 using ECommerce.Core.Helpers;
 using ECommerce.Core.Middlwares;
-using ECommerce.Core.Services.MailServices;
-using ECommerce.Core.Services.WhatsappServices;
-using ECommerce.Core.Services.WhatsappServices.Services;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using FluentValidation.AspNetCore;
@@ -195,7 +163,7 @@ namespace ECommerce.API
             Injector.InjectServices(services, Configuration);
         }
 
-        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //*****************  Global Error Handling  ***************************
             app.ConfigureExceptionHandler();

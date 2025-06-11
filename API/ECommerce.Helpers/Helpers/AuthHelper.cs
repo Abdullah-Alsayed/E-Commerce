@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +15,9 @@ namespace ECommerce.Core.Helpers
     {
         public static string GetClaimValue(ClaimsPrincipal user, string type)
         {
-            if (user.Identity is ClaimsIdentity identity)
-            {
-                var claim = identity.FindFirst(c => c.Type == type);
-                if (claim != null)
-                    return claim.Value;
-            }
+            var claim = user.Claims.FirstOrDefault(c => c.Type == type);
+            if (claim != null)
+                return claim.Value;
 
             return null;
         }
@@ -95,6 +94,16 @@ namespace ECommerce.Core.Helpers
         {
             //  return permissions.Contains(action);
             return true;
+        }
+
+        public static string OpenMenuItem(List<string> paths, string currentPath)
+        {
+            var flag = false;
+            foreach (var path in paths)
+                if (currentPath.StartsWith(path))
+                    flag = true;
+
+            return flag ? "active open" : "";
         }
     }
 }

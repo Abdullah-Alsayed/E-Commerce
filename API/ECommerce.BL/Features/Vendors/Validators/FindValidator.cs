@@ -33,7 +33,7 @@ public class FindVendorValidator : AbstractValidator<FindVendorRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Vendors.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Vendors.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"

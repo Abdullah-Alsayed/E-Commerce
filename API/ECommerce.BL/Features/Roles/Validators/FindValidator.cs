@@ -37,7 +37,7 @@ public class FindRoleValidator : AbstractValidator<FindRoleRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return roleManager.Roles.AsNoTracking().Any(x => x.Id == req.ID.ToString());
+                return roleManager.Roles.AsNoTracking().Any(x => x.Id == req.ID);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.NotFound]}"

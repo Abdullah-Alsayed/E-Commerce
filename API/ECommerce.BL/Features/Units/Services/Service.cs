@@ -1,48 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.DTO;
-using ECommerce.BLL.Features.Units.Dtos;
-using ECommerce.BLL.Features.Units.Requests;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Features.Tags.Dtos;
+using ECommerce.BLL.Features.Tags.Requests;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
-namespace ECommerce.BLL.Features.Units.Services
+namespace ECommerce.BLL.Features.Tags.Services
 {
     public class UnitService : IUnitService
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer<UnitService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Constants.Languages.Ar;
 
         public UnitService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<UnitService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Unit, UnitDto>().ReverseMap();
+                cfg.CreateMap<Unit, TagDto>().ReverseMap();
                 cfg.CreateMap<Unit, CreateUnitRequest>().ReverseMap();
                 cfg.CreateMap<Unit, UpdateUnitRequest>().ReverseMap();
             });
@@ -50,17 +48,11 @@ namespace ECommerce.BLL.Features.Units.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -68,9 +60,9 @@ namespace ECommerce.BLL.Features.Units.Services
         {
             try
             {
-                var Unit = await _unitOfWork.Unit.FindAsync(request.ID);
-                var result = _mapper.Map<UnitDto>(Unit);
-                return new BaseResponse<UnitDto>
+                var Unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                var result = _mapper.Map<TagDto>(Unit);
+                return new BaseResponse<TagDto>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
@@ -79,7 +71,11 @@ namespace ECommerce.BLL.Features.Units.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Unit);
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.View,
+                    EntitiesEnum.Unit
+                );
                 return new BaseResponse
                 {
                     IsSuccess = false,
@@ -88,7 +84,9 @@ namespace ECommerce.BLL.Features.Units.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllUnitRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<TagDto>>>> GetAllAsync(
+            GetAllUnitRequest request
+        )
         {
             try
             {
@@ -98,27 +96,28 @@ namespace ECommerce.BLL.Features.Units.Services
                         : nameof(Unit.NameEN)
                     : request.SearchBy;
 
-                var Units = await _unitOfWork.Unit.GetAllAsync(request);
-                var response = _mapper.Map<List<UnitDto>>(Units);
-                return new BaseResponse<BaseGridResponse<List<UnitDto>>>
+                var result = await _unitOfWork.ProductModule.Unit.GetAllAsync(request);
+                var response = _mapper.Map<List<TagDto>>(result.list);
+                return new BaseResponse<BaseGridResponse<List<TagDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
-                    Result = new BaseGridResponse<List<UnitDto>>
+                    Total = response != null ? result.count : 0,
+                    Result = new BaseGridResponse<List<TagDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Unit
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<TagDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -133,24 +132,24 @@ namespace ECommerce.BLL.Features.Units.Services
             try
             {
                 var Unit = _mapper.Map<Unit>(request);
-                Unit.CreateBy = _userId;
-                Unit = await _unitOfWork.Unit.AddAsync(Unit);
-                var result = _mapper.Map<UnitDto>(Unit);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                Unit = await _unitOfWork.ProductModule.Unit.AddAsync(Unit, _userId);
+                var result = _mapper.Map<TagDto>(Unit);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<UnitDto>
+                    return new BaseResponse<TagDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -170,7 +169,7 @@ namespace ECommerce.BLL.Features.Units.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Unit
@@ -189,26 +188,26 @@ namespace ECommerce.BLL.Features.Units.Services
             var modifyRows = 0;
             try
             {
-                var Unit = await _unitOfWork.Unit.FindAsync(request.ID);
-                _mapper.Map(request, Unit);
-                Unit.ModifyBy = _userId;
-                Unit.ModifyAt = DateTime.UtcNow;
-                var result = _mapper.Map<UnitDto>(Unit);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                _mapper.Map(request, unit);
+                _unitOfWork.ProductModule.Unit.Update(unit, _userId);
+                var result = _mapper.Map<TagDto>(unit);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<UnitDto>
+                    return new BaseResponse<TagDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -228,7 +227,7 @@ namespace ECommerce.BLL.Features.Units.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Unit
@@ -247,26 +246,25 @@ namespace ECommerce.BLL.Features.Units.Services
             var modifyRows = 0;
             try
             {
-                var Unit = await _unitOfWork.Unit.FindAsync(request.ID);
-                Unit.DeletedBy = _userId;
-                Unit.DeletedAt = DateTime.UtcNow;
-                Unit.IsDeleted = true;
-                var result = _mapper.Map<UnitDto>(Unit);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Unit.Delete(unit, _userId);
+                var result = _mapper.Map<TagDto>(unit);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<UnitDto>
+                    return new BaseResponse<TagDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -286,10 +284,68 @@ namespace ECommerce.BLL.Features.Units.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Delete,
                     EntitiesEnum.Unit
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveUnitRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Unit.ToggleActive(unit, _userId);
+
+                var result = _mapper.Map<TagDto>(unit);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<TagDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
                 );
                 return new BaseResponse
                 {
@@ -303,7 +359,7 @@ namespace ECommerce.BLL.Features.Units.Services
         {
             try
             {
-                var result = _unitOfWork.Unit.SearchEntity();
+                var result = _unitOfWork.ProductModule.Unit.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -313,7 +369,7 @@ namespace ECommerce.BLL.Features.Units.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Unit
@@ -328,7 +384,7 @@ namespace ECommerce.BLL.Features.Units.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -339,13 +395,14 @@ namespace ECommerce.BLL.Features.Units.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Unit
-                }
+                },
+                _userId
             );
 
         #endregion

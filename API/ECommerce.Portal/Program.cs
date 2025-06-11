@@ -1,10 +1,11 @@
 using System.Globalization;
-using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Injector;
+using ECommerce.BLL.Validators;
 using ECommerce.Core.Middlwares;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
+using FluentValidation.AspNetCore;
 using LocalizationAPI.Localization;
 using MasBeach.BackEnd.Portal.Localization.LocalizationManger;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -53,12 +54,21 @@ builder
         Option.Password.RequiredUniqueChars = 0;
         Option.Password.RequireLowercase = false;
         Option.Password.RequireUppercase = false;
+        Option.Password.RequiredLength = 3;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 //****************** Auto Mapper ******************************
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(Program));
+
+//****************** Fluent Validation ******************************
+//builder.Services.AddFluentValidationAutoValidation();
+//builder.Services.AddValidatorsFromAssemblyContaining<BaseValidator>();
+
+builder
+    .Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BaseValidator>());
 
 //****************** Http Context Accessor ******************************
 builder.Services.AddHttpContextAccessor();
@@ -72,6 +82,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 builder.Services.AddScoped<ILocalizationManger, LocalizationManger>();
 
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

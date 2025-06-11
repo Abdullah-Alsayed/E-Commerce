@@ -1,6 +1,10 @@
-﻿using ECommerce.BLL.Request;
+﻿using System;
+using ECommerce.BLL.Request;
 
 namespace ECommerce.BLL.Features.Areas.Requests
 {
-    public record GetAllAreaRequest : BaseGridRequest { }
+    public record GetAllAreaRequest : BaseGridRequest
+    {
+        public Guid? GovernorateID { get; set; }
+    }
 }

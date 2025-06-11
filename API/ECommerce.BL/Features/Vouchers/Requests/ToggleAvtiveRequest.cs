@@ -3,5 +3,5 @@ using ECommerce.BLL.Request;
 
 namespace ECommerce.BLL.Features.Vouchers.Requests
 {
-    public record ToggleAvtiveVoucherRequest : BaseRequest { }
+    public record ToggleActiveVoucherRequest : BaseRequest { }
 }

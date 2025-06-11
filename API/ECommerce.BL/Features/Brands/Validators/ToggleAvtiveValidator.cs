@@ -9,13 +9,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Brands.Validators
 {
-    public class ToggleAvtiveBrandValidator : AbstractValidator<ToggleAvtiveBrandRequest>
+    public class ToggleActiveBrandValidator : AbstractValidator<ToggleActiveBrandRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveBrandValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveBrandValidator> _localizer;
 
-        public ToggleAvtiveBrandValidator(
+        public ToggleActiveBrandValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveBrandValidator> localizer
+            IStringLocalizer<ToggleActiveBrandValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
@@ -25,7 +25,7 @@ namespace ECommerce.BLL.Features.Brands.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Brands.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Brands.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotFound]}"

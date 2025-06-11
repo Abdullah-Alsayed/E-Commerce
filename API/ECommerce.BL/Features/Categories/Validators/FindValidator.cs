@@ -32,7 +32,7 @@ public class FindCategoryValidator : AbstractValidator<FindCategoryRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Categories.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Categories.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotFound]}"

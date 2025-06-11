@@ -1,0 +1,107 @@
+@model ECommerce.DAL.Entity.Setting
+
+<form id="editSettingForm" class="row g-5" onsubmit="return false">
+    <div class="col-12">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingTitle" name="Title" class="form-control" value="@Model.Title" placeholder="Enter Title">
+            <label for="modalEditSettingTitle">Title</label>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingLogo" name="Logo" class="form-control" value="@Model.Logo" placeholder="Enter Logo URL">
+            <label for="modalEditSettingLogo">Logo URL</label>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingAddress" name="Address" class="form-control" value="@Model.Address" placeholder="Enter Address">
+            <label for="modalEditSettingAddress">Address</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingMainColor" name="MainColor" class="form-control" value="@Model.MainColor" placeholder="Enter Main Color">
+            <label for="modalEditSettingMainColor">Main Color</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="email" id="modalEditSettingEmail" name="Email" class="form-control" value="@Model.Email" placeholder="Enter Email">
+            <label for="modalEditSettingEmail">Email</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingPhone" name="Phone" class="form-control" value="@Model.Phone" placeholder="Enter Phone">
+            <label for="modalEditSettingPhone">Phone</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingBookingMessage" name="BookingMessage" class="form-control" value="@Model.BookingMessage" placeholder="Enter Booking Message">
+            <label for="modalEditSettingBookingMessage">Booking Message</label>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <h5 class="mb-3">Social Media Links</h5>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingFacebook" name="FaceBook" class="form-control" value="@Model.FaceBook" placeholder="Enter Facebook URL">
+            <label for="modalEditSettingFacebook">Facebook URL</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingInstagram" name="Instagram" class="form-control" value="@Model.Instagram" placeholder="Enter Instagram URL">
+            <label for="modalEditSettingInstagram">Instagram URL</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingYoutube" name="Youtube" class="form-control" value="@Model.Youtube" placeholder="Enter Youtube URL">
+            <label for="modalEditSettingYoutube">Youtube URL</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingWhatsapp" name="Whatsapp" class="form-control" value="@Model.Whatsapp" placeholder="Enter Whatsapp URL">
+            <label for="modalEditSettingWhatsapp">Whatsapp URL</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" id="modalEditSettingTikTok" name="TikTok" class="form-control" value="@Model.TikTok" placeholder="Enter TikTok URL">
+            <label for="modalEditSettingTikTok">TikTok URL</label>
+        </div>
+    </div>
+
+    <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary me-3 waves-effect waves-light">Save Changes</button>
+        <button type="reset" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#editSettingForm').on('submit', function(e) {
+                e.preventDefault();
+                // Add your form submission logic here
+            });
+        });
+    </script>
+} 

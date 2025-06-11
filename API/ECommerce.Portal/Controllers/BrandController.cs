@@ -1,8 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
 using ECommerce.BLL.Features.Brands.Services;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.Core.PermissionsClaims;
+using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,21 +18,109 @@ namespace ECommerce.API.Controllers
 
         public BrandController(IBrandService service) => _service = service;
 
-        [HttpGet]
-        public async Task<BaseResponse> FindBrand([FromQuery] FindBrandRequest request)
+        [Authorize(Policy = Permissions.Brand.View)]
+        public IActionResult List() => View();
+
+        #region CRUD
+        [HttpPost]
+        [Authorize(Policy = Permissions.Brand.View)]
+        public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
+            var search = request?.Search?.Value;
+            var dir = request?.Order?.FirstOrDefault()?.Dir ?? Constants.Descending;
+            bool isDescending = (dir == Constants.Descending);
+            var columns = new List<string>
+            {
+                nameof(BrandDto.NameAR),
+                nameof(BrandDto.NameEN),
+                nameof(BrandDto.PhotoPath),
+                nameof(BrandDto.IsActive),
+                nameof(BrandDto.CreateAt),
+            };
+            string sortColumn = columns[
+                request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1
+            ];
+
+            var response = await _service.GetAllAsync(
+                new GetAllBrandRequest
+                {
+                    IsDescending = isDescending,
+                    SortBy = sortColumn,
+                    PageSize = request?.Length ?? Constants.PageSize,
+                    PageIndex = request?.PageIndex ?? Constants.PageIndex,
+                    SearchFor = search,
+                }
+            );
+
+            var jsonResponse = new
+            {
+                draw = request?.Draw ?? 0,
+                recordsTotal = response?.Total ?? 0,
+                recordsFiltered = response?.Total ?? 0,
+                data = response?.Result.Items ?? new List<BrandDto>()
+            };
+
+            return Json(jsonResponse);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Permissions.Brand.Create)]
+        public async Task<IActionResult> Create([FromForm] CreateBrandRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
             try
             {
-                return await _service.FindAsync(request);
+                var result = await _service.CreateAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Policy = Permissions.Brand.Update)]
+        public async Task<IActionResult> Update([FromForm] UpdateBrandRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
+            try
+            {
+                var result = await _service.UpdateAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = Permissions.Brand.Delete)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
+            try
+            {
+                var result = await _service.DeleteAsync(
+                    new DeleteBrandRequest { ID = Guid.Parse(id) }
+                );
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
         [HttpGet]
-        public async Task<BaseResponse> GetAllBrand([FromQuery] GetAllBrandRequest request)
+        public async Task<BaseResponse> GetAll([FromQuery] GetAllBrandRequest request)
         {
             try
             {
@@ -41,38 +132,12 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<BaseResponse> GetSearchEntity()
-        {
-            try
-            {
-                return await _service.GetSearchEntityAsync();
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
-        [HttpPost]
-        public async Task<BaseResponse> CreateBrand([FromForm] CreateBrandRequest request)
-        {
-            try
-            {
-                return await _service.CreateAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
-
         [HttpPut]
-        public async Task<BaseResponse> UpdateBrand([FromForm] UpdateBrandRequest request)
+        public async Task<BaseResponse> ToggleActive([FromBody] ToggleActiveBrandRequest request)
         {
             try
             {
-                return await _service.UpdateAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {
@@ -80,14 +145,11 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<BaseResponse> ToggleActiveBrand(
-            [FromForm] ToggleAvtiveBrandRequest request
-        )
+        public async Task<BaseResponse> Get(Guid id)
         {
             try
             {
-                return await _service.ToggleAvtiveAsync(request);
+                return await _service.FindAsync(new FindBrandRequest { ID = id });
             }
             catch (Exception ex)
             {
@@ -95,17 +157,6 @@ namespace ECommerce.API.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<BaseResponse> DeleteBrand(DeleteBrandRequest request)
-        {
-            try
-            {
-                return await _service.DeleteAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
+        #endregion
     }
 }

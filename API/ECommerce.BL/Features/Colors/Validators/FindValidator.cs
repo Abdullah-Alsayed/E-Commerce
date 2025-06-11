@@ -33,7 +33,7 @@ public class FindColorValidator : AbstractValidator<FindColorRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Colors.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Colors.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotFound]}"

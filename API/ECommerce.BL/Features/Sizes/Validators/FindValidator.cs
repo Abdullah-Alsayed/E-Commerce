@@ -33,7 +33,7 @@ public class FindSizeValidator : AbstractValidator<FindSizeRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Sizes.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Sizes.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotFound]}"

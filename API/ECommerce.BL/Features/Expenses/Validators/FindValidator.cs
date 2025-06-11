@@ -32,7 +32,7 @@ public class FindExpenseValidator : AbstractValidator<FindExpenseRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Expenses.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Expenses.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Expense]} {_localizer[Constants.MessageKeys.NotFound]}"

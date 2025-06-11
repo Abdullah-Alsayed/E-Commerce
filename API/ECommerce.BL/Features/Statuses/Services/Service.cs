@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ECommerce.BLL.DTO;
 using ECommerce.BLL.Features.Statuses.Dtos;
 using ECommerce.BLL.Features.Statuses.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
@@ -21,22 +19,22 @@ namespace ECommerce.BLL.Features.Statuses.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IStringLocalizer<StatusService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public StatusService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<StatusService> localizer,
-            IHttpContextAccessor httpContextAccessor
+            IUserContext userContext
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
 
             #region initilize mapper
             var config = new MapperConfiguration(cfg =>
@@ -50,17 +48,11 @@ namespace ECommerce.BLL.Features.Statuses.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
@@ -68,7 +60,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
         {
             try
             {
-                var Status = await _unitOfWork.Status.FindAsync(request.ID);
+                var Status = await _unitOfWork.OrderModule.Status.FindAsync(request.ID);
                 var result = _mapper.Map<StatusDto>(Status);
                 return new BaseResponse<StatusDto>
                 {
@@ -79,7 +71,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Status
@@ -92,7 +84,9 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllStatusRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<StatusDto>>>> GetAllAsync(
+            GetAllStatusRequest request
+        )
         {
             try
             {
@@ -102,27 +96,28 @@ namespace ECommerce.BLL.Features.Statuses.Services
                         : nameof(Status.NameEN)
                     : request.SearchBy;
 
-                var Statuss = await _unitOfWork.Status.GetAllAsync(request);
-                var response = _mapper.Map<List<StatusDto>>(Statuss);
+                var result = await _unitOfWork.OrderModule.Status.GetAllAsync(request);
+                var response = _mapper.Map<List<StatusDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<StatusDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
+                    Total = response != null ? result.count : 0,
                     Result = new BaseGridResponse<List<StatusDto>>
                     {
                         Items = response,
-                        Total = response != null ? response.Count : 0
+                        Total = response != null ? result.count : 0,
                     }
                 };
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Status
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<StatusDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -136,26 +131,20 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var allStatus = await _unitOfWork.Status.GetAllAsync(
-                    stat => stat.IsActive && !stat.IsDeleted,
-                    null
-                );
                 var status = _mapper.Map<Status>(request);
-                status.CreateBy = _userId;
-                status.Order = GetCurentOrder(allStatus.OrderBy(x => x.Order).ToList());
-                await _unitOfWork.Status.AddAsync(status);
+                modifyRows += await _unitOfWork.OrderModule.Status.AddAsync(status, _userId);
                 var result = _mapper.Map<StatusDto>(status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
-                modifyRows++;
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -179,7 +168,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Create,
                     EntitiesEnum.Status
@@ -198,27 +187,25 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var allStatus = await _unitOfWork.Status.GetAllAsync(
-                    stat => stat.IsActive && !stat.IsDeleted,
-                    null
+                var status = await _unitOfWork.OrderModule.Status.FindAsync(request.ID);
+                modifyRows = await _unitOfWork.OrderModule.Status.UpdateAsync(
+                    status,
+                    request.Order,
+                    _userId
                 );
-                var status = await _unitOfWork.Status.FindAsync(request.ID);
-                modifyRows = SwapOrder(request.Order, status.Order, modifyRows, allStatus);
                 _mapper.Map(request, status);
-                status.ModifyBy = _userId;
-                status.ModifyAt = DateTime.UtcNow;
                 var result = _mapper.Map<StatusDto>(status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
-                modifyRows++;
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
@@ -242,7 +229,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Status
@@ -261,20 +248,75 @@ namespace ECommerce.BLL.Features.Statuses.Services
             var modifyRows = 0;
             try
             {
-                var Status = await _unitOfWork.Status.FindAsync(request.ID);
-                Status.DeletedBy = _userId;
-                Status.DeletedAt = DateTime.UtcNow;
-                Status.IsDeleted = true;
+                var Status = await _unitOfWork.OrderModule.Status.FindAsync(request.ID);
+                modifyRows = await _unitOfWork.OrderModule.Status.DeleteAsync(Status, _userId);
                 var result = _mapper.Map<StatusDto>(Status);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Delete);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Delete);
+                //modifyRows++;
+                //#endregion
+
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<StatusDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Delete,
+                    EntitiesEnum.Status
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveStatusRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Status = await _unitOfWork.OrderModule.Status.FindAsync(request.ID);
+                _unitOfWork.OrderModule.Status.ToggleActive(Status, _userId);
+                var result = _mapper.Map<StatusDto>(Status);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -300,16 +342,12 @@ namespace ECommerce.BLL.Features.Statuses.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
-                    OperationTypeEnum.Delete,
+                    OperationTypeEnum.Toggle,
                     EntitiesEnum.Status
                 );
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    Message = _localizer[MessageKeys.Fail].ToString()
-                };
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
 
@@ -317,7 +355,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
         {
             try
             {
-                var result = _unitOfWork.Status.SearchEntity();
+                var result = _unitOfWork.OrderModule.Status.SearchEntity();
                 return new BaseResponse<List<string>>
                 {
                     IsSuccess = true,
@@ -327,7 +365,7 @@ namespace ECommerce.BLL.Features.Statuses.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Search,
                     EntitiesEnum.Status
@@ -341,42 +379,8 @@ namespace ECommerce.BLL.Features.Statuses.Services
         }
 
         #region helpers
-        private int SwapOrder(
-            int neworder,
-            int oldOrder,
-            int modifyRows,
-            IEnumerable<Status> allStatus
-        )
-        {
-            if (oldOrder != neworder)
-            {
-                var oldStatus = allStatus.FirstOrDefault(stat => stat.Order == neworder);
-                if (oldStatus != null)
-                {
-                    oldStatus.Order = oldOrder;
-                    modifyRows++;
-                }
-            }
-
-            return modifyRows;
-        }
-
-        private int GetCurentOrder(List<Status> allStatus)
-        {
-            var order = allStatus.Count;
-            for (int i = 0; i < allStatus.Count(); i++)
-            {
-                if (allStatus[i].Order != (i + 1))
-                {
-                    order = (i + 1);
-                    break;
-                }
-            }
-            return order;
-        }
-
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -387,13 +391,14 @@ namespace ECommerce.BLL.Features.Statuses.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Status
-                }
+                },
+                _userId
             );
 
         #endregion

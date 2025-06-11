@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ECommerce.BLL.Features.Invoices.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Repository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +24,7 @@ public class InvoiceRepository : BaseRepository<Invoice>, IInvoiceRepository
                 .Invoices.Include(x => x.Order)
                 .ThenInclude(x => x.ProductOrders)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.ID == request.ID);
+                .FirstOrDefaultAsync(x => x.Id == request.ID);
             return invoice;
         }
         catch (Exception exception)

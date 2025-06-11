@@ -7,6 +7,7 @@
         Delete,
         Toggle,
         GetAll,
+        Get,
         View,
         Search,
         Accept,
@@ -22,6 +23,9 @@
         ResetPassword,
         SendConfirmEmail,
         ChangeUserPassword,
-        Notify
+        Notify,
+        UpdateLanguage,
+        Active,
+        UnActive
     }
 }

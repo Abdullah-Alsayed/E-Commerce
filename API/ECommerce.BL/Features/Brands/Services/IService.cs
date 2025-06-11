@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
-using ECommerce.BLL.Features.Products.Requests;
-using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Response;
 
 namespace ECommerce.BLL.Features.Brands.Services
@@ -11,9 +11,11 @@ namespace ECommerce.BLL.Features.Brands.Services
         Task<BaseResponse> CreateAsync(CreateBrandRequest request);
         Task<BaseResponse> DeleteAsync(DeleteBrandRequest request);
         Task<BaseResponse> FindAsync(FindBrandRequest request);
-        Task<BaseResponse> GetAllAsync(GetAllBrandRequest request);
+        Task<BaseResponse<BaseGridResponse<List<BrandDto>>>> GetAllAsync(
+            GetAllBrandRequest request
+        );
         Task<BaseResponse> UpdateAsync(UpdateBrandRequest request);
-        Task<BaseResponse> ToggleAvtiveAsync(ToggleAvtiveBrandRequest request);
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveBrandRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
     }
 }

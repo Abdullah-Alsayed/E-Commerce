@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ECommerce.Core.PermissionsClaims;
@@ -10,7 +9,6 @@ using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static ECommerce.Core.Constants;
 
 namespace ECommerce.Core
 {
@@ -22,48 +20,70 @@ namespace ECommerce.Core
             UserManager<User> userManager
         )
         {
-            await SeedRoles(context, roleManager);
-            string systemUser = await GetUser(context, userManager);
-            await SeedGovernorates(context, systemUser);
-            await SeedSettings(context, systemUser);
-            await SeedStatuses(context, systemUser);
-            await context.SaveChangesAsync();
+            try
+            {
+                await SeedRoles(context, roleManager);
+                var systemUser = await GetUser(context, userManager);
+                await SeedGovernorates(context, systemUser);
+                await SeedSettings(context, systemUser);
+                await SeedStatuses(context, systemUser);
+                await context.SaveChangesAsync();
+            }
+            catch (global::System.Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
-        private static async Task<string> GetUser(
+        private static async Task<Guid> GetUser(
             ApplicationDbContext context,
             UserManager<User> userManager
         )
         {
-            var systemUser = Guid.NewGuid().ToString();
-            var hasDefault = await context.Users.AnyAsync(x => x.UserName == "System");
-            if (!hasDefault)
+            try
             {
-                var adminUser = new User
+                var systemUser = Guid.NewGuid();
+                var hasDefault = await context.Users.AnyAsync(x => x.UserName == Constants.System);
+                if (!hasDefault)
                 {
-                    Id = systemUser,
-                    UserName = "System",
-                    FirstName = "System",
-                    LastName = "System",
-                    Address = "System",
-                    Email = "System",
-                    EmailConfirmed = true,
-                    CreateAt = DateTime.UtcNow
-                };
-                await userManager.CreateAsync(adminUser, "P@ssword123");
-                await userManager.AddToRoleAsync(adminUser, Constants.Roles.SuperAdmin);
+                    var roleId = await context
+                        .Roles.Where(x => x.RoleType == Enums.RoleTypeEnum.SuberAdmin)
+                        .Select(x => x.Id)
+                        .FirstOrDefaultAsync();
+                    var adminUser = new User
+                    {
+                        Id = systemUser,
+                        UserName = Constants.System,
+                        FirstName = Constants.System,
+                        LastName = Constants.System,
+                        Address = Constants.System,
+                        Email = Constants.System,
+                        EmailConfirmed = true,
+                        RoleId = roleId,
+                        Photo =
+                            $"/Images/{Constants.PhotoFolder.User}/{Constants.DefaultPhotos.User}",
+                        CreateAt = DateTime.UtcNow
+                    };
+                    await userManager.CreateAsync(adminUser, "P@ssword123");
+                    await userManager.AddToRoleAsync(adminUser, Constants.Roles.SuperAdmin);
+                }
+                else
+                {
+                    var defaultUser = await context.Users.FirstOrDefaultAsync(x =>
+                        x.UserName == "System"
+                    );
+                    systemUser = defaultUser.Id;
+                }
+                return systemUser;
             }
-            else
+            catch (Exception ex)
             {
-                var defaultUser = await context.Users.FirstOrDefaultAsync(x =>
-                    x.UserName == "System"
-                );
-                systemUser = defaultUser.Id;
+                Console.WriteLine(ex);
+                return Guid.Empty;
             }
-            return systemUser;
         }
 
-        private static async Task SeedStatuses(ApplicationDbContext context, string systemUser)
+        private static async Task SeedStatuses(ApplicationDbContext context, Guid systemUser)
         {
             var hasStatuses = await context.Statuses.AnyAsync();
             if (!hasStatuses)
@@ -73,14 +93,23 @@ namespace ECommerce.Core
                     {
                         NameAR = "مكتمل",
                         NameEN = "Complete",
-                        Order = 10,
+                        Order = 1,
+                        CreateBy = systemUser,
+                    }
+                );
+                await context.Statuses.AddAsync(
+                    new Status
+                    {
+                        NameAR = "ملغي",
+                        NameEN = "Cancel",
+                        Order = 2,
                         CreateBy = systemUser,
                     }
                 );
             }
         }
 
-        private static async Task SeedSettings(ApplicationDbContext context, string systemUser)
+        private static async Task SeedSettings(ApplicationDbContext context, Guid systemUser)
         {
             var hasSettings = await context.Settings.AnyAsync();
             if (!hasSettings)
@@ -114,13 +143,14 @@ namespace ECommerce.Core
             {
                 var SuperAdmin = new Role
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = Guid.NewGuid(),
                     Name = Constants.Roles.SuperAdmin,
+                    NameEn = "المسؤل",
                     Description = Constants.Roles.SuperAdmin,
                     NormalizedName = Constants.Roles.SuperAdmin.ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    RoleType = Enums.RoleTypeEnum.SuberAdmin,
                     CreateAt = DateTime.UtcNow,
-                    IsMaster = true
                 };
 
                 await roleManager.CreateAsync(SuperAdmin);
@@ -128,31 +158,33 @@ namespace ECommerce.Core
                 await roleManager.CreateAsync(
                     new Role
                     {
-                        Id = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid(),
                         Name = Constants.Roles.User,
+                        NameEn = "مستخدم",
                         Description = Constants.Roles.User,
                         NormalizedName = Constants.Roles.User.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
-                        CreateAt = DateTime.UtcNow,
-                        IsMaster = false
+                        RoleType = Enums.RoleTypeEnum.User,
+                        CreateAt = DateTime.UtcNow.AddSeconds(1),
                     }
                 );
                 await roleManager.CreateAsync(
                     new Role
                     {
-                        Id = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid(),
                         Name = Constants.Roles.Client,
+                        NameEn = "عميل",
                         Description = Constants.Roles.Client,
                         NormalizedName = Constants.Roles.Client.ToUpper(),
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
+                        RoleType = Enums.RoleTypeEnum.Client,
                         CreateAt = DateTime.UtcNow,
-                        IsMaster = false
                     }
                 );
             }
         }
 
-        private static async Task SeedGovernorates(ApplicationDbContext context, string systemUser)
+        private static async Task SeedGovernorates(ApplicationDbContext context, Guid systemUser)
         {
             var hasGovernorates = await context.Governorates.AnyAsync();
             if (!hasGovernorates)
@@ -166,7 +198,7 @@ namespace ECommerce.Core
 
                 var governoratesList = governorates.Select(governorate => new Governorate
                 {
-                    ID = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
                     NameAR = governorate.NameAR,
                     NameEN = governorate.NameEN,
                     Areas = Areas

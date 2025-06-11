@@ -9,7 +9,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Roles.Validators
 {
-    public class UpdateRoleClaimsValidator : AbstractValidator<UpdateRoleClaimsRequest>
+    public class UpdateRoleClaimsValidator : AbstractValidator<UpdateClaimsRequest>
     {
         private readonly IStringLocalizer<UpdateRoleClaimsValidator> _localizer;
 
@@ -22,7 +22,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
             RuleLevelCascadeMode = CascadeMode.Stop;
             _localizer = localizer;
 
-            RuleFor(req => req.RoleID)
+            RuleFor(req => req.ID)
                 .NotEmpty()
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Role]} {_localizer[Constants.MessageKeys.IsRequired]}"
@@ -49,7 +49,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
                 .Must(req =>
                 {
                     var claimsRole = context
-                        .RoleClaims.Where(role => role.RoleId == req.RoleID)
+                        .RoleClaims.Where(role => role.RoleId == req.ID)
                         .Select(x => x.ClaimValue)
                         .ToList();
                     var requestClaims = req.Claims.Distinct().ToList();
@@ -67,7 +67,7 @@ namespace ECommerce.BLL.Features.Roles.Validators
                 {
                     var AllPermissions = Permissions.GetAllPermissions();
                     foreach (var claim in req.Claims)
-                        if (!AllPermissions.Any(x => x.Claim == claim))
+                        if (!AllPermissions.Exists(x => x.Claim == claim))
                             return false;
 
                     return true;

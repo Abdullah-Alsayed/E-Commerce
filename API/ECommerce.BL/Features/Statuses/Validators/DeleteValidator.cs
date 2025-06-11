@@ -3,6 +3,7 @@ using ECommerce.BLL.Features.Statuses.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Statuses.Validators
@@ -23,7 +24,7 @@ namespace ECommerce.BLL.Features.Statuses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Statuses.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -32,19 +33,17 @@ namespace ECommerce.BLL.Features.Statuses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Statuses.Where(x => x.IsActive && !x.IsDeleted).Count() > 1;
-                })
-                .WithMessage(x =>
-                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.LastOne]}"
-                );
+                    var status = context
+                        .Statuses.Include(x => x.Orders)
+                        .FirstOrDefault(x => x.Id == req.ID);
 
-            RuleFor(req => req)
-                .Must(req =>
-                {
-                    return context.Statuses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    if (status == null)
+                        return true;
+
+                    return status.Orders.Count == 0;
                 })
                 .WithMessage(x =>
-                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.IsComplete]} {_localizer[Constants.MessageKeys.CantDelete]}"
+                    $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.HasOrders]} {_localizer[Constants.MessageKeys.CantDelete]}"
                 );
         }
     }

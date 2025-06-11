@@ -1,6 +1,6 @@
 ﻿using ECommerce.BLL.DTO;
 
-namespace ECommerce.BLL.Features.Units.Dtos
+namespace ECommerce.BLL.Features.Tags.Dtos
 {
     public record UnitDto : BaseEntityDto
     {

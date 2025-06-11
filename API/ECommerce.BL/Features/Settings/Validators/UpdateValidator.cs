@@ -4,6 +4,7 @@ using System.Linq;
 using ECommerce.BLL.Features.Settings.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -78,11 +79,11 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
         RuleFor(req => req.Phone)
             .NotEmpty()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .NotNull()
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
+                $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.IsRequired]}"
             )
             .MaximumLength(20)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
@@ -90,26 +91,25 @@ public class UpdateSettingValidator : AbstractValidator<UpdateSettingRequest>
             .WithMessage(x => $"{_localizer[Constants.MessageKeys.PhoneNotValid]}");
 
         RuleFor(req => req.FormFile)
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
             .Must(path =>
             {
-                var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                var extension = Path.GetExtension(path.FileName.ToLower());
-                if (string.IsNullOrEmpty(extension))
-                    return false;
-
-                extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                if (!allowedExtensions.Contains(extension))
-                    return false;
-
-                return true;
+                return FileHelper.ExtensionsCheck(path);
             })
-            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-            .Must(req =>
+            .Must(path =>
             {
-                return (req.Length / 1024) > 3000 ? false : true;
+                return FileHelper.SizeCheck(path);
             })
-            .When(x => x.FormFile != null)
-            .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+            .WithMessage(x =>
+                _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+            );
     }
 }

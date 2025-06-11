@@ -24,7 +24,7 @@ public class UpdateAreaValidator : AbstractValidator<UpdateAreaRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Areas.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Areas.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -46,7 +46,7 @@ public class UpdateAreaValidator : AbstractValidator<UpdateAreaRequest>
                 (req, name) =>
                 {
                     return !context.Areas.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -71,7 +71,7 @@ public class UpdateAreaValidator : AbstractValidator<UpdateAreaRequest>
                 (req, name) =>
                 {
                     return !context.Areas.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID
                     );
                 }
             )
@@ -83,7 +83,7 @@ public class UpdateAreaValidator : AbstractValidator<UpdateAreaRequest>
             .Must(req =>
             {
                 return context.Governorates.Any(x =>
-                    x.ID == req.GovernorateID && x.IsActive && !x.IsDeleted
+                    x.Id == req.GovernorateID && x.IsActive && !x.IsDeleted
                 );
             })
             .WithMessage(x =>

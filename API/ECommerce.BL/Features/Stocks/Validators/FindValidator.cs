@@ -33,7 +33,7 @@ public class FindStockValidator : AbstractValidator<FindStockRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Stocks.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Stocks.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Stock]} {_localizer[Constants.MessageKeys.NotFound]}"

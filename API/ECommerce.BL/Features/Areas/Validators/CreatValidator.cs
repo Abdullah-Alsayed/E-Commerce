@@ -53,7 +53,7 @@ namespace ECommerce.BLL.Features.Areas.Validators
                 .Must(req =>
                 {
                     return context.Governorates.Any(x =>
-                        x.ID == req.GovernorateID && x.IsActive && !x.IsDeleted
+                        x.Id == req.GovernorateID && x.IsActive && !x.IsDeleted
                     );
                 })
                 .WithMessage(x =>

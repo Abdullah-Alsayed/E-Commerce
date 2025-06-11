@@ -32,7 +32,7 @@ public class FindReviewValidator : AbstractValidator<FindReviewRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Reviews.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Reviews.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Review]} {_localizer[Constants.MessageKeys.NotFound]}"

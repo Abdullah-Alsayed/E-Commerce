@@ -1,4 +1,5 @@
-﻿
+﻿using System.IO;
+
 namespace ECommerce.Core
 {
     public static class Constants
@@ -7,7 +8,11 @@ namespace ECommerce.Core
         public const string Permission= "Permission";
         public const string Issuer= "E-commerceApi";
         public const string HostName= "localhost:5001";
-
+        public const int PageSize = 25;
+        public const int PageIndex = 0;
+        public const int FileSize = 3;
+        public const string Descending = "desc";
+        public const string Ascending = "Asc";
         public static class Languages
         {
             public const string Arabic = "Arabic";
@@ -53,6 +58,9 @@ namespace ECommerce.Core
             public const string RestPassword= "Rest Password";
             public const string EmailIsConfirm= "EmailIsConfirm";
             public const string LoginFiled = "LoginFiled";
+            public const string HasUser = "HasUser";
+            public const string InPast = "InPast";
+            public const string HasOrders = "HasOrders";
         }
 
         public static class Message
@@ -74,7 +82,7 @@ namespace ECommerce.Core
             public const string Value = "value";
             public const string Name="name";
             public const string Photo="photo";
-            public const string Brand = "barnd";
+            public const string Brand = "brand";
             public const string Category= "category";
             public const string SubCategory= "subCategory";
             public const string Unit= "unit";
@@ -84,7 +92,7 @@ namespace ECommerce.Core
             public const string Email= "Email";
             public const string Whatsapp= "MainColor";
             public const string MainColor= "MainColor";
-            public const string Phone= "Phone";
+            public const string PhoneNumber = "PhoneNumber";
             public const string Subject= "Subject";
             public const string Message= "Message";
             public const string Expense= "Expense";
@@ -118,8 +126,70 @@ namespace ECommerce.Core
             public const string Token="Token";
             public const string UserName= "UserName";
             public const string Booking= "Booking";
-			public const  string Products= "Products";
-		}
+			public const string Products= "Products";
+            public const string LastName = "LastName";
+            public const string FirstName = "FirstName";
+            public const string Password = "Password";
+            public const string CreatedAt = "CreatedAt";
+            public const string IsActive = "IsActive";
+            public const string LastLogin = "LastLogin";
+            public const string Age = "Age";
+            public const string Gander = "Gander";
+            public const string Tag = "Tag";
+            public const string ExpirationDate = "ExpirationDate";
+            public const string Used = "Used";
+            public const string Max = "Max";
+            public const string Setting = "Setting";
+            public const string ContactUs = "ContactUs";
+            public const string Favorite = "Favorite";
+            public const string History = "History";
+            public const string Facebook = "Facebook";
+            public const string BookingMessage = "BookingMessage";
+            public const string Youtube = "Youtube";
+            public const string Instagram = "Instagram";
+            public const string TikTok = "TikTok";
+            public const string Action = "Action";
+            public const string Entity = "Entity";
+            public const string Total = "Total";
+            public const string Count = "Count";
+            public const string Discount = "Discount";
+            public const string IsOffLine = "IsOffLine";
+            public const string IsReturn = "IsReturn";
+        }
+
+        public static class LabelKeys
+        {
+            public const string Select = "Select";
+            public const string ClickToUploadImage = "ClickToUploadImage";
+            public const string Close = "Close";
+            public const string SaveChanges = "SaveChanges";
+            public const string Action = "Action";
+            public const string Permission = "Permission";
+            public const string Statistics = "Statistics";
+            public const string UserManagement = "UserManagement";
+            public const string ProductManagement = "ProductManagement";
+            public const string Reviews = "Reviews";
+            public const string Calender = "Calender";
+            public const string Kanban = "Kanban";
+            public const string Setting = "Setting";
+            public const string Information = "Information";
+            public const string SettingsConfiguration = "SettingsConfiguration";
+            public const string BasicInformation = "BasicInformation";
+            public const string ContactInformation = "ContactInformation";
+            public const string SocialMediaLinks = "SocialMediaLinks";
+            public const string ProductAndOrders = "ProductAndOrders";
+            public const string CatalogManagement = "CatalogManagement";
+            public const string OrderProcessing = "OrderProcessing";
+            public const string InventoryAndVendors = "InventoryAndVendors";
+            public const string FinancialOperations = "FinancialOperations";
+            public const string CustomerFeedback = "CustomerFeedback";
+            public const string SystemSettings = "SystemSettings";
+            public const string CompanyInfo = "CompanyInfo";
+            public const string BannerManagement = "BannerManagement";
+            public const string CustomerSupport = "CustomerSupport";
+            public const string ActivityLog = "ActivityLog";
+            public const string MasterDataManagement = "MasterDataManagement";
+        }
 
         public static class Gender
         {
@@ -151,11 +221,13 @@ namespace ECommerce.Core
             public const string Expense= "Expense";
             public const string Slider= "Slider";
             public const string Products= "Products";
+            public const string User= "User";
         }
 
         public static class DefaultPhotos
         {
             public const string User = "User.png";
+            public const string Default = "/Images/Default.png";
 
         }
 
@@ -169,6 +241,7 @@ namespace ECommerce.Core
             public const string NotFound = "notFound";
             public const string Exist = "exist";
             public const string Register = "Register Failed";
+            public const string PhoneNumbeIsnotValid = "PhoneNumbeIsnotValid";
         }
 
         public static class NotificationIcons
@@ -181,7 +254,7 @@ namespace ECommerce.Core
         public static class Regex
         {
             public const string Color = "^#?([a-f0-9]{6}|[a-f0-9]{3})$";
-            public const string PhoneNumber = "^(\\+\\d{1,2}\\s?)?(1\\s?)?((\\(\\d{3}\\))|\\d{3})[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
+            public const string PhoneNumber = @"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$";
         }
 
         public static class Claims
@@ -199,6 +272,16 @@ namespace ECommerce.Core
             public const string UserRole = "UserRole";
 
             public const string Language = "Language";
+
+            public const string ID = "ID";
+
+            public const string UserName = "UserName";
+
+            public const string FirstName = "FirstName";
+
+            public const string LastName = "LastName";
+
+            public const string FullName = "FullName";
         }
     }
 }

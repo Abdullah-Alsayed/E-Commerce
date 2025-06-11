@@ -28,6 +28,7 @@
         User,
         Claims,
         Booking,
-        Errors
+        Errors,
+        Tag
     }
 }

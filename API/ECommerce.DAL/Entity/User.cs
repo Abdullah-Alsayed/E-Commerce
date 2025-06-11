@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ECommerce.Core;
 using ECommerce.DAL.Enums;
+using ECommerce.DAL.Interface;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.DAL.Entity
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<Guid>, IBaseEntity
     {
         public User()
         {
             Notifications = new HashSet<Notification>();
             Governorates = new HashSet<Governorate>();
-            SubCategorys = new HashSet<SubCategory>();
+            SubCategories = new HashSet<SubCategory>();
             Reviews = new HashSet<ProductReview>();
             PromoCodes = new HashSet<Voucher>();
-            Categorys = new HashSet<Category>();
+            Categories = new HashSet<Category>();
             Favorites = new HashSet<Favorite>();
             Products = new HashSet<Product>();
             Expenses = new HashSet<Expense>();
@@ -32,7 +34,7 @@ namespace ECommerce.DAL.Entity
         [Required, StringLength(100)]
         public string FirstName { get; set; }
 
-        [Required, StringLength(100)]
+        [StringLength(100)]
         public string LastName { get; set; }
 
         [Required]
@@ -49,27 +51,35 @@ namespace ECommerce.DAL.Entity
         [Required]
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
-        public string CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         public DateTime? LastLogin { get; set; }
 
         public bool IsActive { get; set; } = true;
         public bool IsDeleted { get; set; } = false;
 
-        public string DeletedBy { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public DateTime? ModifyAt { get; set; }
+
+        public Guid ModifyBy { get; set; }
+        public Guid DeletedBy { get; set; }
 
         [StringLength(50)]
         public string Language { get; set; } = Constants.Languages.Ar;
 
-        [StringLength(50)]
+        [StringLength(255)]
         public string Photo { get; set; } = Constants.DefaultPhotos.User;
+
+        [ForeignKey(nameof(Role))]
+        public Guid RoleId { get; set; }
+
+        public virtual Role Role { get; set; }
 
         public virtual ICollection<Slider> Sliders { get; set; }
         public virtual ICollection<Governorate> Governorates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<SubCategory> SubCategorys { get; set; }
+        public virtual ICollection<SubCategory> SubCategories { get; set; }
         public virtual ICollection<Voucher> PromoCodes { get; set; }
-        public virtual ICollection<Category> Categorys { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Expense> Expenses { get; set; }

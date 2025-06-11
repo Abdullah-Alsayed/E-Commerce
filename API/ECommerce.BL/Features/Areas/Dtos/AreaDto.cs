@@ -1,5 +1,6 @@
 ﻿using System;
 using ECommerce.BLL.DTO;
+using ECommerce.BLL.Features.Governorates.Dtos;
 
 namespace ECommerce.BLL.Features.Areas.Dtos
 {
@@ -8,5 +9,6 @@ namespace ECommerce.BLL.Features.Areas.Dtos
         public Guid GovernorateID { get; set; }
         public string NameAR { get; set; }
         public string NameEN { get; set; }
+        public GovernorateDto Governorate { get; set; }
     }
 }

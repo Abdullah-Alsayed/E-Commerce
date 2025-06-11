@@ -31,7 +31,7 @@ public class UpdateBookingValidator : AbstractValidator<UpdateBookingRequest>
             )
             .Must(ID =>
             {
-                return context.Bookings.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Bookings.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Booking]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -48,7 +48,7 @@ public class UpdateBookingValidator : AbstractValidator<UpdateBookingRequest>
             )
             .Must(ID =>
             {
-                return context.Products.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Products.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -65,7 +65,7 @@ public class UpdateBookingValidator : AbstractValidator<UpdateBookingRequest>
             )
             .Must(ID =>
             {
-                return context.Sizes.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Sizes.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Size]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -82,7 +82,7 @@ public class UpdateBookingValidator : AbstractValidator<UpdateBookingRequest>
             )
             .Must(ID =>
             {
-                return context.Colors.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                return context.Colors.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotExist]}"

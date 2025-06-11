@@ -33,7 +33,7 @@ public class FindFeedbackValidator : AbstractValidator<FindFeedbackRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Feedbacks.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Feedbacks.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Feedback]} {_localizer[Constants.MessageKeys.NotFound]}"

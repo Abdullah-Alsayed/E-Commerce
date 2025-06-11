@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.Features.Units.Requests;
-using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Tags.Requests;
+using ECommerce.BLL.Features.Tags.Services;
 using ECommerce.BLL.Response;
 using ECommerce.Core.PermissionsClaims;
 using Microsoft.AspNetCore.Authorization;
@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteUnit( DeleteUnitRequest request)
+        public async Task<BaseResponse> DeleteUnit(DeleteUnitRequest request)
         {
             try
             {

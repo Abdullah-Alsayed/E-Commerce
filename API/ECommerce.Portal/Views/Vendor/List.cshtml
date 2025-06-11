@@ -1,0 +1,175 @@
+﻿@using ECommerce.BLL.Features.Vendors.Dtos
+@using ECommerce.BLL.Features.Vendors.Requests
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Vendor List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["VendorsList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Vendor)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="VendorList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.Name]</th>
+                    <th>@_Localizer[Constants.EntityKeys.PhoneNumber]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Email]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Address]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Vendor="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Vendor)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateVendorRequest.Name)" id="@nameof(CreateVendorRequest.Name)" placeholder="@_Localizer[Constants.EntityKeys.Name]" required />
+                        <label for="@nameof(CreateVendorRequest.Name)">@_Localizer[Constants.EntityKeys.Name]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Name] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateVendorRequest.Phone)" id="@nameof(CreateVendorRequest.Phone)" placeholder="@_Localizer[Constants.EntityKeys.PhoneNumber]" />
+                        <label for="@nameof(CreateVendorRequest.Phone)">@_Localizer[Constants.EntityKeys.PhoneNumber]</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="email" class="form-control" name="@nameof(UpdateVendorRequest.Email)" id="@nameof(UpdateVendorRequest.Email)" placeholder="@_Localizer[Constants.EntityKeys.Email]" />
+                        <label for="@nameof(UpdateVendorRequest.Email)">@_Localizer[Constants.EntityKeys.Email]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Email] @_Localizer[Constants.MessageKeys.NotValid]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateVendorRequest.Address)" id="@nameof(UpdateVendorRequest.Address)" placeholder="@_Localizer[Constants.EntityKeys.Address]" />
+                        <label for="@nameof(UpdateVendorRequest.Address)">@_Localizer[Constants.EntityKeys.Address]</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#CreateForm', 'Vendor', 'Create', 'VendorList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Vendor="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.Vendor)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" Vendor="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateVendorRequest.Name)" id="@nameof(UpdateVendorRequest.Name)" placeholder="@_Localizer[Constants.EntityKeys.Name]" required />
+                        <label for="@nameof(UpdateVendorRequest.Name)">@_Localizer[Constants.EntityKeys.Name]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Name] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateVendorRequest.Phone)" id="@nameof(UpdateVendorRequest.Phone)" placeholder="@_Localizer[Constants.EntityKeys.PhoneNumber]"  />
+                        <label for="@nameof(UpdateVendorRequest.Phone)">@_Localizer[Constants.EntityKeys.PhoneNumber]</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="email" class="form-control" name="@nameof(UpdateVendorRequest.Email)" id="@nameof(UpdateVendorRequest.Email)" placeholder="@_Localizer[Constants.EntityKeys.Email]"/>
+                        <label for="@nameof(UpdateVendorRequest.Email)">@_Localizer[Constants.EntityKeys.Email]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Email] @_Localizer[Constants.MessageKeys.NotValid]</div> 
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateVendorRequest.Address)" id="@nameof(UpdateVendorRequest.Address)" placeholder="@_Localizer[Constants.EntityKeys.Address]"/>
+                        <label for="@nameof(UpdateVendorRequest.Address)">@_Localizer[Constants.EntityKeys.Address]</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Vendor', 'Update', 'VendorList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Vendor="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Vendor)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Vendor','Delete','VendorList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'name' },
+            { data: 'phone' },
+            { data: 'email' },
+            { data: 'address' },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('VendorList', 'Vendor', 'Table', tableColumns, '@_localizationManger.Language');
+    </script>
+}

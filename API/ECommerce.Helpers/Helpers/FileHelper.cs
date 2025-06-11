@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using ECommerce.Core.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.Core.Helpers
 {
@@ -25,6 +28,25 @@ namespace ECommerce.Core.Helpers
                 return true;
             else
                 return false;
+        }
+
+        public static bool ExtensionsCheck(IFormFile path)
+        {
+            var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
+            var extension = Path.GetExtension(path.FileName.ToLower());
+            if (string.IsNullOrEmpty(extension))
+                return false;
+
+            extension = extension.Remove(extension.LastIndexOf('.'), 1);
+            if (!allowedExtensions.Contains(extension))
+                return false;
+
+            return true;
+        }
+
+        public static bool SizeCheck(IFormFile req)
+        {
+            return !((req.Length / 1024) > 3000);
         }
 
         private static string[] allowedImageExtensions =

@@ -83,11 +83,11 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<BaseResponse> ToggleAvtiveArea([FromForm] ToggleAvtiveAreaRequest request)
+        public async Task<BaseResponse> ToggleActiveArea([FromForm] ToggleActiveAreaRequest request)
         {
             try
             {
-                return await _service.ToggleAvtiveAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteArea( DeleteAreaRequest request)
+        public async Task<BaseResponse> DeleteArea(DeleteAreaRequest request)
         {
             try
             {

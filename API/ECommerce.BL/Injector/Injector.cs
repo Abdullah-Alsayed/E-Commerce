@@ -1,5 +1,4 @@
-﻿using ECommerce.BL.Repository;
-using ECommerce.BLL.Features.Areas.Services;
+﻿using ECommerce.BLL.Features.Areas.Services;
 using ECommerce.BLL.Features.Bookings.Services;
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Features.Carts.Services;
@@ -10,6 +9,7 @@ using ECommerce.BLL.Features.Errors.Services;
 using ECommerce.BLL.Features.Expenses.Services;
 using ECommerce.BLL.Features.Feedbacks.Services;
 using ECommerce.BLL.Features.Governorates.Services;
+using ECommerce.BLL.Features.Histories.Services;
 using ECommerce.BLL.Features.Invoices.Services;
 using ECommerce.BLL.Features.Orders.Services;
 using ECommerce.BLL.Features.Products.Services;
@@ -21,13 +21,14 @@ using ECommerce.BLL.Features.Sliders.Services;
 using ECommerce.BLL.Features.Statuses.Services;
 using ECommerce.BLL.Features.Stocks.Services;
 using ECommerce.BLL.Features.SubCategories.Services;
-using ECommerce.BLL.Features.Units.Services;
+using ECommerce.BLL.Features.Tags.Services;
 using ECommerce.BLL.Features.Users.Filter;
 using ECommerce.BLL.Features.Users.Services;
 using ECommerce.BLL.Features.Vendors.Services;
 using ECommerce.BLL.Features.Vouchers.Services;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core.Services.MailServices;
+using ECommerce.Core.Services.User;
 using ECommerce.Core.Services.WhatsappServices;
 using ECommerce.Core.Services.WhatsappServices.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -48,12 +49,16 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IWhatsappServices, WhatsappServices>();
 
             //****************** Services ******************************
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            //****************** UserContext ******************************
+            services.AddScoped<IUserContext, UserContext>();
 
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             //****************** Features ******************************
+            services.AddScoped<ITagService, TagService>();
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUnitService, UnitService>();
@@ -77,6 +82,7 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IContactUsService, ContactUsService>();

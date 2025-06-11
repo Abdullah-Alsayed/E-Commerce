@@ -23,11 +23,12 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Vendors.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Vendors.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Vendor]} {_localizer[Constants.MessageKeys.NotFound]}"
             );
+
         RuleFor(req => req.Name)
             .MaximumLength(100)
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
@@ -45,7 +46,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 (req, name) =>
                 {
                     return !context.Vendors.Any(x =>
-                        x.Name.ToLower() == req.Name.ToLower() && x.ID != req.ID
+                        x.Name.ToLower() == req.Name.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -53,52 +54,45 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorRequest>
                 $"{_localizer[Constants.EntityKeys.Name]} {_localizer[Constants.MessageKeys.Exist]}"
             );
 
-        RuleFor(req => req.Address)
-            .MaximumLength(100)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
-            .MinimumLength(3)
-            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .Must(
-                (req, name) =>
-                {
-                    return !context.Vendors.Any(x =>
-                        x.Address.ToLower() == req.Address.ToLower() && x.ID != req.ID
-                    );
-                }
-            )
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Address]} {_localizer[Constants.MessageKeys.Exist]}"
-            );
-
         RuleFor(req => req.Phone)
-            .NotEmpty()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
-            .NotNull()
-            .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Phone]} {_localizer[Constants.MessageKeys.IsRequired]}"
-            )
             .MaximumLength(20)
+            .When(x => !string.IsNullOrEmpty(x.Phone))
             .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 20].ToString())
             .Matches(Constants.Regex.PhoneNumber)
+            .When(x => !string.IsNullOrEmpty(x.Phone))
             .WithMessage(x => $"{_localizer[Constants.MessageKeys.PhoneNotValid]}")
             .Must(
                 (req, name) =>
                 {
-                    return !context.Vendors.Any(x => x.Phone == req.Phone && x.ID != req.ID);
+                    return !context.Vendors.Any(x =>
+                        x.Phone.ToLower() == req.Phone.ToLower() && x.Id != req.ID && !x.IsDeleted
+                    );
                 }
             )
+            .When(x => !string.IsNullOrEmpty(x.Phone))
             .WithMessage(x =>
-                $"{_localizer[Constants.EntityKeys.Value]} {_localizer[Constants.MessageKeys.Exist]}"
+                $"{_localizer[Constants.EntityKeys.PhoneNumber]} {_localizer[Constants.MessageKeys.Exist]}"
+            );
+
+        RuleFor(req => req.Address)
+            .MaximumLength(100)
+            .When(x => !string.IsNullOrEmpty(x.Address))
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
+            .MinimumLength(3)
+            .When(x => !string.IsNullOrEmpty(x.Address))
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString());
+
+        RuleFor(req => req.Email)
+            .MaximumLength(100)
+            .When(x => !string.IsNullOrEmpty(x.Email))
+            .WithMessage(x => _localizer[Constants.MessageKeys.MaxNumber, 100].ToString())
+            .MinimumLength(3)
+            .When(x => !string.IsNullOrEmpty(x.Email))
+            .WithMessage(x => _localizer[Constants.MessageKeys.MinNumber, 3].ToString())
+            .EmailAddress()
+            .When(x => !string.IsNullOrEmpty(x.Email))
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Email]} {_localizer[Constants.MessageKeys.NotValid]}"
             );
     }
 }

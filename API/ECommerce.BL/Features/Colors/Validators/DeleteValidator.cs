@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Colors.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Colors.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Colors.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Color]} {_localizer[Constants.MessageKeys.NotFound]}"

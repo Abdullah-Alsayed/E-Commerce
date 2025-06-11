@@ -7,14 +7,14 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.SubCategorys.Validators
 {
-    public class ToggleAvtiveSubCategoryValidator
-        : AbstractValidator<ToggleAvtiveSubCategoryRequest>
+    public class ToggleActiveSubCategoryValidator
+        : AbstractValidator<ToggleActiveSubCategoryRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveSubCategoryValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveSubCategoryValidator> _localizer;
 
-        public ToggleAvtiveSubCategoryValidator(
+        public ToggleActiveSubCategoryValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveSubCategoryValidator> localizer
+            IStringLocalizer<ToggleActiveSubCategoryValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
@@ -24,7 +24,7 @@ namespace ECommerce.BLL.Features.SubCategorys.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Categories.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Categories.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotFound]}"

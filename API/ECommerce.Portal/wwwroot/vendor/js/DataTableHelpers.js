@@ -1,5 +1,5 @@
-let arabic = "Arabic";
-let english = "English";
+let arabic = "ar-EG";
+let english = "en-US";
 
 //Form Validation
 const flatPickrEL = $(".flatpickr-validation");
@@ -11,7 +11,7 @@ if (flatPickrEL.length) {
 }
 
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
-var bsValidationForms = document.querySelectorAll(".needs-validation");
+let bsValidationForms = document.querySelectorAll(".needs-validation");
 
 // Loop over them and prevent submission
 Array.prototype.slice.call(bsValidationForms).forEach(function (form) {
@@ -35,28 +35,32 @@ Array.prototype.slice.call(bsValidationForms).forEach(function (form) {
 
 
 
-function initializeDataTable(tableId, controler, action, entity, columnsConfig, language, withAction = true) {
+function initializeDataTable(tableId, controller, action, columnsConfig, language, withAction = true) {
 
+  const isArabic = language === arabic;
   if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
     $(`#${tableId}`).DataTable().destroy();
   }
 
-  const filterId = $(`#${tableId}`).attr('data-filterId');
+  // Find the index of the 'createAt' column dynamically
+    let createAtIndex = tableColumns.findIndex(col => col.data === 'createAt');
+  if (createAtIndex === -1) createAtIndex = 0; // Default to first column if not found
+
 
   $(`#${tableId}`).DataTable({
     language: {
-      searchPlaceholder: language == arabic ? "ابحث عن اي شيئ..." : 'Search...', // Custom search placeholder
-      search: language == arabic ? "البحث" : 'Search', // Remove default search text
-      lengthMenu: language == arabic ? "_MENU_ عدد العرض" : "Show _MENU_ entries", // Entries per page label
+      searchPlaceholder: isArabic ? "ابحث عن اي شيئ..." : 'Search...', // Custom search placeholder
+      search: isArabic ? "البحث" : 'Search', // Remove default search text
+      lengthMenu: isArabic ? "_MENU_ عدد العرض" : "Show _MENU_ entries", // Entries per page label
       paginate: {
-        first: language == arabic ? "بداية" : "Start",
-        previous: language == arabic ? "السابق" : "Back",
-        next: language == arabic ? "التالي" : "Forward",
-        last: language == arabic ? "نهاية" : "End"
+          first: isArabic? "بداية" : "Start",
+          previous: isArabic ? "السابق" : "Back",
+          next: isArabic ? "التالي" : "Forward",
+          last: isArabic ? "نهاية" : "End"
       },
-      info: language == arabic ? "_START_ إلى _END_ من _TOTAL_ مدخلات" : "Showing _START_ to _END_ of _TOTAL_ entries", // Information about entries
-      infoEmpty: language == arabic ? "لا توجد مدخلات" : "No entries available", // When no entries exist
-      infoFiltered: language == arabic ? "(مصفاة من _MAX_ مدخلات)" : "(filtered from _MAX_ total entries)", // Filtered info
+          info: isArabic ? "_START_ إلى _END_ من _TOTAL_ مدخلات" : "Showing _START_ to _END_ of _TOTAL_ entries", // Information about entries
+          infoEmpty: isArabic ? "لا توجد مدخلات" : "No entries available", // When no entries exist
+          infoFiltered: isArabic ? "(مصفاة من _MAX_ مدخلات)" : "(filtered from _MAX_ total entries)", // Filtered info
     },
     processing: true,
     serverSide: true,
@@ -64,15 +68,17 @@ function initializeDataTable(tableId, controler, action, entity, columnsConfig, 
       return: true
     },
     ajax: {
-      url: `/${controler}/${action}?id=${filterId}`,
+      url: `/${controller}/${action}`,
       type: 'POST',
       contentType: 'application/json',
-      data: function (d) {
-        let data = JSON.stringify(d);
-        console.log(data);
-        return data;
+        data: function (d) {
+            const filters = getFilters(); // Collect all filters dynamically
+            Object.assign(d, filters);   // Merge filters into the request payload
+            let data = JSON.stringify(d);
+            console.log(data);
+            return data;
       },
-      error: function (xhr, status, error) {
+        error: function (xhr, status, error) {
         console.error('Error:', error);
         const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Failed to delete the record.';
         toastError(errorMessage); // Display error message from the response
@@ -86,20 +92,26 @@ function initializeDataTable(tableId, controler, action, entity, columnsConfig, 
         searchable: false, // Disable searching for this column
         render: function (data, type, row) {
           // Generate Add and Delete buttons
-          let currentId = row[`${entity}Id`];
+          let currentId = row[`id`];
           return `
-          <div class="d-flex">
-              <button type="button" onclick=fetchData('${controler}','Get','${currentId}') class="btn btn-icon me-2 btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateFormModal">
-                 <span class="mdi mdi-square-edit-outline"></span>
-              </button>
-              <button type="button" onclick=setDeleteRecordId('${currentId}') class="btn btn-icon me-2 btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#DeleteRecord">
-                 <span class="mdi mdi-delete-forever"></span>
-              </button>
-            </div>`;
+                 <div class="dropdown">
+                    <button class="btn p-0" type="button" id="organicSessionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="organicSessionsDropdown">
+                        <a class="dropdown-item" onclick="fetchData('${controller}', 'Get', '${currentId}')" data-bs-toggle="modal" data-bs-target="#UpdateFormModal" href="javascript:void(0);">
+                            ${isArabic ? 'تعديل' : 'Update'}
+                        </a>
+                        <a class="dropdown-item" onclick="setDeleteRecordId('${currentId}')" data-bs-toggle="modal" data-bs-target="#DeleteRecord" href="javascript:void(0);">
+                            ${isArabic ? 'حذف' : 'Delete'}
+                        </a>
+                    </div>
+                </div>
+`               ;
         }
       }
     ] : [...columnsConfig],
-    order: [[0, 'desc']]
+      order: [[createAtIndex, 'desc']]
   });
 }
 
@@ -140,24 +152,30 @@ function submitFormData(formSelector, controler, action, table, e) {
   }
 
   const updateRecordId = $(`#updateRecordId`).val();
+  formData.append('id', updateRecordId);
 
   // Send data via AJAX
   $.ajax({
-    url: `/${controler}/${action}?id=${updateRecordId}`,
-    type: 'POST',
+    url: `/${controler}/${action}`,
+    type: action =="Update" ? 'PUT' : 'POST',
     data: formData,
     processData: false, // Prevent jQuery from processing the data
     contentType: false, // Prevent jQuery from setting the content type
     success: function (response) {
-      if (response.success) {
-        toastSuccess(response.message);
-        $(formSelector)[0].reset(); // Reset the form
-        $(`${formSelector}Modal`).modal('hide'); // Hide the modal after success
-        resetImagePreview(formSelector) // Reset the Photo
-        $(`#${table}`).DataTable().ajax.reload(); // Reload DataTable
-      } else {
-        toastError(response.message);
+      if (response.isSuccess) {
+          toastSuccess(response.message);
+
+          if (action =="Create") {
+            $(formSelector)[0].reset(); // Reset the form
+            $(`${formSelector}Modal`).modal('hide'); // Hide the modal after success
+            resetImagePreview(formSelector) // Reset the Photo
+          }
+          if ($.fn.DataTable.isDataTable(`#${table}`)) 
+            $(`#${table}`).DataTable().ajax.reload();
       }
+      else 
+       toastError(response.message,5000);
+      
     },
     error: function (xhr, status, error) {
       console.error('Error:', error);
@@ -181,10 +199,10 @@ function DeleteRecord(controller, action, table) {
 
   $.ajax({
     url: `/${controller}/${action}`,
-    type: 'POST',
+    type: 'DELETE',
     data: { id: recordId },
     success: function (response) {
-      if (response.success) {
+      if (response.isSuccess) {
         toastSuccess(response.message); // Display success message
         $('#DeleteRecord').modal('hide'); // Hide modal
         $(`#${table}`).DataTable().ajax.reload(); // Reload DataTable
@@ -216,22 +234,27 @@ function fetchData(controller, action, id) {
     type: 'GET',
     dataType: 'json',
     success: function (response) {
-      if (response.success) {
+      if (response.isSuccess) {
         // Populate the form with data
-        for (let key in response.data) {
+        for (let key in response.result) {
           let pascalCaseKey = toPascalCase(key); // Convert key to PascalCase
           let input = $('#UpdateForm').find(`[name="${pascalCaseKey}"]`);
           if (input.length) {
 
-            // If the input is a select element, handle it differently
+            // If the input is a select element, handle it differently-
             if (input.is('select')) {
               HandelOptionCase(response, key, input);
             }
             else if (input.is('img')) {
               HandelImgeCase(response, pascalCaseKey, key);
             }
+            else if (input.attr('type') === 'date' ||
+                     input.attr('type') === 'datetime-local')
+            {
+              HandelDateCase(response, pascalCaseKey, key);
+            }
             else {
-              input.val(response.data[key]);
+              input.val(response.result[key]);
             }
           }
         }
@@ -287,7 +310,37 @@ function resetImagePreview(formName) {
   }
 }
 
-  
+function updateIsActive(checkbox, controller) {
+    let userId = checkbox.dataset.id;
+    let isActive = checkbox.checked;
+
+    $.ajax({
+        url: `/${controller}/ToggleActive`,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: userId }),
+        success: function (response) {
+            if (response.isSuccess) {
+                toastSuccess(response.message);
+            } else {
+                toastError(response.message);
+                checkbox.checked = !isActive;
+            }
+        },
+        error: function (ex) {
+            checkbox.checked = !isActive;
+            console.log(ex);
+            toastError(ex.responseJSON.message);
+        }
+    });
+}
+
+// Attach event listener
+$(document).on('change', '.switch-input', function () {
+    let controller = window.location.pathname.split('/')[1];
+    updateIsActive(this, controller);
+});
+
 
 //Helpers
 function setDeleteRecordId(recordId) {
@@ -308,7 +361,7 @@ function toPascalCase(str) {
 }
 
 function HandelOptionCase(response, key, input) {
-  let valueToSelect = response.data[key];
+  let valueToSelect = response.result[key];
   let options = input.find('option');
 
   // Loop through the options and set the matching option as selected
@@ -324,12 +377,36 @@ function HandelOptionCase(response, key, input) {
 
 function HandelImgeCase(response, pascalCaseKey, key) {
   let imagePreview = $(`#UpdateForm #${pascalCaseKey}`);
-  if (imagePreview.length && response.data[key]) {
-    imagePreview.prop('src', response.data[key]);
+  if (imagePreview.length && response.result[key]) {
+    imagePreview.prop('src', response.result[key]);
   } else {
     imagePreview.attr('src', '/path-to-default-placeholder.png');
   }
 }
+
+function HandelDateCase(response, pascalKey, key) {
+    const input = $('#UpdateForm').find(`[name="${pascalKey}"]`);
+    const inputType = input.attr('type');
+    const rawValue = response.result[key];
+
+    if (!rawValue) return;
+
+    // Ensure date is a valid Date object
+    const date = new Date(convertUTCToLocal(rawValue));
+    if (isNaN(date.getTime())) return; // Invalid date, skip
+
+    let formatted = '';
+
+    if (inputType === 'date') {
+        formatted = date.toISOString().split('T')[0];
+    } else if (inputType === 'datetime-local') {
+        formatted = date.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    }
+
+    input.val(formatted);
+}
+
+
 
 // Private method to validate image file
 function validateImageFile(file) {
@@ -349,3 +426,116 @@ function validateImageFile(file) {
 
   return true; // Valid file
 } 
+
+const getFilters = () => {
+    const filters = {};
+    $(`#filter-container .filter`).each(function () {
+        const key = $(this).data('filter'); // Get the filter key from the data attribute
+        let value = $(this).val();         // Get the selected value
+
+        // Set default empty GUID if value is empty
+        filters[key] = value ? value : "00000000-0000-0000-0000-000000000000";
+    });
+    return filters;
+};
+
+
+// Table Render
+function convertUTCToLocal(utcDate) {
+    if (!utcDate) return '-'; // Handle null/empty values
+
+    let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's time zone
+
+    // Convert to UTC correctly by appending 'Z' if it's missing
+    let date = new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z');
+
+    // Convert UTC to local time using the user's time zone
+    let localTime = date.toLocaleString(undefined, { timeZone: userTimeZone });
+
+    return localTime;
+}
+function convertUTCToLocalDateOnly(utcDate) {
+    if (!utcDate) return '-'; // Handle null/empty values
+
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Ensure UTC format
+    const date = new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z');
+
+    // Return date in M/D/YYYY format
+    return date.toLocaleDateString('en-US', {
+        timeZone: userTimeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    });
+}
+
+function isActiveRender(data, row) {
+    return `
+        <label class="switch switch-primary">
+            <input type="checkbox" class="switch-input" ${data ? 'checked' : ''} data-id="${row.id}" />
+            <span class="switch-toggle-slider">
+                <span class="switch-on"></span>
+                <span class="switch-off"></span>
+            </span>
+        </label>
+       `;
+}
+
+function entityRender(data) {
+    let img = data.photoPath ? data.photoPath : '/Images/Default.png' ; 
+    return `
+        <div class="text-truncate entityRender fw-normal">
+            <span class="avatar avatar-lg rounded-circle d-flex justify-content-center align-items-center">
+                <img src="${img}" alt="Avatar" class="rounded-circle">
+            </span>
+            ${data.name}
+        </div>
+    `;
+}
+
+function photoRender(data) {
+    return `<div class="avatar avatar-lg">
+               <img src="${data}" alt="Avatar" class="rounded-circle">
+           </div>
+    `;
+}
+
+function userRender(data) {
+    if (data != null)
+    {
+        let img = "";
+        if (data.photo)
+            img = `${data.photo}"`;
+        else
+            img = `/Images/User/@Constants.DefaultPhotos.User`;
+
+        return `
+            <div class="d-flex justify-content-center align-items-center customer-name">
+                <div class="avatar-wrapper me-3">
+                    <div class="avatar avatar-sm">
+                        <img src="${img}" alt="Avatar" class="rounded-circle">
+                    </div>
+                </div>
+                <div class="d-flex flex-column">
+                    <a href="app-ecommerce-customer-details-overview.html" class="text-heading">
+                        <span class="fw-medium text-truncate">${data.firstName} ${data.lastName ?? ""}</span>
+                    </a>
+                    <small class="text-nowrap">${data.email?? ""}</small>
+                    <small class="text-nowrap">${data.phoneNumber?? ""}</small>
+                </div>
+            </div>
+    `
+    } else {
+        return "-";
+    }
+}
+
+function ratingRender(data) {
+    let stars = '';
+    for (let i = 0; i < data; i++) {
+        stars += '<i class="mdi mdi-star gold-bg"></i>';
+    }
+    return stars;
+}

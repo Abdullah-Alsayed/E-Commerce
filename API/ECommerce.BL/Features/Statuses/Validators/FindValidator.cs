@@ -32,7 +32,7 @@ public class FindStatusValidator : AbstractValidator<FindStatusRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Statuses.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Statuses.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotFound]}"

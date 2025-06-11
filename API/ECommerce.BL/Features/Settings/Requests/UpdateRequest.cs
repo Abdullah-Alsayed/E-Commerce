@@ -12,6 +12,7 @@ namespace ECommerce.BLL.Features.Settings.Requests
         public string Instagram { get; set; }
         public string Youtube { get; set; }
         public string Whatsapp { get; set; }
+        public string TikTok { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string BookingMessage { get; set; }

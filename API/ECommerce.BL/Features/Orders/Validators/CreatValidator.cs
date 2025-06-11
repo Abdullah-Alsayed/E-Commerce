@@ -31,7 +31,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Areas.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Areas.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Area]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -48,7 +48,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Governorates.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Governorates.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Governorate]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -65,7 +65,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Statuses.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Statuses.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Status]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -74,7 +74,7 @@ namespace ECommerce.BLL.Features.Orders.Validators
             RuleFor(req => req.VoucherID)
                 .Must(ID =>
                 {
-                    return context.Vouchers.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Vouchers.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Voucher]} {_localizer[Constants.MessageKeys.NotExist]}"

@@ -1,0 +1,65 @@
+﻿@using ECommerce.BLL.Features.Invoices.Requests
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Invoice List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["InvoiceList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="InvoiceList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.Order]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Total]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Count]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Discount]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Tax]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsOffLine]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsReturn]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'orderID', render: function (data) { return `<a href="/Order/Details/${data}" target="_blank" class="btn btn-primary">${data}</a>`; } },
+            { data: 'order.total' },         
+            { data: 'order.count' },          
+            { data: 'order.discount' },      
+            { data: 'order.tax' },            
+            { data: 'order.isOffLine', render: function(data) { return data ? '<span class="badge bg-success">Offline</span>' : ''; } },      
+            { data: 'isReturn', render: function(data) { return data ? '<span class="badge bg-warning">Return</span>' : ''; } },       
+            {
+                data: 'createAt',           
+                render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            }
+        ];
+        initializeDataTable('InvoiceList', 'Invoice', 'Table', tableColumns, '@_localizationManger.Language', false);
+    </script>
+}

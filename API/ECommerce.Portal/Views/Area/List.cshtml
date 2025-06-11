@@ -1,0 +1,214 @@
+﻿@using ECommerce.BLL.Features.Areas.Dtos
+@using ECommerce.BLL.Features.Areas.Requests
+@using ECommerce.BLL.Features.Governorates.Dtos
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@model IEnumerable<GovernorateDto>
+@{
+    ViewData["Title"] = "Area List";
+}
+@inject IStringLocalizer<AccountController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["AreasList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <button class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" data-bs-toggle="modal" data-bs-target="#CreateFormModal" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Area)]</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="filter-container" id="filter-container">
+    <div class="card-header mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-4">@_Localizer["Filter"]</h5>
+            <div class="d-flex justify-content-start align-items-center row gap-5 gx-6 gap-md-0">
+                <div class="col-md-4 product_status">
+                    <select class="form-select text-capitalize filter"
+                            id="GovernorateSelect"
+                            data-filter="ItemId">
+                        <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Governorate]</option>
+                        @foreach (var item in Model)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="AreaList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.NameAR]</th>
+                    <th>@_Localizer[Constants.EntityKeys.NameEn]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Governorate]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal to add new record -->
+<div class="modal fade" id="CreateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Area="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Area)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" id="CreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateAreaRequest.NameAR)" id="@nameof(CreateAreaRequest.NameAR)" placeholder="@_Localizer[Constants.EntityKeys.NameAR]" required />
+                        <label for="@nameof(CreateAreaRequest.NameAR)">@_Localizer[Constants.EntityKeys.NameAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(CreateAreaRequest.NameEN)" id="@nameof(CreateAreaRequest.NameEN)" placeholder="@_Localizer[Constants.EntityKeys.NameEn]" required />
+                        <label for="@nameof(CreateAreaRequest.NameEN)">@_Localizer[Constants.EntityKeys.NameEn]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameEn] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" name="@nameof(CreateAreaRequest.GovernorateID)" id="@nameof(CreateAreaRequest.GovernorateID)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Governorate]</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <label for="@nameof(CreateAreaRequest.GovernorateID)">@_Localizer[Constants.EntityKeys.Governorate]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Governorate] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#CreateForm', 'Area', 'Create', 'AreaList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to Update new record -->
+<div class="modal fade" id="UpdateFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Area="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Update)] @_Localizer[nameof(EntitiesEnum.Area)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border m-5 d-none" Area="status" id="UpdateForm-spinner">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <form class="needs-validation" id="UpdateForm" novalidate>
+                <input type="hidden" id="updateRecordId" name="Id">
+                <div class="modal-body">
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateAreaRequest.NameAR)" id="@nameof(UpdateAreaRequest.NameAR)" placeholder="@_Localizer[Constants.EntityKeys.NameAR]" required />
+                        <label for="@nameof(UpdateAreaRequest.NameAR)">@_Localizer[Constants.EntityKeys.NameAR]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameAR] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3">
+                        <input type="text" class="form-control" name="@nameof(UpdateAreaRequest.NameEN)" id="@nameof(UpdateAreaRequest.NameEN)" placeholder="@_Localizer[Constants.EntityKeys.NameEn]" required />
+                        <label for="@nameof(UpdateAreaRequest.NameEN)">@_Localizer[Constants.EntityKeys.NameEn]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.NameEn] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-3 px-1">
+                        <select class="form-control" name="@nameof(UpdateAreaRequest.GovernorateID)" id="@nameof(UpdateAreaRequest.GovernorateID)" required>
+                            <option value="">@_Localizer[Constants.LabelKeys.Select] @_Localizer[Constants.EntityKeys.Governorate]</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <label for="@nameof(UpdateAreaRequest.GovernorateID)">@_Localizer[Constants.EntityKeys.Governorate]</label>
+                        <div class="invalid-feedback">@_Localizer[Constants.EntityKeys.Governorate] @_Localizer[Constants.MessageKeys.IsRequired]</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Area', 'Update', 'AreaList',event)">@_Localizer["SaveChanges"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Area="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Area)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Area','Delete','AreaList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'nameAR' },
+            { data: 'nameEN' },
+            {
+                data: 'governorate',
+                render: function (data, type, row) {
+                    if (data) {
+                        return `${data.name} <br> <span class="mdi mdi-currency-usd avatar rounded-circle bg-label-success me-2"></span>${data.tax}`;
+                    }
+                    return '';
+                }
+            },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+        ];
+        initializeDataTable('AreaList', 'Area', 'Table', tableColumns, '@_localizationManger.Language');
+        $('#GovernorateSelect').on('change', function () {
+            initializeDataTable('AreaList', 'Area', 'Table', tableColumns, '@_localizationManger.Language');
+        });
+    </script>
+}

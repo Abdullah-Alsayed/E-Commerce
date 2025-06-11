@@ -4,6 +4,7 @@ using System.Linq;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -66,7 +67,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.BrandID)
                 .Must(ID =>
                 {
-                    return context.Brands.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Brands.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -84,7 +85,7 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Units.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Units.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -101,7 +102,7 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Categories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Categories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Category]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -110,7 +111,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req.SubCategoryID)
                 .Must(ID =>
                 {
-                    return context.SubCategories.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.SubCategories.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.SubCategory]} {_localizer[Constants.MessageKeys.NotExist]}"
@@ -138,23 +139,16 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .Must(path =>
                 {
-                    var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                    var extension = Path.GetExtension(path.FileName.ToLower());
-                    if (string.IsNullOrEmpty(extension))
-                        return false;
-
-                    extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                    if (!allowedExtensions.Contains(extension))
-                        return false;
-
-                    return true;
+                    return FileHelper.ExtensionsCheck(path);
                 })
                 .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-                .Must(req =>
+                .Must(path =>
                 {
-                    return req.Length / 1024 > 3000 ? false : true;
+                    return FileHelper.SizeCheck(path);
                 })
-                .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+                .WithMessage(x =>
+                    _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+                );
 
             RuleFor(req => req)
                 .Must(req =>

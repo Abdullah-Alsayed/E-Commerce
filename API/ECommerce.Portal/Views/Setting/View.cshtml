@@ -1,0 +1,122 @@
+﻿@using ECommerce.BLL.Features.Settings.Dtos
+@using ECommerce.BLL.Features.Settings.Requests
+@using ECommerce.Core
+@model SettingDto
+@inject IStringLocalizer<SettingController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+@{
+    ViewData["Title"] = _Localizer["Settings"];
+}
+@section VendorStyles {
+
+}
+
+@if (Model != null)
+{
+    <div class="card mb-6">
+        <h5 class="card-header">@_Localizer[Constants.LabelKeys.SettingsConfiguration]</h5>
+        <form id="UpdateForm" class="card-body">
+            <h6>@_Localizer[Constants.LabelKeys.BasicInformation]</h6>
+            <div class="row g-2">
+                <div class="col-md-12 mb-3">
+                    <div class="d-flex justify-content-start mb-3 px-1">
+                        <label for="UpdateFileInput" class="custum-file-upload">
+                            <img id="@nameof(SettingDto.Logo)" name="@nameof(SettingDto.Logo)" src="@Model.Logo" class="img-fluid" />
+                            <input id="UpdateFileInput" type="file" accept="image/*" name="@nameof(UpdateSettingRequest.FormFile)" onchange="updateImagePreview('UpdateForm',event)">
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Title)" name="@nameof(SettingDto.Title)" class="form-control" value="@Model.Title" placeholder="@_Localizer[Constants.EntityKeys.Title]">
+                        <label for="@nameof(SettingDto.Title)">@_Localizer[Constants.EntityKeys.Title]</label>
+                    </div>
+                </div>
+                <div class="col-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Address)" name="@nameof(SettingDto.Address)" class="form-control" value="@Model.Address" placeholder="@_Localizer[Constants.EntityKeys.Address]">
+                        <label for="@nameof(SettingDto.Address)">@_Localizer[Constants.EntityKeys.Address]</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-6 mx-n4">
+
+            <h6>@_Localizer[Constants.LabelKeys.ContactInformation]</h6>
+            <div class="row g-6">
+                <div class="col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <input type="email" id="@nameof(SettingDto.Email)" name="@nameof(SettingDto.Email)" class="form-control" value="@Model.Email" placeholder="@_Localizer[Constants.EntityKeys.Email]">
+                        <label for="@nameof(SettingDto.Email)">@_Localizer[Constants.EntityKeys.Email]</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Phone)" name="@nameof(SettingDto.Phone)" class="form-control" value="@Model.Phone" placeholder="@_Localizer[Constants.EntityKeys.PhoneNumber]">
+                        <label for="@nameof(SettingDto.Phone)">@_Localizer[Constants.EntityKeys.PhoneNumber]</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.MainColor)" name="@nameof(SettingDto.MainColor)" class="form-control" value="@Model.MainColor" placeholder="@_Localizer[Constants.EntityKeys.MainColor]">
+                        <label for="@nameof(SettingDto.MainColor)">@_Localizer[Constants.EntityKeys.MainColor]</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.BookingMessage)" name="@nameof(SettingDto.BookingMessage)" class="form-control" value="@Model.BookingMessage" placeholder="@_Localizer[Constants.EntityKeys.BookingMessage]">
+                        <label for="@nameof(SettingDto.BookingMessage)">@_Localizer[Constants.EntityKeys.BookingMessage]</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-6 mx-n4">
+
+            <h6>@_Localizer[Constants.LabelKeys.SocialMediaLinks]</h6>
+            <div class="row g-6">
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.FaceBook)" name="@nameof(SettingDto.FaceBook)" class="form-control" value="@Model.FaceBook" placeholder="@_Localizer[Constants.EntityKeys.Facebook]">
+                        <label for="@nameof(SettingDto.FaceBook)">@_Localizer[Constants.EntityKeys.Facebook]</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Instagram)" name="@nameof(SettingDto.Instagram)" class="form-control" value="@Model.Instagram" placeholder="@_Localizer[Constants.EntityKeys.Instagram]">
+                        <label for="@nameof(SettingDto.Instagram)">@_Localizer[Constants.EntityKeys.Instagram]</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Youtube)" name="@nameof(SettingDto.Youtube)" class="form-control" value="@Model.Youtube" placeholder="@_Localizer[Constants.EntityKeys.Youtube]">
+                        <label for="@nameof(SettingDto.Youtube)">@_Localizer[Constants.EntityKeys.Youtube]</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.Whatsapp)" name="@nameof(SettingDto.Whatsapp)" class="form-control" value="@Model.Whatsapp" placeholder="@_Localizer[Constants.EntityKeys.Whatsapp]">
+                        <label for="@nameof(SettingDto.Whatsapp)">@_Localizer[Constants.EntityKeys.Whatsapp]</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" id="@nameof(SettingDto.TikTok)" name="@nameof(SettingDto.TikTok)" class="form-control" value="@Model.TikTok" placeholder="@_Localizer[Constants.EntityKeys.TikTok]">
+                        <label for="@nameof(SettingDto.TikTok)">@_Localizer[Constants.EntityKeys.TikTok]</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 mb-3">
+                <button type="submit" class="btn btn-primary" onclick="submitFormData('#UpdateForm', 'Setting', 'Update', 'TagList',event)">@_Localizer[Constants.LabelKeys.SaveChanges]</button>
+            </div>
+        </form>
+    </div>
+}
+
+@section VendorScripts {
+
+}
+
+@section PageScripts {
+}
+

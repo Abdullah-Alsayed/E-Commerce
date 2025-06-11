@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using ECommerce.BLL.Features.Units.Requests;
+using ECommerce.BLL.Features.Tags.Requests;
 using ECommerce.Core;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace ECommerce.BLL.Features.Units.Validators;
+namespace ECommerce.BLL.Features.Tags.Validators;
 
 public class FindUnitValidator : AbstractValidator<FindUnitRequest>
 {
@@ -33,7 +33,7 @@ public class FindUnitValidator : AbstractValidator<FindUnitRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Units.Any(x => x.ID == req.ID && x.IsActive && !x.IsDeleted);
+                return context.Units.Any(x => x.Id == req.ID && x.IsActive && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Unit]} {_localizer[Constants.MessageKeys.NotFound]}"

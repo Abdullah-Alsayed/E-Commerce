@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Expenses.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Expenses.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Expenses.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Expense]} {_localizer[Constants.MessageKeys.NotFound]}"

@@ -2,5 +2,5 @@
 
 namespace ECommerce.BLL.Features.Areas.Requests
 {
-    public record ToggleAvtiveAreaRequest : BaseRequest { }
+    public record ToggleActiveAreaRequest : BaseRequest { }
 }

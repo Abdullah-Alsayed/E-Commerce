@@ -9,6 +9,8 @@ public class Size : BaseEntity
 
     [Required, StringLength(100)]
     public string NameAR { get; set; }
+
+    [Required, StringLength(100)]
     public string NameEN { get; set; }
 
     public virtual ICollection<ProductSize> ProductSizes { get; set; }

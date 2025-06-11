@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Expenses.Dtos;
 using ECommerce.BLL.Features.Expenses.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
+using Expense = ECommerce.DAL.Entity.Expense;
 
 namespace ECommerce.BLL.Features.Expenses.Services;
 
@@ -21,24 +21,24 @@ public class ExpenseService : IExpenseService
 {
     IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHttpContextAccessor _httpContext;
+    private readonly IUserContext _userContext;
     private readonly IHostEnvironment _environment;
     private readonly IStringLocalizer<ExpenseService> _localizer;
 
-    private string _userId = Constants.System;
+    private Guid _userId = Guid.Empty;
     private string _userName = Constants.System;
     private string _lang = Languages.Ar;
 
     public ExpenseService(
         IUnitOfWork unitOfWork,
         IStringLocalizer<ExpenseService> localizer,
-        IHttpContextAccessor httpContextAccessor,
+        IUserContext userContext,
         IHostEnvironment environment
     )
     {
         _unitOfWork = unitOfWork;
         _localizer = localizer;
-        _httpContext = httpContextAccessor;
+        _userContext = userContext;
         _environment = environment;
 
         #region initilize mapper
@@ -53,16 +53,11 @@ public class ExpenseService : IExpenseService
         #endregion initilize mapper
 
         #region Get User Data From Token
-        _userId = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-            ?.Value;
+        _userId = _userContext.UserId.Value;
 
-        _userName = _httpContext
-            .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-            ?.Value;
+        _userName = _userContext.UserName.Value;
 
-        _lang =
-            _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString() ?? Languages.Ar;
+        _lang = _userContext.Language.Value;
         #endregion
     }
 
@@ -70,7 +65,7 @@ public class ExpenseService : IExpenseService
     {
         try
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
+            var Expense = await _unitOfWork.SettingModule.Expense.FindAsync(request.ID);
             var result = _mapper.Map<ExpenseDto>(Expense);
             return new BaseResponse<ExpenseDto>
             {
@@ -81,7 +76,11 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.View, EntitiesEnum.Expense);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.View,
+                EntitiesEnum.Expense
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -90,7 +89,9 @@ public class ExpenseService : IExpenseService
         }
     }
 
-    public async Task<BaseResponse> GetAllAsync(GetAllExpenseRequest request)
+    public async Task<BaseResponse<BaseGridResponse<List<ExpenseDto>>>> GetAllAsync(
+        GetAllExpenseRequest request
+    )
     {
         try
         {
@@ -98,23 +99,28 @@ public class ExpenseService : IExpenseService
                 ? nameof(Expense.Reference)
                 : request.SearchBy;
 
-            var Expenses = await _unitOfWork.Expense.GetAllAsync(request);
-            var response = _mapper.Map<List<ExpenseDto>>(Expenses);
+            var result = await _unitOfWork.SettingModule.Expense.GetAllAsync(request);
+            var response = _mapper.Map<List<ExpenseDto>>(result.list);
             return new BaseResponse<BaseGridResponse<List<ExpenseDto>>>
             {
                 IsSuccess = true,
                 Message = _localizer[MessageKeys.Success].ToString(),
+                Total = response != null ? result.count : 0,
                 Result = new BaseGridResponse<List<ExpenseDto>>
                 {
                     Items = response,
-                    Total = response != null ? response.Count : 0
+                    Total = response != null ? result.count : 0,
                 }
             };
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.GetAll, EntitiesEnum.Expense);
-            return new BaseResponse
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.GetAll,
+                EntitiesEnum.Expense
+            );
+            return new BaseResponse<BaseGridResponse<List<ExpenseDto>>>
             {
                 IsSuccess = false,
                 Message = _localizer[MessageKeys.Fail].ToString()
@@ -128,24 +134,24 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = _mapper.Map<Expense>(request);
-            Expense.CreateBy = _userId;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
+            var expense = _mapper.Map<Expense>(request);
+            expense.CreateBy = _userId;
+            expense.PhotoPath = await _unitOfWork.SettingModule.Expense.UploadPhotoAsync(
                 request.FormFile,
-                _environment,
                 Constants.PhotoFolder.Expense
             );
-            Expense = await _unitOfWork.Expense.AddAsync(Expense);
-            var result = _mapper.Map<ExpenseDto>(Expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            expense = await _unitOfWork.SettingModule.Expense.AddAsync(expense, _userId);
+            var result = _mapper.Map<ExpenseDto>(expense);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Create);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Create);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -171,7 +177,11 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Create, EntitiesEnum.Expense);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Create,
+                EntitiesEnum.Expense
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -186,26 +196,25 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
-            _mapper.Map(request, Expense);
-            Expense.ModifyBy = _userId;
-            Expense.ModifyAt = DateTime.UtcNow;
-            Expense.PhotoPath = await _unitOfWork.Expense.UploadPhoto(
+            var expense = await _unitOfWork.SettingModule.Expense.FindAsync(request.ID);
+            _mapper.Map(request, expense);
+            _unitOfWork.SettingModule.Expense.Update(expense, _userId);
+            expense.PhotoPath = await _unitOfWork.SettingModule.Expense.UploadPhotoAsync(
                 request.FormFile,
-                _environment,
                 Constants.PhotoFolder.Expense,
-                Expense.PhotoPath
+                expense.PhotoPath
             );
-            var result = _mapper.Map<ExpenseDto>(Expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            var result = _mapper.Map<ExpenseDto>(expense);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Update);
-            modifyRows++;
-            #endregion
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Update);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -231,7 +240,11 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Update, EntitiesEnum.Expense);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Update,
+                EntitiesEnum.Expense
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -246,20 +259,20 @@ public class ExpenseService : IExpenseService
         var modifyRows = 0;
         try
         {
-            var Expense = await _unitOfWork.Expense.FindAsync(request.ID);
-            Expense.DeletedBy = _userId;
-            Expense.DeletedAt = DateTime.UtcNow;
-            Expense.IsDeleted = true;
-            var result = _mapper.Map<ExpenseDto>(Expense);
-            #region Send Notification
-            await SendNotification(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var expense = await _unitOfWork.SettingModule.Expense.FindAsync(request.ID);
+            _unitOfWork.SettingModule.Expense.Delete(expense, _userId);
 
-            #region Log
-            await LogHistory(OperationTypeEnum.Delete);
-            modifyRows++;
-            #endregion
+            var result = _mapper.Map<ExpenseDto>(expense);
+
+            //#region Send Notification
+            //await SendNotification(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
+
+            //#region Log
+            //await LogHistory(OperationTypeEnum.Delete);
+            //modifyRows++;
+            //#endregion
 
             modifyRows++;
             if (await _unitOfWork.IsDone(modifyRows))
@@ -285,7 +298,11 @@ public class ExpenseService : IExpenseService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Delete, EntitiesEnum.Expense);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Delete,
+                EntitiesEnum.Expense
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -298,7 +315,7 @@ public class ExpenseService : IExpenseService
     {
         try
         {
-            var result = _unitOfWork.Expense.SearchEntity();
+            var result = _unitOfWork.SettingModule.Expense.SearchEntity();
             return new BaseResponse<List<string>>
             {
                 IsSuccess = true,
@@ -308,7 +325,11 @@ public class ExpenseService : IExpenseService
         }
         catch (Exception ex)
         {
-            await _unitOfWork.ErrorLog.ErrorLog(ex, OperationTypeEnum.Search, EntitiesEnum.Expense);
+            await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                ex,
+                OperationTypeEnum.Search,
+                EntitiesEnum.Expense
+            );
             return new BaseResponse
             {
                 IsSuccess = false,
@@ -320,7 +341,7 @@ public class ExpenseService : IExpenseService
     #region helpers
     private async Task SendNotification(OperationTypeEnum action)
     {
-        _ = await _unitOfWork.Notification.AddNotificationAsync(
+        _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
             new Notification
             {
                 CreateBy = _userId,
@@ -333,13 +354,14 @@ public class ExpenseService : IExpenseService
 
     private async Task LogHistory(OperationTypeEnum action)
     {
-        await _unitOfWork.History.AddAsync(
+        await _unitOfWork.ContentModule.History.AddAsync(
             new History
             {
                 UserID = _userId,
                 Action = action,
                 Entity = EntitiesEnum.Expense
-            }
+            },
+            _userId
         );
     }
 

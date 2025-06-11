@@ -1,12 +1,28 @@
 ﻿using System;
 using ECommerce.BLL.Request;
+using ECommerce.DAL.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.BLL.Features.Users.Requests
 {
     public record UpdateUserRequest : BaseRequest
     {
-        public string NameAR { get; set; }
-        public string NameEN { get; set; }
-        public string Value { get; set; }
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public Guid RoleId { get; set; }
+
+        public UserGanderEnum Gander { get; set; }
+
+        public string Address { get; set; }
+
+        public int Age { get; set; }
+
+        public string Email { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public IFormFile ProfilePicture { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
@@ -30,7 +30,8 @@ namespace ECommerce.BLL.Repository
                         StackTrace = ex.StackTrace,
                         Operation = action,
                         Entity = entity
-                    }
+                    },
+                    Guid.Empty
                 );
                 await _context.SaveChangesAsync();
             }

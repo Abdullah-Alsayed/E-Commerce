@@ -84,12 +84,12 @@ namespace ECommerce.API.Controllers
 
         [HttpPut]
         public async Task<BaseResponse> ToggleActiveBrand(
-            [FromForm] ToggleAvtiveBrandRequest request
+            [FromForm] ToggleActiveBrandRequest request
         )
         {
             try
             {
-                return await _service.ToggleAvtiveAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {

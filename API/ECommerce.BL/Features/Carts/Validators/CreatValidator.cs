@@ -43,7 +43,7 @@ namespace ECommerce.BLL.Features.Carts.Validators
                 )
                 .Must(ID =>
                 {
-                    return context.Products.Any(x => x.ID == ID && x.IsActive && !x.IsDeleted);
+                    return context.Products.Any(x => x.Id == ID && x.IsActive && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotExist]}"

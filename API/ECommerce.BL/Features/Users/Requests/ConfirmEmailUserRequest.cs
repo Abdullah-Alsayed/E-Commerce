@@ -8,7 +8,7 @@ namespace ECommerce.BLL.Features.Users.Requests
 {
     public class ConfirmEmailUserRequest
     {
-        public string ID { get; set; }
+        public Guid ID { get; set; }
         public string Token { get; set; }
     }
 }

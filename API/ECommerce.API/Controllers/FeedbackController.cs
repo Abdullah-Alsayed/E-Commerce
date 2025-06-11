@@ -10,7 +10,7 @@ namespace ECommerce.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize]
+    [AllowAnonymous]
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackService _service;
@@ -83,7 +83,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteFeedback( DeleteFeedbackRequest request)
+        public async Task<BaseResponse> DeleteFeedback(DeleteFeedbackRequest request)
         {
             try
             {

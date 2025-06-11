@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Users.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Users.Any(x => x.Id == req.ID.ToString() && !x.IsDeleted);
+                    return context.Users.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.User]} {_localizer[Constants.MessageKeys.NotFound]}"

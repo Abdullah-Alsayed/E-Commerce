@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Reflection;
 using System.Security.Claims;
 using ECommerce.DAL.Enums;
@@ -48,22 +49,20 @@ namespace ECommerce.Core.PermissionsClaims
             return allPermissions;
         }
 
-        public static List<ClaimDto> UserPermissions = new List<ClaimDto>
-        {
-            new ClaimDto
-            {
-                Claim = Product.View,
-                Module = EntitiesEnum.Product.ToString(),
-                Operation = OperationTypeEnum.View.ToString()
-            }
-        };
-
         public static class Products
         {
             public const string View = "Permissions.Products.View";
             public const string Create = "Permissions.Products.Create";
             public const string Update = "Permissions.Products.Update";
             public const string Delete = "Permissions.Products.Delete";
+        }
+
+        public static class Users
+        {
+            public const string View = "Permissions.Users.View";
+            public const string Create = "Permissions.Users.Create";
+            public const string Update = "Permissions.Users.Update";
+            public const string Delete = "Permissions.Users.Delete";
         }
 
         public static class Governorate
@@ -156,8 +155,6 @@ namespace ECommerce.Core.PermissionsClaims
         {
             public const string View = "Permissions.ContactUs.View";
             public const string Create = "Permissions.ContactUs.Create";
-            public const string Update = "Permissions.ContactUs.Update";
-            public const string Reply = "Permissions.ContactUs.Reply";
             public const string Delete = "Permissions.ContactUs.Delete";
         }
 
@@ -188,8 +185,6 @@ namespace ECommerce.Core.PermissionsClaims
         public static class Feedback
         {
             public const string View = "Permissions.Feedback.View";
-            public const string Create = "Permissions.Feedback.Create";
-            public const string Update = "Permissions.Feedback.Update";
             public const string Delete = "Permissions.Feedback.Delete";
         }
 
@@ -247,6 +242,27 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Create = "Permissions.Role.Create";
             public const string Update = "Permissions.Role.Update";
             public const string Delete = "Permissions.Role.Delete";
+            public const string Permission = "Permissions.Role.Permission";
+        }
+
+        public static class Tag
+        {
+            public const string View = "Permissions.Tag.View";
+            public const string Create = "Permissions.Tag.Create";
+            public const string Update = "Permissions.Tag.Update";
+            public const string Delete = "Permissions.Tag.Delete";
+        }
+
+        public static class Views
+        {
+            public const string Dashboard = "Permissions.Dashboard.View";
+            public const string History = "Permissions.History.View";
+            public const string Booking = "Permissions.Booking.View";
+        }
+
+        public static class Histories
+        {
+            public const string View = "Permissions.History.View";
         }
     }
 }

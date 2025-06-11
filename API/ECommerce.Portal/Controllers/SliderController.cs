@@ -1,8 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using ECommerce.BLL.Features.Brands.Dtos;
+using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Sliders.Dtos;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.BLL.Features.Sliders.Services;
+using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
+using ECommerce.Core;
+using ECommerce.Core.PermissionsClaims;
+using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,84 +20,134 @@ namespace ECommerce.API.Controllers
 
         public SliderController(ISliderService service) => _service = service;
 
-        [HttpGet]
-        public async Task<BaseResponse> FindSlider([FromQuery] FindSliderRequest request)
-        {
-            try
-            {
-                return await _service.FindAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
+        [Authorize(Policy = Permissions.Setting.View)]
+        public IActionResult List() => View();
 
-        [HttpGet]
-        public async Task<BaseResponse> GetAllSlider([FromQuery] GetAllSliderRequest request)
+        #region CRUD
+        [HttpPost]
+        [Authorize(Policy = Permissions.Setting.View)]
+        public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
-            try
+            var search = request?.Search?.Value;
+            var dir = request?.Order?.FirstOrDefault()?.Dir ?? Constants.Descending;
+            bool isDescending = (dir == Constants.Descending);
+            var columns = new List<string>
             {
-                return await _service.GetAllAsync(request);
-            }
-            catch (Exception ex)
+                nameof(SliderDto.TitleAR),
+                nameof(SliderDto.TitleEN),
+                nameof(SliderDto.Description),
+                nameof(SliderDto.PhotoPath),
+                nameof(SliderDto.IsActive),
+                nameof(SliderDto.CreateAt),
+            };
+            string sortColumn = columns[
+                request?.Order?.FirstOrDefault()?.Column ?? columns.Count - 1
+            ];
+
+            var response = await _service.GetAllAsync(
+                new GetAllSliderRequest
+                {
+                    IsDeleted = false,
+                    IsDescending = isDescending,
+                    SortBy = sortColumn,
+                    PageSize = request?.Length ?? Constants.PageSize,
+                    PageIndex = request?.PageIndex ?? Constants.PageIndex,
+                    SearchFor = search,
+                }
+            );
+
+            var jsonResponse = new
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
+                draw = request?.Draw ?? 0,
+                recordsTotal = response?.Total ?? 0,
+                recordsFiltered = response?.Total ?? 0,
+                data = response?.Result.Items ?? new List<SliderDto>()
+            };
+
+            return Json(jsonResponse);
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> CreateSlider([FromForm] CreateSliderRequest request)
+        [Authorize(Policy = Permissions.Setting.Update)]
+        public async Task<IActionResult> Create([FromForm] CreateSliderRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
             try
             {
-                return await _service.CreateAsync(request);
+                var result = await _service.CreateAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
         [HttpPut]
-        [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> UpdateSlider([FromForm] UpdateSliderRequest request)
+        [Authorize(Policy = Permissions.Setting.Update)]
+        public async Task<IActionResult> Update([FromForm] UpdateSliderRequest request)
         {
-            try
-            {
-                return await _service.UpdateAsync(request);
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
-            }
-        }
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
 
-        [HttpGet]
-        public async Task<BaseResponse> GetSearchEntity()
-        {
             try
             {
-                return await _service.GetSearchEntityAsync();
+                var result = await _service.UpdateAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
             }
         }
 
         [HttpDelete]
-        public async Task<BaseResponse> DeleteSlider(DeleteSliderRequest request)
+        [Authorize(Policy = Permissions.Setting.Update)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(DashboardHelpers.ValidationErrors(ModelState));
+
+            try
+            {
+                var result = await _service.DeleteAsync(
+                    new DeleteSliderRequest { ID = Guid.Parse(id) }
+                );
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BaseResponse { IsSuccess = false, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Policy = Permissions.Setting.Update)]
+        public async Task<BaseResponse> ToggleActive([FromBody] ToggleActiveSliderRequest request)
         {
             try
             {
-                return await _service.DeleteAsync(request);
+                return await _service.ToggleActiveAsync(request);
             }
             catch (Exception ex)
             {
                 return new BaseResponse { IsSuccess = false, Message = ex.Message };
             }
         }
+
+        public async Task<BaseResponse> Get(Guid id)
+        {
+            try
+            {
+                return await _service.FindAsync(new FindSliderRequest { ID = id });
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+            }
+        }
+        #endregion
     }
 }

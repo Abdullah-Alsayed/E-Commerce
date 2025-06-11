@@ -4,6 +4,7 @@ using System.Linq;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -64,7 +65,6 @@ namespace ECommerce.BLL.Features.Sliders.Validators
                 .WithMessage(x =>
                     $"{_localizer[Constants.EntityKeys.Description]} {_localizer[Constants.MessageKeys.IsRequired]}"
                 );
-
             RuleFor(req => req.FormFile)
                 .NotNull()
                 .WithMessage(x =>
@@ -76,23 +76,16 @@ namespace ECommerce.BLL.Features.Sliders.Validators
                 )
                 .Must(path =>
                 {
-                    var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                    var extension = Path.GetExtension(path.FileName.ToLower());
-                    if (string.IsNullOrEmpty(extension))
-                        return false;
-
-                    extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                    if (!allowedExtensions.Contains(extension))
-                        return false;
-
-                    return true;
+                    return FileHelper.ExtensionsCheck(path);
                 })
                 .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-                .Must(req =>
+                .Must(path =>
                 {
-                    return req.Length / 1024 > 3000 ? false : true;
+                    return FileHelper.SizeCheck(path);
                 })
-                .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+                .WithMessage(x =>
+                    _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+                );
 
             RuleFor(req => req)
                 .Must(req =>

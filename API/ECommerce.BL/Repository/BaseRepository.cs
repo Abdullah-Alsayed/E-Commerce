@@ -7,18 +7,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using ECommerce.BL.Repository;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.BLL.Request;
 using ECommerce.Core;
 using ECommerce.DAL;
-using ECommerce.DAL.Entity;
-using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Hosting;
+using ECommerce.DAL.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.BLL.Repository
 {
@@ -32,25 +27,58 @@ namespace ECommerce.BLL.Repository
             _context = context;
         }
 
-        public async Task<T> AddAsync(T Entity)
+        public async Task<T> AddAsync(T entity, Guid userId)
         {
-            await _context.Set<T>().AddAsync(Entity);
-            return Entity;
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.CreateAt = DateTime.UtcNow;
+                auditableEntity.CreateBy = userId;
+            }
+
+            await _context.Set<T>().AddAsync(entity);
+            return entity;
         }
 
-        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> Entitys)
+        public T Update(T entity, Guid userId)
         {
-            await _context.Set<T>().AddRangeAsync(Entitys);
-            return Entitys;
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.ModifyAt = DateTime.UtcNow;
+                auditableEntity.ModifyBy = userId;
+            }
+
+            _context.Set<T>().Update(entity);
+            return entity;
         }
 
-        public bool Delete(T Entity)
+        public T Delete(T entity, Guid userId)
         {
-            if (Entity == null)
-                return false;
-            else
-                _context.Set<T>().Remove(Entity);
-            return true;
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.DeletedAt = DateTime.UtcNow;
+                auditableEntity.DeletedBy = userId;
+                auditableEntity.IsDeleted = true;
+            }
+
+            return entity;
+        }
+
+        public T ToggleActive(T entity, Guid userId)
+        {
+            if (entity is IBaseEntity auditableEntity)
+            {
+                auditableEntity.ModifyAt = DateTime.UtcNow;
+                auditableEntity.ModifyBy = userId;
+                auditableEntity.IsActive = !auditableEntity.IsActive;
+            }
+
+            return entity;
+        }
+
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entitys)
+        {
+            await _context.Set<T>().AddRangeAsync(entitys);
+            return entitys;
         }
 
         public async Task<T> FindAsync(int ID)
@@ -65,18 +93,12 @@ namespace ECommerce.BLL.Repository
             return Result;
         }
 
-        public T Update(T Entity)
-        {
-            _context.Set<T>().Update(Entity);
-            return Entity;
-        }
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }
 
-        public virtual async Task<List<T>> GetAllAsync(
+        public virtual async Task<(List<T> list, int count)> GetAllAsync(
             BaseGridRequest request,
             List<string> Includes = null
         )
@@ -98,11 +120,43 @@ namespace ECommerce.BLL.Repository
                     result = await query.AsNoTracking().ToListAsync();
                 }
 
-                return result;
+                return (result, total);
             }
             catch (Exception ex)
             {
-                return new List<T>();
+                return (new List<T>(), 0);
+            }
+        }
+
+        public async Task<(IEnumerable<T> list, int count)> GetAllAsync(
+            BaseGridRequest request,
+            Expression<Func<T, bool>> criteria,
+            IEnumerable<string> Includes = null
+        )
+        {
+            try
+            {
+                var result = new List<T>();
+                IQueryable<T> query = _context.Set<T>();
+                if (Includes != null)
+                    foreach (var incluse in Includes)
+                        query = query.Include(incluse);
+
+                query = query.Where(criteria);
+
+                query = ApplyDynamicQuery(request, query);
+
+                var total = await query.CountAsync();
+                if (total > 0)
+                {
+                    query = ApplyPagination(request, query);
+                    result = await query.AsNoTracking().ToListAsync();
+                }
+                return (result, total);
+            }
+            catch (Exception ex)
+            {
+                return (new List<T>(), 0);
             }
         }
 
@@ -114,11 +168,17 @@ namespace ECommerce.BLL.Repository
 
         public IQueryable<T> ApplyDynamicQuery(BaseGridRequest request, IQueryable<T> query)
         {
-            query = IsDeletedDynamic(query, request.IsDeleted);
+            query = FilterDynamic(query, request.IsDeleted, nameof(request.IsDeleted));
+
+            if (request.IsActive.HasValue)
+                query = FilterDynamic(query, request.IsActive.Value, nameof(request.IsActive));
+
             if (!string.IsNullOrEmpty(request.SortBy))
                 query = OrderByDynamic(query, request.SortBy, request.IsDescending);
+
             if (!string.IsNullOrEmpty(request.SearchFor) && !string.IsNullOrEmpty(request.SearchBy))
                 query = SearchDynamic(query, request.SearchBy, request.SearchFor);
+
             return query;
         }
 
@@ -204,64 +264,134 @@ namespace ECommerce.BLL.Repository
             return await Query.FirstOrDefaultAsync(Criteria);
         }
 
-        public async Task<string> UploadPhoto(
+        public async Task<string> UploadPhotoAsync(
             IFormFile file,
-            IHostEnvironment environment,
-            string FolderName,
+            string folderName,
             string photoName = null
         )
         {
-            string Photo = string.Empty;
-            string path = string.Empty;
-            string fullPath = string.Empty;
+            string fullPath = Constants.DefaultPhotos.Default;
             try
             {
                 if (file != null)
                 {
+                    // Get file extension
                     var extension = Path.GetExtension(file.FileName);
-                    var GuId = Guid.NewGuid().ToString();
-                    Photo = GuId + extension;
-                    path = $"{Constants.PhotoFolder.Images}/{FolderName}";
+                    var guid = Guid.NewGuid().ToString();
+                    var fileName = guid + extension;
 
-                    if (!Directory.Exists(path))
-                        Directory.CreateDirectory(path);
+                    // Get the absolute path for saving in wwwroot
+                    var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var directoryPath = Path.Combine(wwwRootPath, "Images", folderName);
 
-                    fullPath = $"{path}/{Photo}";
-                    await file.CopyToAsync(new FileStream(fullPath, FileMode.Create));
+                    // Ensure directory exists
+                    if (!Directory.Exists(directoryPath))
+                        Directory.CreateDirectory(directoryPath);
+
+                    // Full file path
+                    fullPath = Path.Combine(directoryPath, fileName);
+
+                    // Save the file
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    // Convert absolute path to relative path for DB storage
+                    fullPath = $"/Images/{folderName}/{fileName}";
                 }
-                //Update Photo
-                if (photoName != null && file != null && System.IO.File.Exists(photoName))
-                    System.IO.File.Delete(photoName);
-                if (photoName != null && file == null)
+
+                // Delete old photo if provided
+                if (
+                    !string.IsNullOrEmpty(photoName)
+                    && photoName != Constants.DefaultPhotos.Default
+                    && file != null
+                )
+                {
+                    var oldFilePath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        photoName.TrimStart('/')
+                    );
+
+                    if (System.IO.File.Exists(oldFilePath))
+                        System.IO.File.Delete(oldFilePath);
+                }
+
+                // If no new file is uploaded but old photo exists, return the old photo
+                if (
+                    !string.IsNullOrEmpty(photoName)
+                    && photoName != Constants.DefaultPhotos.Default
+                    && file == null
+                )
                     return photoName;
 
                 return fullPath;
             }
             catch (Exception ex)
             {
-                return $"{Constants.PhotoFolder.Images}/default.png";
+                Console.WriteLine(ex.Message);
+                return Constants.DefaultPhotos.Default; // Return default image on error
             }
+        }
+
+        public async Task<string> UploadPhotoAsync(Stream file, string folderName)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var extension = ".png"; // Assuming avatar is always PNG
+                    var fileName = guid + extension;
+
+                    // Get wwwroot path
+                    var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var directoryPath = Path.Combine(wwwRootPath, "Images", folderName);
+
+                    // Ensure directory exists
+                    if (!Directory.Exists(directoryPath))
+                        Directory.CreateDirectory(directoryPath);
+
+                    // Create full path
+                    var fullPath = Path.Combine(directoryPath, fileName);
+
+                    // Save file
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    // Return relative path (for storing in DB)
+                    return $"/Images/{folderName}/{fileName}";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            // Return default image if an error occurs
+            return "/Images/default.png";
         }
 
         public async Task<List<string>> UploadPhotos(
             List<IFormFile> files,
-            IHostEnvironment environment,
             string FolderName,
             List<string> ImgNames = null
         )
         {
             var photos = new List<string>();
-            var curentPhoto = string.Empty;
+            var currentPhoto = string.Empty;
             var index = 0;
             foreach (var file in files)
             {
-                curentPhoto = await UploadPhoto(
+                currentPhoto = await UploadPhotoAsync(
                     file,
-                    environment,
                     FolderName,
                     ImgNames != null ? ImgNames[index] : null
                 );
-                photos.Add(curentPhoto);
+                photos.Add(currentPhoto);
                 index++;
             }
 
@@ -288,9 +418,7 @@ namespace ECommerce.BLL.Repository
                     Console.WriteLine("File deleted successfully.");
                 }
                 else
-                {
                     Console.WriteLine("File does not exist.");
-                }
             }
             catch (Exception ex)
             {
@@ -367,13 +495,17 @@ namespace ECommerce.BLL.Repository
             return query.Where(predicate);
         }
 
-        public IQueryable<T> IsDeletedDynamic(IQueryable<T> query, bool propertyValue)
+        public IQueryable<T> FilterDynamic(
+            IQueryable<T> query,
+            bool propertyValue,
+            string propertyName
+        )
         {
             // Create a parameter expression
             ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
 
             // Create property access expression
-            MemberExpression property = Expression.PropertyOrField(parameter, "IsDeleted");
+            MemberExpression property = Expression.PropertyOrField(parameter, propertyName);
 
             // Create constant expression for dynamic value
             ConstantExpression value = Expression.Constant(propertyValue);
@@ -414,7 +546,7 @@ namespace ECommerce.BLL.Repository
 
         public async Task<T> FirstAsync(
             Expression<Func<T, bool>> Criteria,
-            string[] Includes = null
+            List<string> Includes = null
         )
         {
             IQueryable<T> Query = _context.Set<T>();

@@ -6,6 +6,7 @@ using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Sliders.Requests;
 using ECommerce.Core;
 using ECommerce.Core.Enums;
+using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -28,7 +29,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
         RuleFor(req => req)
             .Must(req =>
             {
-                return context.Brands.Any(x => x.ID == req.ID && !x.IsDeleted);
+                return context.Brands.Any(x => x.Id == req.ID && !x.IsDeleted);
             })
             .WithMessage(x =>
                 $" {_localizer[Constants.EntityKeys.Brand]} {_localizer[Constants.MessageKeys.NotFound]}"
@@ -50,7 +51,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.ID != req.ID
+                        x.NameAR.ToLower() == req.NameAR.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -75,7 +76,7 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
                 (req, name) =>
                 {
                     return !context.Brands.Any(x =>
-                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.ID != req.ID
+                        x.NameEN.ToLower() == req.NameEN.ToLower() && x.Id != req.ID && !x.IsDeleted
                     );
                 }
             )
@@ -84,26 +85,27 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandRequest>
             );
 
         RuleFor(req => req.FormFile)
+            .NotNull()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .NotEmpty()
+            .WithMessage(x =>
+                $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            )
+            .When(x => x.FormFile != null)
             .Must(path =>
             {
-                var allowedExtensions = Enum.GetNames(typeof(PhotoExtensions)).ToList();
-                var extension = Path.GetExtension(path.FileName.ToLower());
-                if (string.IsNullOrEmpty(extension))
-                    return false;
-
-                extension = extension.Remove(extension.LastIndexOf('.'), 1);
-                if (!allowedExtensions.Contains(extension))
-                    return false;
-
-                return true;
+                return FileHelper.ExtensionsCheck(path);
             })
-            .When(x => x.FormFile != null)
             .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-            .Must(req =>
+            .Must(path =>
             {
-                return (req.Length / 1024) > 3000 ? false : true;
+                return FileHelper.SizeCheck(path);
             })
             .When(x => x.FormFile != null)
-            .WithMessage(x => _localizer[Constants.MessageKeys.InvalidSize, 3].ToString());
+            .WithMessage(x =>
+                _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+            );
     }
 }

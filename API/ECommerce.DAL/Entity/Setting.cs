@@ -29,6 +29,9 @@ namespace ECommerce.DAL.Entity
         [StringLength(200)]
         public string Whatsapp { get; set; }
 
+        [StringLength(200)]
+        public string TikTok { get; set; }
+
         [EmailAddress, StringLength(100)]
         public string Email { get; set; }
 
@@ -37,6 +40,5 @@ namespace ECommerce.DAL.Entity
 
         [StringLength(100)]
         public string BookingMessage { get; set; }
-        public virtual ICollection<Section> Sections { get; set; }
     }
 }

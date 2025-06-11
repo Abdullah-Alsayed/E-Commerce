@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Settings.Dtos;
 using ECommerce.BLL.Features.Settings.Requests;
-using ECommerce.BLL.Features.Statuses.Dtos;
-using ECommerce.BLL.Features.Statuses.Requests;
-using ECommerce.BLL.IRepository;
 using ECommerce.BLL.Response;
+using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
+using ECommerce.Core.Services.User;
 using ECommerce.DAL.Entity;
 using ECommerce.DAL.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
@@ -22,24 +19,24 @@ namespace ECommerce.BLL.Features.Settings.Services
     {
         IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserContext _userContext;
         private readonly IHostEnvironment _environment;
         private readonly IStringLocalizer<SettingService> _localizer;
 
-        private string _userId = Constants.System;
+        private Guid _userId = Guid.Empty;
         private string _userName = Constants.System;
         private string _lang = Languages.Ar;
 
         public SettingService(
             IUnitOfWork unitOfWork,
             IStringLocalizer<SettingService> localizer,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             IHostEnvironment environment
         )
         {
             _unitOfWork = unitOfWork;
             _localizer = localizer;
-            _httpContext = httpContextAccessor;
+            _userContext = userContext;
             _environment = environment;
 
             #region initilize mapper
@@ -53,25 +50,19 @@ namespace ECommerce.BLL.Features.Settings.Services
             #endregion initilize mapper
 
             #region Get User Data From Token
-            _userId = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.ID)
-                ?.Value;
+            _userId = _userContext.UserId.Value;
 
-            _userName = _httpContext
-                .HttpContext.User.Claims.FirstOrDefault(x => x.Type == EntityKeys.FullName)
-                ?.Value;
+            _userName = _userContext.UserName.Value;
 
-            _lang =
-                _httpContext.HttpContext?.Request.Headers?.AcceptLanguage.ToString()
-                ?? Languages.Ar;
+            _lang = _userContext.Language.Value;
             #endregion
         }
 
-        public async Task<BaseResponse> GetAsync()
+        public async Task<BaseResponse<SettingDto>> GetAsync()
         {
             try
             {
-                var Setting = await _unitOfWork.Setting.FirstAsync();
+                var Setting = await _unitOfWork.SettingModule.Setting.FirstAsync();
                 var result = _mapper.Map<SettingDto>(Setting);
                 return new BaseResponse<SettingDto>
                 {
@@ -82,12 +73,12 @@ namespace ECommerce.BLL.Features.Settings.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.View,
                     EntitiesEnum.Setting
                 );
-                return new BaseResponse
+                return new BaseResponse<SettingDto>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -101,25 +92,25 @@ namespace ECommerce.BLL.Features.Settings.Services
             var modifyRows = 0;
             try
             {
-                var Setting = await _unitOfWork.Setting.FirstAsync();
-                _mapper.Map(request, Setting);
-                Setting.ModifyBy = _userId;
-                Setting.ModifyAt = DateTime.UtcNow;
-                Setting.Logo = await _unitOfWork.Setting.UploadPhoto(
+                var setting = await _unitOfWork.SettingModule.Setting.FirstAsync();
+                _mapper.Map(request, setting);
+                setting.Logo = await _unitOfWork.SettingModule.Setting.UploadPhotoAsync(
                     request.FormFile,
-                    _environment,
-                    Constants.PhotoFolder.Main
+                    Constants.PhotoFolder.Main,
+                    setting.Logo
                 );
-                var result = _mapper.Map<SettingDto>(Setting);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                _unitOfWork.SettingModule.Setting.Update(setting, _userId);
+                var result = _mapper.Map<SettingDto>(setting);
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -145,7 +136,7 @@ namespace ECommerce.BLL.Features.Settings.Services
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _unitOfWork.ErrorLog.ErrorLog(
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
                     ex,
                     OperationTypeEnum.Update,
                     EntitiesEnum.Setting
@@ -160,7 +151,7 @@ namespace ECommerce.BLL.Features.Settings.Services
 
         #region helpers
         private async Task SendNotification(OperationTypeEnum action) =>
-            _ = await _unitOfWork.Notification.AddNotificationAsync(
+            _ = await _unitOfWork.ContentModule.Notification.AddNotificationAsync(
                 new Notification
                 {
                     CreateBy = _userId,
@@ -171,13 +162,14 @@ namespace ECommerce.BLL.Features.Settings.Services
             );
 
         private async Task LogHistory(OperationTypeEnum action) =>
-            await _unitOfWork.History.AddAsync(
+            await _unitOfWork.ContentModule.History.AddAsync(
                 new History
                 {
                     UserID = _userId,
                     Action = action,
                     Entity = EntitiesEnum.Setting
-                }
+                },
+                _userId
             );
 
         #endregion

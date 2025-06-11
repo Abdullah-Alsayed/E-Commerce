@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using ECommerce.BLL.IRepository;
+using ECommerce.BLL.Repository.IRepository;
 using ECommerce.DAL;
 using ECommerce.DAL.Entity;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +20,7 @@ namespace ECommerce.BLL.Repository
             notification.MessageAR = "";
             notification.MessageEN = "";
 
-            _ = await AddAsync(notification);
+            _ = await AddAsync(notification, System.Guid.Empty);
 
             // Call Signal R
             return notification;

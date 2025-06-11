@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using ECommerce.BLL.Features.Settings.Dtos;
 using ECommerce.BLL.Features.Settings.Requests;
 using ECommerce.BLL.Features.Settings.Services;
 using ECommerce.BLL.Response;
+using ECommerce.Core.PermissionsClaims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,21 +16,23 @@ namespace ECommerce.API.Controllers
         public SettingController(ISettingService service) => _service = service;
 
         [HttpGet]
-        public async Task<BaseResponse> GetSetting()
+        [Authorize(Policy = Permissions.Setting.View)]
+        public async Task<IActionResult> View()
         {
             try
             {
-                return await _service.GetAsync();
+                var result = await _service.GetAsync();
+                return View(result.Result);
             }
             catch (Exception ex)
             {
-                return new BaseResponse { IsSuccess = false, Message = ex.Message };
+                return View(ex.Message);
             }
         }
 
         [HttpPut]
-        [Consumes("multipart/form-data")]
-        public async Task<BaseResponse> UpdateSetting([FromForm] UpdateSettingRequest request)
+        [Authorize(Policy = Permissions.Setting.Update)]
+        public async Task<BaseResponse> Update([FromForm] UpdateSettingRequest request)
         {
             try
             {

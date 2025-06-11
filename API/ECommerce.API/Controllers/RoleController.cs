@@ -83,7 +83,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<BaseResponse> DeleteRole( DeleteRoleRequest request)
+    public async Task<BaseResponse> DeleteRole(DeleteRoleRequest request)
     {
         try
         {
@@ -96,7 +96,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateRoleClaimsRequest request)
+    public async Task<BaseResponse> UpdateRoleClaims([FromForm] UpdateClaimsRequest request)
     {
         try
         {

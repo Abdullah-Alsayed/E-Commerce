@@ -18,9 +18,7 @@ namespace ECommerce.BLL.Features.Users.Filter
                 return;
 
             var canAccess = context.User.Claims.Any(c =>
-                c.Type == Constants.Permission
-                && c.Value == requirement.Permission
-                && c.Issuer == Constants.Issuer
+                c.Type == Constants.Permission && c.Value == requirement.Permission
             );
 
             if (canAccess)

@@ -7,13 +7,13 @@ using Microsoft.Extensions.Localization;
 
 namespace ECommerce.BLL.Features.Products.Validators
 {
-    public class ToggleAvtiveProductValidator : AbstractValidator<ToggleAvtiveProductRequest>
+    public class ToggleActiveProductValidator : AbstractValidator<ToggleActiveProductRequest>
     {
-        private readonly IStringLocalizer<ToggleAvtiveProductValidator> _localizer;
+        private readonly IStringLocalizer<ToggleActiveProductValidator> _localizer;
 
-        public ToggleAvtiveProductValidator(
+        public ToggleActiveProductValidator(
             ApplicationDbContext context,
-            IStringLocalizer<ToggleAvtiveProductValidator> localizer
+            IStringLocalizer<ToggleActiveProductValidator> localizer
         )
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
@@ -23,7 +23,7 @@ namespace ECommerce.BLL.Features.Products.Validators
             RuleFor(req => req)
                 .Must(req =>
                 {
-                    return context.Products.Any(x => x.ID == req.ID && !x.IsDeleted);
+                    return context.Products.Any(x => x.Id == req.ID && !x.IsDeleted);
                 })
                 .WithMessage(x =>
                     $" {_localizer[Constants.EntityKeys.Product]} {_localizer[Constants.MessageKeys.NotFound]}"

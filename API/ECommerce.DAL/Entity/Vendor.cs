@@ -7,10 +7,13 @@ namespace ECommerce.DAL.Entity
         [Required, StringLength(100)]
         public string Name { get; set; }
 
-        [Required, StringLength(11)]
+        [StringLength(30)]
         public string Phone { get; set; }
 
         [StringLength(100)]
         public string Address { get; set; }
+
+        [StringLength(100)]
+        public string Email { get; set; }
     }
 }
