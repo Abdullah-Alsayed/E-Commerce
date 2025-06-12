@@ -14,6 +14,8 @@ namespace ECommerce.DAL.Entity
         [Required, Range(1, int.MaxValue)]
         public int Quantity { get; set; }
 
+        public bool IsReturn { get; set; } = false;
+
         public virtual Product Product { get; set; }
         public virtual Vendor Vendor { get; set; }
     }

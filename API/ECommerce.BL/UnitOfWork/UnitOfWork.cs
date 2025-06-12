@@ -30,6 +30,14 @@ namespace ECommerce.BLL.UnitOfWork
         private readonly IMailServices _mailServices;
         private readonly JWTHelpers _jwt;
 
+        private readonly Lazy<IProductModule> _productModule;
+        private readonly Lazy<IOrderModule> _orderModule;
+        private readonly Lazy<IStockModule> _stockModule;
+        private readonly Lazy<IUserModule> _userModule;
+        private readonly Lazy<ISettingModule> _settingModule;
+        private readonly Lazy<ILocationModule> _locationModule;
+        private readonly Lazy<IContentModule> _contentModule;
+
         public UnitOfWork(
             ApplicationDbContext context,
             IStringLocalizer<UserRepository> localizer,
@@ -47,22 +55,11 @@ namespace ECommerce.BLL.UnitOfWork
             _roleManager = roleManager;
             _mailServices = mailServices;
             _jwt = jwtOptions.Value;
-        }
 
-        public ApplicationDbContext Context => _context;
-
-        private IProductModule _productModule;
-        public IProductModule ProductModule => _productModule ??= new ProductModule(_context);
-
-        private IOrderModule _orderModule;
-        public IOrderModule OrderModule => _orderModule ??= new OrderModule(_context);
-
-        private IStockModule _stockModule;
-        public IStockModule StockModule => _stockModule ??= new StockModule(_context);
-
-        private IUserModule _userModule;
-        public IUserModule UserModule =>
-            _userModule ??= new UserModule(
+            _productModule = new Lazy<IProductModule>(() => new ProductModule(_context));
+            _orderModule = new Lazy<IOrderModule>(() => new OrderModule(_context));
+            _stockModule = new Lazy<IStockModule>(() => new StockModule(_context));
+            _userModule = new Lazy<IUserModule>(() => new UserModule(
                 _context,
                 _localizer,
                 _userManager,
@@ -70,16 +67,21 @@ namespace ECommerce.BLL.UnitOfWork
                 _roleManager,
                 _mailServices,
                 _jwt
-            );
+            ));
+            _settingModule = new Lazy<ISettingModule>(() => new SettingModule(_context));
+            _locationModule = new Lazy<ILocationModule>(() => new LocationModule(_context));
+            _contentModule = new Lazy<IContentModule>(() => new ContentModule(_context));
+        }
 
-        private ISettingModule _settingModule;
-        public ISettingModule SettingModule => _settingModule ??= new SettingModule(_context);
+        public ApplicationDbContext Context => _context;
 
-        private ILocationModule _locationModule;
-        public ILocationModule LocationModule => _locationModule ??= new LocationModule(_context);
-
-        private IContentModule _contentModule;
-        public IContentModule ContentModule => _contentModule ??= new ContentModule(_context);
+        public IProductModule ProductModule => _productModule.Value;
+        public IOrderModule OrderModule => _orderModule.Value;
+        public IStockModule StockModule => _stockModule.Value;
+        public IUserModule UserModule => _userModule.Value;
+        public ISettingModule SettingModule => _settingModule.Value;
+        public ILocationModule LocationModule => _locationModule.Value;
+        public IContentModule ContentModule => _contentModule.Value;
 
         public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 
