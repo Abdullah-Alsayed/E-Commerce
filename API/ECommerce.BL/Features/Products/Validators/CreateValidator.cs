@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.Core;
-using ECommerce.Core.Enums;
-using ECommerce.Core.Helpers;
 using ECommerce.DAL;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -118,37 +114,37 @@ namespace ECommerce.BLL.Features.Products.Validators
                 )
                 .When(req => req.SubCategoryID.HasValue);
 
-            RuleFor(req => req.FormFiles)
-                .NotNull()
-                .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-                )
-                .NotEmpty()
-                .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-                );
+            //RuleFor(req => req.FormFiles)
+            //    .NotNull()
+            //    .WithMessage(x =>
+            //        $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            //    )
+            //    .NotEmpty()
+            //    .WithMessage(x =>
+            //        $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            //    );
 
-            RuleForEach(req => req.FormFiles)
-                .NotNull()
-                .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-                )
-                .NotEmpty()
-                .WithMessage(x =>
-                    $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
-                )
-                .Must(path =>
-                {
-                    return FileHelper.ExtensionsCheck(path);
-                })
-                .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
-                .Must(path =>
-                {
-                    return FileHelper.SizeCheck(path);
-                })
-                .WithMessage(x =>
-                    _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
-                );
+            //RuleForEach(req => req.FormFiles)
+            //    .NotNull()
+            //    .WithMessage(x =>
+            //        $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            //    )
+            //    .NotEmpty()
+            //    .WithMessage(x =>
+            //        $"{_localizer[Constants.EntityKeys.Photo]} {_localizer[Constants.MessageKeys.IsRequired]}"
+            //    )
+            //    .Must(path =>
+            //    {
+            //        return FileHelper.ExtensionsCheck(path);
+            //    })
+            //    .WithMessage(x => _localizer[Constants.MessageKeys.InvalidExtension].ToString())
+            //    .Must(path =>
+            //    {
+            //        return FileHelper.SizeCheck(path);
+            //    })
+            //    .WithMessage(x =>
+            //        _localizer[Constants.MessageKeys.InvalidSize, Constants.FileSize].ToString()
+            //    );
 
             RuleFor(req => req)
                 .Must(req =>

@@ -56,7 +56,7 @@ namespace ECommerce.API.Controllers
                 draw = request?.Draw ?? 0,
                 recordsTotal = response?.Total ?? 0,
                 recordsFiltered = response?.Total ?? 0,
-                data = response?.Result.Items ?? new List<TagDto>()
+                data = response?.Result.Items ?? new List<UnitDto>()
             };
 
             return Json(jsonResponse);

@@ -1,6 +1,3 @@
-let arabic = "ar-EG";
-let english = "en-US";
-
 //Form Validation
 const flatPickrEL = $(".flatpickr-validation");
 if (flatPickrEL.length) {

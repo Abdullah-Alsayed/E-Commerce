@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Response;
 
@@ -9,10 +11,13 @@ namespace ECommerce.BLL.Features.Products.Services
         Task<BaseResponse> CreateAsync(CreateProductRequest request);
         Task<BaseResponse> DeleteAsync(DeleteProductRequest request);
         Task<BaseResponse> FindAsync(FindProductRequest request);
-        Task<BaseResponse> GetAllAsync(GetAllProductRequest request);
+        Task<BaseResponse<BaseGridResponse<List<ProductDto>>>> GetAllAsync(
+            GetAllProductRequest request
+        );
         Task<BaseResponse> UpdateAsync(UpdateProductRequest request);
         Task<BaseResponse> ToggleActivesAsync(ToggleActiveProductRequest request);
         Task<BaseResponse> GetProductItems(GetProductItemsRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
+        Task<BaseResponse> ToggleActiveAsync(ToggleActiveProductRequest request);
     }
 }

@@ -11,7 +11,7 @@ namespace ECommerce.BLL.Features.Tags.Services
         Task<BaseResponse> CreateAsync(CreateUnitRequest request);
         Task<BaseResponse> DeleteAsync(DeleteUnitRequest request);
         Task<BaseResponse> FindAsync(FindUnitRequest request);
-        Task<BaseResponse<BaseGridResponse<List<TagDto>>>> GetAllAsync(GetAllUnitRequest request);
+        Task<BaseResponse<BaseGridResponse<List<UnitDto>>>> GetAllAsync(GetAllUnitRequest request);
         Task<BaseResponse> UpdateAsync(UpdateUnitRequest request);
         Task<BaseResponse> GetSearchEntityAsync();
         Task<BaseResponse> ToggleActiveAsync(ToggleActiveUnitRequest request);

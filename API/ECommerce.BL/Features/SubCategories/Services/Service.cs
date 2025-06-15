@@ -47,7 +47,15 @@ namespace ECommerce.BLL.Features.SubCategories.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
+                cfg.CreateMap<SubCategory, SubCategoryDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Category, CategoryDto>()
                     .ForMember(
                         dest => dest.Name,
@@ -112,16 +120,20 @@ namespace ECommerce.BLL.Features.SubCategories.Services
                         : nameof(SubCategory.NameEN)
                     : request.SearchBy;
 
+                var includes = new List<string>();
+                if (request.IncludeReferences.HasValue && request.IncludeReferences.Value)
+                    includes.Add(nameof(Category));
+
                 var result =
-                    request.CategoryId.Value != Guid.Empty
+                    request.CategoryId.HasValue && request.CategoryId.Value != Guid.Empty
                         ? await _unitOfWork.ProductModule.SubCategory.GetAllAsync(
                             request,
                             x => x.CategoryID == request.CategoryId.Value,
-                            new List<string> { nameof(Category) }
+                            includes
                         )
                         : await _unitOfWork.ProductModule.SubCategory.GetAllAsync(
                             request,
-                            new List<string> { nameof(Category) }
+                            includes
                         );
 
                 var response = _mapper.Map<List<SubCategoryDto>>(result.list);

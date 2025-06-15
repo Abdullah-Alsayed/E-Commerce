@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Tags.Dtos;
 using ECommerce.BLL.Features.Tags.Requests;
+using ECommerce.BLL.Features.Tags.Services;
 using ECommerce.BLL.Response;
 using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
@@ -13,7 +15,7 @@ using ECommerce.DAL.Enums;
 using Microsoft.Extensions.Localization;
 using static ECommerce.Core.Constants;
 
-namespace ECommerce.BLL.Features.Tags.Services
+namespace ECommerce.BLL.Features.Units.Services
 {
     public class UnitService : IUnitService
     {
@@ -40,7 +42,15 @@ namespace ECommerce.BLL.Features.Tags.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Unit, TagDto>().ReverseMap();
+                cfg.CreateMap<Unit, UnitDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Unit, CreateUnitRequest>().ReverseMap();
                 cfg.CreateMap<Unit, UpdateUnitRequest>().ReverseMap();
             });
@@ -61,8 +71,8 @@ namespace ECommerce.BLL.Features.Tags.Services
             try
             {
                 var Unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
-                var result = _mapper.Map<TagDto>(Unit);
-                return new BaseResponse<TagDto>
+                var result = _mapper.Map<UnitDto>(Unit);
+                return new BaseResponse<UnitDto>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
@@ -84,7 +94,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             }
         }
 
-        public async Task<BaseResponse<BaseGridResponse<List<TagDto>>>> GetAllAsync(
+        public async Task<BaseResponse<BaseGridResponse<List<UnitDto>>>> GetAllAsync(
             GetAllUnitRequest request
         )
         {
@@ -97,13 +107,13 @@ namespace ECommerce.BLL.Features.Tags.Services
                     : request.SearchBy;
 
                 var result = await _unitOfWork.ProductModule.Unit.GetAllAsync(request);
-                var response = _mapper.Map<List<TagDto>>(result.list);
-                return new BaseResponse<BaseGridResponse<List<TagDto>>>
+                var response = _mapper.Map<List<UnitDto>>(result.list);
+                return new BaseResponse<BaseGridResponse<List<UnitDto>>>
                 {
                     IsSuccess = true,
                     Message = _localizer[MessageKeys.Success].ToString(),
                     Total = response != null ? result.count : 0,
-                    Result = new BaseGridResponse<List<TagDto>>
+                    Result = new BaseGridResponse<List<UnitDto>>
                     {
                         Items = response,
                         Total = response != null ? result.count : 0,
@@ -117,7 +127,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Unit
                 );
-                return new BaseResponse<BaseGridResponse<List<TagDto>>>
+                return new BaseResponse<BaseGridResponse<List<UnitDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -133,7 +143,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             {
                 var Unit = _mapper.Map<Unit>(request);
                 Unit = await _unitOfWork.ProductModule.Unit.AddAsync(Unit, _userId);
-                var result = _mapper.Map<TagDto>(Unit);
+                var result = _mapper.Map<UnitDto>(Unit);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Create);
@@ -149,7 +159,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<TagDto>
+                    return new BaseResponse<UnitDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -191,7 +201,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
                 _mapper.Map(request, unit);
                 _unitOfWork.ProductModule.Unit.Update(unit, _userId);
-                var result = _mapper.Map<TagDto>(unit);
+                var result = _mapper.Map<UnitDto>(unit);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Update);
@@ -207,7 +217,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<TagDto>
+                    return new BaseResponse<UnitDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -248,7 +258,7 @@ namespace ECommerce.BLL.Features.Tags.Services
             {
                 var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
                 _unitOfWork.ProductModule.Unit.Delete(unit, _userId);
-                var result = _mapper.Map<TagDto>(unit);
+                var result = _mapper.Map<UnitDto>(unit);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Delete);
@@ -264,7 +274,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<TagDto>
+                    return new BaseResponse<UnitDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),
@@ -306,7 +316,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 var unit = await _unitOfWork.ProductModule.Unit.FindAsync(request.ID);
                 _unitOfWork.ProductModule.Unit.ToggleActive(unit, _userId);
 
-                var result = _mapper.Map<TagDto>(unit);
+                var result = _mapper.Map<UnitDto>(unit);
 
                 //#region Send Notification
                 //await SendNotification(OperationTypeEnum.Toggle);
@@ -322,7 +332,7 @@ namespace ECommerce.BLL.Features.Tags.Services
                 if (await _unitOfWork.IsDone(modifyRows))
                 {
                     await transaction.CommitAsync();
-                    return new BaseResponse<TagDto>
+                    return new BaseResponse<UnitDto>
                     {
                         IsSuccess = true,
                         Message = _localizer[MessageKeys.Success].ToString(),

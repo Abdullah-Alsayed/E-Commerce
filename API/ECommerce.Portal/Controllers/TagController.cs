@@ -4,7 +4,6 @@ using ECommerce.BLL.Features.Tags.Services;
 using ECommerce.BLL.Request;
 using ECommerce.BLL.Response;
 using ECommerce.Core;
-using ECommerce.Core.PermissionsClaims;
 using ECommerce.Portal.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +17,12 @@ namespace ECommerce.Portal.Controllers
 
         public TagController(ITagService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Tag.View)]
+        //  [Authorize(Policy = Permissions.Tag.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Tag.View)]
+        // [Authorize(Policy = Permissions.Tag.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -63,7 +62,7 @@ namespace ECommerce.Portal.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Tag.Create)]
+        // [Authorize(Policy = Permissions.Tag.Create)]
         public async Task<IActionResult> Create([FromForm] CreateTagRequest request)
         {
             if (!ModelState.IsValid)
@@ -81,7 +80,7 @@ namespace ECommerce.Portal.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Tag.Update)]
+        // [Authorize(Policy = Permissions.Tag.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateTagRequest request)
         {
             if (!ModelState.IsValid)
@@ -99,7 +98,7 @@ namespace ECommerce.Portal.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Tag.Delete)]
+        // [Authorize(Policy = Permissions.Tag.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

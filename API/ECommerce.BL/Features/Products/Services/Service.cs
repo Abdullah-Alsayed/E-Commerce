@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ECommerce.BLL.Features.Brands.Dtos;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Features.Colors.Dtos;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Sizes.Dtos;
+using ECommerce.BLL.Features.SubCategories.Dtos;
+using ECommerce.BLL.Features.Tags.Dtos;
 using ECommerce.BLL.Response;
 using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
@@ -53,6 +57,11 @@ namespace ECommerce.BLL.Features.Products.Services
                 cfg.CreateMap<Product, UpdateProductRequest>().ReverseMap();
                 cfg.CreateMap<Color, ColorDto>().ReverseMap();
                 cfg.CreateMap<Size, SizeDto>().ReverseMap();
+
+                cfg.CreateMap<Brand, BrandDto>().ReverseMap();
+                cfg.CreateMap<Category, CategoryDto>().ReverseMap();
+                cfg.CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
+                cfg.CreateMap<Unit, UnitDto>().ReverseMap();
             });
             _mapper = new Mapper(config);
             #endregion initialize mapper
@@ -125,7 +134,9 @@ namespace ECommerce.BLL.Features.Products.Services
             }
         }
 
-        public async Task<BaseResponse> GetAllAsync(GetAllProductRequest request)
+        public async Task<BaseResponse<BaseGridResponse<List<ProductDto>>>> GetAllAsync(
+            GetAllProductRequest request
+        )
         {
             try
             {
@@ -133,7 +144,16 @@ namespace ECommerce.BLL.Features.Products.Services
                     ? nameof(Product.Title)
                     : request.SearchBy;
 
-                var result = await _unitOfWork.ProductModule.Product.GetAllAsync(request);
+                var result = await _unitOfWork.ProductModule.Product.GetAllAsync(
+                    request,
+                    new List<string>
+                    {
+                        nameof(Brand),
+                        nameof(SubCategory),
+                        nameof(Category),
+                        nameof(Unit),
+                    }
+                );
                 var response = _mapper.Map<List<ProductDto>>(result.list);
                 return new BaseResponse<BaseGridResponse<List<ProductDto>>>
                 {
@@ -154,7 +174,7 @@ namespace ECommerce.BLL.Features.Products.Services
                     OperationTypeEnum.GetAll,
                     EntitiesEnum.Product
                 );
-                return new BaseResponse
+                return new BaseResponse<BaseGridResponse<List<ProductDto>>>
                 {
                     IsSuccess = false,
                     Message = _localizer[MessageKeys.Fail].ToString()
@@ -170,20 +190,21 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 var Product = _mapper.Map<Product>(request);
                 Product = await _unitOfWork.ProductModule.Product.AddAsync(Product, _userId);
-                Product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
-                    request.FormFiles,
-                    PhotoFolder.Products
-                );
+                //Product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
+                //    request.FormFiles,
+                //    PhotoFolder.Products
+                //);
                 var result = _mapper.Map<ProductDto>(Product);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Create);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Create);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -230,22 +251,23 @@ namespace ECommerce.BLL.Features.Products.Services
             {
                 var product = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
                 _mapper.Map(request, product);
-                product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
-                    request.FormFiles,
-                    PhotoFolder.Products,
-                    product.ProductPhotos
-                );
+                //product.ProductPhotos = await _unitOfWork.ProductModule.Product.UploadPhotos(
+                //    request.FormFiles,
+                //    PhotoFolder.Products,
+                //    product.ProductPhotos
+                //);
                 _unitOfWork.ProductModule.Product.Update(product, _userId);
                 var result = _mapper.Map<ProductDto>(product);
-                #region Send Notification
-                await SendNotification(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
 
-                #region Log
-                await LogHistory(OperationTypeEnum.Update);
-                modifyRows++;
-                #endregion
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Update);
+                //modifyRows++;
+                //#endregion
 
                 modifyRows++;
                 if (await _unitOfWork.IsDone(modifyRows))
@@ -470,6 +492,64 @@ namespace ECommerce.BLL.Features.Products.Services
                 .ToList();
 
             return result;
+        }
+
+        public async Task<BaseResponse> ToggleActiveAsync(ToggleActiveProductRequest request)
+        {
+            using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+            var modifyRows = 0;
+            try
+            {
+                var Tag = await _unitOfWork.ProductModule.Product.FindAsync(request.ID);
+                _unitOfWork.ProductModule.Product.ToggleActive(Tag, _userId);
+
+                var result = _mapper.Map<TagDto>(Tag);
+
+                //#region Send Notification
+                //await SendNotification(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                //#region Log
+                //await LogHistory(OperationTypeEnum.Toggle);
+                //modifyRows++;
+                //#endregion
+
+                modifyRows++;
+                if (await _unitOfWork.IsDone(modifyRows))
+                {
+                    await transaction.CommitAsync();
+                    return new BaseResponse<TagDto>
+                    {
+                        IsSuccess = true,
+                        Message = _localizer[MessageKeys.Success].ToString(),
+                        Result = result
+                    };
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = _localizer[MessageKeys.Fail].ToString(),
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                await _unitOfWork.ContentModule.ErrorLog.ErrorLog(
+                    ex,
+                    OperationTypeEnum.Toggle,
+                    EntitiesEnum.Category
+                );
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = _localizer[MessageKeys.Fail].ToString()
+                };
+            }
         }
 
         #endregion

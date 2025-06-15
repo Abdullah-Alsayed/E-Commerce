@@ -40,7 +40,15 @@ namespace ECommerce.BLL.Features.Tags.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Tag, TagDto>().ReverseMap();
+                cfg.CreateMap<Tag, TagDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Tag, CreateTagRequest>().ReverseMap();
                 cfg.CreateMap<Tag, UpdateTagRequest>().ReverseMap();
             });

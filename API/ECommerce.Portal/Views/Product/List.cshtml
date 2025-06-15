@@ -1,0 +1,150 @@
+﻿@using ECommerce.BLL.Features.Products.Requests
+@using ECommerce.BLL.Features.Products.Dtos
+@using ECommerce.Core.Enums
+@using ECommerce.DAL.Enums
+@{
+    ViewData["Title"] = "Product List";
+}
+@inject IStringLocalizer<ProductController> _Localizer;
+@inject ILocalizationManger _localizationManger;
+
+@section VendorStyles {
+}
+
+@* ************** Content ************** *@
+<h1 class="py-3 mb-4">
+    @_Localizer["ProductList"]
+</h1>
+
+<div class="d-flex justify-content-end">
+    <div class="mb-3">
+        <a href="/Product/Create" target="_blank" class="btn btn-secondary create-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" type="button">
+            <span>
+                <span class="mdi mdi-plus"></span>
+                <span class="d-none d-lg-inline-block">@_Localizer[nameof(OperationTypeEnum.Create)] @_Localizer[nameof(EntitiesEnum.Product)]</span>
+            </span>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table id="ProductList" class="datatables-basic table table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>@_Localizer[Constants.EntityKeys.Code]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Title]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Price]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Photo]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Description]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Brand]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Unit]</th>
+                    <th>@_Localizer[Constants.EntityKeys.Category]</th>
+                    <th>@_Localizer[Constants.EntityKeys.SubCategory]</th>
+                    <th>@_Localizer[Constants.EntityKeys.IsActive]</th>
+                    <th>@_Localizer[Constants.EntityKeys.CreatedAt]</th>
+                    <th>@_Localizer[Constants.LabelKeys.Action]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal to Delete new record -->
+<div class="modal fade" id="DeleteRecord" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" Product="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">@_Localizer[nameof(OperationTypeEnum.Delete)] @_Localizer[nameof(EntitiesEnum.Product)]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteRecordId">
+                <h5>@_Localizer["DeleteModalMessage"]</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@_Localizer[Constants.LabelKeys.Close]</button>
+                <button type="submit" class="btn btn-danger" id="deleteRecordButton" onclick="DeleteRecord('Product','Delete','ProductList')">@_Localizer["Delete"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section VendorScripts {
+}
+
+@section PageScripts {
+    <script>
+        var tableColumns = [
+            { data: 'code' },
+            { data: 'title' },
+            { data: 'price' },
+            {
+                data: 'productPhotos[0]', 
+                render: function (data, type, row) {
+                    return data ? photoRender(data) : '';
+                }
+            },
+            { data: 'description' },
+            {
+                data: 'brand',
+                render: function (data, type, row) {
+                    return entityRender(data);
+                }
+            },
+            {
+                data: 'unit',
+                render: function (data, type, row) {
+                    return entityRender(data);
+                }
+            },
+            {
+                data: 'category',
+                render: function (data, type, row) {
+                    return entityRender(data);
+                }
+            },
+            {
+                data: 'subCategory',
+                render: function (data, type, row) {
+                    return entityRender(data);
+                }
+            },
+            {
+                data: 'isActive',
+                render: function (data, type, row) {
+                    return isActiveRender(data, row);
+                }
+            },
+            {
+                data: 'createAt', 
+                render: function (data, type, row) {
+                    return convertUTCToLocal(data);
+                }
+            },
+            {
+                data: 'id',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                <div class="dropdown">
+                    <button class="btn p-0" type="button" id="organicSessionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="organicSessionsDropdown">
+                        <a class="dropdown-item" href="/Product/Edit/${row.id}">
+                              @_Localizer["Update"]
+                        </a>
+                        <a class="dropdown-item" onclick="setDeleteRecordId('${row.id}')" data-bs-toggle="modal" data-bs-target="#DeleteRecord" href="javascript:void(0);">
+                                @_Localizer["Delete"]
+                        </a>
+                    </div>
+                </div>`;
+                }
+            }
+        ];
+        initializeDataTable('ProductList', 'Product', 'Table', tableColumns, '@_localizationManger.Language',false);
+    </script>
+}

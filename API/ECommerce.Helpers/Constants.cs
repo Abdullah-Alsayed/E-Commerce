@@ -155,6 +155,9 @@ namespace ECommerce.Core
             public const string Discount = "Discount";
             public const string IsOffLine = "IsOffLine";
             public const string IsReturn = "IsReturn";
+            public const string Code = "Code";
+            public const string Barcode = "Barcode";
+            public const string Tags = "Tags";
         }
 
         public static class LabelKeys

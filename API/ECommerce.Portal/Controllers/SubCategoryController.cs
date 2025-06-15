@@ -139,6 +139,7 @@ namespace ECommerce.API.Controllers
         {
             try
             {
+                request.IncludeReferences = false;
                 return await _service.GetAllAsync(request);
             }
             catch (Exception ex)

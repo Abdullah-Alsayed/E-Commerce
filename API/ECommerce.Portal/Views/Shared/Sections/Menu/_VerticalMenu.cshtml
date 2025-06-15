@@ -232,7 +232,7 @@
                     }
                     @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
                     {
-                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Favorite)}"},currentPage))'>
                             <a asp-controller="@nameof(Favorite)" asp-action="List" class="menu-link">
                                 <i class="menu-icon tf-icons mdi mdi-heart me-1"></i>
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Favorite, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Favorite, "s")] </div>

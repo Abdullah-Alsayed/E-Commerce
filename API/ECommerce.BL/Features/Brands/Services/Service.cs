@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ECommerce.BLL.Features.Brands.Dtos;
 using ECommerce.BLL.Features.Brands.Requests;
+using ECommerce.BLL.Features.Categories.Dtos;
 using ECommerce.BLL.Response;
 using ECommerce.BLL.UnitOfWork;
 using ECommerce.Core;
@@ -44,7 +45,15 @@ namespace ECommerce.BLL.Features.Brands.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Brand, BrandDto>().ReverseMap();
+                cfg.CreateMap<Brand, BrandDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Brand, CreateBrandRequest>().ReverseMap();
                 cfg.CreateMap<Brand, UpdateBrandRequest>().ReverseMap();
             });

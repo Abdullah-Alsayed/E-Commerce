@@ -79,7 +79,7 @@
 
 //Jquery to handle the e-commerce product add page
 
-$(function () {
+$(document).ready(function() {
   // Select2
   var select2 = $('.select2');
   if (select2.length) {
@@ -138,4 +138,102 @@ $(function () {
       }
     });
   }
+
+  
+
+  
+  
+  // Initialize Select2 for both category and subcategory
+  const categorySelect = $('#CategoryID');
+  const subCategorySelect = $('#SubCategoryID');
+
+  categorySelect.select2({
+    placeholder: 'Select Category',
+    allowClear: true,
+    dropdownParent: categorySelect.parent()
+  });
+
+  subCategorySelect.select2({
+    placeholder: 'Select Subcategory',
+    allowClear: true,
+    dropdownParent: subCategorySelect.parent()
+  });
+
+  // Add change event listener
+  categorySelect.on('change', filterSubCategories);
+
+  
+  function filterSubCategories() {
+    const selectedCategoryId = categorySelect.val();
+    
+    // Reset subcategory selection
+    subCategorySelect.val(null).trigger('change');
+    
+    // Clear all existing options
+    subCategorySelect.empty();
+    
+    const subCategoryContainer = $('#subCategoryContainer');
+    
+    if (selectedCategoryId) {
+        // Make AJAX request to get subcategories
+        $.ajax({
+            url: '/SubCategory/GetAll',
+            type: 'GET',
+            data: {
+                categoryId: selectedCategoryId,
+                isActive: true
+            },
+            success: function(response) {
+                if (response.isSuccess && response.result && response.result.items) {
+                    const subCategories = response.result.items;
+                    
+                    // Add new options
+                    subCategories.forEach(function(subCategory) {
+                        subCategorySelect.append(`<option value="${subCategory.id}">${subCategory.name}</option>`);
+                    });
+                    
+                    // Show container if we have subcategories
+                    if (subCategories.length > 0) {
+                        subCategoryContainer.show();
+                        
+                        // Reinitialize Select2 with placeholder
+                        subCategorySelect.select2('destroy');
+                        subCategorySelect.select2({
+                            placeholder: "Select subcategory",
+                            allowClear: true
+                        });
+                    } else {
+                        subCategoryContainer.hide();
+                    }
+                } else {
+                    subCategoryContainer.hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching subcategories:', error);
+                subCategoryContainer.hide();
+            }
+        });
+    } else {
+        subCategoryContainer.hide();
+    }
+}
+  // Initialize Tagify for tags input
+  const input = document.querySelector('#TagIDs');
+  const tags = document.querySelector('#tagsWhiteList').value || '';
+  const whiteList = tags.split(',').map(tag => ({
+      value: tag
+  }));
+
+  const tagify = new Tagify(input, {
+      whitelist: whiteList, 
+      maxTags: 100,
+      dropdown: {
+          maxItems: 100,
+          classname: "tags-look",
+          enabled: 0,
+          closeOnSelect: false
+      }
+  });
+  
 });
