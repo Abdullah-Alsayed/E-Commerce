@@ -19,12 +19,12 @@ namespace ECommerce.API.Controllers
 
         public ContactUsController(IContactUsService service) => _service = service;
 
-        [Authorize(Policy = Permissions.ContactUs.View)]
+        [Authorize(Policy = Permissions.ContactUses.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.ContactUs.View)]
+        [Authorize(Policy = Permissions.ContactUses.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -66,7 +66,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.ContactUs.Delete)]
+        [Authorize(Policy = Permissions.ContactUses.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

@@ -29,6 +29,7 @@
         Claims,
         Booking,
         Errors,
-        Tag
+        Tag,
+        Collection
     }
 }

@@ -22,11 +22,11 @@ public class RoleController : Controller
     public RoleController(IRoleService service) => _service = service;
 
     #region CRUD
-    [Authorize(Policy = Permissions.Role.View)]
+    [Authorize(Policy = Permissions.Roles.View)]
     public IActionResult List() => View();
 
     [HttpPost]
-    [Authorize(Policy = Permissions.Role.View)]
+    [Authorize(Policy = Permissions.Roles.View)]
     public async Task<IActionResult> Table([FromBody] DataTableRequest request)
     {
         var search = request?.Search?.Value;
@@ -94,7 +94,7 @@ public class RoleController : Controller
     }
 
     [HttpPost]
-    [Authorize(Policy = Permissions.Role.Create)]
+    [Authorize(Policy = Permissions.Roles.Create)]
     public async Task<IActionResult> Create([FromForm] CreateRoleRequest request)
     {
         if (!ModelState.IsValid)
@@ -111,7 +111,7 @@ public class RoleController : Controller
     }
 
     [HttpPut]
-    [Authorize(Policy = Permissions.Role.Update)]
+    [Authorize(Policy = Permissions.Roles.Update)]
     public async Task<IActionResult> Update([FromForm] UpdateRoleRequest request)
     {
         if (!ModelState.IsValid)
@@ -128,7 +128,7 @@ public class RoleController : Controller
     }
 
     [HttpDelete]
-    [Authorize(Policy = Permissions.Role.Delete)]
+    [Authorize(Policy = Permissions.Roles.Delete)]
     public async Task<IActionResult> Delete(DeleteRoleRequest request)
     {
         if (!ModelState.IsValid)
@@ -147,7 +147,7 @@ public class RoleController : Controller
     #endregion
 
     [HttpPut]
-    [Authorize(Policy = Permissions.Role.Permission)]
+    [Authorize(Policy = Permissions.Roles.Permission)]
     public async Task<IActionResult> UpdateRoleClaims([FromForm] UpdateClaimsRequest request)
     {
         if (!ModelState.IsValid)
@@ -164,7 +164,7 @@ public class RoleController : Controller
     }
 
     [HttpPut]
-    [Authorize(Policy = Permissions.Role.Permission)]
+    [Authorize(Policy = Permissions.Roles.Permission)]
     public async Task<IActionResult> UpdateUserClaims([FromForm] UpdateUserClaimsRequest request)
     {
         if (!ModelState.IsValid)
@@ -197,7 +197,7 @@ public class RoleController : Controller
     }
 
     [HttpGet]
-    [Authorize(Policy = Permissions.Role.Permission)]
+    [Authorize(Policy = Permissions.Roles.Permission)]
     public async Task<IActionResult> GetRoleClaims(string id)
     {
         try
@@ -214,7 +214,7 @@ public class RoleController : Controller
         }
     }
 
-    [Authorize(Policy = Permissions.Role.Permission)]
+    [Authorize(Policy = Permissions.Roles.Permission)]
     public async Task<IActionResult> GetUserClaims(string id)
     {
         try

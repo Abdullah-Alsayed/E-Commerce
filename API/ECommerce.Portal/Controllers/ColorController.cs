@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public ColorController(IColorService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Color.View)]
+        [Authorize(Policy = Permissions.Colors.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Color.View)]
+        [Authorize(Policy = Permissions.Colors.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -64,7 +64,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Color.Create)]
+        [Authorize(Policy = Permissions.Colors.Create)]
         public async Task<IActionResult> Create([FromForm] CreateColorRequest request)
         {
             if (!ModelState.IsValid)
@@ -82,7 +82,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Color.Update)]
+        [Authorize(Policy = Permissions.Colors.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateColorRequest request)
         {
             if (!ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Color.Delete)]
+        [Authorize(Policy = Permissions.Colors.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

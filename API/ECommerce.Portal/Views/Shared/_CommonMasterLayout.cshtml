@@ -63,6 +63,63 @@
 </head>
 
 <body>
+  <!-- Page Loader Overlay -->
+  <div id="pageLoader" class="page-loader-overlay show">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+          <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+          <div style="margin-top: 1rem; font-size: 1.2rem; color: #007bff; letter-spacing: 2px; font-weight: bold;">
+              Loading...
+          </div>
+      </div>
+  </div>
+  <style>
+      .page-loader-overlay {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100vw; height: 100vh;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff; /* سيتم تغييره بالجافاسكريبت حسب الثيم */
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.5s;
+      }
+      .page-loader-overlay.show {
+          opacity: 1;
+          pointer-events: all;
+      }
+  </style>
+  <script>
+      function setLoaderBgByTheme() {
+          var loader = document.getElementById('pageLoader');
+          var theme = localStorage.getItem('templateCustomizer-vertical-menu-template--Style');
+          if (theme && theme.toLowerCase() === 'dark') {
+              loader.style.background = '#1e1e1e';
+          } else {
+              loader.style.background = '#fff';
+          }
+      }
+      setLoaderBgByTheme();
+
+      // Show loader with fade-in on DOM ready
+      document.addEventListener('DOMContentLoaded', function () {
+          var loader = document.getElementById('pageLoader');
+          if (loader) loader.classList.add('show');
+      });
+
+      // Hide loader with fade-out on window load
+      window.addEventListener('load', function () {
+          var loader = document.getElementById('pageLoader');
+          if (loader) {
+              loader.classList.remove('show');
+              setTimeout(function () {
+                  loader.style.display = 'none';
+              }, 500); // نفس مدة transition في CSS
+          }
+      });
+  </script>
   <!-- Layout Content -->
   @RenderBody()
   <!--/ Layout Content -->

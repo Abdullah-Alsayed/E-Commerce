@@ -18,12 +18,12 @@ public class GovernorateController : Controller
 
     public GovernorateController(IGovernorateService service) => _service = service;
 
-    [Authorize(Policy = Permissions.Governorate.View)]
+    [Authorize(Policy = Permissions.Governorates.View)]
     public IActionResult List() => View();
 
     #region CRUD
     [HttpPost]
-    [Authorize(Policy = Permissions.Governorate.View)]
+    [Authorize(Policy = Permissions.Governorates.View)]
     public async Task<IActionResult> Table([FromBody] DataTableRequest request)
     {
         var search = request?.Search?.Value;
@@ -62,7 +62,7 @@ public class GovernorateController : Controller
     }
 
     [HttpPost]
-    [Authorize(Policy = Permissions.Governorate.Create)]
+    [Authorize(Policy = Permissions.Governorates.Create)]
     public async Task<IActionResult> Create([FromForm] CreateGovernorateRequest request)
     {
         if (!ModelState.IsValid)
@@ -86,7 +86,7 @@ public class GovernorateController : Controller
     }
 
     [HttpPut]
-    [Authorize(Policy = Permissions.Governorate.Update)]
+    [Authorize(Policy = Permissions.Governorates.Update)]
     public async Task<IActionResult> Update([FromForm] UpdateGovernorateRequest request)
     {
         if (!ModelState.IsValid)
@@ -110,7 +110,7 @@ public class GovernorateController : Controller
     }
 
     [HttpDelete]
-    [Authorize(Policy = Permissions.Governorate.Delete)]
+    [Authorize(Policy = Permissions.Governorates.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         if (!ModelState.IsValid)

@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public SizeController(ISizeService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Size.View)]
+        [Authorize(Policy = Permissions.Sizes.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Size.View)]
+        [Authorize(Policy = Permissions.Sizes.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -63,7 +63,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Size.Create)]
+        [Authorize(Policy = Permissions.Sizes.Create)]
         public async Task<IActionResult> Create([FromForm] CreateSizeRequest request)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Size.Update)]
+        [Authorize(Policy = Permissions.Sizes.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateSizeRequest request)
         {
             if (!ModelState.IsValid)
@@ -99,7 +99,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Size.Delete)]
+        [Authorize(Policy = Permissions.Sizes.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

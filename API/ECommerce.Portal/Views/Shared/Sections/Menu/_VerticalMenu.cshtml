@@ -8,16 +8,16 @@
     TempData.Keep();
     string? currentPage = ViewContext.HttpContext.Request.Path;
     var permissions = new List<string>();
-    var hasMangment = AuthHelper.CanAccess(permissions, Permissions.Category.View)
-        || AuthHelper.CanAccess(permissions, Permissions.SubCategory.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Brand.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Color.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Unit.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Size.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Tag.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Governorate.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Status.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Area.View);
+    var hasMangment = AuthHelper.CanAccess(permissions, Permissions.Categories.View)
+        || AuthHelper.CanAccess(permissions, Permissions.SubCategories.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Brands.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Colors.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Units.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Sizes.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Tags.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Governorates.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Statuses.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Areas.View);
 
     var activeManger = AuthHelper.OpenMenuItem(new List<string>
     {
@@ -33,9 +33,9 @@
         $"/{nameof(Category)}",
     },currentPage);
 
-    var hasFinancials= AuthHelper.CanAccess(permissions, Permissions.Voucher.View)
-       || AuthHelper.CanAccess(permissions, Permissions.Expense.View)
-        || AuthHelper.CanAccess(permissions, Permissions.Invoice.View);
+    var hasFinancials= AuthHelper.CanAccess(permissions, Permissions.Vouchers.View)
+       || AuthHelper.CanAccess(permissions, Permissions.Expenses.View)
+        || AuthHelper.CanAccess(permissions, Permissions.Invoices.View);
 
     var activeFinancials = AuthHelper.OpenMenuItem(new List<string>
     {
@@ -80,7 +80,7 @@
           </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Users.View) || AuthHelper.CanAccess(permissions, Permissions.Role.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Users.View) || AuthHelper.CanAccess(permissions, Permissions.Roles.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{ "/Role","/Account"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -97,7 +97,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Role.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Roles.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{ "/Role"},currentPage))'>
                             <a asp-controller="@nameof(Role)" asp-action="List" class="menu-link">
@@ -118,7 +118,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.MasterDataManagement]">@_Localizer[Constants.LabelKeys.MasterDataManagement]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Category.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Categories.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Category)}"},currentPage))'>
                             <a asp-controller="@nameof(Category)" asp-action="List" class="menu-link">
@@ -127,7 +127,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategory.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.SubCategories.View))
                     {
                         <li class='menu-item@(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(SubCategory)}"},currentPage))'>
                             <a asp-controller="@nameof(SubCategory)" asp-action="List" class="menu-link">
@@ -136,7 +136,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Brand.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Brands.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Brand)}"},currentPage))'>
                             <a asp-controller="@nameof(Brand)" asp-action="List" class="menu-link">
@@ -145,7 +145,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Color.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Colors.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Color)}"},currentPage))'>
                             <a asp-controller="@nameof(Color)" asp-action="List" class="menu-link">
@@ -154,7 +154,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Unit.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Units.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Unit)}"},currentPage))'>
                             <a asp-controller="@nameof(Unit)" asp-action="List" class="menu-link">
@@ -162,7 +162,7 @@
                                 <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Unit, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Unit, "s")]</div>
                             </a>
                         </li>
-                    } @if (AuthHelper.CanAccess(permissions, Permissions.Size.View))
+                    } @if (AuthHelper.CanAccess(permissions, Permissions.Sizes.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Size)}"},currentPage))'>
                             <a asp-controller="@nameof(Size)" asp-action="List" class="menu-link">
@@ -171,7 +171,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Tag.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Tags.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Tag)}"},currentPage))'>
                             <a asp-controller="@nameof(Tag)" asp-action="List" class="menu-link">
@@ -180,7 +180,16 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Status.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Collections.View))
+                    {
+                        <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Collection)}"},currentPage))'>
+                            <a asp-controller="@nameof(Collection)" asp-action="List" class="menu-link">
+                                <i class="menu-icon tf-icons mdi mdi-tag-multiple me-1"></i>
+                                <div data-i18n="@_Localizer[string.Concat(Constants.EntityKeys.Collection, "s")]">@_Localizer[string.Concat(Constants.EntityKeys.Collection, "s")]</div>
+                            </a>
+                        </li>
+                    }
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Statuses.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Status)}"},currentPage))'>
                             <a asp-controller="@nameof(Status)" asp-action="List" class="menu-link">
@@ -190,7 +199,7 @@
                         </li>
                     }
 
-                     @if (AuthHelper.CanAccess(permissions, Permissions.Governorate.View))
+                     @if (AuthHelper.CanAccess(permissions, Permissions.Governorates.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Governorate)}"},currentPage))'>
                             <a asp-controller="@nameof(Governorate)" asp-action="List" class="menu-link">
@@ -200,7 +209,7 @@
                         </li>
                     }
 
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Area.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Areas.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Area)}"},currentPage))'>
                             <a asp-controller="@nameof(Area)" asp-action="List" class="menu-link">
@@ -213,7 +222,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Products.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -221,7 +230,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.ProductManagement]">@_Localizer[Constants.LabelKeys.ProductManagement]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Products.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Product)}"},currentPage))'>
                             <a asp-controller="@nameof(Product)" asp-action="List" class="menu-link">
@@ -230,7 +239,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Products.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Favorite)}"},currentPage))'>
                             <a asp-controller="@nameof(Favorite)" asp-action="List" class="menu-link">
@@ -239,7 +248,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Cart.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Carts.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(ShoppingCart)}"},currentPage))'>
                             <a asp-controller="@nameof(ShoppingCart)" asp-action="List" class="menu-link">
@@ -261,7 +270,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Orders.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -269,7 +278,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.OrderProcessing]">@_Localizer[Constants.LabelKeys.OrderProcessing]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Orders.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
                             <a asp-controller="@nameof(Order)" asp-action="List" class="menu-link">
@@ -278,7 +287,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Orders.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
                             <a asp-controller="@nameof(Order)" asp-action="Calender" class="menu-link">
@@ -287,7 +296,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Order.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Orders.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Order)}"},currentPage))'>
                             <a asp-controller="@nameof(Order)" asp-action="Kanban" class="menu-link">
@@ -300,7 +309,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Vendor.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Vendors.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Vendor)}",$"/{nameof(Stock)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -308,7 +317,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.InventoryAndVendors]">@_Localizer[Constants.LabelKeys.InventoryAndVendors]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Stock.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Stocks.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Stock)}"},currentPage))'>
                             <a asp-controller="@nameof(Stock)" asp-action="List" class="menu-link">
@@ -318,7 +327,7 @@
                         </li>
                     }
 
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Category.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Categories.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Vendor)}"},currentPage))'>
                             <a asp-controller="@nameof(Vendor)" asp-action="List" class="menu-link">
@@ -339,7 +348,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.FinancialOperations]">@_Localizer[Constants.LabelKeys.FinancialOperations]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Invoice.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Invoices.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Invoice)}"},currentPage))'>
                             <a asp-controller="@nameof(Invoice)" asp-action="List" class="menu-link">
@@ -349,7 +358,7 @@
                         </li>
                     }
 
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Expense.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Expenses.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Expense)}"},currentPage))'>
                             <a asp-controller="@nameof(Expense)" asp-action="List" class="menu-link">
@@ -359,7 +368,7 @@
                         </li>
                     }
 
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Voucher.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Vouchers.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Voucher)}"},currentPage))'>
                             <a asp-controller="@nameof(Voucher)" asp-action="List" class="menu-link">
@@ -372,7 +381,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Feedback.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Feedbacks.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Feedback)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -380,7 +389,7 @@
                     <div data-i18n="@_Localizer[Constants.LabelKeys.CustomerFeedback]">@_Localizer[Constants.LabelKeys.CustomerFeedback]</div>
                 </a>
                 <ul class="menu-sub">
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Product.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Products.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Feedback)}"},currentPage))'>
                             <a asp-controller="@nameof(Feedback)" asp-action="List" class="menu-link">
@@ -389,7 +398,7 @@
                             </a>
                         </li>
                     }
-                    @if (AuthHelper.CanAccess(permissions, Permissions.Review.View))
+                    @if (AuthHelper.CanAccess(permissions, Permissions.Reviews.View))
                     {
                         <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(ProductReview)}"},currentPage))'>
                             <a asp-controller="@nameof(ProductReview)" asp-action="List" class="menu-link">
@@ -402,7 +411,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.Setting.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.Settings.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string>{$"/{nameof(Setting)}",$"/{nameof(Slider)}"},currentPage))'>
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -427,7 +436,7 @@
             </li>
         }
 
-        @if (AuthHelper.CanAccess(permissions, Permissions.ContactUs.View))
+        @if (AuthHelper.CanAccess(permissions, Permissions.ContactUses.View))
         {
             <li class='menu-item @(AuthHelper.OpenMenuItem(new List<string> {$"/{nameof(ContactUs)}"},currentPage))'>
                 <a asp-controller="ContactUs" asp-action="List" class="menu-link">

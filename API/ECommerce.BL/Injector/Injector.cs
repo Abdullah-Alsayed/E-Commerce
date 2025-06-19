@@ -3,6 +3,7 @@ using ECommerce.BLL.Features.Bookings.Services;
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Features.Carts.Services;
 using ECommerce.BLL.Features.Categories.Services;
+using ECommerce.BLL.Features.Collections.Services;
 using ECommerce.BLL.Features.Colors.Services;
 using ECommerce.BLL.Features.ContactUses.Services;
 using ECommerce.BLL.Features.Errors.Services;
@@ -72,7 +73,6 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IMailServices, MailServices>();
-            services.AddScoped<IMailServices, MailServices>();
             services.AddScoped<ISliderService, SliderService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IReviewService, ReviewService>();
@@ -87,6 +87,7 @@ namespace ECommerce.BLL.Injector
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IContactUsService, ContactUsService>();
+            services.AddScoped<ICollectionService, CollectionService>();
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IGovernorateService, GovernorateService>();
         }

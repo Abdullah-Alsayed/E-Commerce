@@ -12,6 +12,7 @@ namespace ECommerce.BLL.Features.Products.Requests
         public Guid UnitID { get; set; }
         public Guid? SubCategoryID { get; set; }
         public Guid CategoryID { get; set; }
+        public List<Guid> CollectionIDs { get; set; }
         public List<String> TagIDs { get; set; }
         public string Barcode { get; set; }
         public string Code { get; set; }

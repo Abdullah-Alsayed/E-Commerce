@@ -28,7 +28,7 @@ namespace ECommerce.API.Controllers
             _governorateService = governorateService;
         }
 
-        [Authorize(Policy = Permissions.Area.View)]
+        [Authorize(Policy = Permissions.Areas.View)]
         public async Task<IActionResult> List()
         {
             var response = await _governorateService.GetAllAsync(
@@ -39,7 +39,7 @@ namespace ECommerce.API.Controllers
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Area.View)]
+        [Authorize(Policy = Permissions.Areas.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -81,7 +81,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Area.Create)]
+        [Authorize(Policy = Permissions.Areas.Create)]
         public async Task<IActionResult> Create([FromForm] CreateAreaRequest request)
         {
             if (!ModelState.IsValid)
@@ -99,7 +99,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Area.Update)]
+        [Authorize(Policy = Permissions.Areas.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateAreaRequest request)
         {
             if (!ModelState.IsValid)
@@ -117,7 +117,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Area.Delete)]
+        [Authorize(Policy = Permissions.Areas.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

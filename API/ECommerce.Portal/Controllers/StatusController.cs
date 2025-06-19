@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public StatusController(IStatusService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Status.View)]
+        [Authorize(Policy = Permissions.Statuses.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Status.View)]
+        [Authorize(Policy = Permissions.Statuses.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -64,7 +64,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Status.Create)]
+        [Authorize(Policy = Permissions.Statuses.Create)]
         public async Task<IActionResult> Create([FromForm] CreateStatusRequest request)
         {
             if (!ModelState.IsValid)
@@ -82,7 +82,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Status.Update)]
+        [Authorize(Policy = Permissions.Statuses.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateStatusRequest request)
         {
             if (!ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Status.Delete)]
+        [Authorize(Policy = Permissions.Statuses.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

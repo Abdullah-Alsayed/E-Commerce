@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public VoucherController(IVoucherService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Voucher.View)]
+        [Authorize(Policy = Permissions.Vouchers.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Voucher.View)]
+        [Authorize(Policy = Permissions.Vouchers.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -66,7 +66,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Voucher.Create)]
+        [Authorize(Policy = Permissions.Vouchers.Create)]
         public async Task<IActionResult> Create([FromForm] CreateVoucherRequest request)
         {
             if (!ModelState.IsValid)
@@ -84,7 +84,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Voucher.Update)]
+        [Authorize(Policy = Permissions.Vouchers.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateVoucherRequest request)
         {
             if (!ModelState.IsValid)
@@ -102,7 +102,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Voucher.Delete)]
+        [Authorize(Policy = Permissions.Vouchers.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

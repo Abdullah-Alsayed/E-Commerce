@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public FeedbackController(IFeedbackService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Feedback.View)]
+        [Authorize(Policy = Permissions.Feedbacks.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Feedback.View)]
+        [Authorize(Policy = Permissions.Feedbacks.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -63,7 +63,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Feedback.Delete)]
+        [Authorize(Policy = Permissions.Feedbacks.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

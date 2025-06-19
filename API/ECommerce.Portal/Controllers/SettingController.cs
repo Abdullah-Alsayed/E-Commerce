@@ -16,7 +16,7 @@ namespace ECommerce.API.Controllers
         public SettingController(ISettingService service) => _service = service;
 
         [HttpGet]
-        [Authorize(Policy = Permissions.Setting.View)]
+        [Authorize(Policy = Permissions.Settings.View)]
         public async Task<IActionResult> View()
         {
             try
@@ -31,7 +31,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Setting.Update)]
+        [Authorize(Policy = Permissions.Settings.Update)]
         public async Task<BaseResponse> Update([FromForm] UpdateSettingRequest request)
         {
             try

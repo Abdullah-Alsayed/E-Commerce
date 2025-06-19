@@ -22,12 +22,12 @@ namespace ECommerce.API.Controllers
 
         public VendorController(IVendorService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Vendor.View)]
+        [Authorize(Policy = Permissions.Vendors.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Vendor.View)]
+        [Authorize(Policy = Permissions.Vendors.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -69,7 +69,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Vendor.Create)]
+        [Authorize(Policy = Permissions.Vendors.Create)]
         public async Task<IActionResult> Create([FromForm] CreateVendorRequest request)
         {
             if (!ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Vendor.Update)]
+        [Authorize(Policy = Permissions.Vendors.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateVendorRequest request)
         {
             if (!ModelState.IsValid)
@@ -105,7 +105,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Vendor.Delete)]
+        [Authorize(Policy = Permissions.Vendors.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

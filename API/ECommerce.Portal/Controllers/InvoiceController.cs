@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public InvoiceController(IInvoiceService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Invoice.View)]
+        [Authorize(Policy = Permissions.Invoices.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Invoice.View)]
+        [Authorize(Policy = Permissions.Invoices.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;

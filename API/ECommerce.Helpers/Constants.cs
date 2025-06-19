@@ -158,6 +158,9 @@ namespace ECommerce.Core
             public const string Code = "Code";
             public const string Barcode = "Barcode";
             public const string Tags = "Tags";
+            public const string InStock = "InStock";
+            public const string Collection = "Collection";
+            public const string DiscountLabel = "DiscountLabel";
         }
 
         public static class LabelKeys
@@ -192,6 +195,17 @@ namespace ECommerce.Core
             public const string CustomerSupport = "CustomerSupport";
             public const string ActivityLog = "ActivityLog";
             public const string MasterDataManagement = "MasterDataManagement";
+            public const string AddNewProduct = "AddNewProduct";
+            public const string OrdersPlacedAcrossYourStore = "OrdersPlacedAcrossYourStore";
+            public const string ProductInformation = "ProductInformation";
+            public const string Media = "Media";
+            public const string AddMediaFromUrl = "AddMediaFromUrl";
+            public const string DragAndDropYourImageHere = "DragAndDropYourImageHere";
+            public const string Or = "Or";
+            public const string BrowseImage = "BrowseImage";
+            public const string Pricing = "Pricing";
+            public const string DiscountedPrice = "DiscountedPrice";
+            public const string Organize = "Organize";
         }
 
         public static class Gender
@@ -225,6 +239,7 @@ namespace ECommerce.Core
             public const string Slider= "Slider";
             public const string Products= "Products";
             public const string User= "User";
+            public const string Collections = "Collections";
         }
 
         public static class DefaultPhotos

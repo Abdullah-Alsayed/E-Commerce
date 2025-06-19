@@ -2,6 +2,10 @@
 using ECommerce.BLL.Features.Brands.Services;
 using ECommerce.BLL.Features.Categories.Requests;
 using ECommerce.BLL.Features.Categories.Services;
+using ECommerce.BLL.Features.Collections.Requests;
+using ECommerce.BLL.Features.Collections.Services;
+using ECommerce.BLL.Features.Colors.Requests;
+using ECommerce.BLL.Features.Colors.Services;
 using ECommerce.BLL.Features.Products.Dtos;
 using ECommerce.BLL.Features.Products.Requests;
 using ECommerce.BLL.Features.Products.Services;
@@ -29,13 +33,17 @@ namespace ECommerce.API.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly ITagService _tagService;
+        private readonly ICollectionService _collectionService;
+        private readonly IColorService _colorService;
 
         public ProductController(
             IProductService service,
             IUnitService unitService,
             ICategoryService categoryService,
             IBrandService brandService,
-            ITagService tagService
+            ITagService tagService,
+            ICollectionService collectionService,
+            IColorService colorService
         )
         {
             _service = service;
@@ -43,14 +51,16 @@ namespace ECommerce.API.Controllers
             _categoryService = categoryService;
             _brandService = brandService;
             _tagService = tagService;
+            _collectionService = collectionService;
+            _colorService = colorService;
         }
 
-        [Authorize(Policy = Permissions.Product.View)]
+        [Authorize(Policy = Permissions.Products.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Product.View)]
+        [Authorize(Policy = Permissions.Products.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -97,7 +107,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = Permissions.Product.Create)]
+        [Authorize(Policy = Permissions.Products.Create)]
         [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> Create()
         {
@@ -110,18 +120,28 @@ namespace ECommerce.API.Controllers
             );
             var tags = await _tagService.GetAllAsync(new GetAllTagRequest { IsActive = true });
 
+            var collections = await _collectionService.GetAllAsync(
+                new GetAllCollectionRequest { IsActive = true }
+            );
+
+            var colors = await _colorService.GetAllAsync(
+                new GetAllColorRequest { IsActive = true }
+            );
+
             var viewModel = new CreateProductViewModel
             {
                 Units = units?.Result?.Items ?? new(),
                 Categories = categories?.Result?.Items ?? new(),
                 Brands = brands?.Result?.Items ?? new(),
-                Tags = tags?.Result?.Items ?? new()
+                Tags = tags?.Result?.Items ?? new(),
+                Collections = collections?.Result?.Items ?? new(),
+                Colors = colors?.Result?.Items ?? new(),
             };
             return View(viewModel);
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Product.Create)]
+        [Authorize(Policy = Permissions.Products.Create)]
         public async Task<IActionResult> Create([FromForm] CreateProductRequest request)
         {
             if (!ModelState.IsValid)
@@ -139,7 +159,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Product.Update)]
+        [Authorize(Policy = Permissions.Products.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateProductRequest request)
         {
             if (!ModelState.IsValid)
@@ -157,7 +177,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Product.Delete)]
+        [Authorize(Policy = Permissions.Products.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

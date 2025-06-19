@@ -58,7 +58,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Permissions.Unit.Create)]
+        [Authorize(Permissions.Units.Create)]
         public async Task<BaseResponse> CreateUnit([FromForm] CreateUnitRequest request)
         {
             try

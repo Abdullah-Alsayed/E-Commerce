@@ -18,11 +18,11 @@ namespace ECommerce.API.Controllers
 
         public StockController(IStockService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Stock.View)]
+        [Authorize(Policy = Permissions.Stocks.View)]
         public IActionResult List() => View();
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Stock.View)]
+        [Authorize(Policy = Permissions.Stocks.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;

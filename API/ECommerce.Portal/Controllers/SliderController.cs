@@ -20,12 +20,12 @@ namespace ECommerce.API.Controllers
 
         public SliderController(ISliderService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Setting.View)]
+        [Authorize(Policy = Permissions.Settings.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Setting.View)]
+        [Authorize(Policy = Permissions.Settings.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -68,7 +68,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Setting.Update)]
+        [Authorize(Policy = Permissions.Settings.Update)]
         public async Task<IActionResult> Create([FromForm] CreateSliderRequest request)
         {
             if (!ModelState.IsValid)
@@ -86,7 +86,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Setting.Update)]
+        [Authorize(Policy = Permissions.Settings.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateSliderRequest request)
         {
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Setting.Update)]
+        [Authorize(Policy = Permissions.Settings.Update)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)
@@ -124,7 +124,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Setting.Update)]
+        [Authorize(Policy = Permissions.Settings.Update)]
         public async Task<BaseResponse> ToggleActive([FromBody] ToggleActiveSliderRequest request)
         {
             try

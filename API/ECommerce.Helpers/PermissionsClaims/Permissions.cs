@@ -65,7 +65,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Users.Delete";
         }
 
-        public static class Governorate
+        public static class Governorates
         {
             public const string View = "Permissions.Governorate.View";
             public const string Create = "Permissions.Governorate.Create";
@@ -73,7 +73,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Governorate.Delete";
         }
 
-        public static class Area
+        public static class Areas
         {
             public const string View = "Permissions.Area.View";
             public const string Create = "Permissions.Area.Create";
@@ -81,7 +81,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Area.Delete";
         }
 
-        public static class Color
+        public static class Colors
         {
             public const string View = "Permissions.Color.View";
             public const string Create = "Permissions.Color.Create";
@@ -89,7 +89,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Color.Delete";
         }
 
-        public static class Voucher
+        public static class Vouchers
         {
             public const string View = "Permissions.Voucher.View";
             public const string Create = "Permissions.Voucher.Create";
@@ -97,7 +97,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Voucher.Delete";
         }
 
-        public static class Brand
+        public static class Brands
         {
             public const string View = "Permissions.Brand.View";
             public const string Create = "Permissions.Brand.Create";
@@ -105,7 +105,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Brand.Delete";
         }
 
-        public static class Category
+        public static class Categories
         {
             public const string View = "Permissions.Category.View";
             public const string Create = "Permissions.Category.Create";
@@ -113,7 +113,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Category.Delete";
         }
 
-        public static class SubCategory
+        public static class SubCategories
         {
             public const string View = "Permissions.SubCategory.View";
             public const string Create = "Permissions.SubCategory.Create";
@@ -121,7 +121,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.SubCategory.Delete";
         }
 
-        public static class Unit
+        public static class Units
         {
             public const string View = "Permissions.Unit.View";
             public const string Create = "Permissions.Unit.Create";
@@ -129,7 +129,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Unit.Delete";
         }
 
-        public static class Status
+        public static class Statuses
         {
             public const string View = "Permissions.Status.View";
             public const string Create = "Permissions.Status.Create";
@@ -137,7 +137,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Status.Delete";
         }
 
-        public static class Review
+        public static class Reviews
         {
             public const string View = "Permissions.Review.View";
             public const string Create = "Permissions.Review.Create";
@@ -145,20 +145,20 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Review.Delete";
         }
 
-        public static class Setting
+        public static class Settings
         {
             public const string View = "Permissions.Setting.View";
             public const string Update = "Permissions.Setting.Update";
         }
 
-        public static class ContactUs
+        public static class ContactUses
         {
             public const string View = "Permissions.ContactUs.View";
             public const string Create = "Permissions.ContactUs.Create";
             public const string Delete = "Permissions.ContactUs.Delete";
         }
 
-        public static class Expense
+        public static class Expenses
         {
             public const string View = "Permissions.Expense.View";
             public const string Create = "Permissions.Expense.Create";
@@ -166,7 +166,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Expense.Delete";
         }
 
-        public static class Slider
+        public static class Sliders
         {
             public const string View = "Permissions.Slider.View";
             public const string Create = "Permissions.Slider.Create";
@@ -174,7 +174,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Slider.Delete";
         }
 
-        public static class Vendor
+        public static class Vendors
         {
             public const string View = "Permissions.Vendor.View";
             public const string Create = "Permissions.Vendor.Create";
@@ -182,13 +182,13 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Vendor.Delete";
         }
 
-        public static class Feedback
+        public static class Feedbacks
         {
             public const string View = "Permissions.Feedback.View";
             public const string Delete = "Permissions.Feedback.Delete";
         }
 
-        public static class Cart
+        public static class Carts
         {
             public const string View = "Permissions.Cart.View";
             public const string Create = "Permissions.Cart.Create";
@@ -196,15 +196,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Cart.Delete";
         }
 
-        public static class Product
-        {
-            public const string View = "Permissions.Product.View";
-            public const string Create = "Permissions.Product.Create";
-            public const string Update = "Permissions.Product.Update";
-            public const string Delete = "Permissions.Product.Delete";
-        }
-
-        public static class Order
+        public static class Orders
         {
             public const string View = "Permissions.Order.View";
             public const string Create = "Permissions.Order.Create";
@@ -212,7 +204,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Order.Delete";
         }
 
-        public static class Size
+        public static class Sizes
         {
             public const string View = "Permissions.Size.View";
             public const string Create = "Permissions.Size.Create";
@@ -220,7 +212,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Size.Delete";
         }
 
-        public static class Invoice
+        public static class Invoices
         {
             public const string View = "Permissions.Invoice.View";
             public const string Create = "Permissions.Invoice.Create";
@@ -228,7 +220,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Invoice.Delete";
         }
 
-        public static class Stock
+        public static class Stocks
         {
             public const string View = "Permissions.Stock.View";
             public const string Create = "Permissions.Stock.Create";
@@ -236,7 +228,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Delete = "Permissions.Stock.Delete";
         }
 
-        public static class Role
+        public static class Roles
         {
             public const string View = "Permissions.Role.View";
             public const string Create = "Permissions.Role.Create";
@@ -245,7 +237,7 @@ namespace ECommerce.Core.PermissionsClaims
             public const string Permission = "Permissions.Role.Permission";
         }
 
-        public static class Tag
+        public static class Tags
         {
             public const string View = "Permissions.Tag.View";
             public const string Create = "Permissions.Tag.Create";
@@ -263,6 +255,14 @@ namespace ECommerce.Core.PermissionsClaims
         public static class Histories
         {
             public const string View = "Permissions.History.View";
+        }
+
+        public static class Collections
+        {
+            public const string View = "Permissions.Collection.View";
+            public const string Create = "Permissions.Collection.Create";
+            public const string Update = "Permissions.Collection.Update";
+            public const string Delete = "Permissions.Collection.Delete";
         }
     }
 }

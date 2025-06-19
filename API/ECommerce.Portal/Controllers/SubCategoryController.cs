@@ -25,7 +25,7 @@ namespace ECommerce.API.Controllers
             _categoryService = categoryService;
         }
 
-        [Authorize(Policy = Permissions.SubCategory.View)]
+        [Authorize(Policy = Permissions.SubCategories.View)]
         public async Task<IActionResult> List()
         {
             var response = await _categoryService.GetAllAsync(
@@ -36,7 +36,7 @@ namespace ECommerce.API.Controllers
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.SubCategory.View)]
+        [Authorize(Policy = Permissions.SubCategories.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -79,7 +79,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.SubCategory.Create)]
+        [Authorize(Policy = Permissions.SubCategories.Create)]
         public async Task<IActionResult> Create([FromForm] CreateSubCategoryRequest request)
         {
             if (!ModelState.IsValid)
@@ -97,7 +97,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.SubCategory.Update)]
+        [Authorize(Policy = Permissions.SubCategories.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateSubCategoryRequest request)
         {
             if (!ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.SubCategory.Delete)]
+        [Authorize(Policy = Permissions.SubCategories.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

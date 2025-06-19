@@ -15,5 +15,6 @@ namespace ECommerce.BLL.UnitOfWork.Modules.ProductModule
         IBaseRepository<Unit> Unit { get; }
         IBaseRepository<Booking> Booking { get; }
         IBaseRepository<ProductReview> Review { get; }
+        IBaseRepository<Collection> Collection { get; }
     }
 }

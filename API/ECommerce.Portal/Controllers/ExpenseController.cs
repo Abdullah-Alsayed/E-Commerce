@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public ExpenseController(IExpenseService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Expense.View)]
+        [Authorize(Policy = Permissions.Expenses.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Expense.View)]
+        [Authorize(Policy = Permissions.Expenses.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -64,7 +64,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Expense.Create)]
+        [Authorize(Policy = Permissions.Expenses.Create)]
         public async Task<IActionResult> Create([FromForm] CreateExpenseRequest request)
         {
             if (!ModelState.IsValid)
@@ -82,7 +82,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Expense.Update)]
+        [Authorize(Policy = Permissions.Expenses.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateExpenseRequest request)
         {
             if (!ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Expense.Delete)]
+        [Authorize(Policy = Permissions.Expenses.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

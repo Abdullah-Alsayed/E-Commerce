@@ -45,6 +45,7 @@ namespace ECommerce.DAL
         public DbSet<RoleClaims> RoleClaims { get; set; }
         public DbSet<TokenExpired> TokenExpired { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Collection> Collections { get; set; }
 
         public DbSet<TEntity> AddDbSet<TEntity>()
             where TEntity : class

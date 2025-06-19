@@ -243,6 +243,66 @@ namespace ECommerce.DAL.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Collection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DeletedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifyAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ModifyBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NameAR")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEN")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rules")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateBy");
+
+                    b.ToTable("Collections");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
                     b.Property<Guid>("Id")
@@ -283,7 +343,9 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEN")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -798,11 +860,11 @@ namespace ECommerce.DAL.Migrations
                     b.Property<Guid>("StatusID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("SubTotal")
-                        .HasColumnType("float");
-
                     b.Property<int>("Tax")
                         .HasColumnType("int");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
 
                     b.Property<Guid?>("VoucherID")
                         .HasColumnType("uniqueidentifier");
@@ -828,11 +890,22 @@ namespace ECommerce.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("AllStockOut")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("BrandID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
@@ -871,9 +944,6 @@ namespace ECommerce.DAL.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("ProductPhotos")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("SubCategoryID")
                         .HasColumnType("uniqueidentifier");
 
@@ -898,6 +968,27 @@ namespace ECommerce.DAL.Migrations
                     b.HasIndex("UnitID");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductCollection", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CollectionID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CollectionID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("ProductCollection");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductColor", b =>
@@ -946,6 +1037,30 @@ namespace ECommerce.DAL.Migrations
                     b.HasIndex("ProductID");
 
                     b.ToTable("ProductOrders");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductPhoto", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ColorID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ColorID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("ProductPhoto");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductReview", b =>
@@ -1024,6 +1139,27 @@ namespace ECommerce.DAL.Migrations
                     b.HasIndex("SizeID");
 
                     b.ToTable("ProductSizes");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductTag", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("ProductTag");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
@@ -1418,6 +1554,9 @@ namespace ECommerce.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReturn")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifyAt")
@@ -2097,6 +2236,17 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Collection", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateBy")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.User", "User")
@@ -2295,6 +2445,25 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductCollection", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Collection", "Collection")
+                        .WithMany("ProductCollections")
+                        .HasForeignKey("CollectionID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductCollections")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.ProductColor", b =>
                 {
                     b.HasOne("ECommerce.DAL.Entity.Color", "Color")
@@ -2329,6 +2498,25 @@ namespace ECommerce.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductPhoto", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductPhotos")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Color");
 
                     b.Navigation("Product");
                 });
@@ -2369,6 +2557,25 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("ECommerce.DAL.Entity.ProductTag", b =>
+                {
+                    b.HasOne("ECommerce.DAL.Entity.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.DAL.Entity.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("ECommerce.DAL.Entity.Role", b =>
@@ -2613,6 +2820,11 @@ namespace ECommerce.DAL.Migrations
                     b.Navigation("SubCategories");
                 });
 
+            modelBuilder.Entity("ECommerce.DAL.Entity.Collection", b =>
+                {
+                    b.Navigation("ProductCollections");
+                });
+
             modelBuilder.Entity("ECommerce.DAL.Entity.Color", b =>
                 {
                     b.Navigation("Bookings");
@@ -2638,13 +2850,19 @@ namespace ECommerce.DAL.Migrations
 
                     b.Navigation("Favorites");
 
+                    b.Navigation("ProductCollections");
+
                     b.Navigation("ProductColors");
 
                     b.Navigation("ProductOrders");
 
+                    b.Navigation("ProductPhotos");
+
                     b.Navigation("ProductSizes");
 
                     b.Navigation("ProductStocks");
+
+                    b.Navigation("ProductTags");
 
                     b.Navigation("Reviews");
                 });

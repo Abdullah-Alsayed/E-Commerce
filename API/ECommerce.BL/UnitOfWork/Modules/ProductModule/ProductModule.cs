@@ -20,6 +20,7 @@ namespace ECommerce.BLL.UnitOfWork.Modules.ProductModule
         private readonly Lazy<IBaseRepository<Booking>> _booking;
         private readonly Lazy<IBaseRepository<ProductReview>> _review;
         private readonly Lazy<IBaseRepository<Tag>> _tag;
+        private readonly Lazy<IBaseRepository<Collection>> _collection;
 
         public ProductModule(ApplicationDbContext context)
         {
@@ -43,6 +44,9 @@ namespace ECommerce.BLL.UnitOfWork.Modules.ProductModule
                 () => new BaseRepository<ProductReview>(_context)
             );
             _tag = new Lazy<IBaseRepository<Tag>>(() => new BaseRepository<Tag>(_context));
+            _collection = new Lazy<IBaseRepository<Collection>>(
+                () => new BaseRepository<Collection>(_context)
+            );
         }
 
         public IProductRepository Product => _product.Value;
@@ -55,5 +59,6 @@ namespace ECommerce.BLL.UnitOfWork.Modules.ProductModule
         public IBaseRepository<Booking> Booking => _booking.Value;
         public IBaseRepository<ProductReview> Review => _review.Value;
         public IBaseRepository<Tag> Tag => _tag.Value;
+        public IBaseRepository<Collection> Collection => _collection.Value;
     }
 }

@@ -18,12 +18,12 @@ namespace ECommerce.API.Controllers
 
         public BrandController(IBrandService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Brand.View)]
+        [Authorize(Policy = Permissions.Brands.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Brand.View)]
+        [Authorize(Policy = Permissions.Brands.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -64,7 +64,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Brand.Create)]
+        [Authorize(Policy = Permissions.Brands.Create)]
         public async Task<IActionResult> Create([FromForm] CreateBrandRequest request)
         {
             if (!ModelState.IsValid)
@@ -82,7 +82,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Brand.Update)]
+        [Authorize(Policy = Permissions.Brands.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateBrandRequest request)
         {
             if (!ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Brand.Delete)]
+        [Authorize(Policy = Permissions.Brands.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

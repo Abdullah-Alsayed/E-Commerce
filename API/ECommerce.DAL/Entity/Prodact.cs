@@ -15,6 +15,7 @@ namespace ECommerce.DAL.Entity
             Reviews = new HashSet<ProductReview>();
             ProductTags = new HashSet<ProductTag>();
             ProductPhotos = new HashSet<ProductPhoto>();
+            ProductCollections = new HashSet<ProductCollection>();
         }
 
         public Guid? BrandID { get; set; }
@@ -59,5 +60,6 @@ namespace ECommerce.DAL.Entity
         public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<Stock> ProductStocks { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual ICollection<ProductCollection> ProductCollections { get; set; }
     }
 }

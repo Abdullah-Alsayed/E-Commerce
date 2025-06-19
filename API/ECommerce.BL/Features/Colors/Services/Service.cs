@@ -54,7 +54,15 @@ namespace ECommerce.BLL.Features.Colors.Services
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
-                cfg.CreateMap<Color, ColorDto>().ReverseMap();
+                cfg.CreateMap<Color, ColorDto>()
+                    .ForMember(
+                        dest => dest.Name,
+                        opt =>
+                            opt.MapFrom(src =>
+                                _lang == Constants.Languages.Ar ? src.NameAR : src.NameEN
+                            )
+                    )
+                    .ReverseMap();
                 cfg.CreateMap<Color, CreateColorRequest>().ReverseMap();
                 cfg.CreateMap<Color, UpdateColorRequest>().ReverseMap();
             });

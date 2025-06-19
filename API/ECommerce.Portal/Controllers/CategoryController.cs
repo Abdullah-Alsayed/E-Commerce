@@ -21,12 +21,12 @@ namespace ECommerce.API.Controllers
 
         public CategoryController(ICategoryService service) => _service = service;
 
-        [Authorize(Policy = Permissions.Category.View)]
+        [Authorize(Policy = Permissions.Categories.View)]
         public IActionResult List() => View();
 
         #region CRUD
         [HttpPost]
-        [Authorize(Policy = Permissions.Category.View)]
+        [Authorize(Policy = Permissions.Categories.View)]
         public async Task<IActionResult> Table([FromBody] DataTableRequest request)
         {
             var search = request?.Search?.Value;
@@ -67,7 +67,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Permissions.Category.Create)]
+        [Authorize(Policy = Permissions.Categories.Create)]
         public async Task<IActionResult> Create([FromForm] CreateCategoryRequest request)
         {
             if (!ModelState.IsValid)
@@ -85,7 +85,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = Permissions.Category.Update)]
+        [Authorize(Policy = Permissions.Categories.Update)]
         public async Task<IActionResult> Update([FromForm] UpdateCategoryRequest request)
         {
             if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = Permissions.Category.Delete)]
+        [Authorize(Policy = Permissions.Categories.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)
